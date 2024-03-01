@@ -10,14 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Rarities {
+public class RaritiesConfig {
     private static final DailyShop plugin = DailyShop.getInstance();
     private static YamlConfiguration config;
 
     private static HashMap<String, ConfigurationSection> rarities = new HashMap<>();
 
     public static void load() {
-
         File file = new File(plugin.getDataFolder(), "rarities.yml");
         config = new YamlConfiguration();
 

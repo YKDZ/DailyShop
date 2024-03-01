@@ -21,7 +21,6 @@ public class Config {
     private static int version;
 
     public static void load() {
-
         File file = new File(plugin.getDataFolder(), "config.yml");
         config = new YamlConfiguration();
 

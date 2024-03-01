@@ -1,11 +1,5 @@
 language: zh_CN
 
-shop-default:
-  buy-price: 500.0
-  sell-price: 20.0
-  restock-timer: 86400
-  rarity: common
-
 decimal-format: "###,###.##"
 time-format: "hh:mm a"
 

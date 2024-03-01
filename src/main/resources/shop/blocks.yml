@@ -15,71 +15,11 @@ shop-gui:
       material: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
 
-items:
-  COARSE_DIRT:
-    material: COARSE_DIRT
-    amount: 64
-    buyPrice:
-      fixed: 15.6
-    sellPrice:
-      fixed: 1.5
-
-  RED_CONCRETE_POWDER:
-    material: RED_CONCRETE_POWDER
-    amount: 16
-    buyPrice:
-      fixed: 115.5
-    sellPrice:
-      fixed: -1.0
-    rarity: uncommon
-
-  GREEN_CONCRETE_POWDER:
-    material: GREEN_CONCRETE_POWDER
-    amount: 16
-    buyPrice:
-      fixed: 115.5
-    sellPrice:
-      fixed: -1.0
-
-  LIME_CONCRETE_POWDER:
-    material: LIME_CONCRETE_POWDER
-    amount: 16
-    buyPrice:
-      fixed: 115.5
-    sellPrice:
-      fixed: -1.0
-
-  MAGENTA_CONCRETE:
-    material: MAGENTA_CONCRETE
-    amount: 16
-    buy-price:
-      mean: 175.5
-      dev: 5
-    sell-price:
-      mean: 175.5
-      dev: 5
-
-  CONCRETE_POWDER_BUNDLE_1:
-    material: BUNDLE
-    name: "Concrete Powder Bundle 1"
-    bundle-part:
-      - GREEN_CONCRETE_POWDER
-      - LIME_CONCRETE_POWDER
-      - RED_CONCRETE_POWDER
-    buy-price: auto
-    sell-price: auto
-    rarity: rare
-
-  CONCRETE_POWDER_BUNDLE_2:
-    material: BUNDLE
-    name: "Concrete Powder Bundle 2"
-    bundle-part:
-      - GREEN_CONCRETE_POWDER
-      - LIME_CONCRETE_POWDER
-      - RED_CONCRETE_POWDER
-    buy-price:
-      mean: 300.0
-      dev: 5
-    sell-price: auto
-    rarity: rare
-
+products:
+  - COARSE_DIRT
+  - GREEN_CONCRETE_POWDER
+  - RED_CONCRETE_POWDER
+  - LIME_CONCRETE_POWDER
+  - MAGENTA_CONCRETE
+  - CONCRETE_POWDER_BUNDLE_1
+  - CONCRETE_POWDER_BUNDLE_2
