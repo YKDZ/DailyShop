@@ -1,7 +1,5 @@
 restock-timer: 86400
 
-enabled-shop-gui: true
-
 shop-gui:
   title: "Hi %player_name%, Welcome to Daily Blocks Shop."
   layout:
@@ -20,6 +18,7 @@ shop-gui:
 items:
   COARSE_DIRT:
     material: COARSE_DIRT
+    amount: 64
     buyPrice:
       fixed: 15.6
     sellPrice:
@@ -27,6 +26,7 @@ items:
 
   RED_CONCRETE_POWDER:
     material: RED_CONCRETE_POWDER
+    amount: 16
     buyPrice:
       fixed: 115.5
     sellPrice:
@@ -35,6 +35,7 @@ items:
 
   GREEN_CONCRETE_POWDER:
     material: GREEN_CONCRETE_POWDER
+    amount: 16
     buyPrice:
       fixed: 115.5
     sellPrice:
@@ -42,6 +43,7 @@ items:
 
   LIME_CONCRETE_POWDER:
     material: LIME_CONCRETE_POWDER
+    amount: 16
     buyPrice:
       fixed: 115.5
     sellPrice:
@@ -49,6 +51,7 @@ items:
 
   MAGENTA_CONCRETE:
     material: MAGENTA_CONCRETE
+    amount: 16
     buy-price:
       mean: 175.5
       dev: 5

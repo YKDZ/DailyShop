@@ -3,7 +3,7 @@ rarities:
     name: "&7Common"
     material: GRAY_DYE
     weight: 100
-  unCommon:
+  uncommon:
     name: "&fUncommon"
     material: PINK_DYE
     weight: 80
