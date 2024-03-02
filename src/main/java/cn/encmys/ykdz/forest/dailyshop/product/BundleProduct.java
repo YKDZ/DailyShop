@@ -18,7 +18,7 @@ public class BundleProduct implements Product {
     private final Material material;
     private final int amount;
     private final String displayName;
-    private final List<String> displayedLore;
+    private final List<String> descLore;
     private final List<String> contents;
 
     public BundleProduct(
@@ -28,7 +28,7 @@ public class BundleProduct implements Product {
             Material material,
             int amount ,
             @Nullable String displayName,
-            @Nullable List<String> displayedLore,
+            @Nullable List<String> descLore,
             @Nullable List<String> contents) {
         this.id = id;
         this.priceProvider = priceProvider;
@@ -36,7 +36,7 @@ public class BundleProduct implements Product {
         this.material = material;
         this.amount = amount;
         this.displayName = displayName;
-        this.displayedLore = displayedLore;
+        this.descLore = descLore;
         this.contents = contents;
     }
 
@@ -49,7 +49,7 @@ public class BundleProduct implements Product {
     public ItemStack getDisplayedItem() {
         ItemStack displayedItem = new ItemStack(material, amount);
         ItemUtils.displayName(displayedItem, displayName);
-        ItemUtils.lore(displayedItem, displayedLore);
+        ItemUtils.lore(displayedItem, descLore);
         return displayedItem;
     }
 

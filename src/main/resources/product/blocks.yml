@@ -7,7 +7,7 @@ default-settings:
 
 products:
   COARSE_DIRT:
-    material: COARSE_DIRT
+    item: COARSE_DIRT
     amount: 64
     buyPrice:
       fixed: 15.6
@@ -15,7 +15,7 @@ products:
       fixed: 1.5
 
   RED_CONCRETE_POWDER:
-    material: RED_CONCRETE_POWDER
+    item: RED_CONCRETE_POWDER
     amount: 16
     buyPrice:
       fixed: 115.5
@@ -24,7 +24,7 @@ products:
     rarity: uncommon
 
   GREEN_CONCRETE_POWDER:
-    material: GREEN_CONCRETE_POWDER
+    item: GREEN_CONCRETE_POWDER
     amount: 16
     buyPrice:
       fixed: 115.5
@@ -32,7 +32,7 @@ products:
       fixed: -1.0
 
   LIME_CONCRETE_POWDER:
-    material: LIME_CONCRETE_POWDER
+    item: LIME_CONCRETE_POWDER
     amount: 16
     buyPrice:
       fixed: 115.5
@@ -40,19 +40,21 @@ products:
       fixed: -1.0
 
   MAGENTA_CONCRETE:
-    material: MAGENTA_CONCRETE
+    item: MAGENTA_CONCRETE
     amount: 16
     buy-price:
       mean: 175.5
       dev: 5
+      round: true
     sell-price:
       mean: 175.5
       dev: 5
+      round: true
 
   CONCRETE_POWDER_BUNDLE_1:
-    material: BUNDLE
+    item: BUNDLE
     name: "Concrete Powder Bundle 1"
-    bundle-part:
+    bundle-contents:
       - GREEN_CONCRETE_POWDER
       - LIME_CONCRETE_POWDER
       - RED_CONCRETE_POWDER
@@ -61,9 +63,9 @@ products:
     rarity: rare
 
   CONCRETE_POWDER_BUNDLE_2:
-    material: BUNDLE
+    item: BUNDLE
     name: "Concrete Powder Bundle 2"
-    bundle-part:
+    bundle-contents:
       - GREEN_CONCRETE_POWDER
       - LIME_CONCRETE_POWDER
       - RED_CONCRETE_POWDER

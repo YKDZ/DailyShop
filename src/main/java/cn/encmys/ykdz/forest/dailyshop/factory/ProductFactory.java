@@ -6,10 +6,12 @@ import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.VanillaProduct;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
 import javax.management.openmbean.InvalidKeyException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,10 +19,48 @@ public class ProductFactory {
     private static HashMap<String, Product> products = new HashMap<>();
 
     public ProductFactory() {
-        for(String id : ProductConfig.getAllId()) {
-            YamlConfiguration config = ProductConfig.getConfig(id);
-            config.getConfigurationSection("");
+        for(String configId : ProductConfig.getAllId()) {
+            YamlConfiguration config = ProductConfig.getConfig(configId);
+            ConfigurationSection products = config.getConfigurationSection("products");
+            ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
+            List<String> bundles = new ArrayList<>();
+            for(String productId : products.getKeys(false)) {
+
+                // Record Bundle
+                if(!products.getStringList(productId + ".bundle-contents").isEmpty()) {
+                    bundles.add(productId);
+                    continue;
+                }
+
+                String item = products.getString(productId + ".item");
+                Material material = Material.matchMaterial(item);
+                buildVanillaProduct(
+                        productId,
+                        new PriceProvider(products.getConfigurationSection(productId + ".buy-price"), products.getConfigurationSection(productId + ".sell-price")),
+                        products.getString(productId + ".rarity"),
+                        material,
+                        products.getInt(productId + ".amount", 1),
+                        products.getString(productId + ".display-name"),
+                        products.getStringList(productId + ".desc-lore"),
+                        products.getStringList(productId + ".product-lore")
+                );
+            }
+
+            // Handle Bundle
+            for(String id : bundles) {
+                Material material = Material.matchMaterial(products.getString(id + ".item"));
+                buildBundleProduct(
+                        id,
+                        new PriceProvider(products.getConfigurationSection(id + ".buy-price"), products.getConfigurationSection(id + ".sell-price")),
+                        products.getString(id + ".rarity"),
+                        material,
+                        products.getInt(id + ".amount", 1),
+                        products.getString(id + ".display-name"),
+                        products.getStringList(id + ".desc-lore"),
+                        products.getStringList(id + ".bundle-contents")
+                        );
+            }
         }
     }
 
@@ -34,13 +74,13 @@ public class ProductFactory {
                                               Material material,
                                               int amount ,
                                               @Nullable String displayName,
-                                              @Nullable List<String> displayedLore,
+                                              @Nullable List<String> descLore,
                                               @Nullable List<String> productLore) {
         if(products.containsKey(id)) {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
-        Product product = new VanillaProduct(id, priceProvider, rarity, material, amount, displayName, displayedLore, productLore);
+        Product product = new VanillaProduct(id, priceProvider, rarity, material, amount, displayName, descLore, productLore);
         products.put(id, product);
         return product;
     }
@@ -51,13 +91,13 @@ public class ProductFactory {
                                              Material material,
                                              int amount ,
                                              @Nullable String displayName,
-                                             @Nullable List<String> displayedLore,
+                                             @Nullable List<String> descLore,
                                              @Nullable List<String> contents) {
         if(products.containsKey(id)) {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
-        Product product = new BundleProduct(id, priceProvider, rarity, material, amount, displayName, displayedLore, contents);
+        Product product = new BundleProduct(id, priceProvider, rarity, material, amount, displayName, descLore, contents);
         products.put(id, product);
         return product;
     }

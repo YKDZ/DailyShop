@@ -18,7 +18,7 @@ public class VanillaProduct implements Product {
     private final Material material;
     private final int amount;
     private final String displayName;
-    private final List<String> displayedLore;
+    private final List<String> descLore;
     private final List<String> productLore;
 
     public VanillaProduct(
@@ -28,7 +28,7 @@ public class VanillaProduct implements Product {
             Material material,
             int amount ,
             @Nullable String displayName,
-            @Nullable List<String> displayedLore,
+            @Nullable List<String> descLore,
             @Nullable List<String> productLore) {
         this.id = id;
         this.priceProvider = priceProvider;
@@ -36,7 +36,7 @@ public class VanillaProduct implements Product {
         this.material = material;
         this.amount = amount;
         this.displayName = displayName;
-        this.displayedLore = displayedLore;
+        this.descLore = descLore;
         this.productLore = productLore;
     }
 
@@ -48,7 +48,7 @@ public class VanillaProduct implements Product {
     @Override
     public ItemStack getDisplayedItem() {
         ItemStack displayedItem = new ItemStack(material, amount);
-        ItemUtils.lore(displayedItem, displayedLore);
+        ItemUtils.lore(displayedItem, descLore);
         return displayedItem;
     }
 
