@@ -46,8 +46,14 @@ public class VanillaProduct implements Product {
     }
 
     @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
     public ItemStack getDisplayedItem() {
         ItemStack displayedItem = new ItemStack(material, amount);
+        ItemUtils.displayName(displayedItem, displayName);
         ItemUtils.lore(displayedItem, descLore);
         return displayedItem;
     }

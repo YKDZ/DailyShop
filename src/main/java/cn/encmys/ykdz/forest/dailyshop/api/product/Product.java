@@ -7,4 +7,5 @@ public interface Product {
     String getId();
     ItemStack getDisplayedItem();
     void deliver(Player player);
+    String getDisplayName();
 }

@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
@@ -46,6 +47,11 @@ public class BundleProduct implements Product {
     }
 
     @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
     public ItemStack getDisplayedItem() {
         ItemStack displayedItem = new ItemStack(material, amount);
         ItemUtils.displayName(displayedItem, displayName);
@@ -56,7 +62,7 @@ public class BundleProduct implements Product {
     @Override
     public void deliver(Player player) {
         for(String id : contents) {
-            ProductFactory.getProduct(id).deliver(player);
+            DailyShop.getProductFactory().getProduct(id).deliver(player);
         }
     }
 }

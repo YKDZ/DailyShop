@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
+import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.VanillaProduct;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class ProductFactory {
     private static HashMap<String, Product> products = new HashMap<>();
+    private static HashMap<String, ProductType> productTypes = new HashMap<>();
 
     public ProductFactory() {
         for(String configId : ProductConfig.getAllId()) {
@@ -64,11 +66,11 @@ public class ProductFactory {
         }
     }
 
-    public static Product getProduct(String id) {
+    public Product getProduct(String id) {
         return products.get(id);
     }
 
-    public static Product buildVanillaProduct(String id,
+    public Product buildVanillaProduct(String id,
                                               PriceProvider priceProvider,
                                               String rarity,
                                               Material material,
@@ -82,10 +84,11 @@ public class ProductFactory {
 
         Product product = new VanillaProduct(id, priceProvider, rarity, material, amount, displayName, descLore, productLore);
         products.put(id, product);
+        productTypes.put(id, ProductType.VANILLA);
         return product;
     }
 
-    public static Product buildBundleProduct(String id,
+    public Product buildBundleProduct(String id,
                                              PriceProvider priceProvider,
                                              String rarity,
                                              Material material,
@@ -99,6 +102,7 @@ public class ProductFactory {
 
         Product product = new BundleProduct(id, priceProvider, rarity, material, amount, displayName, descLore, contents);
         products.put(id, product);
+        productTypes.put(id, ProductType.BUNDLE);
         return product;
     }
 }
