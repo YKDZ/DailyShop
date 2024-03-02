@@ -34,4 +34,8 @@ public class ShopFactory {
         shops.put(id, shop);
         return shop;
     }
+
+    public Shop getShop(String id) {
+        return shops.get(id);
+    }
 }

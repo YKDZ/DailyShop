@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop;
 
+import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RaritiesConfig;
@@ -24,6 +25,8 @@ public final class DailyShop extends JavaPlugin {
 
         productFactory = new ProductFactory();
         shopFactory = new ShopFactory();
+
+        new CommandHandler(instance).load();
     }
 
     @Override
