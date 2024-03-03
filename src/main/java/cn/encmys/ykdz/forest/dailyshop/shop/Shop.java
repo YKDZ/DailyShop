@@ -32,8 +32,8 @@ public class Shop {
             builder.addIngredient(key, ShopConfig.getIcon(id, key));
         }
         gui = builder
-                .addIngredient('.', products.get(new Random().nextInt()).getDisplayedItem())
-                .addIngredient('.', products.get(new Random().nextInt()).getDisplayedItem())
+                .addIngredient('.', products.get(new Random().nextInt(6)).getDisplayedItem())
+                .addIngredient('.', products.get(new Random().nextInt(6)).getDisplayedItem())
                 .build();
     }
 

@@ -14,7 +14,9 @@ public class ShopFactory {
     private static HashMap<String, Shop> shops = new HashMap<>();
 
     public ShopFactory() {
-
+        for(String id : ShopConfig.getAllId()) {
+            buildShop(id);
+        }
     }
 
     public Shop buildShop(String id) {
@@ -22,7 +24,7 @@ public class ShopFactory {
 
         List<Product> products = new ArrayList<>();
         for(String productId : config.getStringList("products")) {
-            DailyShop.getProductFactory().getProduct(productId);
+            products.add(DailyShop.getProductFactory().getProduct(productId));
         }
 
         Shop shop = new Shop(

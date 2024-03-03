@@ -7,6 +7,8 @@ import cn.encmys.ykdz.forest.dailyshop.config.RaritiesConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DailyShop extends JavaPlugin {
@@ -15,13 +17,20 @@ public final class DailyShop extends JavaPlugin {
     private static ShopFactory shopFactory;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         instance = this;
 
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(instance));
+    }
+
+    @Override
+    public void onEnable() {
         Config.load();
         RaritiesConfig.load();
         ProductConfig.load();
         ShopConfig.load();
+
+        CommandAPI.onEnable();
 
         productFactory = new ProductFactory();
         shopFactory = new ShopFactory();
@@ -31,7 +40,7 @@ public final class DailyShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        CommandAPI.onDisable();
     }
 
     public static DailyShop getInstance() {

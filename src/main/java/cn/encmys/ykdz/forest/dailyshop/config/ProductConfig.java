@@ -18,7 +18,7 @@ public class ProductConfig {
         File directory = new File(plugin.getDataFolder() + "/product");
 
         if (!directory.exists() || !directory.isDirectory()) {
-            throw new IllegalArgumentException("Product config path not find.");
+            directory.getParentFile().mkdirs();
         }
 
         File[] files = directory.listFiles();

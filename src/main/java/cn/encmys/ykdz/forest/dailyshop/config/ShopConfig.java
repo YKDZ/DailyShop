@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,7 @@ public class ShopConfig {
         File directory = new File(plugin.getDataFolder() + "/shop");
 
         if (!directory.exists() || !directory.isDirectory()) {
-            throw new IllegalArgumentException("ShopConfig config path not find.");
+            directory.getParentFile().mkdirs();
         }
 
         File[] files = directory.listFiles();
@@ -47,7 +49,8 @@ public class ShopConfig {
         return configs.get(id);
     }
 
-    public static List<String> getAllId() {
+    @Contract(" -> new")
+    public static @NotNull List<String> getAllId() {
         return new ArrayList<>(configs.keySet());
     }
 
@@ -55,15 +58,16 @@ public class ShopConfig {
         return getConfig(id).getString("shop-gui.title");
     }
 
-    public static String[] getLayout(String id) {
+    public static String @NotNull [] getLayout(String id) {
         return getConfig(id).getStringList("shop-gui.layout").toArray(new String[0]);
     }
 
-    public static Set<String> getIcons(String id) {
+    public static @NotNull Set<String> getIcons(String id) {
+        System.out.println(getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false));
         return getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false);
     }
 
-    public static ItemStack getIcon(String shopId, char iconId) {
+    public static @NotNull ItemStack getIcon(String shopId, char iconId) {
         Material material = Material.matchMaterial(getConfig(shopId).getString("shop-gui.icons." + iconId + ".material"));
         String displayName = getConfig(shopId).getString("shop-gui.icons." + iconId + ". name");
         List<String> lore = getConfig(shopId).getStringList("shop-gui.icons." + iconId + ".lore");
