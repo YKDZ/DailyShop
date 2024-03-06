@@ -81,6 +81,8 @@ dependencies {
     compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
 
     compileOnly("me.clip:placeholderapi:2.11.5")
+
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 }
 
 tasks {

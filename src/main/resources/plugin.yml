@@ -2,3 +2,5 @@ name: DailyShop
 version: '${version}'
 main: cn.encmys.ykdz.forest.dailyshop.DailyShop
 api-version: '1.16'
+depend:
+  - Vault

@@ -43,8 +43,8 @@ public class Config {
         shopDefault_sellPrice = config.getDouble("shop-default.sell-price", 20d);
         shopDefault_restockTimer = config.getInt("shop-default.restock-timer", 86400);
         shopDefault_rarity = config.getString("shop-default.rarity");
-        decimalFormat = config.getString("decimal-format" ,"###,###.##");
-        timeFormat = config.getString("time-format" ,"hh:mm a");
+        decimalFormat = config.getString("decimal-format", "###,###.##");
+        timeFormat = config.getString("time-format", "hh:mm a");
         version = config.getInt("version");
     }
 

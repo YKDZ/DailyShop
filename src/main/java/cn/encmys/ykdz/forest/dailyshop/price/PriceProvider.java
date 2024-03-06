@@ -5,29 +5,33 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.Random;
 
 public class PriceProvider {
-    private final static Random random = new Random();
-    private final ConfigurationSection buySection;
-    private final ConfigurationSection sellSection;
+    private final static double gaussian = new Random().nextGaussian();
+    private final double buyPrice;
+    private final double sellPrice;
 
     public PriceProvider(ConfigurationSection buySection, ConfigurationSection sellSection) {
-        this.buySection = buySection;
-        this.sellSection = sellSection;
+        this.buyPrice = buildPrice(buySection);
+        this.sellPrice = buildPrice(sellSection);
     }
 
     public double getBuyPrice() {
-        return getPrice(buySection);
+        return buyPrice;
     }
 
     public double getSellPrice() {
-        return getPrice(sellSection);
+        return sellPrice;
     }
 
-    private double getPrice(ConfigurationSection configSection) {
-        if(configSection.contains("fixed")) {
+    private double buildPrice(ConfigurationSection configSection) {
+        if (configSection == null) {
+            return -1d;
+        }
+
+        if (configSection.contains("fixed")) {
             return configSection.getDouble("fixed");
-        } else if(configSection.contains("mean") && configSection.contains("dev")) {
-            double result = random.nextGaussian() * Math.sqrt(configSection.getDouble("dev")) + configSection.getDouble("mean");
-            if(configSection.getBoolean("round", false)) {
+        } else if (configSection.contains("mean") && configSection.contains("dev")) {
+            double result = gaussian * Math.sqrt(configSection.getDouble("dev")) + configSection.getDouble("mean");
+            if (configSection.getBoolean("round", false)) {
                 return Math.round(result);
             }
             return result;

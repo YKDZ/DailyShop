@@ -63,7 +63,6 @@ public class ShopConfig {
     }
 
     public static @NotNull Set<String> getIcons(String id) {
-        System.out.println(getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false));
         return getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false);
     }
 

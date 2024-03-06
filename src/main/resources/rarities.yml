@@ -1,29 +1,22 @@
 rarities:
   common:
     name: "&7Common"
-    material: GRAY_DYE
     weight: 100
   uncommon:
     name: "&fUncommon"
-    material: PINK_DYE
     weight: 80
   rare:
     name: "&5Rare"
-    material: MAGENTA_DYE
     weight: 60
   epic:
     name: "&5Epic"
-    material: PURPLE_DYE
     weight: 40
   ancient:
     name: "&9Ancient"
-    material: CYAN_DYE
     weight: 20
   legendary:
     name: "&dLegendary"
-    material: ORANGE_DYE
     weight: 10
   mythic:
     name: "&eMythic"
-    material: YELLOW_DYE
     weight: 5

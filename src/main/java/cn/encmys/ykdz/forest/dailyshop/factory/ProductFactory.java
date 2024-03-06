@@ -1,11 +1,13 @@
 package cn.encmys.ykdz.forest.dailyshop.factory;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.VanillaProduct;
+import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,20 +19,21 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductFactory {
-    private static HashMap<String, Product> products = new HashMap<>();
-    private static HashMap<String, ProductType> productTypes = new HashMap<>();
+    private static final HashMap<String, Product> products = new HashMap<>();
+    private static final HashMap<String, ProductType> productTypes = new HashMap<>();
 
     public ProductFactory() {
-        for(String configId : ProductConfig.getAllId()) {
+        for (String configId : ProductConfig.getAllId()) {
+            RarityFactory rarityFactory = DailyShop.getRarityFactory();
             YamlConfiguration config = ProductConfig.getConfig(configId);
             ConfigurationSection products = config.getConfigurationSection("products");
             ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
             List<String> bundles = new ArrayList<>();
-            for(String productId : products.getKeys(false)) {
+            for (String productId : products.getKeys(false)) {
 
                 // Record Bundle
-                if(!products.getStringList(productId + ".bundle-contents").isEmpty()) {
+                if (!products.getStringList(productId + ".bundle-contents").isEmpty()) {
                     bundles.add(productId);
                     continue;
                 }
@@ -40,7 +43,7 @@ public class ProductFactory {
                 buildVanillaProduct(
                         productId,
                         new PriceProvider(products.getConfigurationSection(productId + ".buy-price"), products.getConfigurationSection(productId + ".sell-price")),
-                        products.getString(productId + ".rarity"),
+                        rarityFactory.getRarity(products.getString(productId + ".rarity")),
                         material,
                         products.getInt(productId + ".amount", 1),
                         products.getString(productId + ".display-name"),
@@ -50,18 +53,18 @@ public class ProductFactory {
             }
 
             // Handle Bundle
-            for(String id : bundles) {
+            for (String id : bundles) {
                 Material material = Material.matchMaterial(products.getString(id + ".item"));
                 buildBundleProduct(
                         id,
                         new PriceProvider(products.getConfigurationSection(id + ".buy-price"), products.getConfigurationSection(id + ".sell-price")),
-                        products.getString(id + ".rarity"),
+                        rarityFactory.getRarity(products.getString(id + ".rarity")),
                         material,
                         products.getInt(id + ".amount", 1),
                         products.getString(id + ".display-name"),
                         products.getStringList(id + ".desc-lore"),
                         products.getStringList(id + ".bundle-contents")
-                        );
+                );
             }
         }
     }
@@ -71,14 +74,14 @@ public class ProductFactory {
     }
 
     public Product buildVanillaProduct(String id,
-                                              PriceProvider priceProvider,
-                                              String rarity,
-                                              Material material,
-                                              int amount ,
-                                              @Nullable String displayName,
-                                              @Nullable List<String> descLore,
-                                              @Nullable List<String> productLore) {
-        if(products.containsKey(id)) {
+                                       PriceProvider priceProvider,
+                                       Rarity rarity,
+                                       Material material,
+                                       int amount,
+                                       @Nullable String displayName,
+                                       @Nullable List<String> descLore,
+                                       @Nullable List<String> productLore) {
+        if (products.containsKey(id)) {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
@@ -89,14 +92,14 @@ public class ProductFactory {
     }
 
     public Product buildBundleProduct(String id,
-                                             PriceProvider priceProvider,
-                                             String rarity,
-                                             Material material,
-                                             int amount ,
-                                             @Nullable String displayName,
-                                             @Nullable List<String> descLore,
-                                             @Nullable List<String> contents) {
-        if(products.containsKey(id)) {
+                                      PriceProvider priceProvider,
+                                      Rarity rarity,
+                                      Material material,
+                                      int amount,
+                                      @Nullable String displayName,
+                                      @Nullable List<String> descLore,
+                                      @Nullable List<String> contents) {
+        if (products.containsKey(id)) {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
@@ -104,5 +107,10 @@ public class ProductFactory {
         products.put(id, product);
         productTypes.put(id, ProductType.BUNDLE);
         return product;
+    }
+
+    public void unload() {
+        products.clear();
+        productTypes.clear();
     }
 }

@@ -9,35 +9,29 @@ products:
   COARSE_DIRT:
     item: COARSE_DIRT
     amount: 64
-    buyPrice:
+    buy-price:
       fixed: 15.6
-    sellPrice:
+    sell-price:
       fixed: 1.5
 
   RED_CONCRETE_POWDER:
     item: RED_CONCRETE_POWDER
     amount: 16
-    buyPrice:
+    buy-price:
       fixed: 115.5
-    sellPrice:
-      fixed: -1.0
     rarity: uncommon
 
   GREEN_CONCRETE_POWDER:
     item: GREEN_CONCRETE_POWDER
     amount: 16
-    buyPrice:
+    buy-price:
       fixed: 115.5
-    sellPrice:
-      fixed: -1.0
 
   LIME_CONCRETE_POWDER:
     item: LIME_CONCRETE_POWDER
     amount: 16
-    buyPrice:
+    buy-price:
       fixed: 115.5
-    sellPrice:
-      fixed: -1.0
 
   MAGENTA_CONCRETE:
     item: MAGENTA_CONCRETE

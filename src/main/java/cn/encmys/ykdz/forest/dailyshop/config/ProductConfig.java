@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ProductConfig {
     private static final DailyShop plugin = DailyShop.getInstance();
-    private static HashMap<String, YamlConfiguration> configs = new HashMap<>();
+    private static final HashMap<String, YamlConfiguration> configs = new HashMap<>();
 
     public static void load() {
         File directory = new File(plugin.getDataFolder() + "/product");
