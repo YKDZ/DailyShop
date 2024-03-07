@@ -17,7 +17,8 @@ import java.util.List;
 
 public class VanillaProduct implements Product {
     private final String id;
-    private final PriceProvider priceProvider;
+    private final PriceProvider buyPriceProvider;
+    private final PriceProvider sellPriceProvider;
     private final Rarity rarity;
     private final Material material;
     private final int amount;
@@ -29,7 +30,8 @@ public class VanillaProduct implements Product {
 
     public VanillaProduct(
             String id,
-            PriceProvider priceProvider,
+            PriceProvider buyPriceProvider,
+            PriceProvider sellPriceProvider,
             Rarity rarity,
             Material material,
             int amount,
@@ -37,7 +39,8 @@ public class VanillaProduct implements Product {
             @Nullable List<String> descLore,
             @Nullable List<String> productLore) {
         this.id = id;
-        this.priceProvider = priceProvider;
+        this.buyPriceProvider = buyPriceProvider;
+        this.sellPriceProvider = sellPriceProvider;
         this.rarity = rarity;
         this.material = material;
         this.amount = amount;
@@ -95,23 +98,23 @@ public class VanillaProduct implements Product {
 
     @Override
     public void sellTo(Player player) {
-        if (priceProvider.getBuyPrice() == -1d) {
+        if (sellPriceProvider.getPrice() == -1d) {
             return;
         }
 
-        if (BalanceUtils.removeBalance(player, priceProvider.getBuyPrice()).transactionSuccess()) {
+        if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice()).transactionSuccess()) {
             PlayerUtils.giveItem(player, getProductItem());
         }
     }
 
     @Override
     public void buyFrom(Player player) {
-        if (priceProvider.getSellPrice() == -1d) {
+        if (buyPriceProvider.getPrice() == -1d) {
             return;
         }
 
         if (PlayerUtils.takeItem(player, getProductItem())) {
-            BalanceUtils.addBalance(player, priceProvider.getSellPrice());
+            BalanceUtils.addBalance(player, buyPriceProvider.getPrice());
         }
     }
 
@@ -121,7 +124,12 @@ public class VanillaProduct implements Product {
     }
 
     @Override
-    public PriceProvider getPriceProvider() {
-        return priceProvider;
+    public PriceProvider getBuyPriceProvider() {
+        return buyPriceProvider;
+    }
+
+    @Override
+    public PriceProvider getSellPriceProvider() {
+        return sellPriceProvider;
     }
 }

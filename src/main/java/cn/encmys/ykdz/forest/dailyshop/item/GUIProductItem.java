@@ -26,8 +26,8 @@ public class GUIProductItem extends AbstractItem {
                 .setAmount(product.getAmount())
                 .addLoreLines(product.getDescLore().toArray(new String[0]))
                 .addLoreLines(new ArrayList<String>() {{
-                    add("- Buy price: " + product.getPriceProvider().getBuyPrice());
-                    add("- Sell price: " + product.getPriceProvider().getSellPrice());
+                    add("- Buy price: " + product.getBuyPriceProvider().getPrice());
+                    add("- Sell price: " + product.getSellPriceProvider().getPrice());
                     add(" ");
                     add("Rarity: " + product.getRarity().getName());
                 }}.toArray(new String[0]));

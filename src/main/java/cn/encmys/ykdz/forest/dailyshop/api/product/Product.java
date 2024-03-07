@@ -33,5 +33,7 @@ public interface Product {
 
     Rarity getRarity();
 
-    PriceProvider getPriceProvider();
+    PriceProvider getBuyPriceProvider();
+
+    PriceProvider getSellPriceProvider();
 }

@@ -40,13 +40,16 @@ public class ProductFactory {
 
                 String item = products.getString(productId + ".item");
                 Material material = Material.matchMaterial(item);
-                PriceProvider priceProvider = new PriceProvider(
-                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
-                        products.getConfigurationSection(productId + ".sell-price") != null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
+                PriceProvider buyPriceProvider = new PriceProvider(
+                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                );
+                PriceProvider sellPriceProvider = new PriceProvider(
+                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 buildVanillaProduct(
                         productId,
-                        priceProvider,
+                        buyPriceProvider,
+                        sellPriceProvider,
                         rarityFactory.getRarity(products.getString(productId + ".rarity", defaultSettings.getString("rarity"))),
                         material,
                         products.getInt(productId + ".amount", 1),
@@ -59,13 +62,16 @@ public class ProductFactory {
             // Handle Bundle
             for (String id : bundles) {
                 Material material = Material.matchMaterial(products.getString(id + ".item"));
-                PriceProvider priceProvider = new PriceProvider(
-                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
-                        products.getConfigurationSection(id + ".sell-price") != null ? products.getConfigurationSection(id + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
+                PriceProvider buyPriceProvider = new PriceProvider(
+                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                );
+                PriceProvider sellPriceProvider = new PriceProvider(
+                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 buildBundleProduct(
                         id,
-                        priceProvider,
+                        buyPriceProvider,
+                        sellPriceProvider,
                         rarityFactory.getRarity(products.getString(id + ".rarity")),
                         material,
                         products.getInt(id + ".amount", 1),
@@ -82,7 +88,8 @@ public class ProductFactory {
     }
 
     public Product buildVanillaProduct(String id,
-                                       PriceProvider priceProvider,
+                                       PriceProvider buyPriceProvider,
+                                       PriceProvider sellPriceProvider,
                                        Rarity rarity,
                                        Material material,
                                        int amount,
@@ -93,14 +100,15 @@ public class ProductFactory {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
-        Product product = new VanillaProduct(id, priceProvider, rarity, material, amount, displayName, descLore, productLore);
+        Product product = new VanillaProduct(id, buyPriceProvider, sellPriceProvider, rarity, material, amount, displayName, descLore, productLore);
         products.put(id, product);
         productTypes.put(id, ProductType.VANILLA);
         return product;
     }
 
     public Product buildBundleProduct(String id,
-                                      PriceProvider priceProvider,
+                                      PriceProvider buyPriceProvider,
+                                      PriceProvider sellPriceProvider,
                                       Rarity rarity,
                                       Material material,
                                       int amount,
@@ -111,7 +119,7 @@ public class ProductFactory {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
 
-        Product product = new BundleProduct(id, priceProvider, rarity, material, amount, displayName, descLore, contents);
+        Product product = new BundleProduct(id, buyPriceProvider, sellPriceProvider, rarity, material, amount, displayName, descLore, contents);
         products.put(id, product);
         productTypes.put(id, ProductType.BUNDLE);
         return product;

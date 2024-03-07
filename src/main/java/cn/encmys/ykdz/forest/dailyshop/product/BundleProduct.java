@@ -14,7 +14,8 @@ import java.util.List;
 
 public class BundleProduct implements Product {
     private final String id;
-    private final PriceProvider priceProvider;
+    private final PriceProvider buyPriceProvider;
+    private final PriceProvider sellPriceProvider;
     private final Rarity rarity;
     private final Material material;
     private final int amount;
@@ -25,7 +26,8 @@ public class BundleProduct implements Product {
 
     public BundleProduct(
             String id,
-            PriceProvider priceProvider,
+            PriceProvider buyPriceProvider,
+            PriceProvider sellPriceProvider,
             Rarity rarity,
             Material material,
             int amount,
@@ -33,7 +35,8 @@ public class BundleProduct implements Product {
             @Nullable List<String> descLore,
             @Nullable List<String> contents) {
         this.id = id;
-        this.priceProvider = priceProvider;
+        this.buyPriceProvider = buyPriceProvider;
+        this.sellPriceProvider = sellPriceProvider;
         this.rarity = rarity;
         this.material = material;
         this.amount = amount;
@@ -95,7 +98,12 @@ public class BundleProduct implements Product {
     }
 
     @Override
-    public PriceProvider getPriceProvider() {
-        return priceProvider;
+    public PriceProvider getBuyPriceProvider() {
+        return buyPriceProvider;
+    }
+
+    @Override
+    public PriceProvider getSellPriceProvider() {
+        return sellPriceProvider;
     }
 }
