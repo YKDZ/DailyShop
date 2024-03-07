@@ -1,7 +1,5 @@
 package cn.encmys.ykdz.forest.dailyshop.factory;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 
@@ -24,10 +22,8 @@ public class ShopFactory {
             throw new InvalidKeyException("Shop ID is duplicated: " + id);
         }
 
-        List<Product> products = new ArrayList<>();
-        for (String productId : ShopConfig.getAllProductsId(id)) {
-            products.add(DailyShop.getProductFactory().getProduct(productId));
-        }
+        List<String> products = new ArrayList<>();
+        products.addAll(ShopConfig.getAllProductsId(id));
 
         Shop shop = new Shop(
                 id,

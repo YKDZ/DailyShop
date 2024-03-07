@@ -20,7 +20,7 @@ import java.util.Map;
 public class Shop {
     private final String id;
     private final String name;
-    private final List<Product> products;
+    private final List<String> allProductsId;
     private final ConfigurationSection guiSection;
     private Gui gui;
     private final int size;
@@ -30,14 +30,14 @@ public class Shop {
     /**
      * @param id Shop id
      * @param restockTimer Shop restock time in second
-     * @param products Shop products list
+     * @param allProductsId Id of all possible products
      * @param size Maximum number of items in the shop at the same time
      * @param guiSection Shop gui configuration section
      */
-    public Shop(String id, String name, int restockTimer, List<Product> products, int size, ConfigurationSection guiSection) {
+    public Shop(String id, String name, int restockTimer, List<String> allProductsId, int size, ConfigurationSection guiSection) {
         this.id = id;
         this.name = name;
-        this.products = products;
+        this.allProductsId = allProductsId;
         this.size = size;
         this.guiSection = guiSection;
         loadData();
@@ -81,7 +81,8 @@ public class Shop {
         listedProducts.clear();
         for (int i = 0; i < size; i++) {
             int tempWeight = 0;
-            for (Product product : products) {
+            for (String productId : allProductsId) {
+                Product product = DailyShop.getProductFactory().getProduct(productId);
                 tempWeight += product.getRarity().getWeight();
                 if (tempWeight >= randoms[i]) {
                     listedProducts.add(product);
@@ -95,7 +96,8 @@ public class Shop {
 
     public int getTotalWeight() {
         int sumWeight = 0;
-        for(Product product : products) {
+        for(String productId : allProductsId) {
+            Product product = DailyShop.getProductFactory().getProduct(productId);
             sumWeight += product.getRarity().getWeight();
         }
         return sumWeight;
