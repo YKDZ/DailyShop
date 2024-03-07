@@ -40,10 +40,14 @@ public class ProductFactory {
 
                 String item = products.getString(productId + ".item");
                 Material material = Material.matchMaterial(item);
+                PriceProvider priceProvider = new PriceProvider(
+                        products.getConfigurationSection(productId + ".buy-price") == null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
+                        products.getConfigurationSection(productId + ".sell-price") == null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
+                );
                 buildVanillaProduct(
                         productId,
-                        new PriceProvider(products.getConfigurationSection(productId + ".buy-price"), products.getConfigurationSection(productId + ".sell-price")),
-                        rarityFactory.getRarity(products.getString(productId + ".rarity")),
+                        priceProvider,
+                        rarityFactory.getRarity(products.getString(productId + ".rarity", defaultSettings.getString("rarity"))),
                         material,
                         products.getInt(productId + ".amount", 1),
                         products.getString(productId + ".display-name"),

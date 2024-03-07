@@ -14,7 +14,8 @@ public class ShopCommand {
     public CommandAPICommand getShopCommand() {
         return new CommandAPICommand("shop")
                 .withSubcommands(
-                        getShopOpenCommand()
+                        getShopOpenCommand(),
+                        getShopRestockCommand()
                 );
     }
 
@@ -27,6 +28,17 @@ public class ShopCommand {
                 )
                 .executes((sender, args) -> {
                     DailyShop.getShopFactory().getShop((String) args.get("shop")).openGUI((Player) args.get("player"));
+                });
+    }
+
+    private CommandAPICommand getShopRestockCommand() {
+        return new CommandAPICommand("restock")
+                .withArguments(
+                        new StringArgument("shop")
+                                .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
+                        )
+                .executes((sender, args) -> {
+                    DailyShop.getShopFactory().getShop((String) args.get("shop")).restock();
                 });
     }
 }

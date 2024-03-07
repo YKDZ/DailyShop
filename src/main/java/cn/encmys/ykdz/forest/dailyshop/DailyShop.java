@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RaritiesConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.data.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
@@ -19,6 +20,7 @@ public final class DailyShop extends JavaPlugin {
     private static RarityFactory rarityFactory;
     private static ProductFactory productFactory;
     private static ShopFactory shopFactory;
+    private static Database database;
     private static Economy economy;
 
     public static DailyShop getInstance() {
@@ -41,6 +43,10 @@ public final class DailyShop extends JavaPlugin {
         return economy;
     }
 
+    public static Database getDatabase() {
+        return database;
+    }
+
     @Override
     public void onLoad() {
         instance = this;
@@ -60,6 +66,8 @@ public final class DailyShop extends JavaPlugin {
         RaritiesConfig.load();
         ProductConfig.load();
         ShopConfig.load();
+
+        database = new Database(instance.getDataFolder().getPath());
 
         rarityFactory = new RarityFactory();
         productFactory = new ProductFactory();

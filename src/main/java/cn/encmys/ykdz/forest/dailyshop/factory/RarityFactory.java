@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.HashMap;
 
 public class RarityFactory {
-    private static HashMap<String, Rarity> rarities;
+    private static final HashMap<String, Rarity> rarities = new HashMap<>();
 
     public RarityFactory() {
         YamlConfiguration config = RaritiesConfig.getConfig();

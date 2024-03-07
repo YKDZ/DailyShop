@@ -48,6 +48,9 @@ public class ShopFactory {
     }
 
     public void unload() {
+        for(Shop shop : shops.values()) {
+            shop.saveData();
+        }
         shops.clear();
     }
 }

@@ -14,6 +14,28 @@ public class PriceProvider {
         this.sellPrice = buildPrice(sellSection);
     }
 
+    /**
+     * @param buyPrice Fixed buy price
+     * @param sellPrice Fixed sell price
+     */
+    public PriceProvider(double buyPrice, double sellPrice) {
+        this.buyPrice = buyPrice;
+        this.sellPrice = sellPrice;
+    }
+
+    /**
+     * @param buyMean Gaussian mean of buy price
+     * @param buyDev Gaussian dev of buy price
+     * @param buyRound Whether round the buy price
+     * @param sellMean Gaussian mean of sell price
+     * @param sellDev Gaussian dev of sell price
+     * @param sellRound Whether round the sell price
+     */
+    public PriceProvider(double buyMean, double buyDev, boolean buyRound, double sellMean, double sellDev, boolean sellRound) {
+        this.buyPrice = buildPrice(buyMean, buyDev, buyRound);
+        this.sellPrice = buildPrice(sellMean, sellDev, sellRound);
+    }
+
     public double getBuyPrice() {
         return buyPrice;
     }
@@ -37,5 +59,13 @@ public class PriceProvider {
             return result;
         }
         throw new IllegalArgumentException("Illegal price setting");
+    }
+
+    private double buildPrice(double mean, double dev, boolean round) {
+        double result = gaussian * Math.sqrt(dev) + mean;
+        if (round) {
+            return Math.round(result);
+        }
+        return result;
     }
 }

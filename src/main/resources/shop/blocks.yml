@@ -1,5 +1,7 @@
 restock-timer: 86400
 
+size: 6
+
 shop-gui:
   title: "Hi %player_name%, Welcome to Daily Blocks Shop."
   layout:

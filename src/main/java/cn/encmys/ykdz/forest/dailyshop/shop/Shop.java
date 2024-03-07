@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.shop;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,14 +12,18 @@ import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Shop {
     private final String id;
     private final List<Product> products;
+    private final ConfigurationSection guiSection;
     private Gui gui;
-    private int size;
-    private List<Product> listedProducts;
+    private final int size;
+    private final List<Product> listedProducts = new ArrayList<>();
 
     /**
      * @param id Shop id
@@ -31,7 +36,8 @@ public class Shop {
         this.id = id;
         this.products = products;
         this.size = size;
-        restock();
+        this.guiSection = guiSection;
+        loadData();
         buildGUI(guiSection);
     }
 
@@ -80,6 +86,7 @@ public class Shop {
                 }
             }
         }
+        buildGUI(guiSection);
     }
 
     public int getTotalWeight() {
@@ -88,5 +95,26 @@ public class Shop {
             sumWeight += product.getRarity().getWeight();
         }
         return sumWeight;
+    }
+
+    public void loadData() {
+        List<String> listedProductsId = DailyShop.getDatabase().loadShopData().get(id);
+        if(listedProductsId == null) {
+            restock();
+        } else {
+            for(String productId : listedProductsId) {
+                listedProducts.add(DailyShop.getProductFactory().getProduct(productId));
+            }
+        }
+    }
+
+    public void saveData() {
+        Map<String, List<String>> dataMap = new HashMap<>();
+        List<String> listedProductsId = new ArrayList<>();
+        for(Product product : listedProducts) {
+            listedProductsId.add(product.getId());
+        }
+        dataMap.put(id, listedProductsId);
+        DailyShop.getDatabase().saveShopData(dataMap);
     }
 }
