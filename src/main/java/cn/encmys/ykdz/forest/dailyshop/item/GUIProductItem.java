@@ -9,6 +9,8 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
+import java.util.ArrayList;
+
 public class GUIProductItem extends AbstractItem {
     private final Product product;
 
@@ -22,7 +24,13 @@ public class GUIProductItem extends AbstractItem {
         return new ItemBuilder(product.getMaterial())
                 .setDisplayName(product.getDisplayName() == null ? "EMPTY" : product.getDisplayName())
                 .setAmount(product.getAmount())
-                .addLoreLines(product.getDescLore().toArray(new String[0]));
+                .addLoreLines(product.getDescLore().toArray(new String[0]))
+                .addLoreLines(new ArrayList<String>() {{
+                    add("- Buy price: " + product.getPriceProvider().getBuyPrice());
+                    add("- Sell price: " + product.getPriceProvider().getSellPrice());
+                    add(" ");
+                    add("Rarity: " + product.getRarity().getName());
+                }}.toArray(new String[0]));
     }
 
     @Override

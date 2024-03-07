@@ -21,6 +21,13 @@ products:
       fixed: 115.5
     rarity: uncommon
 
+  PINK_CONCRETE_POWDER:
+    item: PINK_CONCRETE_POWDER
+    amount: 16
+    buy-price:
+      fixed: 115.5
+    rarity: uncommon
+
   GREEN_CONCRETE_POWDER:
     item: GREEN_CONCRETE_POWDER
     amount: 16

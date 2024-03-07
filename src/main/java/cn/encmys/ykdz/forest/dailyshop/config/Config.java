@@ -24,9 +24,13 @@ public class Config {
         File file = new File(plugin.getDataFolder(), "config.yml");
         config = new YamlConfiguration();
 
+        // Initialize Data folder when config.yml not exists
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             plugin.saveResource("config.yml", false);
+            plugin.saveResource("product/blocks.yml", false);
+            plugin.saveResource("shop/blocks.yml", false);
+            plugin.saveResource("lang/en_US.yml", false);
         }
 
         try {

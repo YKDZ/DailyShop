@@ -4,7 +4,6 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
@@ -25,19 +24,19 @@ public class ShopFactory {
             throw new InvalidKeyException("Shop ID is duplicated: " + id);
         }
 
-        YamlConfiguration config = ShopConfig.getConfig(id);
-
         List<Product> products = new ArrayList<>();
-        for (String productId : config.getStringList("products")) {
+        for (String productId : ShopConfig.getAllProductsId(id)) {
             products.add(DailyShop.getProductFactory().getProduct(productId));
         }
 
         Shop shop = new Shop(
                 id,
-                config.getInt("restock-timer"),
+                ShopConfig.getName(id),
+                ShopConfig.getRestockTimer(id),
                 products,
-                config.getInt("size"),
-                config.getConfigurationSection("shop-gui"));
+                ShopConfig.getSize(id),
+                ShopConfig.getGUISection(id)
+        );
 
         shops.put(id, shop);
         return shop;

@@ -119,4 +119,9 @@ public class VanillaProduct implements Product {
     public Rarity getRarity() {
         return rarity;
     }
+
+    @Override
+    public PriceProvider getPriceProvider() {
+        return priceProvider;
+    }
 }

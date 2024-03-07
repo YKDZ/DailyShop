@@ -1,6 +1,7 @@
-restock-timer: 86400
-
-size: 6
+settings:
+  name: "<brown>Blocks Shop"
+  restock-timer: 86400
+  size: 6
 
 shop-gui:
   title: "Hi %player_name%, Welcome to Daily Blocks Shop."
@@ -20,6 +21,7 @@ shop-gui:
 products:
   - COARSE_DIRT
   - GREEN_CONCRETE_POWDER
+  - PINK_CONCRETE_POWDER
   - RED_CONCRETE_POWDER
   - LIME_CONCRETE_POWDER
   - MAGENTA_CONCRETE

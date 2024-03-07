@@ -41,8 +41,8 @@ public class ProductFactory {
                 String item = products.getString(productId + ".item");
                 Material material = Material.matchMaterial(item);
                 PriceProvider priceProvider = new PriceProvider(
-                        products.getConfigurationSection(productId + ".buy-price") == null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
-                        products.getConfigurationSection(productId + ".sell-price") == null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
+                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
+                        products.getConfigurationSection(productId + ".sell-price") != null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
                 );
                 buildVanillaProduct(
                         productId,
@@ -59,9 +59,13 @@ public class ProductFactory {
             // Handle Bundle
             for (String id : bundles) {
                 Material material = Material.matchMaterial(products.getString(id + ".item"));
+                PriceProvider priceProvider = new PriceProvider(
+                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price"),
+                        products.getConfigurationSection(id + ".sell-price") != null ? products.getConfigurationSection(id + ".sell-price") : defaultSettings.getConfigurationSection( "sell-price")
+                );
                 buildBundleProduct(
                         id,
-                        new PriceProvider(products.getConfigurationSection(id + ".buy-price"), products.getConfigurationSection(id + ".sell-price")),
+                        priceProvider,
                         rarityFactory.getRarity(products.getString(id + ".rarity")),
                         material,
                         products.getInt(id + ".amount", 1),

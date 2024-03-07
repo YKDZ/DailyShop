@@ -5,16 +5,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.Random;
 
 public class PriceProvider {
-    private final static double gaussian = new Random().nextGaussian();
-    private final double buyPrice;
-    private final double sellPrice;
+    private static Random random;
+    private double gaussian;
+    private double buyPrice;
+    private double sellPrice;
 
     public PriceProvider(ConfigurationSection buySection, ConfigurationSection sellSection) {
+        this.gaussian = random.nextGaussian();
         this.buyPrice = buildPrice(buySection);
         this.sellPrice = buildPrice(sellSection);
     }
 
     /**
+     * Build a Fixed PriceProvider quickly. Set price value to -1 means disable it.
      * @param buyPrice Fixed buy price
      * @param sellPrice Fixed sell price
      */
@@ -67,5 +70,9 @@ public class PriceProvider {
             return Math.round(result);
         }
         return result;
+    }
+
+    public void updatePrice() {
+        gaussian = random.nextGaussian();
     }
 }

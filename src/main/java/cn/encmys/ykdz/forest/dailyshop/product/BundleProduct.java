@@ -70,7 +70,7 @@ public class BundleProduct implements Product {
 
     @Override
     public AbstractItem getGUIItem() {
-        return new GUIProductItem(this);
+        return guiProductItem;
     }
 
     public void buildGUIProductItem() {
@@ -92,5 +92,10 @@ public class BundleProduct implements Product {
     @Override
     public Rarity getRarity() {
         return rarity;
+    }
+
+    @Override
+    public PriceProvider getPriceProvider() {
+        return priceProvider;
     }
 }

@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.config;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.util.ItemUtils;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -54,19 +55,31 @@ public class ShopConfig {
         return new ArrayList<>(configs.keySet());
     }
 
-    public static String getTitle(String id) {
+    public static int getSize(String id) {
+        return getConfig(id).getInt("settings.size");
+    }
+
+    public static String getName(String id) {
+        return getConfig(id).getString("settings.name");
+    }
+
+    public static int getRestockTimer(String id) {
+        return getConfig(id).getInt("settings.restock-timer");
+    }
+
+    public static String getGUITitle(String id) {
         return getConfig(id).getString("shop-gui.title");
     }
 
-    public static String @NotNull [] getLayout(String id) {
+    public static String @NotNull [] getGUILayout(String id) {
         return getConfig(id).getStringList("shop-gui.layout").toArray(new String[0]);
     }
 
-    public static @NotNull Set<String> getIcons(String id) {
+    public static @NotNull Set<String> getGUIIcons(String id) {
         return getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false);
     }
 
-    public static @NotNull ItemStack getIcon(String shopId, char iconId) {
+    public static @NotNull ItemStack getGUIIcon(String shopId, char iconId) {
         Material material = Material.matchMaterial(getConfig(shopId).getString("shop-gui.icons." + iconId + ".material"));
         String displayName = getConfig(shopId).getString("shop-gui.icons." + iconId + ". name");
         List<String> lore = getConfig(shopId).getStringList("shop-gui.icons." + iconId + ".lore");
@@ -76,5 +89,13 @@ public class ShopConfig {
         ItemUtils.lore(icon, lore);
 
         return icon;
+    }
+
+    public static ConfigurationSection getGUISection(String id) {
+        return getConfig(id).getConfigurationSection("shop-gui");
+    }
+
+    public static List<String> getAllProductsId(String id) {
+        return getConfig(id).getStringList("products");
     }
 }

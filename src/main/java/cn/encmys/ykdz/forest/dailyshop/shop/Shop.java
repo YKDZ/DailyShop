@@ -19,11 +19,13 @@ import java.util.Map;
 
 public class Shop {
     private final String id;
+    private final String name;
     private final List<Product> products;
     private final ConfigurationSection guiSection;
     private Gui gui;
     private final int size;
     private final List<Product> listedProducts = new ArrayList<>();
+    private long lastRestocking;
 
     /**
      * @param id Shop id
@@ -32,8 +34,9 @@ public class Shop {
      * @param size Maximum number of items in the shop at the same time
      * @param guiSection Shop gui configuration section
      */
-    public Shop(String id, int restockTimer, List<Product> products, int size, ConfigurationSection guiSection) {
+    public Shop(String id, String name, int restockTimer, List<Product> products, int size, ConfigurationSection guiSection) {
         this.id = id;
+        this.name = name;
         this.products = products;
         this.size = size;
         this.guiSection = guiSection;
@@ -46,12 +49,12 @@ public class Shop {
                 .setStructure(guiSection.getStringList("layout").toArray(new String[0]))
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL);
 
-        for (String iconKey : ShopConfig.getIcons(id)) {
+        for (String iconKey : ShopConfig.getGUIIcons(id)) {
             char key = iconKey.charAt(0);
             if (key == '.') {
                 continue;
             }
-            builder.addIngredient(key, ShopConfig.getIcon(id, key));
+            builder.addIngredient(key, ShopConfig.getGUIIcon(id, key));
         }
 
         for(Product product : listedProducts) {
@@ -64,7 +67,7 @@ public class Shop {
     public void openGUI(Player player) {
         Window.single()
                 .setViewer(player)
-                .setTitle(ShopConfig.getTitle(id))
+                .setTitle(ShopConfig.getGUITitle(id))
                 .setGui(gui)
                 .build()
                 .open();
@@ -87,6 +90,7 @@ public class Shop {
             }
         }
         buildGUI(guiSection);
+        lastRestocking = System.currentTimeMillis();
     }
 
     public int getTotalWeight() {
@@ -116,5 +120,13 @@ public class Shop {
         }
         dataMap.put(id, listedProductsId);
         DailyShop.getDatabase().saveShopData(dataMap);
+    }
+
+    public long getLastRestocking() {
+        return lastRestocking;
+    }
+
+    public String getName() {
+        return name;
     }
 }

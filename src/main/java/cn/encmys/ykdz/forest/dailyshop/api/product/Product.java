@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.product;
 
+import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,4 +32,6 @@ public interface Product {
     int getAmount();
 
     Rarity getRarity();
+
+    PriceProvider getPriceProvider();
 }
