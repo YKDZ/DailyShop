@@ -36,4 +36,6 @@ public interface Product {
     PriceProvider getBuyPriceProvider();
 
     PriceProvider getSellPriceProvider();
+
+    void updatePrice(String shopId);
 }

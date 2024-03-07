@@ -30,7 +30,7 @@ public class Shop {
     /**
      * @param id Shop id
      * @param restockTimer Shop restock time in second
-     * @param allProductsId Id of all possible products
+     * @param allProductsId ID of all possible products
      * @param size Maximum number of items in the shop at the same time
      * @param guiSection Shop gui configuration section
      */
@@ -85,6 +85,7 @@ public class Shop {
                 Product product = DailyShop.getProductFactory().getProduct(productId);
                 tempWeight += product.getRarity().getWeight();
                 if (tempWeight >= randoms[i]) {
+                    product.updatePrice(id);
                     listedProducts.add(product);
                     break;
                 }

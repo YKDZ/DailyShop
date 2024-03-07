@@ -106,4 +106,10 @@ public class BundleProduct implements Product {
     public PriceProvider getSellPriceProvider() {
         return sellPriceProvider;
     }
+
+    @Override
+    public void updatePrice(String shopId) {
+        buyPriceProvider.update(shopId);
+        sellPriceProvider.update(shopId);
+    }
 }
