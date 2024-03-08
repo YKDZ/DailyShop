@@ -42,6 +42,10 @@ public class ShopFactory {
         return shops.get(id);
     }
 
+    public HashMap<String, Shop> getAllShops() {
+        return shops;
+    }
+
     public void unload() {
         for(Shop shop : shops.values()) {
             shop.saveData();

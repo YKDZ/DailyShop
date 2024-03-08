@@ -20,6 +20,7 @@ import java.util.Map;
 public class Shop {
     private final String id;
     private final String name;
+    private final int restockTime;
     private final List<String> allProductsId;
     private final ConfigurationSection guiSection;
     private Gui gui;
@@ -29,14 +30,15 @@ public class Shop {
 
     /**
      * @param id Shop id
-     * @param restockTimer Shop restock time in second
+     * @param restockTime Shop restock time in minutes
      * @param allProductsId ID of all possible products
      * @param size Maximum number of items in the shop at the same time
      * @param guiSection Shop gui configuration section
      */
-    public Shop(String id, String name, int restockTimer, List<String> allProductsId, int size, ConfigurationSection guiSection) {
+    public Shop(String id, String name, int restockTime, List<String> allProductsId, int size, ConfigurationSection guiSection) {
         this.id = id;
         this.name = name;
+        this.restockTime = restockTime;
         this.allProductsId = allProductsId;
         this.size = size;
         this.guiSection = guiSection;
@@ -131,5 +133,9 @@ public class Shop {
 
     public String getName() {
         return name;
+    }
+
+    public int getRestockTime() {
+        return restockTime;
     }
 }

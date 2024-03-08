@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -29,8 +30,8 @@ public class GUIProductItem extends AbstractItem {
                 .addLoreLines(new ArrayList<String>() {{
                     addAll(product.getDescLore());
                     add(" ");
-                    add("- Buy price: " + product.getBuyPriceProvider().getPrice(shopId));
-                    add("- Sell price: " + product.getSellPriceProvider().getPrice(shopId));
+                    add("- Buy price: " + Config.getDecimalFormat().format(product.getBuyPriceProvider().getPrice(shopId)));
+                    add("- Sell price: " + Config.getDecimalFormat().format(product.getSellPriceProvider().getPrice(shopId)));
                     add(" ");
                     add("Rarity: " + product.getRarity().getName());
                 }}.toArray(new String[0]));

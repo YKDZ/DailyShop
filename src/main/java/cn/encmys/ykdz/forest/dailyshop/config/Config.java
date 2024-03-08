@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 public class Config {
     private static final DailyShop plugin = DailyShop.getInstance();
@@ -16,7 +17,7 @@ public class Config {
     private static double shopDefault_sellPrice;
     private static int shopDefault_restockTimer;
     private static String shopDefault_rarity;
-    private static String decimalFormat;
+    private static DecimalFormat decimalFormat;
     private static String timeFormat;
     private static int version;
 
@@ -47,12 +48,16 @@ public class Config {
         shopDefault_sellPrice = config.getDouble("shop-default.sell-price", 20d);
         shopDefault_restockTimer = config.getInt("shop-default.restock-timer", 86400);
         shopDefault_rarity = config.getString("shop-default.rarity");
-        decimalFormat = config.getString("decimal-format", "###,###.##");
+        decimalFormat = new DecimalFormat(config.getString("decimal-format", "###,###.##"));
         timeFormat = config.getString("time-format", "hh:mm a");
         version = config.getInt("version");
     }
 
     public static YamlConfiguration getConfig() {
         return config;
+    }
+
+    public static DecimalFormat getDecimalFormat() {
+        return decimalFormat;
     }
 }

@@ -1,6 +1,6 @@
 settings:
   name: "<brown>Blocks Shop"
-  restock-timer: 86400
+  restock-timer: 1
   size: 6
 
 shop-gui:

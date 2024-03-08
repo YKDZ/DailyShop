@@ -10,35 +10,59 @@ products:
     item: COARSE_DIRT
     amount: 64
     buy-price:
-      fixed: 15.6
+      fixed: 15
     sell-price:
-      fixed: 1.5
+      fixed: 15
 
   RED_CONCRETE_POWDER:
     item: RED_CONCRETE_POWDER
     amount: 16
     buy-price:
-      fixed: 115.5
+      mean: 175.5
+      dev: 5
+      round: false
+    sell-price:
+      mean: 175.5
+      dev: 5
+      round: false
     rarity: uncommon
 
   PINK_CONCRETE_POWDER:
     item: PINK_CONCRETE_POWDER
     amount: 16
     buy-price:
-      fixed: 115.5
+      mean: 175.5
+      dev: 5
+      round: false
+    sell-price:
+      mean: 175.5
+      dev: 5
+      round: false
     rarity: uncommon
 
   GREEN_CONCRETE_POWDER:
     item: GREEN_CONCRETE_POWDER
     amount: 16
     buy-price:
-      fixed: 115.5
+      mean: 175.5
+      dev: 5
+      round: false
+    sell-price:
+      mean: 175.5
+      dev: 5
+      round: false
 
   LIME_CONCRETE_POWDER:
     item: LIME_CONCRETE_POWDER
     amount: 16
     buy-price:
-      fixed: 115.5
+      mean: 175.5
+      dev: 5
+      round: false
+    sell-price:
+      mean: 175.5
+      dev: 5
+      round: false
 
   MAGENTA_CONCRETE:
     item: MAGENTA_CONCRETE
@@ -46,11 +70,11 @@ products:
     buy-price:
       mean: 175.5
       dev: 5
-      round: true
+      round: false
     sell-price:
       mean: 175.5
       dev: 5
-      round: true
+      round: false
 
   CONCRETE_POWDER_BUNDLE_1:
     item: BUNDLE
