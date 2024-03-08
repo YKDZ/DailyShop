@@ -3,4 +3,6 @@ language: zh_CN
 decimal-format: "###,###.##"
 time-format: "hh:mm a"
 
+data-save-timer: 5
+
 version: 1

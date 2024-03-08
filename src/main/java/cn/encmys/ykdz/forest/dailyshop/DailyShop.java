@@ -9,7 +9,7 @@ import cn.encmys.ykdz.forest.dailyshop.data.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
-import cn.encmys.ykdz.forest.dailyshop.scheduler.RestockScheduler;
+import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import net.milkbowl.vault.economy.Economy;
@@ -21,7 +21,7 @@ public final class DailyShop extends JavaPlugin {
     private static RarityFactory rarityFactory;
     private static ProductFactory productFactory;
     private static ShopFactory shopFactory;
-    private static RestockScheduler restockScheduler;
+    private static Scheduler scheduler;
     private static Database database;
     private static Economy economy;
 
@@ -49,8 +49,8 @@ public final class DailyShop extends JavaPlugin {
         return database;
     }
 
-    public static RestockScheduler getRestockScheduler() {
-        return restockScheduler;
+    public static Scheduler getRestockScheduler() {
+        return scheduler;
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class DailyShop extends JavaPlugin {
         productFactory = new ProductFactory();
         shopFactory = new ShopFactory();
 
-        restockScheduler = new RestockScheduler(instance);
+        scheduler = new Scheduler(instance);
 
         CommandAPI.onEnable();
         new CommandHandler(instance).load();

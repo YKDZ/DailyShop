@@ -15,7 +15,7 @@ public class Database {
     private final Gson gson = new Gson();
 
     public Database(String path) {
-        this.shopsData = new File(path + "/data/shop-data.json");
+        this.shopsData = new File(path + "data/shop-data.json");
         createDatabaseFileIfNotExists(shopsData);
     }
 

@@ -52,7 +52,7 @@ public class ProductFactory {
                         sellPriceProvider,
                         rarityFactory.getRarity(products.getString(productId + ".rarity", defaultSettings.getString("rarity"))),
                         material,
-                        products.getInt(productId + ".amount", 1),
+                        products.getInt(productId + ".amount", defaultSettings.getInt("amount", 1)),
                         products.getString(productId + ".display-name"),
                         products.getStringList(productId + ".desc-lore"),
                         products.getStringList(productId + ".product-lore")
@@ -72,9 +72,9 @@ public class ProductFactory {
                         id,
                         buyPriceProvider,
                         sellPriceProvider,
-                        rarityFactory.getRarity(products.getString(id + ".rarity")),
+                        rarityFactory.getRarity(products.getString(id + ".rarity", defaultSettings.getString("rarity"))),
                         material,
-                        products.getInt(id + ".amount", 1),
+                        products.getInt(id + ".amount", defaultSettings.getInt("amount", 1)),
                         products.getString(id + ".display-name"),
                         products.getStringList(id + ".desc-lore"),
                         products.getStringList(id + ".bundle-contents")

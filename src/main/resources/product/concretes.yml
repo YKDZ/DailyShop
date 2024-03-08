@@ -1,0 +1,63 @@
+# In this product pack, all product data
+# except "item" is set at "default-settings".
+# This makes maintaining a large number of
+# similar products very easy.
+default-settings:
+  amount: 16
+  buy-price:
+    mean: 150
+    dev: 20
+    round: true
+  sell-price:
+    mean: 20
+    dev: 20
+  rarity: uncommon
+
+products:
+  WHITE_CONCRETE:
+    item: WHITE_CONCRETE
+
+  ORANGE_CONCRETE:
+    item: ORANGE_CONCRETE
+
+  MAGENTA_CONCRETE:
+    item: MAGENTA_CONCRETE
+
+  LIGHT_BLUE_CONCRETE:
+    item: LIGHT_BLUE_CONCRETE
+
+  YELLOW_CONCRETE:
+    item: YELLOW_CONCRETE
+
+  LIME_CONCRETE:
+    item: LIME_CONCRETE
+
+  PINK_CONCRETE:
+    item: PINK_CONCRETE
+
+  GRAY_CONCRETE:
+    item: GRAY_CONCRETE
+
+  LIGHT_GRAY_CONCRETE:
+    item: LIGHT_GRAY_CONCRETE
+
+  CYAN_CONCRETE:
+    item: CYAN_CONCRETE
+
+  PURPLE_CONCRETE:
+    item: PURPLE_CONCRETE
+
+  BLUE_CONCRETE:
+    item: BLUE_CONCRETE
+
+  BROWN_CONCRETE:
+    item: BROWN_CONCRETE
+
+  GREEN_CONCRETE:
+    item: GREEN_CONCRETE
+
+  RED_CONCRETE:
+    item: RED_CONCRETE
+
+  BLACK_CONCRETE:
+    item: BLACK_CONCRETE

@@ -124,6 +124,11 @@ public class VanillaProduct implements Product {
     }
 
     @Override
+    public boolean canBuyFrom(@Nullable String shopId, Player player) {
+        return PlayerUtils.hasItem(player, getProductItem());
+    }
+
+    @Override
     public Rarity getRarity() {
         return rarity;
     }

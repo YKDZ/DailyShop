@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
@@ -15,7 +16,8 @@ public class ShopCommand {
         return new CommandAPICommand("shop")
                 .withSubcommands(
                         getShopOpenCommand(),
-                        getShopRestockCommand()
+                        getShopRestockCommand(),
+                        getShopSaveCommand()
                 );
     }
 
@@ -39,6 +41,15 @@ public class ShopCommand {
                         )
                 .executes((sender, args) -> {
                     DailyShop.getShopFactory().getShop((String) args.get("shop")).restock();
+                });
+    }
+
+    private CommandAPICommand getShopSaveCommand() {
+        return new CommandAPICommand("save")
+                .executes((sender, args) -> {
+                    for(Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
+                        shop.saveData();
+                    }
                 });
     }
 }

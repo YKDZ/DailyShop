@@ -32,4 +32,8 @@ public class PlayerUtils {
         inventory.removeItem(item);
         return true;
     }
+
+    public static boolean hasItem(Player player, ItemStack item) {
+        return player.getInventory().contains(item);
+    }
 }

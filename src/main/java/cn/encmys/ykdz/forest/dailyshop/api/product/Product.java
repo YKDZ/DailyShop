@@ -35,6 +35,8 @@ public interface Product {
 
     int getAmount();
 
+    boolean canBuyFrom(@Nullable String shopId, Player player);
+
     Rarity getRarity();
 
     PriceProvider getBuyPriceProvider();

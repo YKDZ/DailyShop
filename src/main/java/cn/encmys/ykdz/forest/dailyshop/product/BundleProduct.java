@@ -94,7 +94,23 @@ public class BundleProduct implements Product {
 
     @Override
     public void buyFrom(@Nullable String shopId, Player player) {
+        if(canBuyFrom(shopId, player)) {
+            return;
+        }
 
+        for (String id : contents) {
+            DailyShop.getProductFactory().getProduct(id).buyFrom(shopId, player);
+        }
+    }
+
+    @Override
+    public boolean canBuyFrom(@Nullable String shopId, Player player) {
+        for (String id : contents) {
+            if(!DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
