@@ -1,9 +1,11 @@
 package cn.encmys.ykdz.forest.dailyshop.api.product;
 
+import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 import java.util.List;
@@ -13,17 +15,19 @@ public interface Product {
 
     List<String> getDescLore();
 
-    AbstractItem getGUIItem();
+    AbstractItem getGUIItem(String shopId);
+
+    GUIProductItem buildGUIProductItem(String shopId);
 
     /**
      * @param player Buyer
      */
-    void sellTo(Player player);
+    void sellTo(@Nullable String shopId, Player player);
 
     /**
      * @param player Seller
      */
-    void buyFrom(Player player);
+    void buyFrom(@Nullable String shopId, Player player);
 
     String getDisplayName();
 

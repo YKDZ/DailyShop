@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BundleProduct implements Product {
     private final String id;
@@ -22,7 +24,7 @@ public class BundleProduct implements Product {
     private final String displayName;
     private final List<String> descLore;
     private final List<String> contents;
-    private AbstractItem guiProductItem;
+    private final Map<String, GUIProductItem> guiProductItems = new HashMap<>();
 
     public BundleProduct(
             String id,
@@ -43,7 +45,6 @@ public class BundleProduct implements Product {
         this.displayName = displayName;
         this.descLore = descLore;
         this.contents = contents;
-        buildGUIProductItem();
     }
 
     @Override
@@ -72,23 +73,27 @@ public class BundleProduct implements Product {
     }
 
     @Override
-    public AbstractItem getGUIItem() {
-        return guiProductItem;
-    }
-
-    public void buildGUIProductItem() {
-        guiProductItem = new GUIProductItem(this);
+    public GUIProductItem buildGUIProductItem(String shopId) {
+        guiProductItems.put(shopId, new GUIProductItem(shopId, this));
+        return guiProductItems.get(shopId);
     }
 
     @Override
-    public void sellTo(Player player) {
+    public AbstractItem getGUIItem(String shopId) {
+        return guiProductItems.get(shopId) == null ?
+                buildGUIProductItem(shopId) :
+                guiProductItems.get(shopId);
+    }
+
+    @Override
+    public void sellTo(@Nullable String shopId, Player player) {
         for (String id : contents) {
-            DailyShop.getProductFactory().getProduct(id).sellTo(player);
+            DailyShop.getProductFactory().getProduct(id).sellTo(id, player);
         }
     }
 
     @Override
-    public void buyFrom(Player player) {
+    public void buyFrom(@Nullable String shopId, Player player) {
 
     }
 

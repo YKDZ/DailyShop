@@ -13,7 +13,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VanillaProduct implements Product {
     private final String id;
@@ -26,7 +28,7 @@ public class VanillaProduct implements Product {
     private final List<String> descLore;
     private final List<String> productLore;
     private ItemStack productItem;
-    private AbstractItem guiProductItem;
+    private final Map<String, GUIProductItem> guiProductItems = new HashMap<>();
 
     public VanillaProduct(
             String id,
@@ -47,7 +49,6 @@ public class VanillaProduct implements Product {
         this.displayName = displayName;
         this.descLore = descLore;
         this.productLore = productLore;
-        buildGUIProductItem();
         buildProductItem();
     }
 
@@ -77,8 +78,10 @@ public class VanillaProduct implements Product {
     }
 
     @Override
-    public AbstractItem getGUIItem() {
-        return guiProductItem;
+    public AbstractItem getGUIItem(String shopId) {
+        return guiProductItems.get(shopId) == null ?
+                buildGUIProductItem(shopId) :
+                guiProductItems.get(shopId);
     }
 
     public ItemStack getProductItem() {
@@ -92,29 +95,31 @@ public class VanillaProduct implements Product {
         return productItem;
     }
 
-    public void buildGUIProductItem() {
-        guiProductItem = new GUIProductItem(this);
+    @Override
+    public GUIProductItem buildGUIProductItem(String shopId) {
+        guiProductItems.put(shopId, new GUIProductItem(shopId, this));
+        return guiProductItems.get(shopId);
     }
 
     @Override
-    public void sellTo(Player player) {
-        if (sellPriceProvider.getPrice() == -1d) {
+    public void sellTo(@Nullable String shopId, Player player) {
+        if (sellPriceProvider.getPrice(shopId) == -1d) {
             return;
         }
 
-        if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice()).transactionSuccess()) {
+        if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice(id)).transactionSuccess()) {
             PlayerUtils.giveItem(player, getProductItem());
         }
     }
 
     @Override
-    public void buyFrom(Player player) {
-        if (buyPriceProvider.getPrice() == -1d) {
+    public void buyFrom(@Nullable String shopId, Player player) {
+        if (buyPriceProvider.getPrice(shopId) == -1d) {
             return;
         }
 
         if (PlayerUtils.takeItem(player, getProductItem())) {
-            BalanceUtils.addBalance(player, buyPriceProvider.getPrice());
+            BalanceUtils.addBalance(player, buyPriceProvider.getPrice(id));
         }
     }
 

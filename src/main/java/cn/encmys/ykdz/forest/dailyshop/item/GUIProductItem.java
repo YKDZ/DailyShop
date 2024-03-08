@@ -12,10 +12,12 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 import java.util.ArrayList;
 
 public class GUIProductItem extends AbstractItem {
+    private final String shopId;
     private final Product product;
 
-    public GUIProductItem(Product product) {
+    public GUIProductItem(String shopId, Product product) {
         super();
+        this.shopId = shopId;
         this.product = product;
     }
 
@@ -24,10 +26,11 @@ public class GUIProductItem extends AbstractItem {
         return new ItemBuilder(product.getMaterial())
                 .setDisplayName(product.getDisplayName() == null ? "EMPTY" : product.getDisplayName())
                 .setAmount(product.getAmount())
-                .addLoreLines(product.getDescLore().toArray(new String[0]))
                 .addLoreLines(new ArrayList<String>() {{
-                    add("- Buy price: " + product.getBuyPriceProvider().getPrice());
-                    add("- Sell price: " + product.getSellPriceProvider().getPrice());
+                    addAll(product.getDescLore());
+                    add(" ");
+                    add("- Buy price: " + product.getBuyPriceProvider().getPrice(shopId));
+                    add("- Sell price: " + product.getSellPriceProvider().getPrice(shopId));
                     add(" ");
                     add("Rarity: " + product.getRarity().getName());
                 }}.toArray(new String[0]));
@@ -36,9 +39,9 @@ public class GUIProductItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
         if (clickType.isLeftClick()) {
-            product.sellTo(player);
+            product.sellTo(shopId, player);
         } else if (clickType.isRightClick()) {
-            product.buyFrom(player);
+            product.buyFrom(shopId, player);
         }
 
         notifyWindows();

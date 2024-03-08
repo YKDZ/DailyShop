@@ -58,7 +58,7 @@ public class Shop {
         }
 
         for(Product product : listedProducts) {
-            builder.addContent(product.getGUIItem());
+            builder.addContent(product.getGUIItem(id));
         }
 
         gui = builder.build();
