@@ -3,7 +3,6 @@ package cn.encmys.ykdz.forest.dailyshop.price;
 import cn.encmys.ykdz.forest.dailyshop.enums.PriceMode;
 import org.bukkit.configuration.ConfigurationSection;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,13 +11,13 @@ public class PriceProvider {
     private static final Random random = new Random();
     private PriceMode priceMode;
     private final Map<String, Double> prices = new HashMap<>();
-    //
+    // Fixed Mode
     private double fixed;
-    //
+    // Gaussian Mode
     private double mean = 0d;
     private double dev = 0d;
     private boolean round = false;
-    //
+    // Min max Mode
     private double min = 0d;
     private double max = 0d;
 
@@ -28,19 +27,16 @@ public class PriceProvider {
 
     public PriceProvider(double fixed) {
         this.fixed = fixed;
-        this.prices.put("INTERNAL_SHOP", fixed);
         this.priceMode = PriceMode.FIXED;
+        update("INTERNAL_SHOP");
     }
 
     public PriceProvider(double mean, double dev, boolean round) {
         this.mean = mean;
         this.dev = dev;
         this.round = round;
-        double gaussian = random.nextGaussian();
-        this.prices.put("INTERNAL_SHOP", round ?
-                Math.round(mean + dev * gaussian) :
-                mean + dev * gaussian);
         priceMode = PriceMode.GAUSSIAN;
+        update("INTERNAL_SHOP");
     }
 
     private void buildPrice(ConfigurationSection priceSection) {
@@ -59,12 +55,8 @@ public class PriceProvider {
         }
     }
 
-    public double getPrice(@Nullable String shopId) {
+    public double getPrice(String shopId) {
         return shopId == null ? prices.get("INTERNAL_SHOP") : prices.get(shopId);
-    }
-
-    public PriceMode getPriceMode() {
-        return priceMode;
     }
 
     public void update(String shopId) {

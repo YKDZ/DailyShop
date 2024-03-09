@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class RaritiesConfig {
+public class RarityConfig {
     private static final DailyShop plugin = DailyShop.getInstance();
     private static YamlConfiguration config;
 

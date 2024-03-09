@@ -1,0 +1,8 @@
+messages:
+  prefix: "<gold>DailyShop <dark_gray>- "
+  command:
+    reload: "<green>Successfully reload the plugin!"
+    restock: "<green>Successfully restock shop {shop} <green>manually!"
+    save: "<green>Successfully save all shop data manually!"
+
+version: 1

@@ -13,6 +13,9 @@ public class ItemUtils {
     }
 
     public static void displayName(ItemStack item, String displayName) {
+        if (displayName == null) {
+            return;
+        }
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(displayName);
         item.setItemMeta(itemMeta);

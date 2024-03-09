@@ -12,12 +12,10 @@ import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Shop {
+    private static final char productIdentifier = 'x';
     private final String id;
     private final String name;
     private final int restockTime;
@@ -49,11 +47,11 @@ public class Shop {
     public void buildGUI(@NotNull ConfigurationSection guiSection) {
         ScrollGui.Builder<@NotNull Item> builder = ScrollGui.items()
                 .setStructure(guiSection.getStringList("layout").toArray(new String[0]))
-                .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL);
+                .addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
 
         for (String iconKey : ShopConfig.getGUIIcons(id)) {
             char key = iconKey.charAt(0);
-            if (key == '.') {
+            if (key == productIdentifier) {
                 continue;
             }
             builder.addIngredient(key, ShopConfig.getGUIIcon(id, key));
@@ -76,23 +74,40 @@ public class Shop {
     }
 
     public void restock() {
-        double[] randoms = new double[size];
-        for (int i = 0; i < size; i++) {
-            randoms[i] = Math.random() * getTotalWeight();
-        }
+        Random random = new Random();
         listedProducts.clear();
-        for (int i = 0; i < size; i++) {
-            int tempWeight = 0;
-            for (String productId : allProductsId) {
+
+        if (size >= allProductsId.size()) {
+            for(String productId : allProductsId) {
                 Product product = DailyShop.getProductFactory().getProduct(productId);
-                tempWeight += product.getRarity().getWeight();
-                if (tempWeight >= randoms[i]) {
-                    product.updatePrice(id);
-                    listedProducts.add(product);
-                    break;
+                product.updatePrice(id);
+                listedProducts.add(product);
+            }
+        } else {
+            int totalWeight = getTotalWeight();
+            List<String> temp = new ArrayList<>() {{
+                addAll(allProductsId);
+            }};
+            for (int i = 0; i < size; i++) {
+                int needed = random.nextInt(totalWeight);
+                int acc = 0;
+                Iterator<String> iterator = temp.iterator();
+                while (iterator.hasNext()) {
+                    String productId = iterator.next();
+                    Product product = DailyShop.getProductFactory().getProduct(productId);
+                    int weight = product.getRarity().getWeight();
+                    acc += weight;
+                    if (acc >= needed) {
+                        product.updatePrice(id);
+                        listedProducts.add(product);
+                        totalWeight -= weight;
+                        iterator.remove();
+                        break;
+                    }
                 }
             }
         }
+
         buildGUI(guiSection);
         lastRestocking = System.currentTimeMillis();
     }
@@ -137,5 +152,9 @@ public class Shop {
 
     public int getRestockTime() {
         return restockTime;
+    }
+
+    public String getId() {
+        return id;
     }
 }

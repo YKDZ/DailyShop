@@ -6,3 +6,4 @@ depend:
   - Vault
 softdepend:
   - PlaceholderAPI
+  - ItemsLangAPI

@@ -46,8 +46,8 @@ public class ShopConfig {
         }
     }
 
-    public static YamlConfiguration getConfig(String id) {
-        return configs.get(id);
+    public static YamlConfiguration getConfig(String shopId) {
+        return configs.get(shopId);
     }
 
     @Contract(" -> new")
@@ -55,28 +55,28 @@ public class ShopConfig {
         return new ArrayList<>(configs.keySet());
     }
 
-    public static int getSize(String id) {
-        return getConfig(id).getInt("settings.size");
+    public static int getSize(String shopId) {
+        return getConfig(shopId).getInt("settings.size");
     }
 
-    public static String getName(String id) {
-        return getConfig(id).getString("settings.name");
+    public static String getName(String shopId) {
+        return getConfig(shopId).getString("settings.name");
     }
 
-    public static int getRestockTimer(String id) {
-        return getConfig(id).getInt("settings.restock-timer");
+    public static int getRestockTimer(String shopId) {
+        return getConfig(shopId).getInt("settings.restock-timer");
     }
 
-    public static String getGUITitle(String id) {
-        return getConfig(id).getString("shop-gui.title");
+    public static String getGUITitle(String shopId) {
+        return getConfig(shopId).getString("shop-gui.title");
     }
 
-    public static String @NotNull [] getGUILayout(String id) {
-        return getConfig(id).getStringList("shop-gui.layout").toArray(new String[0]);
+    public static String @NotNull [] getGUILayout(String shopId) {
+        return getConfig(shopId).getStringList("shop-gui.layout").toArray(new String[0]);
     }
 
-    public static @NotNull Set<String> getGUIIcons(String id) {
-        return getConfig(id).getConfigurationSection("shop-gui.icons").getKeys(false);
+    public static @NotNull Set<String> getGUIIcons(String shopId) {
+        return getConfig(shopId).getConfigurationSection("shop-gui.icons").getKeys(false);
     }
 
     public static @NotNull ItemStack getGUIIcon(String shopId, char iconId) {
@@ -91,11 +91,23 @@ public class ShopConfig {
         return icon;
     }
 
-    public static ConfigurationSection getGUISection(String id) {
-        return getConfig(id).getConfigurationSection("shop-gui");
+    public static String getProductNameFormat(String shopId) {
+        return getGUISection(shopId).getString("product.name-format", "{name}");
     }
 
-    public static List<String> getAllProductsId(String id) {
-        return getConfig(id).getStringList("products");
+    public static List<String> getProductLoreFormat(String shopId) {
+        return getGUISection(shopId).getStringList("product.lore-format");
+    }
+
+    public static ConfigurationSection getGUISection(String shopId) {
+        return getConfig(shopId).getConfigurationSection("shop-gui");
+    }
+
+    public static List<String> getAllProductsId(String shopId) {
+        return getConfig(shopId).getStringList("products");
+    }
+
+    public static String getRestockNotification(String shopId) {
+        return getConfig(shopId).getString("messages.notification");
     }
 }

@@ -44,7 +44,7 @@ public class ProductFactory {
                         products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 PriceProvider sellPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                        products.getConfigurationSection(productId + ".sell-price") != null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection("sell-price")
                 );
                 buildVanillaProduct(
                         productId,
@@ -66,7 +66,7 @@ public class ProductFactory {
                         products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 PriceProvider sellPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                        products.getConfigurationSection(id + ".sell-price") != null ? products.getConfigurationSection(id + ".sell-price") : defaultSettings.getConfigurationSection("sell-price")
                 );
                 buildBundleProduct(
                         id,

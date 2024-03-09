@@ -1,7 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,9 +15,13 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GUIProductItem extends AbstractItem {
+    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final String shopId;
     private final Product product;
 
@@ -24,17 +33,21 @@ public class GUIProductItem extends AbstractItem {
 
     @Override
     public ItemProvider getItemProvider() {
+        DecimalFormat decimalFormat = Config.getDecimalFormat();
+        Map<String, String> vars = new HashMap<>() {{
+            put("name", product.getDisplayName());
+            put("desc-lore", TextUtils.catLines(product.getDescLore()));
+            put("buy-price", decimalFormat.format(product.getBuyPriceProvider().getPrice(shopId)));
+            put("sell-price", decimalFormat.format(product.getSellPriceProvider().getPrice(shopId)));
+            put("rarity", product.getRarity().getName());
+        }};
+        Component name = adventureManager.getComponentFromMiniMessage(TextUtils.parseVariables(ShopConfig.getProductNameFormat(shopId), vars));
+        List<Component> lores = adventureManager.getComponentFromMiniMessage(TextUtils.parseVariables(ShopConfig.getProductLoreFormat(shopId), vars));
+
         return new ItemBuilder(product.getMaterial())
-                .setDisplayName(product.getDisplayName() == null ? "EMPTY" : product.getDisplayName())
                 .setAmount(product.getAmount())
-                .addLoreLines(new ArrayList<String>() {{
-                    addAll(product.getDescLore());
-                    add(" ");
-                    add("- Buy price: " + Config.getDecimalFormat().format(product.getBuyPriceProvider().getPrice(shopId)));
-                    add("- Sell price: " + Config.getDecimalFormat().format(product.getSellPriceProvider().getPrice(shopId)));
-                    add(" ");
-                    add("Rarity: " + product.getRarity().getName());
-                }}.toArray(new String[0]));
+                .addLoreLines(adventureManager.componentToLegacy(lores).toArray(new String[0]))
+                .setDisplayName(adventureManager.componentToLegacy(name));
     }
 
     @Override

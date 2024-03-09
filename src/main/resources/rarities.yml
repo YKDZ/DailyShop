@@ -1,22 +1,22 @@
 rarities:
   common:
-    name: "&7Common"
+    name: "<gray>Common"
     weight: 100
   uncommon:
-    name: "&fUncommon"
+    name: "<white>Uncommon"
     weight: 80
   rare:
-    name: "&5Rare"
+    name: "<dark_purple>Rare"
     weight: 60
   epic:
-    name: "&5Epic"
+    name: "<purple>Epic"
     weight: 40
   ancient:
-    name: "&9Ancient"
+    name: "<blue>Ancient"
     weight: 20
   legendary:
-    name: "&dLegendary"
+    name: "<purple>Legendary"
     weight: 10
   mythic:
-    name: "&eMythic"
+    name: "<gold>Mythic"
     weight: 5

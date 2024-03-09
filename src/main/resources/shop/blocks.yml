@@ -1,29 +1,34 @@
 settings:
-  name: "<brown>Blocks Shop"
+  name: "<yellow>Blocks Shop"
   restock-timer: 1
-  size: 6
+  size: 7
+
+messages:
+  notification: "<dark_gray>[<red>!<dark_gray>] Shop {shop} just restocked!"
 
 shop-gui:
   title: "Hi %player_name%, Welcome to Daily Blocks Shop."
   layout:
   - "# # # # # # # # #"
-  - "# . . . . . . . #"
-  - "# . . . . . . . #"
+  - "# x x x x x x x #"
   - "# # # # @ # # # #"
   icons:
     "#":
       material: BLACK_STAINED_GLASS_PANE
-      name: ""
+      name: " "
     "@":
       material: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
+  product:
+    name-format: "<dark_gray>Name: <reset>{name}"
+    lore-format:
+      - " "
+      - "<dark_gray>- <gray>Buy Price: <white>{buy-price}"
+      - "<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+      - " "
+      - "<gray>Rarity: <reset>{rarity}"
+      - " "
+      - "{desc-lore}"
 
 products:
-  - COARSE_DIRT
-  - GREEN_CONCRETE_POWDER
-  - PINK_CONCRETE_POWDER
-  - RED_CONCRETE_POWDER
-  - LIME_CONCRETE_POWDER
-  - MAGENTA_CONCRETE
-  - CONCRETE_POWDER_BUNDLE_1
-  - CONCRETE_POWDER_BUNDLE_2
+  - PACK:concretes

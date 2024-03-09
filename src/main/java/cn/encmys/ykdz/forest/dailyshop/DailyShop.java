@@ -1,10 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop;
 
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
-import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
-import cn.encmys.ykdz.forest.dailyshop.config.RaritiesConfig;
-import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.config.*;
 import cn.encmys.ykdz.forest.dailyshop.data.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
@@ -12,9 +10,13 @@ import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import me.rubix327.itemslangapi.ItemsLangAPI;
+import me.rubix327.itemslangapi.Lang;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class DailyShop extends JavaPlugin {
     private static DailyShop instance;
@@ -24,6 +26,8 @@ public final class DailyShop extends JavaPlugin {
     private static Scheduler scheduler;
     private static Database database;
     private static Economy economy;
+    private static AdventureManager adventureManager;
+    private static ItemsLangAPI itemsLangAPI;
 
     public static DailyShop getInstance() {
         return instance;
@@ -53,6 +57,14 @@ public final class DailyShop extends JavaPlugin {
         return scheduler;
     }
 
+    public static AdventureManager getAdventureManager() {
+        return adventureManager;
+    }
+
+    public static ItemsLangAPI getItemsLangAPI() {
+        return itemsLangAPI;
+    }
+
     @Override
     public void onLoad() {
         instance = this;
@@ -68,8 +80,15 @@ public final class DailyShop extends JavaPlugin {
             return;
         }
 
+        if (setupItemsLangAPI()) {
+            getLogger().log(Level.INFO, "Hooked into ItemsLangAPI!");
+        }
+
+        adventureManager = new AdventureManager(instance);
+
         Config.load();
-        RaritiesConfig.load();
+        MessageConfig.load();
+        RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
 
@@ -91,11 +110,13 @@ public final class DailyShop extends JavaPlugin {
     }
 
     public static void reload() {
-        productFactory.unload();
-        shopFactory.unload();
+        rarityFactory = new RarityFactory();
+        productFactory = new ProductFactory();
+        shopFactory = new ShopFactory();
 
         Config.load();
-        RaritiesConfig.load();
+        MessageConfig.load();
+        RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
 
@@ -113,5 +134,14 @@ public final class DailyShop extends JavaPlugin {
         }
         economy = rsp.getProvider();
         return economy != null;
+    }
+
+    private boolean setupItemsLangAPI() {
+        if (getServer().getPluginManager().getPlugin("ItemsLangAPI") == null) {
+            return false;
+        }
+        itemsLangAPI = ItemsLangAPI.getApi();
+        itemsLangAPI.load(Lang.EN_US, Lang.ZH_CN);
+        return true;
     }
 }

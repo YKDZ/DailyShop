@@ -1,6 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
@@ -59,7 +61,7 @@ public class VanillaProduct implements Product {
 
     @Override
     public String getDisplayName() {
-        return displayName;
+        return displayName == null && DailyShop.getItemsLangAPI() != null ? DailyShop.getItemsLangAPI().translate(material, Config.language) : displayName;
     }
 
     @Override
@@ -107,7 +109,7 @@ public class VanillaProduct implements Product {
             return;
         }
 
-        if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice(id)).transactionSuccess()) {
+        if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice(shopId)).transactionSuccess()) {
             PlayerUtils.giveItem(player, getProductItem());
         }
     }
@@ -119,7 +121,7 @@ public class VanillaProduct implements Product {
         }
 
         if (PlayerUtils.takeItem(player, getProductItem())) {
-            BalanceUtils.addBalance(player, buyPriceProvider.getPrice(id));
+            BalanceUtils.addBalance(player, buyPriceProvider.getPrice(shopId));
         }
     }
 

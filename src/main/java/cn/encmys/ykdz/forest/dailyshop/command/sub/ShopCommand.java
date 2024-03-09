@@ -1,15 +1,21 @@
 package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+
 public class ShopCommand {
+    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     public static ShopCommand INSTANCE = new ShopCommand();
 
     public CommandAPICommand getShopCommand() {
@@ -40,7 +46,11 @@ public class ShopCommand {
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
                         )
                 .executes((sender, args) -> {
-                    DailyShop.getShopFactory().getShop((String) args.get("shop")).restock();
+                    Shop shop = DailyShop.getShopFactory().getShop((String) args.get("shop"));
+                    shop.restock();
+                    adventureManager.sendMessageWithPrefix(sender, TextUtils.parseVariables(MessageConfig.messages_command_restock, new HashMap<>() {{
+                        put("shop", shop.getName());
+                    }}));
                 });
     }
 
@@ -50,6 +60,7 @@ public class ShopCommand {
                     for(Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                         shop.saveData();
                     }
+                    adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_save);
                 });
     }
 }

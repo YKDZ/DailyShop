@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.factory;
 
+import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 
@@ -23,7 +24,16 @@ public class ShopFactory {
         }
 
         List<String> products = new ArrayList<>();
-        products.addAll(ShopConfig.getAllProductsId(id));
+
+        for(String productId : ShopConfig.getAllProductsId(id)) {
+            // Handle PACK:XXX format
+            if(productId.startsWith("PACK:")) {
+                products.addAll(ProductConfig.getAllProductId(productId.substring(5)));
+                continue;
+            }
+
+            products.add(productId);
+        }
 
         Shop shop = new Shop(
                 id,

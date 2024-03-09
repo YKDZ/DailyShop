@@ -70,7 +70,7 @@ dependencies {
     implementation("xyz.xenondevs.invui:invui:1.25")
 
     implementation("org.jetbrains:annotations:24.0.0")
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
+    annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")
 
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
@@ -78,11 +78,11 @@ dependencies {
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
-
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+
+    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
 }
 
 tasks {

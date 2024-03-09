@@ -7,12 +7,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class ProductConfig {
     private static final DailyShop plugin = DailyShop.getInstance();
-    private static final HashMap<String, YamlConfiguration> configs = new HashMap<>();
+    private static final HashMap<String, YamlConfiguration> packs = new HashMap<>();
 
     public static void load() {
         File directory = new File(plugin.getDataFolder() + "/product");
@@ -31,7 +32,7 @@ public class ProductConfig {
                 YamlConfiguration config = new YamlConfiguration();
                 try {
                     config.load(file);
-                    configs.put(file.getName().replace(".yml", ""), config);
+                    packs.put(file.getName().replace(".yml", ""), config);
                 } catch (IOException | InvalidConfigurationException error) {
                     error.printStackTrace();
                 }
@@ -39,11 +40,15 @@ public class ProductConfig {
         }
     }
 
-    public static YamlConfiguration getConfig(String id) {
-        return configs.get(id);
+    public static YamlConfiguration getConfig(String packId) {
+        return packs.get(packId);
     }
 
     public static List<String> getAllId() {
-        return new ArrayList<>(configs.keySet());
+        return new ArrayList<>(packs.keySet());
+    }
+
+    public static List<String> getAllProductId(String packId) {
+        return Arrays.asList(getConfig(packId).getConfigurationSection("products").getKeys(false).toArray(new String[0]));
     }
 }

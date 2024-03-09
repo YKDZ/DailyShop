@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
@@ -54,7 +55,7 @@ public class BundleProduct implements Product {
 
     @Override
     public String getDisplayName() {
-        return displayName;
+        return displayName == null && DailyShop.getItemsLangAPI() != null ? DailyShop.getItemsLangAPI().translate(material, Config.language) : displayName;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class BundleProduct implements Product {
     @Override
     public void sellTo(@Nullable String shopId, Player player) {
         for (String id : contents) {
-            DailyShop.getProductFactory().getProduct(id).sellTo(id, player);
+            DailyShop.getProductFactory().getProduct(id).sellTo(shopId, player);
         }
     }
 

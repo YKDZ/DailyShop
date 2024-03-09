@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.factory;
 
-import cn.encmys.ykdz.forest.dailyshop.config.RaritiesConfig;
+import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -10,8 +10,8 @@ public class RarityFactory {
     private static final HashMap<String, Rarity> rarities = new HashMap<>();
 
     public RarityFactory() {
-        YamlConfiguration config = RaritiesConfig.getConfig();
-        for(String id : RaritiesConfig.getAllId()) {
+        YamlConfiguration config = RarityConfig.getConfig();
+        for(String id : RarityConfig.getAllId()) {
             buildRarity(
                     id,
                     config.getString("rarities." + id + ".name"),

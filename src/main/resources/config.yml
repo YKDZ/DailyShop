@@ -1,4 +1,4 @@
-language: zh_CN
+language: en_US
 
 decimal-format: "###,###.##"
 time-format: "hh:mm a"

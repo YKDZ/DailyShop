@@ -10,10 +10,21 @@ default-settings:
     round: true
   sell-price:
     mean: 20
-    dev: 20
+    dev: 5
   rarity: uncommon
 
 products:
+  WARM_COLOR_CONCRETE_BUNDLE:
+    item: BUNDLE
+    amount: 1
+    display-name: "<white>Warm Color Concrete Bundle"
+    bundle-contents:
+      - ORANGE_CONCRETE
+      - YELLOW_CONCRETE
+      - CYAN_CONCRETE
+      - BROWN_CONCRETE
+      - RED_CONCRETE
+
   WHITE_CONCRETE:
     item: WHITE_CONCRETE
 
