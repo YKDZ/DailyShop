@@ -8,7 +8,6 @@ import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.ItemUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -94,8 +93,6 @@ public class VanillaProduct implements Product {
 
     public ItemStack buildProductItem() {
         productItem = new ItemStack(material, amount);
-        ItemUtils.displayName(productItem, displayName);
-        ItemUtils.lore(productItem, productLore);
         return productItem;
     }
 

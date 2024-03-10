@@ -19,8 +19,6 @@ public class PriceProvider {
     // Min max Mode
     private double min = 0d;
     private double max = 0d;
-    // Auto Mode (Bundle)
-    private boolean auto;
     // Whether round the price
     private boolean round = false;
 
@@ -48,7 +46,6 @@ public class PriceProvider {
         priceMode = PriceMode.MINMAX;
         update("INTERNAL_SHOP");
     }
-
 
     private void buildPrice(ConfigurationSection priceSection) {
         if (priceSection.contains("fixed")) {

@@ -83,7 +83,9 @@ public class Shop {
     public void restock() {
         Random random = new Random();
         ProductFactory productFactory = DailyShop.getProductFactory();
+
         listedProducts.clear();
+        Collections.shuffle(allProductsId);
 
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {

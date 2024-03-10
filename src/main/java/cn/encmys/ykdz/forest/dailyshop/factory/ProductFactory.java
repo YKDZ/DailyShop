@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
+import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.VanillaProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.Material;
@@ -29,53 +30,70 @@ public class ProductFactory {
 
             List<String> bundles = new ArrayList<>();
             for (String productId : products.getKeys(false)) {
+                ConfigurationSection productSection = products.getConfigurationSection(productId);
 
                 // Record Bundle
-                if (!products.getStringList(productId + ".bundle-contents").isEmpty()) {
+                if (!productSection.getStringList("bundle-contents").isEmpty()) {
                     bundles.add(productId);
                     continue;
                 }
 
-                String item = products.getString(productId + ".item", "DIRT");
+                String item = productSection.getString("item", "DIRT");
                 Material material = Material.valueOf(item);
                 PriceProvider buyPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(productId + ".buy-price") != null ? products.getConfigurationSection(productId + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                        productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 PriceProvider sellPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(productId + ".sell-price") != null ? products.getConfigurationSection(productId + ".sell-price") : defaultSettings.getConfigurationSection("sell-price")
+                        productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
                 );
-                buildVanillaProduct(
-                        productId,
-                        buyPriceProvider,
-                        sellPriceProvider,
-                        rarityFactory.getRarity(products.getString(productId + ".rarity", defaultSettings.getString("rarity"))),
-                        material,
-                        products.getInt(productId + ".amount", defaultSettings.getInt("amount", 1)),
-                        products.getString(productId + ".display-name"),
-                        products.getStringList(productId + ".desc-lore"),
-                        products.getStringList(productId + ".product-lore")
-                );
+
+                if (productSection.contains("commands")) {
+                    buildCommandProduct(
+                            productId,
+                            buyPriceProvider,
+                            sellPriceProvider,
+                            rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity"))),
+                            material,
+                            productSection.getInt( "amount", defaultSettings.getInt("amount", 1)),
+                            productSection.getString( "display-name"),
+                            productSection.getStringList( "desc-lore"),
+                            productSection.getStringList( "commands")
+                    );
+                } else {
+                    buildVanillaProduct(
+                            productId,
+                            buyPriceProvider,
+                            sellPriceProvider,
+                            rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity"))),
+                            material,
+                            productSection.getInt( "amount", defaultSettings.getInt("amount", 1)),
+                            productSection.getString( "display-name"),
+                            productSection.getStringList( "desc-lore"),
+                            productSection.getStringList( "product-lore")
+                    );
+                }
             }
 
             // Handle Bundle
-            for (String id : bundles) {
-                Material material = Material.valueOf(products.getString(id + ".item", "DIRT"));
+            for (String productId : bundles) {
+                ConfigurationSection productSection = products.getConfigurationSection(productId);
+                Material material = Material.valueOf(productSection.getString("item", "DIRT"));
                 PriceProvider buyPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(id + ".buy-price") != null ? products.getConfigurationSection(id + ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                        productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( ".buy-price") : defaultSettings.getConfigurationSection("buy-price")
                 );
                 PriceProvider sellPriceProvider = new PriceProvider(
-                        products.getConfigurationSection(id + ".sell-price") != null ? products.getConfigurationSection(id + ".sell-price") : defaultSettings.getConfigurationSection("sell-price")
+                        productSection.getConfigurationSection("sell-price") != null ? productSection.getConfigurationSection(".sell-price") : defaultSettings.getConfigurationSection("sell-price")
                 );
                 buildBundleProduct(
-                        id,
+                        productId,
                         buyPriceProvider,
                         sellPriceProvider,
-                        rarityFactory.getRarity(products.getString(id + ".rarity", defaultSettings.getString("rarity"))),
+                        rarityFactory.getRarity(productSection.getString("rarity", defaultSettings.getString("rarity"))),
                         material,
-                        products.getInt(id + ".amount", defaultSettings.getInt("amount", 1)),
-                        products.getString(id + ".display-name"),
-                        products.getStringList(id + ".desc-lore"),
-                        products.getStringList(id + ".bundle-contents")
+                        productSection.getInt("amount", defaultSettings.getInt("amount", 1)),
+                        productSection.getString( "display-name"),
+                        productSection.getStringList( "desc-lore"),
+                        productSection.getStringList( "bundle-contents")
                 );
             }
         }
@@ -99,6 +117,24 @@ public class ProductFactory {
         }
 
         Product product = new VanillaProduct(id, buyPriceProvider, sellPriceProvider, rarity, material, amount, displayName, descLore, productLore);
+        products.put(id, product);
+        return product;
+    }
+
+    public Product buildCommandProduct(String id,
+                                       PriceProvider buyPriceProvider,
+                                       PriceProvider sellPriceProvider,
+                                       Rarity rarity,
+                                       Material material,
+                                       int amount,
+                                       @Nullable String displayName,
+                                       @Nullable List<String> descLore,
+                                       List<String> commands) {
+        if (products.containsKey(id)) {
+            throw new InvalidKeyException("Product ID is duplicated: " + id);
+        }
+
+        Product product = new CommandProduct(id, buyPriceProvider, sellPriceProvider, rarity, material, amount, displayName, descLore, commands);
         products.put(id, product);
         return product;
     }

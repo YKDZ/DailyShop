@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class Scheduler {
     private final DailyShop plugin;
@@ -45,7 +46,7 @@ public class Scheduler {
             for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                 shop.saveData();
             }
-            adventuremanager.sendConsoleMessage("Successfully saved shop products data.");
+            DailyShop.getInstance().getLogger().log(Level.INFO, "Successfully save shop data.");
         }, 0, Config.dataSaveTimer * 60L * 20L);
     }
 }

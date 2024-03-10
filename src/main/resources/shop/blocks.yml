@@ -43,3 +43,4 @@ shop-gui:
 products:
   - PACK:concretes
   - PACK:wools
+  - WARM_WELCOME
