@@ -4,5 +4,9 @@ messages:
     reload: "<green>Successfully reload the plugin!"
     restock: "<green>Successfully restock shop {shop} <green>manually!"
     save: "<green>Successfully save all shop data manually!"
+  action:
+    buy: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{money}."
+    sell: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{money}."
+    sell-all: "<gray>Successfully sell all of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{money}."
 
 version: 1

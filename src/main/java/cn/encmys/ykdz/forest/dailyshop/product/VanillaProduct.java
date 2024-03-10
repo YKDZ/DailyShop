@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.product;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,8 @@ public class VanillaProduct implements Product {
     private final String displayName;
     private final List<String> descLore;
     private final List<String> productLore;
-    private ItemStack productItem;
     private final Map<String, GUIProductItem> guiProductItems = new HashMap<>();
+    private ItemStack productItem;
 
     public VanillaProduct(
             String id,
@@ -105,10 +107,6 @@ public class VanillaProduct implements Product {
 
     @Override
     public void sellTo(@Nullable String shopId, Player player) {
-        if (sellPriceProvider.getPrice(shopId) == -1d) {
-            return;
-        }
-
         if (BalanceUtils.removeBalance(player, sellPriceProvider.getPrice(shopId)).transactionSuccess()) {
             PlayerUtils.giveItem(player, getProductItem());
         }
@@ -123,6 +121,11 @@ public class VanillaProduct implements Product {
         if (PlayerUtils.takeItem(player, getProductItem())) {
             BalanceUtils.addBalance(player, buyPriceProvider.getPrice(shopId));
         }
+    }
+
+    @Override
+    public void buyAllFrom(@Nullable String shopId, Player player) {
+
     }
 
     @Override
@@ -149,5 +152,15 @@ public class VanillaProduct implements Product {
     public void updatePrice(String shopId) {
         buyPriceProvider.update(shopId);
         sellPriceProvider.update(shopId);
+    }
+
+    @Override
+    public ProductType getType() {
+        return ProductType.VANILLA;
+    }
+
+    @Override
+    public List<String> getBundleContents() {
+        return new ArrayList<>();
     }
 }

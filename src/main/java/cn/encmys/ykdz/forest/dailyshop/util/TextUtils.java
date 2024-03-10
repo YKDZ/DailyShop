@@ -5,30 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 public class TextUtils {
-    public static String catLines(List<String> messages) {
-        if(messages.isEmpty()) {
-            return "";
-        }
+    private static final String listMarker = "@";
 
-        StringBuffer buffer = new StringBuffer();
-        for(String message : messages) {
-            buffer.append(message)
-                    .append("\n");
-        }
-        buffer.deleteCharAt(buffer.length() - 1);
-        return buffer.toString();
-    }
-
-    public static List<String> parseVariables(List<String> lines, Map<String, String> map) {
+    public static List<String> parseVariables(List<String> lines, Map<String, String> vars) {
         List<String> result = new ArrayList<>();
-        for(String line : lines) {
-            result.add(parseVariables(line, map));
+        for (String line : lines) {
+            result.add(parseVariables(line, vars));
         }
         return result;
     }
 
-    public static String parseVariables(String line, Map<String, String> map) {
-        for(Map.Entry<String, String> entry : map.entrySet()) {
+    public static String parseVariables(String line, Map<String, String> vars) {
+        for (Map.Entry<String, String> entry : vars.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             if (value != null) {
@@ -36,5 +24,37 @@ public class TextUtils {
             }
         }
         return line;
+    }
+
+    public static List<String> insertListVariables(List<String> lines, Map<String, List<String>> vars) {
+        List<String> result = new ArrayList<>();
+        for (String line : lines) {
+            boolean keyLine = false;
+            for (Map.Entry<String, List<String>> entry : vars.entrySet()) {
+                String key = entry.getKey();
+                List<String> value = entry.getValue();
+                if (line.contains("{" + key + "}")) {
+                    keyLine = true;
+                    int j = result.size();
+                    if (value == null || value.isEmpty()) {
+                        while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
+                            result.remove(j - 1);
+                            j--;
+                        }
+                    } else {
+                        while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
+                            String raw = result.get(j - 1).substring(1);
+                            result.set(j - 1, raw.isEmpty() ? " " : raw);
+                            j--;
+                        }
+                        result.addAll(value);
+                    }
+                }
+            }
+            if (!keyLine) {
+                result.add(line);
+            }
+        }
+        return result;
     }
 }

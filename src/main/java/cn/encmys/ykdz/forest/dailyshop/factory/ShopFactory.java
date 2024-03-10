@@ -25,9 +25,9 @@ public class ShopFactory {
 
         List<String> products = new ArrayList<>();
 
-        for(String productId : ShopConfig.getAllProductsId(id)) {
+        for (String productId : ShopConfig.getAllProductsId(id)) {
             // Handle PACK:XXX format
-            if(productId.startsWith("PACK:")) {
+            if (productId.startsWith("PACK:")) {
                 products.addAll(ProductConfig.getAllProductId(productId.substring(5)));
                 continue;
             }
@@ -57,7 +57,7 @@ public class ShopFactory {
     }
 
     public void unload() {
-        for(Shop shop : shops.values()) {
+        for (Shop shop : shops.values()) {
             shop.saveData();
         }
         shops.clear();

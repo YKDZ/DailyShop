@@ -27,7 +27,7 @@ public class Scheduler {
         scheduler.runTaskTimer(plugin, task -> {
             long currentTime = System.currentTimeMillis();
             for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
-                if(currentTime - shop.getLastRestocking() >= shop.getRestockTime() * 60L * 1000L) {
+                if (currentTime - shop.getLastRestocking() >= shop.getRestockTime() * 60L * 1000L) {
                     shop.restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         adventuremanager.sendPlayerMessage(player, TextUtils.parseVariables(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{
@@ -36,13 +36,13 @@ public class Scheduler {
                     }
                 }
             }
-        }, 0, 100);
+        }, 0, 10);
     }
 
     private void runDataSaver() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimer(plugin, task -> {
-            for(Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
+            for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                 shop.saveData();
             }
             adventuremanager.sendConsoleMessage("Successfully saved shop products data.");

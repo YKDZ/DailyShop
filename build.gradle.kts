@@ -67,7 +67,7 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")
     annotationProcessor("dev.jorel:commandapi-annotations:9.3.0")
 
-    implementation("xyz.xenondevs.invui:invui:1.25")
+    implementation("xyz.xenondevs.invui:invui:1.26")
 
     implementation("org.jetbrains:annotations:24.0.0")
     annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")

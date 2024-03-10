@@ -7,12 +7,14 @@ import cn.encmys.ykdz.forest.dailyshop.data.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
+import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.rubix327.itemslangapi.ItemsLangAPI;
 import me.rubix327.itemslangapi.Lang;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,6 +67,21 @@ public final class DailyShop extends JavaPlugin {
         return itemsLangAPI;
     }
 
+    public static void reload() {
+        shopFactory.unload();
+        productFactory.unload();
+
+        Config.load();
+        MessageConfig.load();
+        RarityConfig.load();
+        ProductConfig.load();
+        ShopConfig.load();
+
+        rarityFactory = new RarityFactory();
+        productFactory = new ProductFactory();
+        shopFactory = new ShopFactory();
+    }
+
     @Override
     public void onLoad() {
         instance = this;
@@ -74,7 +91,7 @@ public final class DailyShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -102,26 +119,18 @@ public final class DailyShop extends JavaPlugin {
 
         CommandAPI.onEnable();
         new CommandHandler(instance).load();
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPIHook(this).register();
+        }
     }
 
     @Override
     public void onDisable() {
+        shopFactory.unload();
+        productFactory.unload();
+
         CommandAPI.onDisable();
-    }
-
-    public static void reload() {
-        rarityFactory = new RarityFactory();
-        productFactory = new ProductFactory();
-        shopFactory = new ShopFactory();
-
-        Config.load();
-        MessageConfig.load();
-        RarityConfig.load();
-        ProductConfig.load();
-        ShopConfig.load();
-
-        productFactory = new ProductFactory();
-        shopFactory = new ShopFactory();
     }
 
     private boolean setupEconomy() {

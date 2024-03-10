@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.product;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
@@ -24,7 +25,7 @@ public class BundleProduct implements Product {
     private final int amount;
     private final String displayName;
     private final List<String> descLore;
-    private final List<String> contents;
+    private final List<String> bundleContents;
     private final Map<String, GUIProductItem> guiProductItems = new HashMap<>();
 
     public BundleProduct(
@@ -36,7 +37,7 @@ public class BundleProduct implements Product {
             int amount,
             @Nullable String displayName,
             @Nullable List<String> descLore,
-            @Nullable List<String> contents) {
+            @Nullable List<String> bundleContents) {
         this.id = id;
         this.buyPriceProvider = buyPriceProvider;
         this.sellPriceProvider = sellPriceProvider;
@@ -45,7 +46,7 @@ public class BundleProduct implements Product {
         this.amount = amount;
         this.displayName = displayName;
         this.descLore = descLore;
-        this.contents = contents;
+        this.bundleContents = bundleContents;
     }
 
     @Override
@@ -88,26 +89,31 @@ public class BundleProduct implements Product {
 
     @Override
     public void sellTo(@Nullable String shopId, Player player) {
-        for (String id : contents) {
-            DailyShop.getProductFactory().getProduct(id).sellTo(shopId, player);
+        for (String productId : bundleContents) {
+            DailyShop.getProductFactory().getProduct(productId).sellTo(shopId, player);
         }
     }
 
     @Override
     public void buyFrom(@Nullable String shopId, Player player) {
-        if(canBuyFrom(shopId, player)) {
+        if (canBuyFrom(shopId, player)) {
             return;
         }
 
-        for (String id : contents) {
+        for (String id : bundleContents) {
             DailyShop.getProductFactory().getProduct(id).buyFrom(shopId, player);
         }
     }
 
     @Override
+    public void buyAllFrom(@Nullable String shopId, Player player) {
+
+    }
+
+    @Override
     public boolean canBuyFrom(@Nullable String shopId, Player player) {
-        for (String id : contents) {
-            if(!DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player)) {
+        for (String id : bundleContents) {
+            if (!DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player)) {
                 return false;
             }
         }
@@ -133,5 +139,15 @@ public class BundleProduct implements Product {
     public void updatePrice(String shopId) {
         buyPriceProvider.update(shopId);
         sellPriceProvider.update(shopId);
+    }
+
+    @Override
+    public ProductType getType() {
+        return ProductType.BUNDLE;
+    }
+
+    @Override
+    public List<String> getBundleContents() {
+        return bundleContents;
     }
 }

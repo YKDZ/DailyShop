@@ -3,6 +3,10 @@ package cn.encmys.ykdz.forest.dailyshop.shop;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.util.GUIIconUtils;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -15,23 +19,26 @@ import xyz.xenondevs.invui.window.Window;
 import java.util.*;
 
 public class Shop {
+    /**
+     * Product slot marker icon in the layout
+     */
     private static final char productIdentifier = 'x';
     private final String id;
     private final String name;
     private final int restockTime;
     private final List<String> allProductsId;
     private final ConfigurationSection guiSection;
-    private Gui gui;
     private final int size;
     private final List<Product> listedProducts = new ArrayList<>();
+    private Gui gui;
     private long lastRestocking;
 
     /**
-     * @param id Shop id
-     * @param restockTime Shop restock time in minutes
+     * @param id            Shop id
+     * @param restockTime   Shop restock time in minutes
      * @param allProductsId ID of all possible products
-     * @param size Maximum number of items in the shop at the same time
-     * @param guiSection Shop gui configuration section
+     * @param size          Maximum number of items in the shop at the same time
+     * @param guiSection    Shop gui configuration section
      */
     public Shop(String id, String name, int restockTime, List<String> allProductsId, int size, ConfigurationSection guiSection) {
         this.id = id;
@@ -54,10 +61,10 @@ public class Shop {
             if (key == productIdentifier) {
                 continue;
             }
-            builder.addIngredient(key, ShopConfig.getGUIIcon(id, key));
+            builder.addIngredient(key, GUIIconUtils.getGUIIcon(ShopConfig.getGUIIconSection(id, key)));
         }
 
-        for(Product product : listedProducts) {
+        for (Product product : listedProducts) {
             builder.addContent(product.getGUIItem(id));
         }
 
@@ -66,20 +73,21 @@ public class Shop {
 
     public void openGUI(Player player) {
         Window.single()
-                .setViewer(player)
-                .setTitle(ShopConfig.getGUITitle(id))
                 .setGui(gui)
+                .setViewer(player)
+                .setTitle(PlaceholderAPI.setPlaceholders(player, ShopConfig.getGUITitle(id)))
                 .build()
                 .open();
     }
 
     public void restock() {
         Random random = new Random();
+        ProductFactory productFactory = DailyShop.getProductFactory();
         listedProducts.clear();
 
         if (size >= allProductsId.size()) {
-            for(String productId : allProductsId) {
-                Product product = DailyShop.getProductFactory().getProduct(productId);
+            for (String productId : allProductsId) {
+                Product product = productFactory.getProduct(productId);
                 product.updatePrice(id);
                 listedProducts.add(product);
             }
@@ -94,10 +102,19 @@ public class Shop {
                 Iterator<String> iterator = temp.iterator();
                 while (iterator.hasNext()) {
                     String productId = iterator.next();
-                    Product product = DailyShop.getProductFactory().getProduct(productId);
+                    Product product = productFactory.getProduct(productId);
                     int weight = product.getRarity().getWeight();
                     acc += weight;
+                    // Pick products and make price for them
                     if (acc >= needed) {
+                        // Handle bundle contents
+                        // Make sure all the bundle content product has its price
+                        if (product.getType() == ProductType.BUNDLE) {
+                            for (String contentId : product.getBundleContents()) {
+                                Product content = productFactory.getProduct(contentId);
+                                content.updatePrice(id);
+                            }
+                        }
                         product.updatePrice(id);
                         listedProducts.add(product);
                         totalWeight -= weight;
@@ -114,7 +131,7 @@ public class Shop {
 
     public int getTotalWeight() {
         int sumWeight = 0;
-        for(String productId : allProductsId) {
+        for (String productId : allProductsId) {
             Product product = DailyShop.getProductFactory().getProduct(productId);
             sumWeight += product.getRarity().getWeight();
         }
@@ -123,10 +140,10 @@ public class Shop {
 
     public void loadData() {
         List<String> listedProductsId = DailyShop.getDatabase().loadShopData().get(id);
-        if(listedProductsId == null) {
+        if (listedProductsId == null) {
             restock();
         } else {
-            for(String productId : listedProductsId) {
+            for (String productId : listedProductsId) {
                 listedProducts.add(DailyShop.getProductFactory().getProduct(productId));
             }
         }
@@ -135,7 +152,7 @@ public class Shop {
     public void saveData() {
         Map<String, List<String>> dataMap = new HashMap<>();
         List<String> listedProductsId = new ArrayList<>();
-        for(Product product : listedProducts) {
+        for (Product product : listedProducts) {
             listedProductsId.add(product.getId());
         }
         dataMap.put(id, listedProductsId);
@@ -156,5 +173,13 @@ public class Shop {
 
     public String getId() {
         return id;
+    }
+
+    public List<Product> getListedProducts() {
+        return listedProducts;
+    }
+
+    public List<String> getAllProductsId() {
+        return allProductsId;
     }
 }

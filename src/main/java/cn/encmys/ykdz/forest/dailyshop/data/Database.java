@@ -37,7 +37,8 @@ public class Database {
     public Map<String, List<String>> loadShopData() {
         Map<String, List<String>> data = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(shopsData))) {
-            data = gson.fromJson(reader, new TypeToken<HashMap<String, List<String>>>(){}.getType());
+            data = gson.fromJson(reader, new TypeToken<HashMap<String, List<String>>>() {
+            }.getType());
         } catch (IOException e) {
             e.printStackTrace();
         }

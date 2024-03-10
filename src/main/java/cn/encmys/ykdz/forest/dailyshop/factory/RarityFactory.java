@@ -11,7 +11,7 @@ public class RarityFactory {
 
     public RarityFactory() {
         YamlConfiguration config = RarityConfig.getConfig();
-        for(String id : RarityConfig.getAllId()) {
+        for (String id : RarityConfig.getAllId()) {
             buildRarity(
                     id,
                     config.getString("rarities." + id + ".name"),

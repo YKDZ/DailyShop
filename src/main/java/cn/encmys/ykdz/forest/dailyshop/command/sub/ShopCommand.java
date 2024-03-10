@@ -44,7 +44,7 @@ public class ShopCommand {
                 .withArguments(
                         new StringArgument("shop")
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
-                        )
+                )
                 .executes((sender, args) -> {
                     Shop shop = DailyShop.getShopFactory().getShop((String) args.get("shop"));
                     shop.restock();
@@ -57,7 +57,7 @@ public class ShopCommand {
     private CommandAPICommand getShopSaveCommand() {
         return new CommandAPICommand("save")
                 .executes((sender, args) -> {
-                    for(Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
+                    for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                         shop.saveData();
                     }
                     adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_save);

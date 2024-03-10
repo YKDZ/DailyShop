@@ -1,34 +1,45 @@
 settings:
   name: "<yellow>Blocks Shop"
   restock-timer: 1
-  size: 7
+  size: 10
 
 messages:
-  notification: "<dark_gray>[<red>!<dark_gray>] Shop {shop} just restocked!"
+  notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
+
+sounds:
+  buy: ENTITY_VILLAGER_YES
+  sell: ENTITY_VILLAGER_YES
 
 shop-gui:
-  title: "Hi %player_name%, Welcome to Daily Blocks Shop."
+  title: "Welcome %player_name%"
   layout:
   - "# # # # # # # # #"
+  - "# x x x x x x x #"
   - "# x x x x x x x #"
   - "# # # # @ # # # #"
   icons:
     "#":
-      material: BLACK_STAINED_GLASS_PANE
+      item: BLACK_STAINED_GLASS_PANE
       name: " "
     "@":
-      material: CLOCK
+      item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
+      update-timer: 10
   product:
-    name-format: "<dark_gray>Name: <reset>{name}"
+    name-format: "<dark_gray>Name: <reset>{name} x {amount}"
     lore-format:
       - " "
       - "<dark_gray>- <gray>Buy Price: <white>{buy-price}"
       - "<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+      - "@"
+      - "@<gray>Bundle Contents:"
+      - "{bundle-contents}"
+      - "@"
+      - "{desc-lore}"
       - " "
       - "<gray>Rarity: <reset>{rarity}"
-      - " "
-      - "{desc-lore}"
+    bundle-contents-line-format: " <dark_gray>- <reset>{name} <gray>x <white>{amount}"
 
 products:
   - PACK:concretes
+  - PACK:wools

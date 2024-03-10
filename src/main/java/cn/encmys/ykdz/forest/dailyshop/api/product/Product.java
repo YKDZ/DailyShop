@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.product;
 
+import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.item.GUIProductItem;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceProvider;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
@@ -29,6 +30,11 @@ public interface Product {
      */
     void buyFrom(@Nullable String shopId, Player player);
 
+    /**
+     * @param player Seller
+     */
+    void buyAllFrom(@Nullable String shopId, Player player);
+
     String getDisplayName();
 
     Material getMaterial();
@@ -44,4 +50,8 @@ public interface Product {
     PriceProvider getSellPriceProvider();
 
     void updatePrice(String shopId);
+
+    ProductType getType();
+
+    List<String> getBundleContents();
 }

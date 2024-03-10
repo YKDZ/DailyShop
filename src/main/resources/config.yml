@@ -1,7 +1,7 @@
 language: en_US
 
 decimal-format: "###,###.##"
-time-format: "hh:mm a"
+time-format: "HH:mm:ss"
 
 data-save-timer: 5
 

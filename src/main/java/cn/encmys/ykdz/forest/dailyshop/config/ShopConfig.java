@@ -1,12 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.config;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.util.ItemUtils;
-import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,20 +77,16 @@ public class ShopConfig {
         return getConfig(shopId).getConfigurationSection("shop-gui.icons").getKeys(false);
     }
 
-    public static @NotNull ItemStack getGUIIcon(String shopId, char iconId) {
-        Material material = Material.matchMaterial(getConfig(shopId).getString("shop-gui.icons." + iconId + ".material"));
-        String displayName = getConfig(shopId).getString("shop-gui.icons." + iconId + ". name");
-        List<String> lore = getConfig(shopId).getStringList("shop-gui.icons." + iconId + ".lore");
-
-        ItemStack icon = new ItemStack(material, 1);
-        ItemUtils.displayName(icon, displayName);
-        ItemUtils.lore(icon, lore);
-
-        return icon;
+    public static ConfigurationSection getGUIIconSection(String shopId, char iconId) {
+        return getGUISection(shopId).getConfigurationSection("icons." + iconId);
     }
 
     public static String getProductNameFormat(String shopId) {
         return getGUISection(shopId).getString("product.name-format", "{name}");
+    }
+
+    public static String getBundleContentsLineFormat(String shopId) {
+        return getGUISection(shopId).getString("product.bundle-contents-line-format", "<dark_gray>- {name} x {amount}");
     }
 
     public static List<String> getProductLoreFormat(String shopId) {
@@ -109,5 +103,15 @@ public class ShopConfig {
 
     public static String getRestockNotification(String shopId) {
         return getConfig(shopId).getString("messages.notification");
+    }
+
+    public static Sound getBuySound(String shopId) {
+        String sound = getConfig(shopId).getString("sounds.buy", "ENTITY_VILLAGER_YES").toUpperCase();
+        return Sound.valueOf(sound);
+    }
+
+    public static Sound getSellSound(String shopId) {
+        String sound = getConfig(shopId).getString("sounds.sell", "ENTITY_VILLAGER_YES").toUpperCase();
+        return Sound.valueOf(sound);
     }
 }

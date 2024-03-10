@@ -1,4 +1,4 @@
-# In this product pack, all product data
+# In this product pack, nearly all product data
 # except "item" is set at "default-settings".
 # This makes maintaining a large number of
 # similar products very easy.
@@ -15,15 +15,34 @@ default-settings:
 
 products:
   WARM_COLOR_CONCRETE_BUNDLE:
-    item: BUNDLE
+    item: ORANGE_SHULKER_BOX
     amount: 1
     display-name: "<white>Warm Color Concrete Bundle"
+    desc-lore:
+      - "<gray>A product bundle that contains"
+      - "<gray>all the <gold>warm color <gray>concrete x 16."
     bundle-contents:
       - ORANGE_CONCRETE
       - YELLOW_CONCRETE
-      - CYAN_CONCRETE
       - BROWN_CONCRETE
       - RED_CONCRETE
+    rarity: rare
+
+  COLD_COLOR_CONCRETE_BUNDLE:
+    item: BLUE_SHULKER_BOX
+    amount: 1
+    display-name: "<white>Cold Color Concrete Bundle"
+    desc-lore:
+      - "<gray>A product bundle that contains"
+      - "<gray>all the <blue>cold color <gray>concrete x 16."
+    bundle-contents:
+      - MAGENTA_CONCRETE
+      - LIGHT_BLUE_CONCRETE
+      - LIME_CONCRETE
+      - PURPLE_CONCRETE
+      - BLUE_CONCRETE
+      - GREEN_CONCRETE
+    rarity: rare
 
   WHITE_CONCRETE:
     item: WHITE_CONCRETE

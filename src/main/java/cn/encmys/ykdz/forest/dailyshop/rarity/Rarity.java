@@ -1,9 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.rarity;
 
 public class Rarity {
-    private String id;
-    private String name;
-    private int weight;
+    private final String id;
+    private final String name;
+    private final int weight;
 
     public Rarity(String id, String name, int weight) {
         this.id = id;
