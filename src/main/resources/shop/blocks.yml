@@ -31,10 +31,10 @@ shop-gui:
       - " "
       - "<dark_gray>- <gray>Buy Price: <white>{buy-price}"
       - "<dark_gray>- <gray>Sell Price: <white>{sell-price}"
-      - "@"
-      - "@<gray>Bundle Contents:"
+      - "|"
+      - "|<gray>Bundle Contents:"
       - "{bundle-contents}"
-      - "@"
+      - "|"
       - "{desc-lore}"
       - " "
       - "<gray>Rarity: <reset>{rarity}"
@@ -43,4 +43,7 @@ shop-gui:
 products:
   - PACK:concretes
   - PACK:wools
+  # In the default config, the chance for this shop
+  # to list this product is 0.56%.
   - WARM_WELCOME
+  - FLY_PERMISSION

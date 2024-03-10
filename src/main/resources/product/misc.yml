@@ -16,5 +16,16 @@ products:
     amount: 1
     display-name: "<white>Warm Welcome from server"
     commands:
-      - "tell %player_name% Welcome to my server!"
+      - "tell %player_name% Welcome!"
+      - "tell %player_name% Have fun!"
+    rarity: ancient
+
+  # Player can not sell a command product to store.
+  FLY_PERMISSION:
+    item: FEATHER
+    amount: 1
+    display-name: "<white>Fly for 30 minutes"
+    commands:
+      - "lp user %player_name% permission settemp cmi.command.fly true 30m"
+      - "tell %player_name% Now you can fly in 30 minutes!"
     rarity: ancient

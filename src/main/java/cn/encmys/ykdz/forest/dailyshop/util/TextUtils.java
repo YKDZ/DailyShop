@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TextUtils {
-    private static final String listMarker = "@";
+    private static final String listMarker = "|";
 
     public static List<String> parseVariables(List<String> lines, Map<String, String> vars) {
         List<String> result = new ArrayList<>();

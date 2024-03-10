@@ -85,7 +85,6 @@ public class Shop {
         ProductFactory productFactory = DailyShop.getProductFactory();
 
         listedProducts.clear();
-        Collections.shuffle(allProductsId);
 
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
@@ -94,36 +93,41 @@ public class Shop {
                 listedProducts.add(product);
             }
         } else {
-            int totalWeight = getTotalWeight();
-            List<String> temp = new ArrayList<>() {{
-                addAll(allProductsId);
-            }};
+            List<String> temp = new ArrayList<>(allProductsId);
+            List<Integer> intervals = new ArrayList<>();
+            int totalWeight = 0;
+
+            // Calculate cumulative weights and total weight
+            for (String productId : temp) {
+                Product product = productFactory.getProduct(productId);
+                totalWeight += product.getRarity().getWeight();
+                intervals.add(totalWeight);
+            }
+
             for (int i = 0; i < size; i++) {
-                int needed = random.nextInt(totalWeight);
-                int acc = 0;
-                Iterator<String> iterator = temp.iterator();
-                while (iterator.hasNext()) {
-                    String productId = iterator.next();
-                    Product product = productFactory.getProduct(productId);
-                    int weight = product.getRarity().getWeight();
-                    acc += weight;
-                    // Pick products and make price for them
-                    if (acc >= needed) {
-                        // Handle bundle contents
-                        // Make sure all the bundle content product has its price
-                        if (product.getType() == ProductType.BUNDLE) {
-                            for (String contentId : product.getBundleContents()) {
-                                Product content = productFactory.getProduct(contentId);
-                                content.updatePrice(id);
-                            }
-                        }
-                        product.updatePrice(id);
-                        listedProducts.add(product);
-                        totalWeight -= weight;
-                        iterator.remove();
-                        break;
+                int needed = random.nextInt(totalWeight) + 1; // Add 1 to avoid 0
+                int index = Collections.binarySearch(intervals, needed);
+                if (index < 0) {
+                    index = -index - 1;
+                }
+
+                // Handle bundle contents
+                String productId = temp.get(index);
+                Product product = productFactory.getProduct(productId);
+                if (product.getType() == ProductType.BUNDLE) {
+                    for (String contentId : product.getBundleContents()) {
+                        Product content = productFactory.getProduct(contentId);
+                        content.updatePrice(id);
                     }
                 }
+
+                product.updatePrice(id);
+                listedProducts.add(product);
+
+                // Update total weight and intervals
+                totalWeight -= product.getRarity().getWeight();
+                intervals.remove(index);
+                temp.remove(index);
             }
         }
 
