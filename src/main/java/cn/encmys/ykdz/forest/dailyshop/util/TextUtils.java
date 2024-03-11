@@ -1,32 +1,55 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class TextUtils {
+    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private static final String listMarker = "|";
 
-    public static List<String> parseVariables(List<String> lines, Map<String, String> vars) {
+    public static List<String> decorateText(List<String> text, @Nullable Player player) {
         List<String> result = new ArrayList<>();
-        for (String line : lines) {
-            result.add(parseVariables(line, vars));
+        for (String line : text) {
+            result.add(decorateText(line, player));
         }
         return result;
     }
 
-    public static String parseVariables(String line, Map<String, String> vars) {
+    public static String decorateText(String text, @Nullable Player player) {
+        return adventureManager.componentToLegacy(adventureManager.getComponentFromMiniMessage(PlaceholderAPI.setPlaceholders(player, text)));
+    }
+
+    public static List<String> parseInternalVariables(List<String> lines, Map<String, String> vars) {
+        if (lines == null) {
+            return null;
+        }
+
+        List<String> result = new ArrayList<>();
+        for (String line : lines) {
+            result.add(parseInternalVariables(line, vars));
+        }
+        return result;
+    }
+
+    public static String parseInternalVariables(String line, Map<String, String> vars) {
         for (Map.Entry<String, String> entry : vars.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (value != null) {
+            if (value != null && line != null) {
                 line = line.replace("{" + key + "}", value);
             }
         }
         return line;
     }
 
-    public static List<String> insertListVariables(List<String> lines, Map<String, List<String>> vars) {
+    public static List<String> insertListInternalVariables(List<String> lines, Map<String, List<String>> vars) {
         List<String> result = new ArrayList<>();
         for (String line : lines) {
             boolean keyLine = false;

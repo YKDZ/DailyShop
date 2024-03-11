@@ -31,7 +31,7 @@ public class Scheduler {
                 if (currentTime - shop.getLastRestocking() >= shop.getRestockTime() * 60L * 1000L) {
                     shop.restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        adventuremanager.sendPlayerMessage(player, TextUtils.parseVariables(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{
+                        adventuremanager.sendPlayerMessage(player, TextUtils.parseInternalVariables(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{
                             put("shop", shop.getName());
                         }}));
                     }

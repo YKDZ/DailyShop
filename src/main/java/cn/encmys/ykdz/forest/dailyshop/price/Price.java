@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class PriceProvider {
+public class Price {
     private static final Random random = new Random();
     private final Map<String, Double> prices = new HashMap<>();
     private PriceMode priceMode;
@@ -22,17 +22,17 @@ public class PriceProvider {
     // Whether round the price
     private boolean round = false;
 
-    public PriceProvider(ConfigurationSection priceSection) {
+    public Price(ConfigurationSection priceSection) {
         buildPrice(priceSection);
     }
 
-    public PriceProvider(double fixed) {
+    public Price(double fixed) {
         this.fixed = fixed;
         this.priceMode = PriceMode.FIXED;
         update("INTERNAL_SHOP");
     }
 
-    public PriceProvider(double mean, double dev, boolean round) {
+    public Price(double mean, double dev, boolean round) {
         this.mean = mean;
         this.dev = dev;
         this.round = round;
@@ -40,7 +40,7 @@ public class PriceProvider {
         update("INTERNAL_SHOP");
     }
 
-    public PriceProvider(double min, double max) {
+    public Price(double min, double max) {
         this.min = min;
         this.max = max;
         priceMode = PriceMode.MINMAX;

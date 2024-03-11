@@ -8,13 +8,14 @@ default-settings:
     mean: 20
     dev: 5
   rarity: uncommon
+  cacheable: false
 
 products:
   # Player can not sell a command product to store.
   WARM_WELCOME:
     item: SUNFLOWER
     amount: 1
-    display-name: "<white>Warm Welcome from server"
+    name: "<white>Warm Welcome from server"
     commands:
       - "tell %player_name% Welcome!"
       - "tell %player_name% Have fun!"
@@ -24,7 +25,7 @@ products:
   FLY_PERMISSION:
     item: FEATHER
     amount: 1
-    display-name: "<white>Fly for 30 minutes"
+    name: "<white>Fly for 30 minutes"
     commands:
       - "lp user %player_name% permission settemp cmi.command.fly true 30m"
       - "tell %player_name% Now you can fly in 30 minutes!"

@@ -48,7 +48,7 @@ public class ShopCommand {
                 .executes((sender, args) -> {
                     Shop shop = DailyShop.getShopFactory().getShop((String) args.get("shop"));
                     shop.restock();
-                    adventureManager.sendMessageWithPrefix(sender, TextUtils.parseVariables(MessageConfig.messages_command_restock, new HashMap<>() {{
+                    adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_restock, new HashMap<>() {{
                         put("shop", shop.getName());
                     }}));
                 });

@@ -13,9 +13,12 @@ public class MessageConfig {
     public static String messages_command_reload;
     public static String messages_command_restock;
     public static String messages_command_save;
-    public static String messages_action_buy;
-    public static String messages_action_sell;
-    public static String messages_action_sellAll;
+    public static String messages_action_buy_success;
+    public static String messages_action_buy_failure;
+    public static String messages_action_sell_success;
+    public static String messages_action_sell_failure;
+    public static String messages_action_sellAll_success;
+    public static String messages_action_sellAll_failure;
     public static int version;
     private static YamlConfiguration config;
 
@@ -36,9 +39,12 @@ public class MessageConfig {
         messages_command_reload = config.getString("messages.command.reload", "<lime>Successfully reload the plugin!");
         messages_command_restock = config.getString("messages.command.restock", "<lime>Successfully restock shop {shop} <lime>manually!");
         messages_command_save = config.getString("messages.command.save", "<lime>Successfully save all shop data manually!");
-        messages_action_buy = config.getString("messages.action.buy", "<green>Successfully buy <reset>{name} <gray>x <white>{amount} <green>from shop <reset>{shop}. The cost is {money}.");
-        messages_action_sell = config.getString("messages.action.sell", "<green>Successfully sell <reset>{name} <gray>x <white>{amount} <green>to shop <reset>{shop}. You earned {money}.");
-        messages_action_sellAll = config.getString("messages.action.sell-all", "<green>Successfully sell all of <reset>{name} <gray>x <white>{amount} <green> in your inventory to shop <reset>{shop}. You earned {money}.");
+        messages_action_buy_success = config.getString("messages.action.buy.success", "<green>Successfully buy <reset>{name} <gray>x <white>{amount} <green>from shop <reset>{shop}. The cost is {money}.");
+        messages_action_buy_failure = config.getString("messages.action.buy.failure", "<gray>You do not have enough <red>money <gray>to buy this product!");
+        messages_action_sell_success = config.getString("messages.action.sell.success", "<green>Successfully sell <reset>{name} <gray>x <white>{amount} <green>to shop <reset>{shop}. You earned {money}.");
+        messages_action_sell_failure = config.getString("messages.action.sell.failure", "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell.");
+        messages_action_sellAll_success = config.getString("messages.action.sell-all.success", "<green>Successfully sell all of <reset>{name} <gray>x <white>{amount} <green> in your inventory to shop <reset>{shop}. You earned {money}.");
+        messages_action_sellAll_failure = config.getString("messages.action.sell-all.failure", "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell.");
         version = config.getInt("version");
     }
 

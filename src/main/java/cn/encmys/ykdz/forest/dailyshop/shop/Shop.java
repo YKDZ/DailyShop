@@ -65,7 +65,7 @@ public class Shop {
         }
 
         for (Product product : listedProducts) {
-            builder.addContent(product.getGUIItem(id));
+            builder.addContent(product.getIconBuilder().build(id, product));
         }
 
         gui = builder.build();
@@ -117,11 +117,19 @@ public class Shop {
                 if (product.getType() == ProductType.BUNDLE) {
                     for (String contentId : product.getBundleContents()) {
                         Product content = productFactory.getProduct(contentId);
+                        // Cache Item
+                        if (content.isCacheable()) {
+                            content.cacheProductItem(id, null);
+                        }
                         content.updatePrice(id);
                     }
                 }
 
                 product.updatePrice(id);
+                // Cache Item
+                if (product.isCacheable()) {
+                    product.cacheProductItem(id, null);
+                }
                 listedProducts.add(product);
 
                 // Update total weight and intervals

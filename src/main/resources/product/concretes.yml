@@ -12,12 +12,17 @@ default-settings:
     mean: 20
     dev: 5
   rarity: uncommon
+  # Whether to cache the product item.
+  # This will reduce the lag of plugin,
+  # but will ignore the player-targeted placeholder
+  # like %player_name% in the name or lore of the item.
+  cacheable: true
 
 products:
   WARM_COLOR_CONCRETE_BUNDLE:
     item: ORANGE_SHULKER_BOX
     amount: 1
-    display-name: "<white>Warm Color Concrete Bundle"
+    name: "<white>Warm Color Concrete Bundle"
     desc-lore:
       - "<gray>A product bundle that contains"
       - "<gray>all the <gold>warm color <gray>concrete x 16."
@@ -31,7 +36,7 @@ products:
   COLD_COLOR_CONCRETE_BUNDLE:
     item: BLUE_SHULKER_BOX
     amount: 1
-    display-name: "<white>Cold Color Concrete Bundle"
+    name: "<white>Cold Color Concrete Bundle"
     desc-lore:
       - "<gray>A product bundle that contains"
       - "<gray>all the <blue>cold color <gray>concrete x 16."

@@ -44,7 +44,7 @@ public class ProductConfig {
         return packs.get(packId);
     }
 
-    public static List<String> getAllId() {
+    public static List<String> getAllPacksId() {
         return new ArrayList<>(packs.keySet());
     }
 
