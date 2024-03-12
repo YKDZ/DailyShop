@@ -1,8 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.factory;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
@@ -33,6 +35,14 @@ public class ShopFactory {
             }
 
             products.add(productId);
+        }
+
+        // Check whether the product actually exist.
+        for (String productId : products) {
+            if (!DailyShop.getProductFactory().containsProduct(productId)) {
+                products.remove(productId);
+                LogUtils.warn("Product " + productId + " in shop " + id + " not exist.");
+            }
         }
 
         Shop shop = new Shop(

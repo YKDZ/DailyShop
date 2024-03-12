@@ -169,21 +169,21 @@ public class ProductIconBuilder {
                         return;
                     }
                     adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_buy_success, vars));
-                    player.playSound(player, ShopConfig.getBuySound(shopId), 1f, 1f);
+                    player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
                     if (!product.buyFrom(shopId, player)) {
                         adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sell_failure, vars));
                         return;
                     }
                     adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sell_success, vars));
-                    player.playSound(player, ShopConfig.getSellSound(shopId), 1f, 1f);
+                    player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
                     adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sellAll_failure, vars));
                     if (!product.buyAllFrom(shopId, player)) {
                         return;
                     }
                     adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sellAll_success, vars));
-                    player.playSound(player, ShopConfig.getSellSound(shopId), 1f, 1f);
+                    player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 
                 notifyWindows();
@@ -191,64 +191,3 @@ public class ProductIconBuilder {
         };
     }
 }
-
-//    @Override
-//    public ItemProvider getItemProvider() {
-//        ProductFactory productFactory = DailyShop.getProductFactory();
-//        DecimalFormat decimalFormat = Config.getDecimalFormat();
-//
-//        List<String> bundleContentsLore = new ArrayList<>();
-//        for (String contentId : product.getBundleContents()) {
-//            Product content = productFactory.getProduct(contentId);
-//            bundleContentsLore.add(TextUtils.parseVariables(ShopConfig.getBundleContentsLineFormat(shopId), new HashMap<>() {{
-//                put("name", content.getDisplayName());
-//                put("amount", String.valueOf(content.getAmount()));
-//            }}));
-//        }
-//
-//        Map<String, String> vars = new HashMap<>() {{
-//            put("name", product.getDisplayName());
-//            put("amount", String.valueOf(product.getAmount()));
-//            put("buy-price", decimalFormat.format(product.getBuyPriceProvider().getPrice(shopId)));
-//            put("sell-price", decimalFormat.format(product.getSellPriceProvider().getPrice(shopId)));
-//            put("rarity", product.getRarity().getName());
-//        }};
-//
-//        Component name = adventureManager.getComponentFromMiniMessage(TextUtils.parseVariables(ShopConfig.getProductNameFormat(shopId), vars));
-//
-//        List<Component> lores = adventureManager.getComponentFromMiniMessage(TextUtils.insertListVariables(TextUtils.parseVariables(ShopConfig.getProductLoreFormat(shopId), vars), new HashMap<>() {{
-//            put("desc-lore", product.getDescLore());
-//            put("bundle-contents", bundleContentsLore);
-//        }}));
-//
-//        return new ItemBuilder(product.getMaterial())
-//                .setAmount(product.getAmount())
-//                .addLoreLines(adventureManager.componentToLegacy(lores).toArray(new String[0]))
-//                .setDisplayName(adventureManager.componentToLegacy(name));
-//    }
-//
-//    @Override
-//    public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-//        HashMap<String, String> vars = new HashMap<>() {{
-//            put("name", product.getDisplayName());
-//            put("amount", String.valueOf(product.getAmount()));
-//            put("shop", DailyShop.getShopFactory().getShop(shopId).getName());
-//            put("money", String.valueOf(product.getBuyPriceProvider().getPrice(shopId)));
-//        }};
-//
-//        if (clickType == ClickType.LEFT) {
-//            product.sellTo(shopId, player);
-//            adventureManager.sendMessageWithPrefix(player, TextUtils.parseVariables(MessageConfig.messages_action_buy, vars));
-//            player.playSound(player, ShopConfig.getBuySound(shopId), 1f, 1f);
-//        } else if (clickType == ClickType.RIGHT) {
-//            product.buyFrom(shopId, player);
-//            adventureManager.sendMessageWithPrefix(player, TextUtils.parseVariables(MessageConfig.messages_action_sell, vars));
-//            player.playSound(player, ShopConfig.getSellSound(shopId), 1f, 1f);
-//        } else if (clickType == ClickType.SHIFT_RIGHT) {
-//            product.buyAllFrom(shopId, player);
-//            adventureManager.sendMessageWithPrefix(player, TextUtils.parseVariables(MessageConfig.messages_action_sellAll, vars));
-//            player.playSound(player, ShopConfig.getSellSound(shopId), 1f, 1f);
-//        }
-//
-//        notifyWindows();
-//    }

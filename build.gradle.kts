@@ -70,7 +70,6 @@ dependencies {
     implementation("xyz.xenondevs.invui:invui:1.26")
 
     implementation("org.jetbrains:annotations:24.0.0")
-    annotationProcessor("javax.annotation:javax.annotation-api:1.3.2")
 
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
@@ -82,7 +81,7 @@ dependencies {
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
-    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
+    implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
 }
 
 tasks {

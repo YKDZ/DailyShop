@@ -23,6 +23,7 @@ public class Shop {
      * Product slot marker icon in the layout
      */
     private static final char productIdentifier = 'x';
+    private static final List<Window> windows = new ArrayList<>();
     private final String id;
     private final String name;
     private final int restockTime;
@@ -51,11 +52,16 @@ public class Shop {
         buildGUI(guiSection);
     }
 
+    public static List<Window> getWindows() {
+        return windows;
+    }
+
     public void buildGUI(@NotNull ConfigurationSection guiSection) {
         ScrollGui.Builder<@NotNull Item> builder = ScrollGui.items()
                 .setStructure(guiSection.getStringList("layout").toArray(new String[0]))
                 .addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
 
+        // Normal Icon
         for (String iconKey : ShopConfig.getGUIIcons(id)) {
             char key = iconKey.charAt(0);
             if (key == productIdentifier) {
@@ -64,6 +70,7 @@ public class Shop {
             builder.addIngredient(key, GUIIconUtils.getGUIIcon(ShopConfig.getGUIIconSection(id, key)));
         }
 
+        // Product Icon
         for (Product product : listedProducts) {
             builder.addContent(product.getIconBuilder().build(id, product));
         }
@@ -72,12 +79,20 @@ public class Shop {
     }
 
     public void openGUI(Player player) {
-        Window.single()
-                .setGui(gui)
-                .setViewer(player)
-                .setTitle(PlaceholderAPI.setPlaceholders(player, ShopConfig.getGUITitle(id)))
-                .build()
-                .open();
+        Window window = Window.single()
+                        .setGui(gui)
+                        .setViewer(player)
+                        .setTitle(PlaceholderAPI.setPlaceholders(player, ShopConfig.getGUITitle(id)))
+                        .build();
+
+        window.setCloseHandlers(new ArrayList<>() {{
+            add(() -> {
+                getWindows().remove(window);
+            });
+        }});
+
+        getWindows().add(window);
+        window.open();
     }
 
     public void restock() {
@@ -139,6 +154,11 @@ public class Shop {
             }
         }
 
+        // Close all windows
+        for (Window window : getWindows()) {
+            window.close();
+        }
+
         buildGUI(guiSection);
         lastRestocking = System.currentTimeMillis();
     }
@@ -195,5 +215,14 @@ public class Shop {
 
     public List<String> getAllProductsId() {
         return allProductsId;
+    }
+
+    public boolean isListedProduct(String id) {
+        for (Product product : listedProducts) {
+            if (product.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

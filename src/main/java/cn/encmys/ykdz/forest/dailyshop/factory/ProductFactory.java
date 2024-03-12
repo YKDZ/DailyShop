@@ -182,6 +182,10 @@ public class ProductFactory {
         return products.get(id);
     }
 
+    public boolean containsProduct(String id) {
+        return products.containsKey(id);
+    }
+
     public void unload() {
         products.clear();
     }

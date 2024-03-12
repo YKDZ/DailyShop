@@ -5,13 +5,13 @@ import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public class Scheduler {
     private final DailyShop plugin;
@@ -46,7 +46,7 @@ public class Scheduler {
             for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                 shop.saveData();
             }
-            DailyShop.getInstance().getLogger().log(Level.INFO, "Successfully save shop data.");
+            LogUtils.info("Successfully save shop data.");
         }, 0, Config.dataSaveTimer * 60L * 20L);
     }
 }

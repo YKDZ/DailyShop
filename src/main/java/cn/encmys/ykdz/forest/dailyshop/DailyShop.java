@@ -14,11 +14,10 @@ import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.rubix327.itemslangapi.ItemsLangAPI;
 import me.rubix327.itemslangapi.Lang;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Level;
 
 public final class DailyShop extends JavaPlugin {
     private static DailyShop instance;
@@ -77,6 +76,8 @@ public final class DailyShop extends JavaPlugin {
         ProductConfig.load();
         ShopConfig.load();
 
+        itemsLangAPI.load(Lang.valueOf(Config.language.toUpperCase()));
+
         rarityFactory = new RarityFactory();
         productFactory = new ProductFactory();
         shopFactory = new ShopFactory();
@@ -97,10 +98,6 @@ public final class DailyShop extends JavaPlugin {
             return;
         }
 
-        if (setupItemsLangAPI()) {
-            getLogger().log(Level.INFO, "Hooked into ItemsLangAPI!");
-        }
-
         adventureManager = new AdventureManager(instance);
 
         Config.load();
@@ -108,6 +105,10 @@ public final class DailyShop extends JavaPlugin {
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
+
+        if (!setupItemsLangAPI()) {
+            return;
+        }
 
         database = new Database(instance.getDataFolder().getPath());
 
@@ -120,8 +121,12 @@ public final class DailyShop extends JavaPlugin {
         CommandAPI.onEnable();
         new CommandHandler(instance).load();
 
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPIHook(this).register();
+        }
+
+        if (!setupBStats()) {
+            return;
         }
     }
 
@@ -150,7 +155,13 @@ public final class DailyShop extends JavaPlugin {
             return false;
         }
         itemsLangAPI = ItemsLangAPI.getApi();
-        itemsLangAPI.load(Lang.EN_US, Lang.ZH_CN);
+        itemsLangAPI.load(Lang.valueOf(Config.language.toUpperCase()));
+        return true;
+    }
+
+    private boolean setupBStats() {
+        int pluginId = 21305; // <-- Replace with the id of your plugin!
+        Metrics metrics = new Metrics(this, pluginId);
         return true;
     }
 }
