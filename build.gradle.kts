@@ -63,13 +63,11 @@ dependencies {
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
-    implementation("dev.jorel:commandapi-annotations:9.3.0")
+    compileOnly("dev.jorel:commandapi-annotations:9.3.0")
     implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")
     annotationProcessor("dev.jorel:commandapi-annotations:9.3.0")
 
     implementation("xyz.xenondevs.invui:invui:1.26")
-
-    implementation("org.jetbrains:annotations:24.0.0")
 
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
@@ -81,7 +79,7 @@ dependencies {
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
-    implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
+    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
 }
 
 tasks {
@@ -90,5 +88,8 @@ tasks {
         relocate("dev.jorel.commandapi", "cn.encmys.ykdz.forest.dailyshop.libraries.commandapi")
         relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
         relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
+        relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
+        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations")
+        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations")
     }
 }
