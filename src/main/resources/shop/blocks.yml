@@ -1,7 +1,7 @@
 settings:
   name: "<yellow>Blocks Shop"
-  restock-timer: 1
-  size: 10
+  restock-timer: 10
+  size: 12
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"

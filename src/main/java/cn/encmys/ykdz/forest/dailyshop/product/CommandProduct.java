@@ -1,11 +1,13 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -45,6 +47,9 @@ public class CommandProduct extends Product {
         if (!canSellTo(shopId, player)) {
             return false;
         }
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+
+        BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
 
         for (int i = 0; i < getProductItemBuilder().getAmount(); i++) {
             for (String command : commands) {
@@ -56,7 +61,8 @@ public class CommandProduct extends Product {
 
     @Override
     public boolean canSellTo(@Nullable String shopId, Player player) {
-        return BalanceUtils.removeBalance(player, getSellPriceProvider().getPrice(shopId)).transactionSuccess();
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+        return BalanceUtils.checkBalance(player) >= shop.getBuyPrice(getId());
     }
 
     @Override

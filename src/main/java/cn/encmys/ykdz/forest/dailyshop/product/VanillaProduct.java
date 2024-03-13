@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
@@ -33,17 +34,19 @@ public class VanillaProduct extends Product {
             getProductItemCache().put(shopId, getProductItemBuilder().build(player));
         }
 
-        if (canSellTo(shopId, player)) {
-            PlayerUtils.giveItem(player, getProductItemCache().get(shopId));
-            return true;
+        if (!canSellTo(shopId, player)) {
+            return false;
         }
 
-        return false;
+        BalanceUtils.removeBalance(player, DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId()));
+        PlayerUtils.giveItem(player, getProductItemCache().get(shopId));
+
+        return true;
     }
 
     @Override
     public boolean canSellTo(@Nullable String shopId, Player player) {
-        return BalanceUtils.removeBalance(player, getSellPriceProvider().getPrice(shopId)).transactionSuccess();
+        return BalanceUtils.checkBalance(player) >= DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
     }
 
     @Override
@@ -53,7 +56,7 @@ public class VanillaProduct extends Product {
         }
 
         if (PlayerUtils.takeItem(player, getProductItemCache().get(shopId))) {
-            BalanceUtils.addBalance(player, getBuyPriceProvider().getPrice(shopId));
+            BalanceUtils.addBalance(player, DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()));
             return true;
         }
 

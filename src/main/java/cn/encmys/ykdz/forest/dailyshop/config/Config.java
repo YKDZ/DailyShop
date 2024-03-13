@@ -7,13 +7,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 public class Config {
     private static final DailyShop plugin = DailyShop.getInstance();
     public static String language;
     private static String decimalFormat;
-    private static String timeFormat;
+    public static String timeFormat;
     public static int dataSaveTimer;
     public static int version;
     private static YamlConfiguration config;
@@ -44,7 +43,7 @@ public class Config {
     private static void setUp() {
         language = config.getString("language", "en_US");
         decimalFormat = config.getString("decimal-format", "###,###.##");
-        timeFormat = config.getString("time-format", "hh:mm a");
+        timeFormat = config.getString("time-format", "%02dh:%02dm:%02ds");
         dataSaveTimer = config.getInt("data-save-timer", 5);
         version = config.getInt("version");
     }
@@ -55,9 +54,5 @@ public class Config {
 
     public static DecimalFormat getDecimalFormat() {
         return new DecimalFormat(decimalFormat);
-    }
-
-    public static SimpleDateFormat getSimpleDateFormat() {
-        return new SimpleDateFormat(timeFormat);
     }
 }

@@ -3,13 +3,10 @@ package cn.encmys.ykdz.forest.dailyshop.price;
 import cn.encmys.ykdz.forest.dailyshop.enums.PriceMode;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class Price {
     private static final Random random = new Random();
-    private final Map<String, Double> prices = new HashMap<>();
     private PriceMode priceMode;
     // Fixed Mode
     private double fixed;
@@ -29,7 +26,6 @@ public class Price {
     public Price(double fixed) {
         this.fixed = fixed;
         this.priceMode = PriceMode.FIXED;
-        update("INTERNAL_SHOP");
     }
 
     public Price(double mean, double dev, boolean round) {
@@ -37,49 +33,45 @@ public class Price {
         this.dev = dev;
         this.round = round;
         priceMode = PriceMode.GAUSSIAN;
-        update("INTERNAL_SHOP");
     }
 
     public Price(double min, double max) {
         this.min = min;
         this.max = max;
         priceMode = PriceMode.MINMAX;
-        update("INTERNAL_SHOP");
     }
 
     private void buildPrice(ConfigurationSection priceSection) {
         if (priceSection.contains("fixed")) {
             this.fixed = priceSection.getDouble("fixed");
             priceMode = PriceMode.FIXED;
-            update("INTERNAL_SHOP");
         } else if (priceSection.contains("mean") && priceSection.contains("dev")) {
             this.mean = priceSection.getDouble("mean");
             this.dev = priceSection.getDouble("dev");
             this.round = priceSection.getBoolean("round", false);
             priceMode = PriceMode.GAUSSIAN;
-            update("INTERNAL_SHOP");
         } else if (priceSection.contains("min") && priceSection.contains("max")) {
             this.min = priceSection.getDouble("min");
             this.max = priceSection.getDouble("max");
             this.round = priceSection.getBoolean("round", false);
             priceMode = PriceMode.MINMAX;
-            update("INTERNAL_SHOP");
         } else {
             throw new IllegalArgumentException("Invalid price setting.");
         }
     }
 
-    public double getPrice(String shopId) {
-        return shopId == null ? prices.get("INTERNAL_SHOP") : prices.get(shopId);
-    }
-
-    public void update(String shopId) {
+    public double getNewPrice() {
         switch (priceMode) {
-            case GAUSSIAN -> prices.put(shopId,
-                    round ? Math.round(mean + dev * random.nextGaussian()) : mean + dev * random.nextGaussian());
-            case FIXED -> prices.put(shopId, fixed);
-            case MINMAX -> prices.put(shopId,
-                    round ? Math.round(min + (max - min) * random.nextDouble()) : min + (max - min) * random.nextDouble());
+            case GAUSSIAN -> {
+                return round ? Math.round(mean + dev * random.nextGaussian()) : mean + dev * random.nextGaussian();
+            }
+            case FIXED -> {
+                return fixed;
+            }
+            case MINMAX -> {
+                return round ? Math.round(min + (max - min) * random.nextDouble()) : min + (max - min) * random.nextDouble();
+            }
         }
+        return -1;
     }
 }

@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import me.rubix327.itemslangapi.ItemsLangAPI;
 import net.kyori.adventure.text.Component;
@@ -115,6 +116,7 @@ public class ProductIconBuilder {
         return new AbstractItem() {
             @Override
             public ItemProvider getItemProvider() {
+                Shop shop = DailyShop.getShopFactory().getShop(shopId);
                 setNameFormat(ShopConfig.getProductNameFormat(shopId));
                 setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
                 setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
@@ -136,8 +138,8 @@ public class ProductIconBuilder {
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
-                    put("buy-price", decimalFormat.format(product.getBuyPriceProvider().getPrice(shopId)));
-                    put("sell-price", decimalFormat.format(product.getSellPriceProvider().getPrice(shopId)));
+                    put("buy-price", decimalFormat.format(shop.getBuyPrice(product.getId())));
+                    put("sell-price", decimalFormat.format(shop.getSellPrice(product.getId())));
                     put("rarity", product.getRarity().getName());
                 }};
 
@@ -156,11 +158,12 @@ public class ProductIconBuilder {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+                Shop shop = DailyShop.getShopFactory().getShop(shopId);
                 HashMap<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
                     put("shop", DailyShop.getShopFactory().getShop(shopId).getName());
-                    put("money", String.valueOf(product.getBuyPriceProvider().getPrice(shopId)));
+                    put("money", String.valueOf(shop.getBuyPrice(product.getId())));
                 }};
 
                 if (clickType == ClickType.LEFT) {
@@ -186,7 +189,8 @@ public class ProductIconBuilder {
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 
-                notifyWindows();
+                // Not needed before Total market volume Feature
+                // notifyWindows();
             }
         };
     }

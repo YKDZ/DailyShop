@@ -5,7 +5,9 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.util.GUIIconUtils;
+import com.google.gson.annotations.Expose;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -23,6 +25,7 @@ public class Shop {
      * Product slot marker icon in the layout
      */
     private static final char productIdentifier = 'x';
+    private static final ProductFactory productFactory = DailyShop.getProductFactory();
     private static final List<Window> windows = new ArrayList<>();
     private final String id;
     private final String name;
@@ -30,9 +33,13 @@ public class Shop {
     private final List<String> allProductsId;
     private final ConfigurationSection guiSection;
     private final int size;
-    private final List<Product> listedProducts = new ArrayList<>();
     private Gui gui;
+    @Expose
+    private List<String> listedProducts = new ArrayList<>();
+    @Expose
     private long lastRestocking;
+    @Expose
+    private Map<String, PricePair> cachedPrice = new HashMap<>();
 
     /**
      * @param id            Shop id
@@ -48,15 +55,13 @@ public class Shop {
         this.allProductsId = allProductsId;
         this.size = size;
         this.guiSection = guiSection;
-        loadData();
-        buildGUI(guiSection);
     }
 
     public static List<Window> getWindows() {
         return windows;
     }
 
-    public void buildGUI(@NotNull ConfigurationSection guiSection) {
+    public void buildGUI() {
         ScrollGui.Builder<@NotNull Item> builder = ScrollGui.items()
                 .setStructure(guiSection.getStringList("layout").toArray(new String[0]))
                 .addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
@@ -71,7 +76,8 @@ public class Shop {
         }
 
         // Product Icon
-        for (Product product : listedProducts) {
+        for (String productId : listedProducts) {
+            Product product = productFactory.getProduct(productId);
             builder.addContent(product.getIconBuilder().build(id, product));
         }
 
@@ -79,6 +85,10 @@ public class Shop {
     }
 
     public void openGUI(Player player) {
+        if (gui == null) {
+            buildGUI();
+        }
+
         Window window = Window.single()
                         .setGui(gui)
                         .setViewer(player)
@@ -86,9 +96,7 @@ public class Shop {
                         .build();
 
         window.setCloseHandlers(new ArrayList<>() {{
-            add(() -> {
-                getWindows().remove(window);
-            });
+            add(() -> getWindows().remove(window));
         }});
 
         getWindows().add(window);
@@ -104,8 +112,8 @@ public class Shop {
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
                 Product product = productFactory.getProduct(productId);
-                product.updatePrice(id);
-                listedProducts.add(product);
+                cachePrice(productId, product.getNewPricePair());
+                listedProducts.add(productId);
             }
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
@@ -136,16 +144,16 @@ public class Shop {
                         if (content.isCacheable()) {
                             content.cacheProductItem(id, null);
                         }
-                        content.updatePrice(id);
+                        cachePrice(productId, product.getNewPricePair());
                     }
                 }
 
-                product.updatePrice(id);
+                cachePrice(productId, product.getNewPricePair());
                 // Cache Item
                 if (product.isCacheable()) {
                     product.cacheProductItem(id, null);
                 }
-                listedProducts.add(product);
+                listedProducts.add(productId);
 
                 // Update total weight and intervals
                 totalWeight -= product.getRarity().getWeight();
@@ -159,38 +167,8 @@ public class Shop {
             window.close();
         }
 
-        buildGUI(guiSection);
+        buildGUI();
         lastRestocking = System.currentTimeMillis();
-    }
-
-    public int getTotalWeight() {
-        int sumWeight = 0;
-        for (String productId : allProductsId) {
-            Product product = DailyShop.getProductFactory().getProduct(productId);
-            sumWeight += product.getRarity().getWeight();
-        }
-        return sumWeight;
-    }
-
-    public void loadData() {
-        List<String> listedProductsId = DailyShop.getDatabase().loadShopData().get(id);
-        if (listedProductsId == null) {
-            restock();
-        } else {
-            for (String productId : listedProductsId) {
-                listedProducts.add(DailyShop.getProductFactory().getProduct(productId));
-            }
-        }
-    }
-
-    public void saveData() {
-        Map<String, List<String>> dataMap = new HashMap<>();
-        List<String> listedProductsId = new ArrayList<>();
-        for (Product product : listedProducts) {
-            listedProductsId.add(product.getId());
-        }
-        dataMap.put(id, listedProductsId);
-        DailyShop.getDatabase().saveShopData(dataMap);
     }
 
     public long getLastRestocking() {
@@ -209,7 +187,7 @@ public class Shop {
         return id;
     }
 
-    public List<Product> getListedProducts() {
+    public List<String> getListedProducts() {
         return listedProducts;
     }
 
@@ -218,11 +196,34 @@ public class Shop {
     }
 
     public boolean isListedProduct(String id) {
-        for (Product product : listedProducts) {
-            if (product.getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
+        return listedProducts.contains(id);
+    }
+
+    public void setLastRestocking(long lastRestocking) {
+        this.lastRestocking = lastRestocking;
+    }
+
+    public void setListedProducts(List<String> listedProducts) {
+        this.listedProducts = listedProducts;
+    }
+
+    public Map<String, PricePair> getCachedPrice() {
+        return cachedPrice;
+    }
+
+    public void setCachedPrice(Map<String, PricePair> cachedPrice) {
+        this.cachedPrice = cachedPrice;
+    }
+
+    public void cachePrice(String id, PricePair pricePair) {
+        getCachedPrice().put(id, pricePair);
+    }
+
+    public double getBuyPrice(String productId) {
+        return getCachedPrice().get(productId).getBuy();
+    }
+
+    public double getSellPrice(String productId) {
+        return getCachedPrice().get(productId).getSell();
     }
 }

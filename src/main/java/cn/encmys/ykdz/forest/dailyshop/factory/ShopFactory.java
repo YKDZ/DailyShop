@@ -7,17 +7,13 @@ import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
 import javax.management.openmbean.InvalidKeyException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ShopFactory {
     private static final HashMap<String, Shop> shops = new HashMap<>();
 
     public ShopFactory() {
-        for (String id : ShopConfig.getAllId()) {
-            buildShop(id);
-        }
+        load();
     }
 
     public Shop buildShop(String id) {
@@ -38,9 +34,11 @@ public class ShopFactory {
         }
 
         // Check whether the product actually exist.
-        for (String productId : products) {
+        Iterator<String> iterator = products.iterator();
+        while (iterator.hasNext()) {
+            String productId = iterator.next();
             if (!DailyShop.getProductFactory().containsProduct(productId)) {
-                products.remove(productId);
+                iterator.remove();
                 LogUtils.warn("Product " + productId + " in shop " + id + " not exist.");
             }
         }
@@ -66,10 +64,42 @@ public class ShopFactory {
         return shops;
     }
 
-    public void unload() {
-        for (Shop shop : shops.values()) {
-            shop.saveData();
+    public void load() {
+        // Build shop
+        for (String id : ShopConfig.getAllId()) {
+            buildShop(id);
         }
+
+        // Load data to built shop
+        Map<String, Shop> data = DailyShop.getDatabase().loadShopData();
+        for (Map.Entry<String, Shop> entry : data.entrySet()) {
+            String id = entry.getKey();
+            Shop dataShop = entry.getValue();
+            Shop shop = getShop(id);
+            if (shop == null) {
+                continue;
+            }
+            shop.setLastRestocking(dataShop.getLastRestocking());
+            shop.setListedProducts(dataShop.getListedProducts());
+            shop.setCachedPrice(dataShop.getCachedPrice());
+        }
+
+        // Build shop gui
+        for (Shop shop : getAllShops().values()) {
+            shop.buildGUI();
+        }
+    }
+
+    public void unload() {
+        HashMap<String, Shop> dataMap = new HashMap();
+        for (Shop shop : getAllShops().values()) {
+            dataMap.put(shop.getId(), shop);
+        }
+        DailyShop.getDatabase().saveShopData(dataMap);
         shops.clear();
+    }
+
+    public void clean() {
+
     }
 }

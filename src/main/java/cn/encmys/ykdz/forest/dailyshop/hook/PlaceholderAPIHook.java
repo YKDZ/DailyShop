@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.hook;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -44,10 +45,10 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 return "Shop " + shopId + " not exist.";
             }
             long remain = shop.getRestockTime() * 60L * 1000L - (System.currentTimeMillis() - shop.getLastRestocking());
-            return String.format("%02d:%02d:%02d",
+            return String.format(Config.timeFormat,
                     TimeUnit.MILLISECONDS.toHours(remain),
-                    TimeUnit.MILLISECONDS.toMinutes(remain),
-                    TimeUnit.MILLISECONDS.toSeconds(remain)
+                    TimeUnit.MILLISECONDS.toMinutes(remain) % 60,
+                    TimeUnit.MILLISECONDS.toSeconds(remain) % 60
             );
         }
 

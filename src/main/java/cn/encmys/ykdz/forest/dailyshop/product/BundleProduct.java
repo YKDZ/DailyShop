@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,9 @@ public class BundleProduct extends Product {
         if (!canSellTo(shopId, player)) {
             return false;
         }
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+
+        BalanceUtils.removeBalance(player, shop.getBuyPrice(shopId));
 
         for (String productId : bundleContents) {
             DailyShop.getProductFactory().getProduct(productId).sellTo(shopId, player);
@@ -53,7 +57,8 @@ public class BundleProduct extends Product {
 
     @Override
     public boolean canSellTo(@Nullable String shopId, Player player) {
-        return BalanceUtils.removeBalance(player, getSellPriceProvider().getPrice(shopId)).transactionSuccess();
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+        return BalanceUtils.checkBalance(player) >= shop.getBuyPrice(getId());
     }
 
     @Override
