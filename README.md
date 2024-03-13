@@ -1,6 +1,14 @@
 # DailyShop
 
-A spigot plugin inspired by [DailyShop](https://github.com/divios/DailyShop).
+English | [中文](README_ZH_CN.md)
+
+# Intro
+
+A SpigotMC plugin inspired by [DailyShop](https://github.com/divios/DailyShop).
+
+## Document
+
+You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 
 ## Todo
 
