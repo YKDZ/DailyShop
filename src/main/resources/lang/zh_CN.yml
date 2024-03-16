@@ -1,18 +1,31 @@
+# 传统的颜色格式 (使用 & 符号) 不受支持,
+# 请使用 MiniMessage 格式, 参考以下页面:
+# https://docs.adventure.kyori.net/minimessage/format.html
+
 messages:
   prefix: "<gold>DailyShop <dark_gray>- "
+  no-permission: "<red>你没有这么做的权限."
   command:
-    reload: "<green>成功重载插件!"
-    restock: "<green>成功手动刷新了商店 {shop}<green>!"
-    save: "<green>成功手动保存了所有商店数据!"
+    reload:
+      success: "<green>成功重载插件!"
+    shop:
+      open:
+        success: ""
+        invalid-shop: "<red>商店 {shop} <red>不存在!"
+      restock:
+        success: "<green>成功手动刷新了商店 {shop}<green>!"
+        invalid-shop: "<red>商店 {shop} <red>不存在!"
+      save:
+        success: "<green>成功手动保存了所有商店数据!"
   action:
     buy:
-      success: "<gray>成功从商店 <reset>{shop}<gray> 购买了 <reset>{name} <gray>x <white>{amount} <gray>. 花费共 <white>{money}."
+      success: "<gray>成功从商店 <reset>{shop}<gray> 购买了 <reset>{name} <gray>x <white>{amount} <gray>. 花费共 <white>{cost}."
       failure: "<gray>你没有足够的 <red>余额 <gray>来购买 <reset>{name} <gray>x <white>{amount}<gray>!"
     sell:
-      success: "<gray>成功将 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{money}."
+      success: "<gray>成功将 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{earn}."
       failure: "<gray>你的背包中没有 <reset>{name} <gray>x <white>{amount} <gray>以供出售."
     sell-all:
-      success: "<gray>成功将背包中所有的 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{money}."
+      success: "<gray>成功将背包中的 <white>{stack} <gray>份 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{earn}."
       failure: "<gray>你的背包中没有 <reset>{name} <gray>x <white>{amount} <gray>以供出售."
 
 version: 1

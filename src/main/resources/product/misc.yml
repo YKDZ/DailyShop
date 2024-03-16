@@ -8,7 +8,7 @@ default-settings:
     mean: 20
     dev: 5
   rarity: uncommon
-  cacheable: false
+  cacheable: true
 
 products:
   # Player can not sell a command product to store.
@@ -21,7 +21,8 @@ products:
       - "tell %player_name% Have fun!"
     rarity: ancient
 
-  # Player can not sell a command product to store.
+  # You can use command product to do various of things
+  # like sell a permission.
   FLY_PERMISSION:
     item: FEATHER
     amount: 1
@@ -30,3 +31,36 @@ products:
       - "lp user %player_name% permission settemp cmi.command.fly true 30m"
       - "tell %player_name% Now you can fly in 30 minutes!"
     rarity: ancient
+
+  # This product will not load if MMOItems plugin is not installed.
+  LONG_SWORD:
+    item: MI:SWORD:LONG_SWORD
+    amount: 1
+    desc-lore:
+      - "<gray>This is a Long Sword from <white>MMOItems<gray>."
+      - "<gray>These lore will not be applied to the product item."
+    # For the mmoitem that has random modifier, level or stat value things,
+    # you need to disable cache to enable it, or every product item
+    # that player buy will be the same without any random.
+    cacheable: false
+
+  # This product will not load if MMOItems plugin is not installed.
+  STEEL_INGOT:
+    item: MI:MATERIAL:STEEL_INGOT
+    amount: 16
+    desc-lore:
+      - "<gray>This is a Steel Ingot from <white>MMOItems<gray>."
+      - "<gray>These lore will not be applied to the product item."
+    # For the static mmoitem item like material, you should
+    # enable cache to reduce the lag.
+    cacheable: true
+
+  # This product will not load if ItemsAdder plugin is not installed.
+  PIZZA:
+    item: IA:iasurvival:pizza
+    amount: 1
+    desc-lore:
+      - "<gray>This is a Steel Ingot from <white>ItemsAdder<gray>."
+      - "<gray>These lore will not be applied to the product item."
+
+

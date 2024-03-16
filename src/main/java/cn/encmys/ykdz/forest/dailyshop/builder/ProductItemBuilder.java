@@ -2,8 +2,8 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
-import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,9 +21,18 @@ public class ProductItemBuilder {
     private int amount;
     private List<String> itemFLags;
 
+    private ProductItemBuilder() {
+    }
+
     public static ProductItemBuilder mmoitems(String type, String id) {
+        ItemStack item = MMOItemsHook.buildItem(type, id);
         return new ProductItemBuilder()
-                .setBase(MMOItems.plugin.getItem(type.toUpperCase(), id));
+                .setBase(item);
+    }
+
+    public static ProductItemBuilder vanilla(Material material) {
+        return new ProductItemBuilder()
+                .setMaterial(material);
     }
 
     public ProductItemBuilder setBase(ItemStack base) {
@@ -75,7 +84,7 @@ public class ProductItemBuilder {
         return lores;
     }
 
-    public ProductItemBuilder setLores(List<String> lores) {
+    public ProductItemBuilder setLore(List<String> lores) {
         this.lores = lores;
         return this;
     }

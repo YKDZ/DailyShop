@@ -29,26 +29,46 @@ public class ShopCommand {
 
     private CommandAPICommand getShopOpenCommand() {
         return new CommandAPICommand("open")
+                .withPermission("dailyshop.command.open")
                 .withArguments(
                         new StringArgument("shop")
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId())),
                         new PlayerArgument("player")
                 )
                 .executes((sender, args) -> {
-                    DailyShop.getShopFactory().getShop((String) args.get("shop")).openGUI((Player) args.get("player"));
+                    String shopId = (String) args.get("shop");
+                    Shop shop = DailyShop.getShopFactory().getShop(shopId);
+                    if (!sender.hasPermission("dailyshop.shop.open." + shopId)) {
+                        adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_noPermission);
+                        return;
+                    }
+                    if (shop == null) {
+                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_open_invalidShop, new HashMap<>() {{
+                            put("shop", (String) args.get("shop"));
+                        }}));
+                        return;
+                    }
+                    shop.openGUI((Player) args.get("player"));
                 });
     }
 
     private CommandAPICommand getShopRestockCommand() {
         return new CommandAPICommand("restock")
+                .withPermission("dailyshop.command.restock")
                 .withArguments(
                         new StringArgument("shop")
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
                 )
                 .executes((sender, args) -> {
                     Shop shop = DailyShop.getShopFactory().getShop((String) args.get("shop"));
+                    if (shop == null) {
+                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_invalidShop, new HashMap<>() {{
+                            put("shop", (String) args.get("shop"));
+                        }}));
+                        return;
+                    }
                     shop.restock();
-                    adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_restock, new HashMap<>() {{
+                    adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_success, new HashMap<>() {{
                         put("shop", shop.getName());
                     }}));
                 });
@@ -56,8 +76,9 @@ public class ShopCommand {
 
     private CommandAPICommand getShopSaveCommand() {
         return new CommandAPICommand("save")
+                .withPermission("dailyshop.command.save")
                 .executes((sender, args) -> {
-                    adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_save);
+                    adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_shop_save_success);
                 });
     }
 }

@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class Product {
     private HashMap<String, ItemStack> productItemCache = new HashMap<>();
@@ -48,11 +47,11 @@ public abstract class Product {
         return rarity;
     }
 
-    public Price getBuyPriceProvider() {
+    public Price getBuyPrice() {
         return buyPrice;
     }
 
-    public Price getSellPriceProvider() {
+    public Price getSellPrice() {
         return sellPrice;
     }
 
@@ -65,8 +64,6 @@ public abstract class Product {
     public ProductItemBuilder getProductItemBuilder() {
         return productItemBuilder;
     }
-
-    public abstract List<String> getBundleContents();
 
     /**
      * @param shopId Seller
@@ -86,7 +83,7 @@ public abstract class Product {
      * @param shopId Buyer
      * @param player Seller
      */
-    public abstract boolean buyAllFrom(@Nullable String shopId, Player player);
+    public abstract int buyAllFrom(@Nullable String shopId, Player player);
 
     /**
      * @param shopId Buyer
@@ -106,7 +103,5 @@ public abstract class Product {
         return isCacheable;
     }
 
-    public PricePair getNewPricePair() {
-        return new PricePair(buyPrice.getNewPrice(), sellPrice.getNewPrice());
-    }
+    public abstract PricePair getNewPricePair(@Nullable String shopId);
 }

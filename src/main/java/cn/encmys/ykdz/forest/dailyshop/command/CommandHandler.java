@@ -28,9 +28,10 @@ public class CommandHandler {
 
     public CommandAPICommand getReloadCommand() {
         return new CommandAPICommand("reload")
+                .withPermission("dailyshop.command.reload")
                 .executes((sender, args) -> {
                     DailyShop.reload();
-                    adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_reload);
+                    adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_reload_success);
                 });
     }
 }

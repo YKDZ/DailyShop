@@ -1,7 +1,7 @@
 settings:
-  name: "<yellow>Blocks Shop"
+  name: "<gray>Black Market"
   restock-timer: 10
-  size: 14
+  size: 7
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
@@ -11,20 +11,19 @@ sounds:
   sell: ENTITY_VILLAGER_YES
 
 shop-gui:
-  title: "Welcome %player_name%"
+  title: "Accede to Every Plea"
   # The x character is the placeholder
   # for the product slot.
   layout:
-  - "# # # # # # # # #"
-  - "# x x x x x x x #"
-  - "# x x x x x x x #"
-  - "# # # # @ # # # #"
+    - "# # # # # # # # #"
+    - "# x x x x x x x #"
+    - "# # # # @ # # # #"
   icons:
     "#":
-      item: BROWN_STAINED_GLASS_PANE
+      item: BLACK_STAINED_GLASS_PANE
       name: " "
       lore:
-        - "<dark_gray>>Wall of Block Shop"
+        - "<dark_gray>>Wall of Black Market."
         - " "
     "@":
       item: CLOCK
@@ -46,7 +45,8 @@ shop-gui:
     bundle-contents-line-format: " <dark_gray>- <reset>{name} <gray>x <white>{amount}"
 
 products:
-  # Use PACK: as prefix to import the entire
-  # product pack to this shop.
-  - PACK:concretes
-  - PACK:wools
+  - WARM_WELCOME
+  - FLY_PERMISSION
+  - LONG_SWORD
+  - STEEL_INGOT
+  - PIZZA

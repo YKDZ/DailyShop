@@ -55,6 +55,10 @@ public class Price {
             this.max = priceSection.getDouble("max");
             this.round = priceSection.getBoolean("round", false);
             priceMode = PriceMode.MINMAX;
+        } else if (priceSection.getBoolean("bundle-auto-new")) {
+            priceMode = PriceMode.BUNDLE_AUTO_NEW;
+        } else if (priceSection.getBoolean("bundle-auto-reuse")) {
+            priceMode = PriceMode.BUNDLE_AUTO_REUSE;
         } else {
             throw new IllegalArgumentException("Invalid price setting.");
         }
@@ -73,5 +77,9 @@ public class Price {
             }
         }
         return -1;
+    }
+
+    public PriceMode getPriceMode() {
+        return priceMode;
     }
 }

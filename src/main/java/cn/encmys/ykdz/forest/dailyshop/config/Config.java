@@ -28,6 +28,7 @@ public class Config {
             plugin.saveResource("product/concretes.yml", false);
             plugin.saveResource("product/wools.yml", false);
             plugin.saveResource("product/misc.yml", false);
+            plugin.saveResource("shop/black_market.yml", false);
             plugin.saveResource("shop/blocks.yml", false);
             plugin.saveResource("lang/en_US.yml", false);
         }

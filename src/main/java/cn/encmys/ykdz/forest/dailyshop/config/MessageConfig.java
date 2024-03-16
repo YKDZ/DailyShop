@@ -10,9 +10,13 @@ import java.io.IOException;
 public class MessageConfig {
     private static final DailyShop plugin = DailyShop.getInstance();
     public static String messages_prefix;
-    public static String messages_command_reload;
-    public static String messages_command_restock;
-    public static String messages_command_save;
+    public static String messages_noPermission;
+    public static String messages_command_reload_success;
+    public static String messages_command_shop_open_success;
+    public static String messages_command_shop_open_invalidShop;
+    public static String messages_command_shop_restock_success;
+    public static String messages_command_shop_restock_invalidShop;
+    public static String messages_command_shop_save_success;
     public static String messages_action_buy_success;
     public static String messages_action_buy_failure;
     public static String messages_action_sell_success;
@@ -26,6 +30,11 @@ public class MessageConfig {
         File file = new File(plugin.getDataFolder(), "lang/" + Config.language + ".yml");
         config = new YamlConfiguration();
 
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            plugin.saveResource("lang/" + Config.language + ".yml", false);
+        }
+
         try {
             config.load(file);
             setUp();
@@ -36,9 +45,13 @@ public class MessageConfig {
 
     private static void setUp() {
         messages_prefix = config.getString("messages.prefix", "<gold>DailyShop <gray>-");
-        messages_command_reload = config.getString("messages.command.reload", "<lime>Successfully reload the plugin!");
-        messages_command_restock = config.getString("messages.command.restock", "<lime>Successfully restock shop {shop} <lime>manually!");
-        messages_command_save = config.getString("messages.command.save", "<lime>Successfully save all shop data manually!");
+        messages_noPermission = config.getString("messages.no-permission", "<red>You do not have enough permission to do this.");
+        messages_command_reload_success = config.getString("messages.command.reload.success", "<lime>Successfully reload the plugin!");
+        messages_command_shop_open_success = config.getString("messages.command.shop.open.success", "");
+        messages_command_shop_open_invalidShop = config.getString("messages.command.shop.open.invalid-shop", "<red>Shop {shop} <red>do not exist!");
+        messages_command_shop_restock_success = config.getString("messages.command.shop.restock.success", "<lime>Successfully restock shop {shop} <lime>manually!");
+        messages_command_shop_restock_invalidShop = config.getString("messages.command.shop.restock.invalid-shop", "<red>The {shop} <red>do not exist!");
+        messages_command_shop_save_success = config.getString("messages.command.shop.save", "<lime>Successfully save all shop data manually!");
         messages_action_buy_success = config.getString("messages.action.buy.success", "<green>Successfully buy <reset>{name} <gray>x <white>{amount} <green>from shop <reset>{shop}. The cost is {money}.");
         messages_action_buy_failure = config.getString("messages.action.buy.failure", "<gray>You do not have enough <red>money <gray>to buy this product!");
         messages_action_sell_success = config.getString("messages.action.sell.success", "<green>Successfully sell <reset>{name} <gray>x <white>{amount} <green>to shop <reset>{shop}. You earned {money}.");

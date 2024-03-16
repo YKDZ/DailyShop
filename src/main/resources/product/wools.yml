@@ -26,6 +26,8 @@ products:
     desc-lore:
       - "<gray>A product bundle that contains"
       - "<gray>all the <gold>warm color <gray>wool x 16."
+    buy-price:
+      bundle-auto-new: true
     bundle-contents:
       - ORANGE_WOOL
       - YELLOW_WOOL
@@ -54,9 +56,20 @@ products:
 
   ORANGE_WOOL:
     item: ORANGE_WOOL
+    name: "<green>Magic Orange Wool"
+    lore:
+      - "<gray>Unlike other wools, this wool"
+      - "<gray>will carry these lore and custom name"
+      - "<gray>when purchased by the player."
 
   MAGENTA_WOOL:
     item: MAGENTA_WOOL
+    desc-lore:
+      - "<gray>Unlike the orange wool,"
+      - "<gray>this wool will not carry the lore"
+      - "<gray>when it is purchased by the player,"
+      - "<gray>as desc-lore is only displayed"
+      - "<gray>in the shop GUI."
 
   LIGHT_BLUE_WOOL:
     item: LIGHT_BLUE_WOOL

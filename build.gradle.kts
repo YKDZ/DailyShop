@@ -61,6 +61,8 @@ dependencies {
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
 
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
+
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
     compileOnly("dev.jorel:commandapi-annotations:9.3.0")

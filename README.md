@@ -1,6 +1,6 @@
 # DailyShop
 
-English | [中文](README_ZH_CN.md)
+English | [简体中文](README_ZH_CN.md)
 
 # Intro
 
@@ -17,6 +17,9 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [ ] Total market volume
 - [ ] Transaction log
 - [ ] SQL Support
+- [ ] Random amount and amount based price
+- [ ] List product by condition
+- [ ] Discount
 
 ## Thanks to
 

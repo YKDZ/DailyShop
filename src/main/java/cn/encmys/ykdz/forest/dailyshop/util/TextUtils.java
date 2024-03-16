@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TextUtils {
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
@@ -51,14 +52,20 @@ public class TextUtils {
 
     public static List<String> insertListInternalVariables(List<String> lines, Map<String, List<String>> vars) {
         List<String> result = new ArrayList<>();
+        Set<Map.Entry<String, List<String>>> entries = vars.entrySet();
+
         for (String line : lines) {
             boolean keyLine = false;
-            for (Map.Entry<String, List<String>> entry : vars.entrySet()) {
+
+            for (Map.Entry<String, List<String>> entry : entries) {
                 String key = entry.getKey();
                 List<String> value = entry.getValue();
-                if (line.contains("{" + key + "}")) {
+                String placeholder = "{" + key + "}";
+
+                if (line.contains(placeholder)) {
                     keyLine = true;
                     int j = result.size();
+
                     if (value == null || value.isEmpty()) {
                         while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
                             result.remove(j - 1);
@@ -72,8 +79,10 @@ public class TextUtils {
                         }
                         result.addAll(value);
                     }
+                    break;
                 }
             }
+
             if (!keyLine) {
                 result.add(line);
             }

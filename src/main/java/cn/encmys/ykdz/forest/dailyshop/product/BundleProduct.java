@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
@@ -34,7 +35,6 @@ public class BundleProduct extends Product {
         return ProductType.BUNDLE;
     }
 
-    @Override
     public List<String> getBundleContents() {
         return bundleContents;
     }
@@ -46,9 +46,9 @@ public class BundleProduct extends Product {
         }
         Shop shop = DailyShop.getShopFactory().getShop(shopId);
 
-        BalanceUtils.removeBalance(player, shop.getBuyPrice(shopId));
+        BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
 
-        for (String productId : bundleContents) {
+        for (String productId : getBundleContents()) {
             DailyShop.getProductFactory().getProduct(productId).sellTo(shopId, player);
         }
 
@@ -75,8 +75,8 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean buyAllFrom(@Nullable String shopId, Player player) {
-        return false;
+    public int buyAllFrom(@Nullable String shopId, Player player) {
+        return 0;
     }
 
     @Override
@@ -87,5 +87,43 @@ public class BundleProduct extends Product {
             }
         }
         return true;
+    }
+
+    @Override
+    public PricePair getNewPricePair(@Nullable String shopId) {
+        Price buyPrice = getBuyPrice();
+        Price sellPrice = getSellPrice();
+        double buy = 0d;
+        double sell = 0d;
+
+        switch (buyPrice.getPriceMode()) {
+            case BUNDLE_AUTO_NEW -> {
+                for (String contentId : getBundleContents()) {
+                    Product content = DailyShop.getProductFactory().getProduct(contentId);
+                    buy += content.getBuyPrice().getNewPrice();
+                }
+            } case BUNDLE_AUTO_REUSE -> {
+                Shop shop = DailyShop.getShopFactory().getShop(shopId);
+                for (String contentId : getBundleContents()) {
+                    buy += shop.getBuyPrice(contentId);
+                }
+            } default -> buy = buyPrice.getNewPrice();
+        }
+
+        switch (sellPrice.getPriceMode()) {
+            case BUNDLE_AUTO_NEW -> {
+                for (String contentId : getBundleContents()) {
+                    Product content = DailyShop.getProductFactory().getProduct(contentId);
+                    sell += content.getSellPrice().getNewPrice();
+                }
+            } case BUNDLE_AUTO_REUSE -> {
+                Shop shop = DailyShop.getShopFactory().getShop(shopId);
+                for (String contentId : getBundleContents()) {
+                    sell += shop.getSellPrice(contentId);
+                }
+            } default -> sell = sellPrice.getNewPrice();
+        }
+
+        return new PricePair(buy, sell);
     }
 }

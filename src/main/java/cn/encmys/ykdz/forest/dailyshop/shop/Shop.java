@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.util.GUIIconUtils;
 import com.google.gson.annotations.Expose;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -112,7 +113,7 @@ public class Shop {
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
                 Product product = productFactory.getProduct(productId);
-                cachePrice(productId, product.getNewPricePair());
+                cachePrice(productId, product.getNewPricePair(getId()));
                 listedProducts.add(productId);
             }
         } else {
@@ -138,17 +139,18 @@ public class Shop {
                 String productId = temp.get(index);
                 Product product = productFactory.getProduct(productId);
                 if (product.getType() == ProductType.BUNDLE) {
-                    for (String contentId : product.getBundleContents()) {
+                    System.out.println("Bundle: " + productId);
+                    for (String contentId : ((BundleProduct) product).getBundleContents()) {
                         Product content = productFactory.getProduct(contentId);
                         // Cache Item
                         if (content.isCacheable()) {
                             content.cacheProductItem(id, null);
                         }
-                        cachePrice(productId, product.getNewPricePair());
+                        cachePrice(contentId, content.getNewPricePair(getId()));
                     }
                 }
 
-                cachePrice(productId, product.getNewPricePair());
+                cachePrice(productId, product.getNewPricePair(getId()));
                 // Cache Item
                 if (product.isCacheable()) {
                     product.cacheProductItem(id, null);

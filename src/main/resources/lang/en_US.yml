@@ -1,18 +1,31 @@
+# The traditional colour format (& symbol) is not supported,
+# please use the MiniMessage format, refer to the following page:
+# https://docs.adventure.kyori.net/minimessage/format.html
+
 messages:
   prefix: "<gold>DailyShop <dark_gray>- "
+  no-permission: "<red>You do not have enough permission to do this."
   command:
-    reload: "<green>Successfully reload the plugin!"
-    restock: "<green>Successfully restock shop {shop} <green>manually!"
-    save: "<green>Successfully save all shop data manually!"
+    reload:
+      success: "<green>Successfully reload the plugin!"
+    shop:
+      open:
+        success: ""
+        invalid-shop: "<red>Shop {shop} <red>do not exist!"
+      restock:
+        success: "<green>Successfully restock shop {shop} <green>manually!"
+        invalid-shop: "<red>The {shop} <red>do not exist!"
+      save:
+        success: "<green>Successfully save all shop data manually!"
   action:
     buy:
-      success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{money}."
+      success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{cost}."
       failure: "<gray>You do not have enough <red>money <gray>to buy <reset>{name} <gray>x <white>{amount}<gray>!"
     sell:
-      success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{money}."
+      success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{earn}."
       failure: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
     sell-all:
-      success: "<gray>Successfully sell all of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{money}."
+      success: "<gray>Successfully sell <white>{stack} <gray>stack of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{earn}."
       failure: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
 
 version: 1

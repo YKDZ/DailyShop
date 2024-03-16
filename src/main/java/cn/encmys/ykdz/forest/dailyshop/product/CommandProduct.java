@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
@@ -14,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandProduct extends Product {
@@ -35,11 +35,6 @@ public class CommandProduct extends Product {
     @Override
     public ProductType getType() {
         return ProductType.COMMAND;
-    }
-
-    @Override
-    public List<String> getBundleContents() {
-        return new ArrayList<>();
     }
 
     @Override
@@ -71,12 +66,17 @@ public class CommandProduct extends Product {
     }
 
     @Override
-    public boolean buyAllFrom(@Nullable String shopId, Player player) {
-        return false;
+    public int buyAllFrom(@Nullable String shopId, Player player) {
+        return 0;
     }
 
     @Override
     public boolean canBuyFrom(@Nullable String shopId, Player player) {
         return false;
+    }
+
+    @Override
+    public PricePair getNewPricePair(@Nullable String shopId) {
+        return new PricePair(getBuyPrice().getNewPrice(), getSellPrice().getNewPrice());
     }
 }

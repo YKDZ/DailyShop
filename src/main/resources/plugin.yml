@@ -7,3 +7,32 @@ depend:
   - ItemsLangApi
 softdepend:
   - PlaceholderAPI
+  - MMOItems
+  - ItemsAdder
+permissions:
+  dailyshop.*:
+    children:
+      dailyshop.shop.open.*: true
+      dailyshop.command.*: true
+
+  dailyshop.command.*:
+    children:
+      dailyshop.command.open: true
+      dailyshop.command.restock: true
+      dailyshop.command.save: true
+      dailyshop.command.reload: true
+
+  dailyshop.shop.open.*:
+    default: true
+
+  dailyshop.command.open:
+    default: true
+
+  dailyshop.command.restock:
+    default: false
+
+  dailyshop.command.save:
+    default: false
+
+  dailyshop.command.reload:
+    default: false

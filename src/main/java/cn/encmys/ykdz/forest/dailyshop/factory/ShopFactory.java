@@ -53,6 +53,7 @@ public class ShopFactory {
         );
 
         shops.put(id, shop);
+        LogUtils.info("Successfully load shop " + id + " with " + products.size() + " products.");
         return shop;
     }
 
@@ -91,15 +92,15 @@ public class ShopFactory {
     }
 
     public void unload() {
+        save();
+        shops.clear();
+    }
+
+    public void save() {
         HashMap<String, Shop> dataMap = new HashMap();
         for (Shop shop : getAllShops().values()) {
             dataMap.put(shop.getId(), shop);
         }
         DailyShop.getDatabase().saveShopData(dataMap);
-        shops.clear();
-    }
-
-    public void clean() {
-
     }
 }
