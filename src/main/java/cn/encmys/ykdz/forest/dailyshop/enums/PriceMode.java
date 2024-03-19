@@ -5,5 +5,6 @@ public enum PriceMode {
     GAUSSIAN,
     MINMAX,
     BUNDLE_AUTO_NEW,
-    BUNDLE_AUTO_REUSE;
+    BUNDLE_AUTO_REUSE,
+    DISABLE;
 }

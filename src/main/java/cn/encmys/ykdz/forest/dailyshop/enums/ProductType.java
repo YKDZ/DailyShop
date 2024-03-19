@@ -4,5 +4,6 @@ public enum ProductType {
     VANILLA,
     COMMAND,
     BUNDLE,
-    MMOITEMS;
+    MMOITEMS,
+    ITEMSADDER;
 }

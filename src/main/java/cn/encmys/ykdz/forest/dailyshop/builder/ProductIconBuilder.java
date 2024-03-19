@@ -2,21 +2,23 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
-import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.OraxenProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.VanillaProductItem;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
-import me.rubix327.itemslangapi.ItemsLangAPI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.ItemProvider;
@@ -32,9 +34,7 @@ import java.util.Map;
 public class ProductIconBuilder {
     private static final DecimalFormat decimalFormat = Config.getDecimalFormat();
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
-    private static final ItemsLangAPI itemsLangAPI = DailyShop.getItemsLangAPI();
-    private ItemStack base;
-    private Material material;
+    private ProductItem item;
     private String name;
     private List<String> descLore;
     private List<String> loreFormat;
@@ -47,35 +47,46 @@ public class ProductIconBuilder {
     }
 
     public static ProductIconBuilder mmoitems(String type, String id) {
-        ItemStack item = MMOItemsHook.buildItem(type, id);
+        ProductItem item = new MMOItemsProductItem(type, id);
         return new ProductIconBuilder()
-                .setBase(item);
+                .setItem(item)
+                .setName(item.getDisplayName());
+    }
+
+    public static ProductIconBuilder itemsadder(String namespacedId) {
+        ProductItem item = new ItemsAdderProductItem(namespacedId);
+        return new ProductIconBuilder()
+                .setItem(item)
+                .setName(item.getDisplayName());
+    }
+
+    public static ProductIconBuilder oraxen(String id) {
+        ProductItem item = new OraxenProductItem(id);
+        return new ProductIconBuilder()
+                .setItem(item)
+                .setName(item.getDisplayName());
     }
 
     public static ProductIconBuilder vanilla(Material material) {
+        ProductItem item = new VanillaProductItem(material);
         return new ProductIconBuilder()
-                .setMaterial(material);
+                .setItem(new VanillaProductItem(material))
+                .setName(item.getDisplayName());
     }
 
-    public ProductIconBuilder setBase(ItemStack base) {
-        this.base = base;
+    public ProductIconBuilder setItem(ProductItem item) {
+        this.item = item;
         return this;
     }
 
-    public ItemStack getBase() {
-        return base;
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public ProductIconBuilder setMaterial(Material material) {
-        this.material = material;
-        return this;
+    public ProductItem getItem() {
+        return item;
     }
 
     public ProductIconBuilder setName(String name) {
+        if (name == null) {
+            return this;
+        }
         this.name = name;
         return this;
     }
@@ -105,7 +116,7 @@ public class ProductIconBuilder {
     }
 
     public String getName() {
-        return name == null ? itemsLangAPI.translate(material, Config.language) : name;
+        return name;
     }
 
     public List<String> getItemFlags() {
@@ -178,13 +189,7 @@ public class ProductIconBuilder {
                     put("bundle-contents", bundleContentsLore);
                 }}), null);
 
-                if (base != null) {
-                    return new ItemBuilder(getBase())
-                            .setAmount(getAmount())
-                            .addLoreLines(lores.toArray(new String[0]))
-                            .setDisplayName(name);
-                }
-                return new ItemBuilder(getMaterial())
+                return new ItemBuilder(getItem().buildItem(null))
                         .setAmount(getAmount())
                         .addLoreLines(lores.toArray(new String[0]))
                         .setDisplayName(name);
@@ -227,7 +232,7 @@ public class ProductIconBuilder {
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 
-                // Not needed before Total market volume Feature
+                // Not needed before total market volume feature
                 // notifyWindows();
             }
         };

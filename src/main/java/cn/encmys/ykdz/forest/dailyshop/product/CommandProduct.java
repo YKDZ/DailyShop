@@ -13,6 +13,7 @@ import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,15 +43,10 @@ public class CommandProduct extends Product {
         if (!canSellTo(shopId, player)) {
             return false;
         }
-        Shop shop = DailyShop.getShopFactory().getShop(shopId);
 
-        BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
+        BalanceUtils.removeBalance(player, DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId()));
+        give(shopId, player);
 
-        for (int i = 0; i < getProductItemBuilder().getAmount(); i++) {
-            for (String command : commands) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, command));
-            }
-        }
         return true;
     }
 
@@ -58,6 +54,15 @@ public class CommandProduct extends Product {
     public boolean canSellTo(@Nullable String shopId, Player player) {
         Shop shop = DailyShop.getShopFactory().getShop(shopId);
         return BalanceUtils.checkBalance(player) >= shop.getBuyPrice(getId());
+    }
+
+    @Override
+    public void give(@Nullable String shopId, @NotNull Player player) {
+        for (int i = 0; i < getIconBuilder().getAmount(); i++) {
+            for (String command : commands) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, command));
+            }
+        }
     }
 
     @Override
@@ -73,6 +78,16 @@ public class CommandProduct extends Product {
     @Override
     public boolean canBuyFrom(@Nullable String shopId, Player player) {
         return false;
+    }
+
+    @Override
+    public boolean take(Player player, int stack) {
+        return false;
+    }
+
+    @Override
+    public int takeAll(Player player) {
+        return 0;
     }
 
     @Override

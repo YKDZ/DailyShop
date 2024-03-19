@@ -10,7 +10,7 @@ messages:
       success: "<green>Successfully reload the plugin!"
     shop:
       open:
-        success: ""
+        success: "" # <gray>Successfully open shop <reset>{shop}<gray>!
         invalid-shop: "<red>Shop {shop} <red>do not exist!"
       restock:
         success: "<green>Successfully restock shop {shop} <green>manually!"

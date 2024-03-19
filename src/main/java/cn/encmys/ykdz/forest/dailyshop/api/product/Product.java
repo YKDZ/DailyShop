@@ -8,6 +8,7 @@ import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -73,6 +74,8 @@ public abstract class Product {
 
     public abstract boolean canSellTo(@Nullable String shopId, Player player);
 
+    public abstract void give(@Nullable String shopId, @NotNull Player player);
+
     /**
      * @param shopId Buyer
      * @param player Seller
@@ -91,8 +94,14 @@ public abstract class Product {
      */
     public abstract boolean canBuyFrom(@Nullable String shopId, Player player);
 
-    public void cacheProductItem(String shopId, @Nullable Player player) {
-        productItemCache.put(shopId, getProductItemBuilder().build(player));
+    public abstract boolean take(Player player, int stack);
+
+    public abstract int takeAll(Player player);
+
+    public ItemStack cacheProductItem(String shopId, @Nullable Player player) {
+        ItemStack item = getProductItemBuilder().build(player);
+        productItemCache.put(shopId, item);
+        return item;
     }
 
     public HashMap<String, ItemStack> getProductItemCache() {
@@ -101,6 +110,10 @@ public abstract class Product {
 
     public boolean isCacheable() {
         return isCacheable;
+    }
+
+    public boolean isCached(String shopId) {
+        return getProductItemCache().containsKey(shopId);
     }
 
     public abstract PricePair getNewPricePair(@Nullable String shopId);

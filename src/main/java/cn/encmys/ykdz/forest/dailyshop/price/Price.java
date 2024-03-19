@@ -59,6 +59,8 @@ public class Price {
             priceMode = PriceMode.BUNDLE_AUTO_NEW;
         } else if (priceSection.getBoolean("bundle-auto-reuse")) {
             priceMode = PriceMode.BUNDLE_AUTO_REUSE;
+        } else if (priceSection.getBoolean("disable")) {
+            priceMode = PriceMode.DISABLE;
         } else {
             throw new IllegalArgumentException("Invalid price setting.");
         }

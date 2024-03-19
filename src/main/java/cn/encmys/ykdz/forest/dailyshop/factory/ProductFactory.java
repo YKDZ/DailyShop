@@ -6,12 +6,13 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
+import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
-import cn.encmys.ykdz.forest.dailyshop.product.MMOItemsProduct;
-import cn.encmys.ykdz.forest.dailyshop.product.VanillaProduct;
+import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,12 +45,8 @@ public class ProductFactory {
 
                 if (productSection.contains("commands")) {
                     buildCommandProduct(productId, productSection, defaultSettings);
-                } else if (productSection.getString("item", "").startsWith("MI:") && MMOItemsHook.isHooked()) {
-                    buildMMOItemsProduct(productId, productSection, defaultSettings);
-                } else if (productSection.getString("item", "").startsWith("IA:") && MMOItemsHook.isHooked()) {
-
                 } else {
-                    buildVanillaProduct(productId, productSection, defaultSettings);
+                    buildItemProduct(productId, productSection, defaultSettings);
                 }
             }
 
@@ -72,7 +69,19 @@ public class ProductFactory {
             String type = typeId[0];
             String id = typeId[1];
             return ProductIconBuilder.mmoitems(type, id)
-                    .setName(MMOItemsHook.getDisplayName(type, id))
+                    .setName(name)
+                    .setDescLore(descLore)
+                    .setAmount(amount);
+        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
+            String namespacedId = item.substring(3);
+            return ProductIconBuilder.itemsadder(namespacedId)
+                    .setName(name)
+                    .setDescLore(descLore)
+                    .setAmount(amount);
+        } else if (item.startsWith("OXN:") && OraxenHook.isHooked()) {
+            String id = item.substring(3);
+            return ProductIconBuilder.oraxen(id)
+                    .setName(name)
                     .setDescLore(descLore)
                     .setAmount(amount);
         } else {
@@ -86,7 +95,7 @@ public class ProductFactory {
 
     public ProductItemBuilder buildProductItemBuilder(ConfigurationSection productSection, ConfigurationSection defaultSettings) {
         String item = productSection.getString("item", "DIRT");
-        List<String> descLore = productSection.getStringList("lore");
+        List<String> lore = productSection.getStringList("lore");
         int amount = productSection.getInt("amount", defaultSettings.getInt("amount", 1));
         String name = productSection.getString("name");
 
@@ -96,45 +105,21 @@ public class ProductFactory {
             String id = typeId[1];
             return ProductItemBuilder.mmoitems(type, id)
                     .setName(name)
-                    .setLore(descLore)
+                    .setLore(lore)
+                    .setAmount(amount);
+        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
+            String namespacedId = item.substring(3);
+            return ProductItemBuilder.itemsadder(namespacedId)
+                    .setName(name)
+                    .setLore(lore)
                     .setAmount(amount);
         } else {
             Material material = Material.valueOf(item);
             return ProductItemBuilder.vanilla(material)
                     .setName(name)
-                    .setLore(descLore)
+                    .setLore(lore)
                     .setAmount(amount);
         }
-    }
-
-    public Product buildVanillaProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        if (products.containsKey(id)) {
-            throw new InvalidKeyException("Product ID is duplicated: " + id);
-        }
-
-        // Price
-        Price buyPrice = new Price(
-                productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
-        );
-        Price sellPrice = new Price(
-                productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
-        );
-
-        // Icon Builder
-        ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
-
-        // Item Builder
-        ProductItemBuilder productItemBuilder = buildProductItemBuilder(productSection, defaultSettings);
-
-        // Rarity
-        Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
-
-        // Cache Item
-        boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
-
-        Product product = new VanillaProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, isCacheable);
-        products.put(id, product);
-        return product;
     }
 
     public Product buildBundleProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
@@ -153,7 +138,7 @@ public class ProductFactory {
         // Icon Builder
         ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
 
-        // Item Builder
+        // ProductItem Builder
         ProductItemBuilder productItemBuilder = null;
 
         // Rarity
@@ -183,13 +168,13 @@ public class ProductFactory {
         // Icon Builder
         ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
 
-        // Item Builder
+        // ProductItem Builder
         ProductItemBuilder productItemBuilder = null;
 
         // Rarity
         Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
-        // Bundle Contents
+        // Commands
         List<String> commands = productSection.getStringList("commands");
 
         Product product = new CommandProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, commands);
@@ -197,7 +182,7 @@ public class ProductFactory {
         return product;
     }
 
-    public Product buildMMOItemsProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
+    public Product buildItemProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
         if (products.containsKey(id)) {
             throw new InvalidKeyException("Product ID is duplicated: " + id);
         }
@@ -213,22 +198,16 @@ public class ProductFactory {
         // Icon Builder
         ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
 
-        // Item Builder
+        // ProductItem Builder
         ProductItemBuilder productItemBuilder = buildProductItemBuilder(productSection, defaultSettings);
 
         // Rarity
         Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
-        // Cache Item
+        // Cache ProductItem
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
 
-        // Type and Id
-        String item = productSection.getString("item", "DIRT");
-        String[] typeId = item.substring(3).split(":");
-        String mmoitemsType = typeId[0];
-        String mmoitemsId = typeId[1];
-
-        Product product = new MMOItemsProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, isCacheable, mmoitemsType, mmoitemsId);
+        Product product = new ItemProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, isCacheable);
         products.put(id, product);
         return product;
     }

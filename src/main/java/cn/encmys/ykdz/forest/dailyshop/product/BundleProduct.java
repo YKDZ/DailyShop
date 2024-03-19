@@ -11,6 +11,7 @@ import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,10 +48,7 @@ public class BundleProduct extends Product {
         Shop shop = DailyShop.getShopFactory().getShop(shopId);
 
         BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
-
-        for (String productId : getBundleContents()) {
-            DailyShop.getProductFactory().getProduct(productId).sellTo(shopId, player);
-        }
+        give(shopId, player);
 
         return true;
     }
@@ -62,14 +60,19 @@ public class BundleProduct extends Product {
     }
 
     @Override
+    public void give(@Nullable String shopId, @NotNull Player player) {
+        for (String productId : getBundleContents()) {
+            DailyShop.getProductFactory().getProduct(productId).give(shopId, player);
+        }
+    }
+
+    @Override
     public boolean buyFrom(@Nullable String shopId, Player player) {
         if (!canBuyFrom(shopId, player)) {
             return false;
         }
 
-        for (String id : bundleContents) {
-            DailyShop.getProductFactory().getProduct(id).buyFrom(shopId, player);
-        }
+        take(player, 1);
 
         return true;
     }
@@ -87,6 +90,19 @@ public class BundleProduct extends Product {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean take(Player player, int stack) {
+        for (String id : getBundleContents()) {
+            DailyShop.getProductFactory().getProduct(id).take(player, stack);
+        }
+        return true;
+    }
+
+    @Override
+    public int takeAll(Player player) {
+        return 0;
     }
 
     @Override

@@ -109,58 +109,35 @@ public class Shop {
         ProductFactory productFactory = DailyShop.getProductFactory();
 
         listedProducts.clear();
+        Map<String, Product> allProducts = new HashMap<>();
+        for (String productId : allProductsId) {
+            allProducts.put(productId, productFactory.getProduct(productId));
+        }
 
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
-                Product product = productFactory.getProduct(productId);
+                Product product = allProducts.get(productId);
                 cachePrice(productId, product.getNewPricePair(getId()));
                 listedProducts.add(productId);
             }
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
-            List<Integer> intervals = new ArrayList<>();
-            int totalWeight = 0;
-
-            // Calculate cumulative weights and total weight
-            for (String productId : temp) {
-                Product product = productFactory.getProduct(productId);
-                totalWeight += product.getRarity().getWeight();
-                intervals.add(totalWeight);
-            }
+            int totalWeight = allProducts.values().stream()
+                    .mapToInt(p -> p.getRarity().getWeight()).sum();
 
             for (int i = 0; i < size; i++) {
                 int needed = random.nextInt(totalWeight) + 1; // Add 1 to avoid 0
-                int index = Collections.binarySearch(intervals, needed);
-                if (index < 0) {
-                    index = -index - 1;
-                }
-
-                // Handle bundle contents
-                String productId = temp.get(index);
-                Product product = productFactory.getProduct(productId);
-                if (product.getType() == ProductType.BUNDLE) {
-                    System.out.println("Bundle: " + productId);
-                    for (String contentId : ((BundleProduct) product).getBundleContents()) {
-                        Product content = productFactory.getProduct(contentId);
-                        // Cache Item
-                        if (content.isCacheable()) {
-                            content.cacheProductItem(id, null);
-                        }
-                        cachePrice(contentId, content.getNewPricePair(getId()));
+                int runningWeight = 0;
+                for (String productId : temp) {
+                    Product product = allProducts.get(productId);
+                    runningWeight += product.getRarity().getWeight();
+                    if (needed <= runningWeight) {
+                        handleProduct(product);
+                        totalWeight -= product.getRarity().getWeight();
+                        temp.remove(productId);
+                        break;
                     }
                 }
-
-                cachePrice(productId, product.getNewPricePair(getId()));
-                // Cache Item
-                if (product.isCacheable()) {
-                    product.cacheProductItem(id, null);
-                }
-                listedProducts.add(productId);
-
-                // Update total weight and intervals
-                totalWeight -= product.getRarity().getWeight();
-                intervals.remove(index);
-                temp.remove(index);
             }
         }
 
@@ -171,6 +148,29 @@ public class Shop {
 
         buildGUI();
         lastRestocking = System.currentTimeMillis();
+    }
+
+    private void handleProduct(Product product) {
+        String productId = product.getId();
+
+        cachePrice(productId, product.getNewPricePair(getId()));
+
+        if (product.isCacheable()) {
+            product.cacheProductItem(getId(), null);
+        }
+
+        // Make sure that every bundle contents have its price.
+        if (product.getType() == ProductType.BUNDLE) {
+            for (String contentId : ((BundleProduct) product).getBundleContents()) {
+                Product content = productFactory.getProduct(contentId);
+                if (content.isCacheable()) {
+                    content.cacheProductItem(getId(), null);
+                }
+                cachePrice(contentId, content.getNewPricePair(getId()));
+            }
+        }
+
+        listedProducts.add(productId);
     }
 
     public long getLastRestocking() {

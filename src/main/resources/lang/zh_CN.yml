@@ -10,7 +10,7 @@ messages:
       success: "<green>成功重载插件!"
     shop:
       open:
-        success: ""
+        success: "" # <gray>成功进入商店 <reset>{shop}<gray>!
         invalid-shop: "<red>商店 {shop} <red>不存在!"
       restock:
         success: "<green>成功手动刷新了商店 {shop}<green>!"

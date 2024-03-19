@@ -2,20 +2,21 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
-import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.OraxenProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.VanillaProductItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ProductItemBuilder {
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
-    private ItemStack base;
-    private Material material;
+    private ProductItem productItem;
     private String name;
     private List<String> lores;
     private int amount;
@@ -25,35 +26,39 @@ public class ProductItemBuilder {
     }
 
     public static ProductItemBuilder mmoitems(String type, String id) {
-        ItemStack item = MMOItemsHook.buildItem(type, id);
         return new ProductItemBuilder()
-                .setBase(item);
+                .setItem(new MMOItemsProductItem(type, id));
+    }
+
+    public static ProductItemBuilder itemsadder(String namespacedId) {
+        return new ProductItemBuilder()
+                .setItem(new ItemsAdderProductItem(namespacedId));
+    }
+
+    public static ProductItemBuilder oraxen(String id) {
+        ProductItem item = new OraxenProductItem(id);
+        return new ProductItemBuilder()
+                .setItem(item);
     }
 
     public static ProductItemBuilder vanilla(Material material) {
         return new ProductItemBuilder()
-                .setMaterial(material);
+                .setItem(new VanillaProductItem(material));
     }
 
-    public ProductItemBuilder setBase(ItemStack base) {
-        this.base = base;
+    public ProductItemBuilder setItem(ProductItem productItem) {
+        this.productItem = productItem;
         return this;
     }
 
-    public ItemStack getBase() {
-        return base;
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public ProductItemBuilder setMaterial(Material material) {
-        this.material = material;
-        return this;
+    public ProductItem getItem() {
+        return productItem;
     }
 
     public ProductItemBuilder setName(String name) {
+        if (name == null) {
+            return this;
+        }
         this.name = name;
         return this;
     }
@@ -80,7 +85,7 @@ public class ProductItemBuilder {
         return amount;
     }
 
-    public List<String> getLores() {
+    public List<String> getLore() {
         return lores;
     }
 
@@ -90,38 +95,10 @@ public class ProductItemBuilder {
     }
 
     public ItemStack build(@Nullable Player player) {
-        if (getBase() != null) {
-            ItemMeta meta = getBase().getItemMeta();
+        ItemStack base = getItem().buildItem(player);
 
-            if (name != null) {
-                meta.setDisplayName(TextUtils.decorateText(getName(), player));
-            }
+        base.setAmount(getAmount());
 
-            if (getLores() != null && !getLores().isEmpty()) {
-                meta.setLore(TextUtils.decorateText(getLores(), player));
-            }
-
-            base.setItemMeta(meta);
-            base.setAmount(getAmount());
-
-            return base;
-        } else if (getMaterial() != null) {
-            ItemStack item = new ItemStack(getMaterial());
-            ItemMeta meta = item.getItemMeta();
-
-            if (name != null) {
-                meta.setDisplayName(TextUtils.decorateText(getName(), player));
-            }
-
-            if (getLores() != null && !getLores().isEmpty()) {
-                meta.setLore(TextUtils.decorateText(getLores(), player));
-            }
-
-            item.setItemMeta(meta);
-            item.setAmount(getAmount());
-
-            return item;
-        }
-        return null;
+        return base;
     }
 }

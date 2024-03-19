@@ -40,11 +40,16 @@ public class TextUtils {
     }
 
     public static String parseInternalVariables(String line, Map<String, String> vars) {
-        for (Map.Entry<String, String> entry : vars.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (value != null && line != null) {
-                line = line.replace("{" + key + "}", value);
+        if (line != null && line.startsWith("?")) {
+            for (String key : vars.keySet()) {
+                if (line.contains("{" + key + "}") && vars.get(key) == null) {
+                    return null;
+                }
+            }
+        }
+        if (line != null) {
+            for (Map.Entry<String, String> entry : vars.entrySet()) {
+                line = line.replace("{" + entry.getKey() + "}", entry.getValue() != null ? entry.getValue() : "");
             }
         }
         return line;

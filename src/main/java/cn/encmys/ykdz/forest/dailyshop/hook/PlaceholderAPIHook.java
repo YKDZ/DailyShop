@@ -58,12 +58,6 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     TimeUnit.MILLISECONDS.toSeconds(remain) % 60
             );
         }
-
-        if(params.contains("product_amount_")){
-            Shop shop = DailyShop.getShopFactory().getShop(params.replace("product_amount_", ""));
-            return String.valueOf(shop.getListedProducts().size());
-        }
-
         return null;
     }
 }

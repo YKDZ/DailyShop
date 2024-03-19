@@ -38,6 +38,7 @@ allprojects {
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
         maven("https://repo.dmulloy2.net/repository/public/")
         maven("https://repo.xenondevs.xyz/releases")
+        maven("https://repo.oraxen.com/releases")
     }
 
     tasks.processResources {
@@ -63,6 +64,8 @@ dependencies {
 
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 
+    compileOnly("io.th0rgal:oraxen:1.171.0")
+
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
     compileOnly("dev.jorel:commandapi-annotations:9.3.0")
@@ -81,7 +84,7 @@ dependencies {
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
-    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
+    implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
 }
 
 tasks {
@@ -91,7 +94,11 @@ tasks {
         relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
         relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
         relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations")
-        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations")
+        relocate("me.rubix327.itemslangapi", "cn.encmys.ykdz.forest.dailyshop.libraries.itemslangapi")
+        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.intellij")
+        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
+        relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
+        relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
+        relocate("net.md_5", "cn.encmys.ykdz.forest.dailyshop.libraries.md_5")
     }
 }

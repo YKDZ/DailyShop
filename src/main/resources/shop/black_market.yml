@@ -33,8 +33,8 @@ shop-gui:
     name-format: "<dark_gray>Name: <reset>{name} x {amount}"
     lore-format:
       - " "
-      - "<dark_gray>- <gray>Buy Price: <white>{buy-price}"
-      - "<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+      - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
+      - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
       - "|"
       - "|<gray>Bundle Contents:"
       - "{bundle-contents}"
