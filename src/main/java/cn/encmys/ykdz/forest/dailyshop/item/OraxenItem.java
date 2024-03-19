@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class OraxenProductItem implements ProductItem {
+public class OraxenItem implements ProductItem {
     private final String id;
 
-    public OraxenProductItem(String id) {
+    public OraxenItem(String id) {
         this.id = id;
     }
 
@@ -28,7 +28,7 @@ public class OraxenProductItem implements ProductItem {
     }
 
     @Override
-    public ItemStack buildItem(@Nullable Player player) {
+    public ItemStack build(@Nullable Player player) {
         return OraxenItems.getItemById(getId()).build();
     }
 

@@ -69,7 +69,7 @@ products:
       - "<gray>this wool will not carry the lore"
       - "<gray>when it is purchased by the player,"
       - "<gray>as desc-lore is only displayed"
-      - "<gray>in the shop GUI."
+      - "<gray>in the shop ShopGUI."
 
   LIGHT_BLUE_WOOL:
     item: LIGHT_BLUE_WOOL

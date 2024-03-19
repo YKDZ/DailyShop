@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemsAdderProductItem implements ProductItem {
+public class ItemsAdderItem implements ProductItem {
     private final String namespacedId;
 
-    public ItemsAdderProductItem(@NotNull String namespacedId) {
+    public ItemsAdderItem(@NotNull String namespacedId) {
         this.namespacedId = namespacedId;
     }
 
@@ -30,7 +30,7 @@ public class ItemsAdderProductItem implements ProductItem {
     }
 
     @Override
-    public ItemStack buildItem(@Nullable Player player) {
+    public ItemStack build(@Nullable Player player) {
         CustomStack stack = CustomStack.getInstance(getNamespacedId());
         if(stack != null) {
             return stack.getItemStack();

@@ -4,14 +4,13 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
-import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
-import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Bukkit;
+import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,10 +57,8 @@ public class CommandProduct extends Product {
 
     @Override
     public void give(@Nullable String shopId, @NotNull Player player) {
-        for (int i = 0; i < getIconBuilder().getAmount(); i++) {
-            for (String command : commands) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, command));
-            }
+        for (int i = 0; i < getProductIconBuilder().getAmount(); i++) {
+            CommandUtils.dispatchCommands(player, getCommands());
         }
     }
 
@@ -93,5 +90,9 @@ public class CommandProduct extends Product {
     @Override
     public PricePair getNewPricePair(@Nullable String shopId) {
         return new PricePair(getBuyPrice().getNewPrice(), getSellPrice().getNewPrice());
+    }
+
+    public List<String> getCommands() {
+        return commands;
     }
 }

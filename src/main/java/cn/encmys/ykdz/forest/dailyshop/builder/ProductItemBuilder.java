@@ -3,10 +3,10 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.OraxenProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.VanillaProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderItem;
+import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsItem;
+import cn.encmys.ykdz.forest.dailyshop.item.OraxenItem;
+import cn.encmys.ykdz.forest.dailyshop.item.VanillaItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,23 +27,23 @@ public class ProductItemBuilder {
 
     public static ProductItemBuilder mmoitems(String type, String id) {
         return new ProductItemBuilder()
-                .setItem(new MMOItemsProductItem(type, id));
+                .setItem(new MMOItemsItem(type, id));
     }
 
     public static ProductItemBuilder itemsadder(String namespacedId) {
         return new ProductItemBuilder()
-                .setItem(new ItemsAdderProductItem(namespacedId));
+                .setItem(new ItemsAdderItem(namespacedId));
     }
 
     public static ProductItemBuilder oraxen(String id) {
-        ProductItem item = new OraxenProductItem(id);
+        ProductItem item = new OraxenItem(id);
         return new ProductItemBuilder()
                 .setItem(item);
     }
 
     public static ProductItemBuilder vanilla(Material material) {
         return new ProductItemBuilder()
-                .setItem(new VanillaProductItem(material));
+                .setItem(new VanillaItem(material));
     }
 
     public ProductItemBuilder setItem(ProductItem productItem) {
@@ -95,7 +95,7 @@ public class ProductItemBuilder {
     }
 
     public ItemStack build(@Nullable Player player) {
-        ItemStack base = getItem().buildItem(player);
+        ItemStack base = getItem().build(player);
 
         base.setAmount(getAmount());
 

@@ -23,7 +23,7 @@ shop-gui:
       item: BLACK_STAINED_GLASS_PANE
       name: " "
       lore:
-        - "<dark_gray>>Wall of Black Market."
+        - "<dark_gray>Wall of Black Market."
         - " "
     "@":
       item: CLOCK

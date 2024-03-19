@@ -15,11 +15,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-public class MMOItemsProductItem implements ProductItem {
+public class MMOItemsItem implements ProductItem {
     private final String type;
     private final String id;
 
-    public MMOItemsProductItem(@NotNull String type, @NotNull String id) {
+    public MMOItemsItem(@NotNull String type, @NotNull String id) {
         this.type = type;
         this.id = id;
     }
@@ -49,7 +49,7 @@ public class MMOItemsProductItem implements ProductItem {
     }
 
     @Override
-    public ItemStack buildItem(@Nullable Player player) {
+    public ItemStack build(@Nullable Player player) {
         MMOItem mmoItem;
         if (player == null) {
             mmoItem = MMOItems.plugin.getMMOItem(Type.get(getType()), getId().toUpperCase(Locale.ENGLISH));

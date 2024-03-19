@@ -48,7 +48,7 @@ public class ShopCommand {
                         }}));
                         return;
                     }
-                    shop.openGUI((Player) args.get("player"));
+                    shop.open((Player) args.get("player"));
                 });
     }
 

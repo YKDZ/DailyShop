@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.price;
 
-import cn.encmys.ykdz.forest.dailyshop.enums.PriceMode;
+import cn.encmys.ykdz.forest.dailyshop.price.enums.PriceMode;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Random;

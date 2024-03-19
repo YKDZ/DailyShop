@@ -87,7 +87,7 @@ public class ShopFactory {
 
         // Build shop gui
         for (Shop shop : getAllShops().values()) {
-            shop.buildGUI();
+            shop.getShopGUI().build(shop.getListedProducts());
         }
     }
 

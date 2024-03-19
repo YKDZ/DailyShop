@@ -8,10 +8,10 @@ import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
-import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.OraxenProductItem;
-import cn.encmys.ykdz.forest.dailyshop.item.VanillaProductItem;
+import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderItem;
+import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsItem;
+import cn.encmys.ykdz.forest.dailyshop.item.OraxenItem;
+import cn.encmys.ykdz.forest.dailyshop.item.VanillaItem;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
@@ -47,30 +47,30 @@ public class ProductIconBuilder {
     }
 
     public static ProductIconBuilder mmoitems(String type, String id) {
-        ProductItem item = new MMOItemsProductItem(type, id);
+        ProductItem item = new MMOItemsItem(type, id);
         return new ProductIconBuilder()
                 .setItem(item)
                 .setName(item.getDisplayName());
     }
 
     public static ProductIconBuilder itemsadder(String namespacedId) {
-        ProductItem item = new ItemsAdderProductItem(namespacedId);
+        ProductItem item = new ItemsAdderItem(namespacedId);
         return new ProductIconBuilder()
                 .setItem(item)
                 .setName(item.getDisplayName());
     }
 
     public static ProductIconBuilder oraxen(String id) {
-        ProductItem item = new OraxenProductItem(id);
+        ProductItem item = new OraxenItem(id);
         return new ProductIconBuilder()
                 .setItem(item)
                 .setName(item.getDisplayName());
     }
 
     public static ProductIconBuilder vanilla(Material material) {
-        ProductItem item = new VanillaProductItem(material);
+        ProductItem item = new VanillaItem(material);
         return new ProductIconBuilder()
-                .setItem(new VanillaProductItem(material))
+                .setItem(new VanillaItem(material))
                 .setName(item.getDisplayName());
     }
 
@@ -166,7 +166,7 @@ public class ProductIconBuilder {
                         for (String contentId : bundleContents) {
                             Product content = productFactory.getProduct(contentId);
                             bundleContentsLore.add(TextUtils.parseInternalVariables(getBundleContentsLineFormat(), new HashMap<>() {{
-                                put("name", adventureManager.legacyToMiniMessage(content.getIconBuilder().getName()));
+                                put("name", adventureManager.legacyToMiniMessage(content.getProductIconBuilder().getName()));
                                 put("amount", String.valueOf(content.getProductItemBuilder().getAmount()));
                             }}));
                         }
@@ -189,7 +189,7 @@ public class ProductIconBuilder {
                     put("bundle-contents", bundleContentsLore);
                 }}), null);
 
-                return new ItemBuilder(getItem().buildItem(null))
+                return new ItemBuilder(getItem().build(null))
                         .setAmount(getAmount())
                         .addLoreLines(lores.toArray(new String[0]))
                         .setDisplayName(name);

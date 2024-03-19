@@ -4,9 +4,9 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
-import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import org.bukkit.entity.Player;
@@ -97,7 +97,7 @@ public class ItemProduct extends Product {
     public boolean canBuyFrom(@Nullable String shopId, Player player) {
         int needed = getProductItemBuilder().getAmount();
         for (ItemStack check : player.getInventory()) {
-            if (check != null && getProductItemBuilder().getItem().isSimilar(check)) {
+            if (check != null && needed > 0 && getProductItemBuilder().getItem().isSimilar(check)) {
                 int has = check.getAmount();
                 if (needed <= has) {
                     return true;
@@ -117,10 +117,11 @@ public class ItemProduct extends Product {
         }
 
         for (ItemStack check : player.getInventory()) {
-            if (check != null && getProductItemBuilder().getItem().isSimilar(check)) {
+            if (check != null && needed > 0 && getProductItemBuilder().getItem().isSimilar(check)) {
                 int has = check.getAmount();
                 if (needed <= has) {
                     check.setAmount(has - needed);
+                    needed = 0;
                 } else {
                     check.setAmount(0);
                     needed -= has;

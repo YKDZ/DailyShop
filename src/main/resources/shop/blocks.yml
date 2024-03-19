@@ -24,7 +24,7 @@ shop-gui:
       item: BROWN_STAINED_GLASS_PANE
       name: " "
       lore:
-        - "<dark_gray>>Wall of Block Shop"
+        - "<dark_gray>Wall of Block Shop"
         - " "
     "@":
       item: CLOCK

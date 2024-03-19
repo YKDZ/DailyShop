@@ -9,5 +9,5 @@ public interface ProductItem {
 
     boolean isSimilar(ItemStack item);
 
-    ItemStack buildItem(@Nullable Player player);
+    ItemStack build(@Nullable Player player);
 }

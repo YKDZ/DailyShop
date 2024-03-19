@@ -2,9 +2,9 @@ package cn.encmys.ykdz.forest.dailyshop.api.product;
 
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
-import cn.encmys.ykdz.forest.dailyshop.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -58,7 +58,7 @@ public abstract class Product {
 
     public abstract ProductType getType();
 
-    public ProductIconBuilder getIconBuilder() {
+    public ProductIconBuilder getProductIconBuilder() {
         return productIconBuilder;
     }
 

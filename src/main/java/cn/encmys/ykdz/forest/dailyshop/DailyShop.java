@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
 import cn.encmys.ykdz.forest.dailyshop.config.*;
-import cn.encmys.ykdz.forest.dailyshop.data.Database;
+import cn.encmys.ykdz.forest.dailyshop.database.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;

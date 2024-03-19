@@ -17,8 +17,8 @@ products:
     amount: 1
     name: "<white>Warm Welcome from server"
     commands:
-      - "tell %player_name% Welcome!"
-      - "tell %player_name% Have fun!"
+      - "tell %player_name% Welcome %player_name%!"
+      - "-p:true -repeat:3 tell %player_name% Have fun!"
     rarity: ancient
 
   # You can use command product to do various of things

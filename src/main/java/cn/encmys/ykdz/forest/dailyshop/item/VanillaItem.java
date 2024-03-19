@@ -9,15 +9,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class VanillaProductItem implements ProductItem {
+public class VanillaItem implements ProductItem {
     private final Material material;
 
-    public VanillaProductItem(@NotNull Material material) {
+    public VanillaItem(@NotNull Material material) {
         this.material = material;
     }
 
     @Override
-    public ItemStack buildItem(@Nullable Player player) {
+    public ItemStack build(@Nullable Player player) {
         return new ItemStack(material);
     }
 
@@ -28,7 +28,7 @@ public class VanillaProductItem implements ProductItem {
 
     @Override
     public boolean isSimilar(@NotNull ItemStack item) {
-        return item.isSimilar(buildItem(null));
+        return item.isSimilar(build(null));
     }
 
     public Material getMaterial() {
