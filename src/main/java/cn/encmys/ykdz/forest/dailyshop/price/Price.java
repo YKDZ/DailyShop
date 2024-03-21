@@ -78,7 +78,7 @@ public class Price {
                 return round ? Math.round(min + (max - min) * random.nextDouble()) : min + (max - min) * random.nextDouble();
             }
         }
-        return -1;
+        return -1d;
     }
 
     public PriceMode getPriceMode() {

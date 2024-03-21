@@ -2,16 +2,13 @@ package cn.encmys.ykdz.forest.dailyshop.gui.icon;
 
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.InvUI;
+import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.item.ItemProvider;
-import xyz.xenondevs.invui.item.impl.AbstractItem;
+import xyz.xenondevs.invui.item.impl.controlitem.ScrollItem;
 
-public abstract class NormalIcon extends AbstractItem implements Icon {
+public abstract class ScrollIcon extends ScrollItem implements Icon {
     private BukkitTask task;
 
     public void startUpdater(long period) {
@@ -24,9 +21,10 @@ public abstract class NormalIcon extends AbstractItem implements Icon {
         task = null;
     }
 
-    @Override
-    public abstract ItemProvider getItemProvider();
+    public ScrollIcon(int scroll) {
+        super(scroll);
+    }
 
     @Override
-    public abstract void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event);
+    public abstract ItemProvider getItemProvider(ScrollGui<?> gui);
 }

@@ -6,20 +6,15 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
-import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.management.openmbean.InvalidKeyException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,27 +28,16 @@ public class ProductFactory {
             ConfigurationSection products = config.getConfigurationSection("products");
             ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
-            List<String> bundlesId = new ArrayList<>();
             for (String productId : products.getKeys(false)) {
                 ConfigurationSection productSection = products.getConfigurationSection(productId);
 
-                // Record Bundle
                 if (!productSection.getStringList("bundle-contents").isEmpty()) {
-                    bundlesId.add(productId);
-                    continue;
-                }
-
-                if (productSection.contains("commands")) {
+                    buildBundleProduct(productId, productSection, defaultSettings);
+                } else if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
                     buildCommandProduct(productId, productSection, defaultSettings);
                 } else {
                     buildItemProduct(productId, productSection, defaultSettings);
                 }
-            }
-
-            // Handle Bundle
-            for (String bundleId : bundlesId) {
-                ConfigurationSection productSection = products.getConfigurationSection(bundleId);
-                buildBundleProduct(bundleId, productSection, defaultSettings);
             }
         }
     }
@@ -63,34 +47,15 @@ public class ProductFactory {
         List<String> descLore = productSection.getStringList("desc-lore");
         int amount = productSection.getInt("amount", defaultSettings.getInt("amount", 1));
         String name = productSection.getString("name");
+        Integer customModelData = productSection.getInt("custom-model-data");
+        List<String> itemFlags = productSection.getStringList("item-flags");
 
-        if (item.startsWith("MI:") && MMOItemsHook.isHooked()) {
-            String[] typeId = item.substring(3).split(":");
-            String type = typeId[0];
-            String id = typeId[1];
-            return ProductIconBuilder.mmoitems(type, id)
-                    .setName(name)
-                    .setDescLore(descLore)
-                    .setAmount(amount);
-        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
-            String namespacedId = item.substring(3);
-            return ProductIconBuilder.itemsadder(namespacedId)
-                    .setName(name)
-                    .setDescLore(descLore)
-                    .setAmount(amount);
-        } else if (item.startsWith("OXN:") && OraxenHook.isHooked()) {
-            String id = item.substring(3);
-            return ProductIconBuilder.oraxen(id)
-                    .setName(name)
-                    .setDescLore(descLore)
-                    .setAmount(amount);
-        } else {
-            Material material = Material.valueOf(item);
-            return ProductIconBuilder.vanilla(material)
-                    .setName(name)
-                    .setDescLore(descLore)
-                    .setAmount(amount);
-        }
+        return ProductIconBuilder.get(item)
+                .setName(name)
+                .setDescLore(descLore)
+                .setAmount(amount)
+                .setCustomModelData(customModelData)
+                .setItemFlags(itemFlags);
     }
 
     public ProductItemBuilder buildProductItemBuilder(ConfigurationSection productSection, ConfigurationSection defaultSettings) {
@@ -98,28 +63,15 @@ public class ProductFactory {
         List<String> lore = productSection.getStringList("lore");
         int amount = productSection.getInt("amount", defaultSettings.getInt("amount", 1));
         String name = productSection.getString("name");
+        int customModelData = productSection.getInt("custom-model-data", 0);
+        List<String> itemFlags = productSection.getStringList("item-flags");
 
-        if (item.startsWith("MI:") && MMOItemsHook.isHooked()) {
-            String[] typeId = item.substring(3).split(":");
-            String type = typeId[0];
-            String id = typeId[1];
-            return ProductItemBuilder.mmoitems(type, id)
-                    .setName(name)
-                    .setLore(lore)
-                    .setAmount(amount);
-        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
-            String namespacedId = item.substring(3);
-            return ProductItemBuilder.itemsadder(namespacedId)
-                    .setName(name)
-                    .setLore(lore)
-                    .setAmount(amount);
-        } else {
-            Material material = Material.valueOf(item);
-            return ProductItemBuilder.vanilla(material)
-                    .setName(name)
-                    .setLore(lore)
-                    .setAmount(amount);
-        }
+        return ProductItemBuilder.get(item)
+                .setName(name)
+                .setLore(lore)
+                .setAmount(amount)
+                .setCustomModelData(customModelData)
+                .setItemFlags(itemFlags);
     }
 
     public Product buildBundleProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
@@ -175,9 +127,10 @@ public class ProductFactory {
         Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
         // Commands
-        List<String> commands = productSection.getStringList("commands");
+        List<String> buyCommands = productSection.getStringList("buy-commands");
+        List<String> sellCommands = productSection.getStringList("sell-commands");
 
-        Product product = new CommandProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, commands);
+        Product product = new CommandProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, buyCommands, sellCommands);
         products.put(id, product);
         return product;
     }

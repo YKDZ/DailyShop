@@ -6,9 +6,9 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import org.bukkit.entity.Player;
@@ -18,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CommandProduct extends Product {
-    private final List<String> commands;
+    private final List<String> buyCommands;
+    private final List<String> sellCommands;
 
     public CommandProduct(
             String id,
@@ -27,9 +28,11 @@ public class CommandProduct extends Product {
             Rarity rarity,
             ProductIconBuilder productIconBuilder,
             ProductItemBuilder productItemBuilder,
-            List<String> commands) {
+            List<String> buyCommands,
+            List<String> sellCommands) {
         super(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, false);
-        this.commands = commands;
+        this.buyCommands = buyCommands;
+        this.sellCommands = sellCommands;
     }
 
     @Override
@@ -38,53 +41,64 @@ public class CommandProduct extends Product {
     }
 
     @Override
-    public boolean sellTo(@Nullable String shopId, Player player) {
-        if (!canSellTo(shopId, player)) {
-            return false;
+    public FailureReason sellTo(@Nullable String shopId, Player player) {
+        FailureReason failure = canSellTo(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
         }
 
         BalanceUtils.removeBalance(player, DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId()));
         give(shopId, player);
 
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
-    public boolean canSellTo(@Nullable String shopId, Player player) {
-        Shop shop = DailyShop.getShopFactory().getShop(shopId);
-        return BalanceUtils.checkBalance(player) >= shop.getBuyPrice(getId());
+    public FailureReason canSellTo(@Nullable String shopId, Player player) {
+        double price = DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
+        if (price == -1d) {
+            return FailureReason.DISABLE;
+        }
+        if (BalanceUtils.checkBalance(player) <= price) {
+            return FailureReason.MONEY;
+        }
+        return FailureReason.SUCCESS;
     }
 
     @Override
     public void give(@Nullable String shopId, @NotNull Player player) {
-        for (int i = 0; i < getProductIconBuilder().getAmount(); i++) {
-            CommandUtils.dispatchCommands(player, getCommands());
-        }
+        CommandUtils.dispatchCommands(player, getBuyCommands());
     }
 
     @Override
-    public boolean buyFrom(@Nullable String shopId, Player player) {
-        return false;
+    public FailureReason buyFrom(@Nullable String shopId, Player player) {
+        take(player, 1);
+        return FailureReason.SUCCESS;
     }
 
     @Override
     public int buyAllFrom(@Nullable String shopId, Player player) {
-        return 0;
+        return takeAll(player);
     }
 
     @Override
-    public boolean canBuyFrom(@Nullable String shopId, Player player) {
-        return false;
+    public FailureReason canBuyFrom(@Nullable String shopId, Player player) {
+        double price = DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId());
+        if (price == -1d) {
+            return FailureReason.DISABLE;
+        }
+        return FailureReason.SUCCESS;
     }
 
     @Override
-    public boolean take(Player player, int stack) {
-        return false;
+    public void take(Player player, int stack) {
+        CommandUtils.dispatchCommands(player, getSellCommands());
     }
 
     @Override
     public int takeAll(Player player) {
-        return 0;
+        CommandUtils.dispatchCommands(player, getSellCommands());
+        return 1;
     }
 
     @Override
@@ -92,7 +106,11 @@ public class CommandProduct extends Product {
         return new PricePair(getBuyPrice().getNewPrice(), getSellPrice().getNewPrice());
     }
 
-    public List<String> getCommands() {
-        return commands;
+    public List<String> getBuyCommands() {
+        return buyCommands;
+    }
+
+    public List<String> getSellCommands() {
+        return sellCommands;
     }
 }

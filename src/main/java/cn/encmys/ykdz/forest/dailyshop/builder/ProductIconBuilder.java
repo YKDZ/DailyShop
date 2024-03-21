@@ -8,11 +8,15 @@ import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderItem;
 import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsItem;
 import cn.encmys.ykdz.forest.dailyshop.item.OraxenItem;
 import cn.encmys.ykdz.forest.dailyshop.item.VanillaItem;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.Material;
@@ -42,8 +46,27 @@ public class ProductIconBuilder {
     private List<String> itemFlags;
     private String nameFormat;
     private String bundleContentsLineFormat;
+    private Integer customModelData;
 
     private ProductIconBuilder() {
+    }
+
+    public static ProductIconBuilder get(String item) {
+        if (item.startsWith("MI:") && MMOItemsHook.isHooked()) {
+            String[] typeId = item.substring(3).split(":");
+            String type = typeId[0];
+            String id = typeId[1];
+            return ProductIconBuilder.mmoitems(type, id);
+        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
+            String namespacedId = item.substring(3);
+            return ProductIconBuilder.itemsadder(namespacedId);
+        } else if (item.startsWith("OXN:") && OraxenHook.isHooked()) {
+            String id = item.substring(3);
+            return ProductIconBuilder.oraxen(id);
+        } else {
+            Material material = Material.valueOf(item);
+            return ProductIconBuilder.vanilla(material);
+        }
     }
 
     public static ProductIconBuilder mmoitems(String type, String id) {
@@ -123,8 +146,9 @@ public class ProductIconBuilder {
         return itemFlags;
     }
 
-    public void setItemFlags(List<String> itemFLags) {
-        this.itemFlags = itemFLags;
+    public ProductIconBuilder setItemFlags(List<String> itemFlags) {
+        this.itemFlags = itemFlags;
+        return this;
     }
 
     public ProductIconBuilder setAmount(int amount) {
@@ -144,8 +168,17 @@ public class ProductIconBuilder {
         return bundleContentsLineFormat;
     }
 
-    private List<String> getDescLore() {
+    public List<String> getDescLore() {
         return descLore;
+    }
+
+    public Integer getCustomModelData() {
+        return customModelData;
+    }
+
+    public ProductIconBuilder setCustomModelData(Integer customModelData) {
+        this.customModelData = customModelData;
+        return this;
     }
 
     public Item build(String shopId, Product product) {
@@ -165,8 +198,8 @@ public class ProductIconBuilder {
                     if (bundleContents != null && !bundleContents.isEmpty()) {
                         for (String contentId : bundleContents) {
                             Product content = productFactory.getProduct(contentId);
-                            bundleContentsLore.add(TextUtils.parseInternalVariables(getBundleContentsLineFormat(), new HashMap<>() {{
-                                put("name", adventureManager.legacyToMiniMessage(content.getProductIconBuilder().getName()));
+                            bundleContentsLore.add(TextUtils.decorateTextInMiniMessage(getBundleContentsLineFormat(), null, new HashMap<>() {{
+                                put("name", content.getProductIconBuilder().getName());
                                 put("amount", String.valueOf(content.getProductItemBuilder().getAmount()));
                             }}));
                         }
@@ -175,31 +208,32 @@ public class ProductIconBuilder {
 
                 // Vars for the product itself
                 Map<String, String> vars = new HashMap<>() {{
-                    put("name", adventureManager.legacyToMiniMessage(getName()));
+                    put("name", getName());
                     put("amount", String.valueOf(getAmount()));
-                    put("buy-price", decimalFormat.format(shop.getBuyPrice(product.getId())));
-                    put("sell-price", decimalFormat.format(shop.getSellPrice(product.getId())));
+                    put("buy-price", shop.getBuyPrice(product.getId()) != -1d ? decimalFormat.format(shop.getBuyPrice(product.getId())) : null);
+                    put("sell-price", shop.getSellPrice(product.getId()) != -1d ? decimalFormat.format(shop.getSellPrice(product.getId())) : null);
                     put("rarity", product.getRarity().getName());
                 }};
 
-                String name = TextUtils.decorateText(TextUtils.parseInternalVariables(getNameFormat(), vars), null);
-
-                List<String> lores = TextUtils.decorateText(TextUtils.insertListInternalVariables(TextUtils.parseInternalVariables(getLoreFormat(), vars), new HashMap<>() {{
+                Map<String, List<String>> listVars = new HashMap<>() {{
                     put("desc-lore", getDescLore());
                     put("bundle-contents", bundleContentsLore);
-                }}), null);
+                }};
 
-                return new ItemBuilder(getItem().build(null))
-                        .setAmount(getAmount())
-                        .addLoreLines(lores.toArray(new String[0]))
-                        .setDisplayName(name);
+                return new ItemBuilder(
+                        new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(null))
+                                .setCustomModelData(getCustomModelData())
+                                .setItemFlags(getItemFlags())
+                                .setLore(TextUtils.decorateTextWithListVar(getLoreFormat(), null, listVars, vars))
+                                .setDisplayName(TextUtils.decorateTextWithVar(getNameFormat(), null, vars))
+                                .build(getAmount()));
             }
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
                 Shop shop = DailyShop.getShopFactory().getShop(shopId);
-                HashMap<String, String> vars = new HashMap<>() {{
-                    put("name", adventureManager.legacyToMiniMessage(getName()));
+                Map<String, String> vars = new HashMap<>() {{
+                    put("name", getName());
                     put("amount", String.valueOf(getAmount()));
                     put("shop", DailyShop.getShopFactory().getShop(shopId).getName());
                     put("cost", decimalFormat.format(shop.getBuyPrice(product.getId())));
@@ -207,28 +241,41 @@ public class ProductIconBuilder {
                 }};
 
                 if (clickType == ClickType.LEFT) {
-                    if (!product.sellTo(shopId, player)) {
-                        adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_buy_failure, vars));
+                    FailureReason failure = product.sellTo(shopId, player);
+                    if (failure != FailureReason.SUCCESS) {
+                        switch (failure) {
+                            case DISABLE -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
+                            case MONEY -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
+                        }
                         return;
                     }
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_buy_success, vars));
+                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
-                    if (!product.buyFrom(shopId, player)) {
-                        adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sell_failure, vars));
+                    FailureReason failure = product.buyFrom(shopId, player);
+                    if (failure != FailureReason.SUCCESS) {
+                        switch (failure) {
+                            case DISABLE -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
+                            case NOT_ENOUGH -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
+                        }
                         return;
                     }
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sell_success, vars));
+                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
+                    if (shop.getSellPrice(product.getId()) == -1d) {
+                        adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_disable, player, vars));
+                        return;
+                    }
+
                     int stack = product.buyAllFrom(shopId, player);
                     if (stack == 0) {
-                        adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sellAll_failure, vars));
+                        adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
                         return;
                     }
                     vars.put("earn", decimalFormat.format(shop.getSellPrice(product.getId()) * stack));
                     vars.put("stack", String.valueOf(stack));
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_action_sellAll_success, vars));
+                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 

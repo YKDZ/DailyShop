@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
@@ -41,22 +42,29 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean sellTo(@Nullable String shopId, Player player) {
-        if (!canSellTo(shopId, player)) {
-            return false;
+    public FailureReason sellTo(@Nullable String shopId, Player player) {
+        FailureReason failure = canSellTo(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
         }
         Shop shop = DailyShop.getShopFactory().getShop(shopId);
 
         BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
         give(shopId, player);
 
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
-    public boolean canSellTo(@Nullable String shopId, Player player) {
-        Shop shop = DailyShop.getShopFactory().getShop(shopId);
-        return BalanceUtils.checkBalance(player) >= shop.getBuyPrice(getId());
+    public FailureReason canSellTo(@Nullable String shopId, Player player) {
+        double price = DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
+        if (price == -1d) {
+            return FailureReason.DISABLE;
+        }
+        if (BalanceUtils.checkBalance(player) <= price) {
+            return FailureReason.MONEY;
+        }
+        return FailureReason.SUCCESS;
     }
 
     @Override
@@ -67,14 +75,15 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean buyFrom(@Nullable String shopId, Player player) {
-        if (!canBuyFrom(shopId, player)) {
-            return false;
+    public FailureReason buyFrom(@Nullable String shopId, Player player) {
+        FailureReason failure = canBuyFrom(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
         }
 
         take(player, 1);
 
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
@@ -83,21 +92,25 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean canBuyFrom(@Nullable String shopId, Player player) {
+    public FailureReason canBuyFrom(@Nullable String shopId, Player player) {
+        if (DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()) == -1d) {
+            return FailureReason.DISABLE;
+        }
+
         for (String id : bundleContents) {
-            if (!DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player)) {
-                return false;
+            FailureReason failure = DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player);
+            if (failure != FailureReason.SUCCESS) {
+                return failure;
             }
         }
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
-    public boolean take(Player player, int stack) {
+    public void take(Player player, int stack) {
         for (String id : getBundleContents()) {
             DailyShop.getProductFactory().getProduct(id).take(player, stack);
         }
-        return true;
     }
 
     @Override

@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import org.bukkit.entity.Player;
@@ -70,9 +71,9 @@ public abstract class Product {
      * @param shopId Seller
      * @param player Buyer
      */
-    public abstract boolean sellTo(@Nullable String shopId, Player player);
+    public abstract FailureReason sellTo(@Nullable String shopId, Player player);
 
-    public abstract boolean canSellTo(@Nullable String shopId, Player player);
+    public abstract FailureReason canSellTo(@Nullable String shopId, Player player);
 
     public abstract void give(@Nullable String shopId, @NotNull Player player);
 
@@ -80,7 +81,7 @@ public abstract class Product {
      * @param shopId Buyer
      * @param player Seller
      */
-    public abstract boolean buyFrom(@Nullable String shopId, Player player);
+    public abstract FailureReason buyFrom(@Nullable String shopId, Player player);
 
     /**
      * @param shopId Buyer
@@ -92,9 +93,9 @@ public abstract class Product {
      * @param shopId Buyer
      * @param player Seller
      */
-    public abstract boolean canBuyFrom(@Nullable String shopId, Player player);
+    public abstract FailureReason canBuyFrom(@Nullable String shopId, Player player);
 
-    public abstract boolean take(Player player, int stack);
+    public abstract void take(Player player, int stack);
 
     public abstract int takeAll(Player player);
 

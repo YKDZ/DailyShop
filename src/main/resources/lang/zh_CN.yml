@@ -19,13 +19,19 @@ messages:
         success: "<green>成功手动保存了所有商店数据!"
   action:
     buy:
-      success: "<gray>成功从商店 <reset>{shop}<gray> 购买了 <reset>{name} <gray>x <white>{amount} <gray>. 花费共 <white>{cost}."
-      failure: "<gray>你没有足够的 <red>余额 <gray>来购买 <reset>{name} <gray>x <white>{amount}<gray>!"
+      success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{cost}."
+      failure:
+        money: "<gray>You do not have enough <red>money <gray>to buy <reset>{name} <gray>x <white>{amount}<gray>."
+        disable: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>."
     sell:
-      success: "<gray>成功将 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{earn}."
-      failure: "<gray>你的背包中没有 <reset>{name} <gray>x <white>{amount} <gray>以供出售."
+      success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{earn}."
+      failure:
+        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>."
+        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
     sell-all:
-      success: "<gray>成功将背包中的 <white>{stack} <gray>份 <reset>{name} <gray>x <white>{amount} <gray>出售到商店 <reset>{shop}<gray>. 你赚得了 <white>{earn}."
-      failure: "<gray>你的背包中没有 <reset>{name} <gray>x <white>{amount} <gray>以供出售."
+      success: "<gray>Successfully sell <white>{stack} <gray>stack of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{earn}."
+      failure:
+        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>!"
+        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
 
 version: 1

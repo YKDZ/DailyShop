@@ -1,5 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
@@ -9,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemsAdderItem implements ProductItem {
+    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final String namespacedId;
 
     public ItemsAdderItem(@NotNull String namespacedId) {
@@ -18,7 +21,7 @@ public class ItemsAdderItem implements ProductItem {
     @Override
     public String getDisplayName() {
         if (CustomStack.isInRegistry(namespacedId)) {
-            return CustomStack.getInstance(namespacedId).getDisplayName();
+            return adventureManager.legacyToMiniMessage(CustomStack.getInstance(namespacedId).getDisplayName());
         } else {
             return null;
         }

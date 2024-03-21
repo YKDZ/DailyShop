@@ -11,14 +11,15 @@ default-settings:
   cacheable: true
 
 products:
-  # Player can not sell a command product to store.
   WARM_WELCOME:
     item: SUNFLOWER
     amount: 1
     name: "<white>Warm Welcome from server"
-    commands:
+    buy-commands:
       - "tell %player_name% Welcome %player_name%!"
       - "-p:true -repeat:3 tell %player_name% Have fun!"
+    sell-price:
+      disable: true
     rarity: ancient
 
   # You can use command product to do various of things
@@ -27,9 +28,11 @@ products:
     item: FEATHER
     amount: 1
     name: "<white>Fly for 30 minutes"
-    commands:
+    buy-commands:
       - "lp user %player_name% permission settemp cmi.command.fly true 30m"
       - "tell %player_name% Now you can fly in 30 minutes!"
+    sell-price:
+      disable: true
     rarity: ancient
 
   # This product will not load if MMOItems plugin is not installed.

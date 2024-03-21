@@ -25,7 +25,7 @@ public class Scheduler {
 
     private void runRestockTimer() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.runTaskTimerAsynchronously(plugin, task -> {
+        scheduler.runTaskTimer(plugin, task -> {
             long now = System.currentTimeMillis();
             for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
                 if (now - shop.getLastRestocking() >= shop.getRestockTime() * 60L * 1000L) {

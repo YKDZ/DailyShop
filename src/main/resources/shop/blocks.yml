@@ -1,7 +1,7 @@
 settings:
   name: "<#A0522D>Blocks Shop"
   restock-timer: 10
-  size: 14
+  size: 18
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
@@ -12,13 +12,14 @@ sounds:
 
 shop-gui:
   title: "Welcome %player_name%"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
   # The x character is the placeholder
   # for the product slot.
   layout:
-  - "# # # # # # # # #"
-  - "# x x x x x x x #"
-  - "# x x x x x x x #"
-  - "# # < # @ # > # #"
+  - "# # # # # # # # u"
+  - "# x x x x x x x @"
+  - "# # # # # # # # n"
   icons:
     "#":
       item: BROWN_STAINED_GLASS_PANE
@@ -30,8 +31,16 @@ shop-gui:
       item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-timer: 10
+    "u":
+      item: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      scroll: -1
+    "n":
+      item: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      scroll: 1
   product:
-    name-format: "<dark_gray>Name: <reset>{name} x {amount}"
+    name-format: "<dark_gray>Name: <reset>{name} <dark_gray>x {amount}"
     lore-format:
       - " "
       - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
@@ -43,7 +52,7 @@ shop-gui:
       - "{desc-lore}"
       - " "
       - "<gray>Rarity: <reset>{rarity}"
-    bundle-contents-line-format: " <dark_gray>- <reset>{name} <gray>x <white>{amount}"
+    bundle-contents-line-format: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 products:
   # Use PACK: as prefix to import the entire

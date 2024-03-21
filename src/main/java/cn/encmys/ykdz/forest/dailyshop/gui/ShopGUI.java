@@ -2,13 +2,13 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.builder.NormalIconBuilder;
+import cn.encmys.ykdz.forest.dailyshop.builder.IconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -21,8 +21,6 @@ import java.util.*;
 public class ShopGUI {
     private static final ProductFactory productFactory = DailyShop.getProductFactory();
     private static final char productIdentifier = 'x';
-    private static final char scrollUpIdentifier = '>';
-    private static final char scrollDownIdentifier = '<';
     private final Map<UUID, Window> windows = new HashMap<>();
     private final String shopId;
     private final ConfigurationSection section;
@@ -35,21 +33,38 @@ public class ShopGUI {
 
     public void build(List<String> listedProduct) {
         ScrollGui.Builder<@NotNull Item> builder = ScrollGui.items()
-                .setStructure(getSection().getStringList("layout").toArray(new String[0]))
-                .addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
+                .setStructure(getSection().getStringList("layout").toArray(new String[0]));
+
+        if (getSection().getString("scroll-mode", "HORIZONTAL").equalsIgnoreCase("HORIZONTAL")) {
+            builder.addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
+        } else {
+            builder.addIngredient(productIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
+        }
 
         // Normal Icon
         ConfigurationSection iconsSection = getSection().getConfigurationSection("icons");
         for (String key : iconsSection.getKeys(false)) {
             char iconKey = key.charAt(0);
-            Material material = Material.matchMaterial(iconsSection.getString(iconKey + ".item", "DIRT"));
-            NormalIconBuilder iconBuilder =
-                    NormalIconBuilder.vanilla(material)
-                                .setAmount(iconsSection.getInt(iconKey + ".amount", 1))
-                                .setName(iconsSection.getString(iconKey + ".name", null))
-                                .setLore(iconsSection.getStringList(iconKey + ".lore"))
-                                .setPeriod(iconsSection.getLong(iconKey + ".update-timer", 0L));
-            builder.addIngredient(iconKey, iconBuilder.build());
+            String item = iconsSection.getString(iconKey + ".item", "DIRT");
+
+            builder.addIngredient(iconKey, IconBuilder.get(item)
+                    .setAmount(iconsSection.getInt(iconKey + ".amount", 1))
+                    .setName(iconsSection.getString(iconKey + ".name", null))
+                    .setLore(iconsSection.getStringList(iconKey + ".lore"))
+                    .setPeriod(iconsSection.getLong(iconKey + ".update-timer", 0L))
+                    .setScroll(iconsSection.getInt(iconKey + ".scroll", 0))
+                    .setCommands(new HashMap<>() {{
+                        put(ClickType.LEFT, iconsSection.getStringList(iconKey + ".commands.left"));
+                        put(ClickType.RIGHT, iconsSection.getStringList(iconKey + ".commands.right"));
+                        put(ClickType.SHIFT_LEFT, iconsSection.getStringList(iconKey + ".commands.shift-left"));
+                        put(ClickType.SHIFT_RIGHT, iconsSection.getStringList(iconKey + ".commands.shift-right"));
+                        put(ClickType.DROP, iconsSection.getStringList(iconKey + ".commands.drop"));
+                        put(ClickType.DOUBLE_CLICK, iconsSection.getStringList(iconKey + ".commands.double-click"));
+                        put(ClickType.MIDDLE, iconsSection.getStringList(iconKey + ".commands.middle"));
+                    }})
+                    .setCustomModelData(iconsSection.getInt(iconKey + ".custom-model-data"))
+                    .setItemFlags(iconsSection.getStringList(iconKey + ".item-flags"))
+                    .build());
         }
 
         // Product Icon

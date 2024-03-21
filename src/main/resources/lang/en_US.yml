@@ -20,12 +20,18 @@ messages:
   action:
     buy:
       success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{cost}."
-      failure: "<gray>You do not have enough <red>money <gray>to buy <reset>{name} <gray>x <white>{amount}<gray>!"
+      failure:
+        money: "<gray>You do not have enough <red>money <gray>to buy <reset>{name} <gray>x <white>{amount}<gray>."
+        disable: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>."
     sell:
       success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{earn}."
-      failure: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+      failure:
+        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>."
+        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
     sell-all:
       success: "<gray>Successfully sell <white>{stack} <gray>stack of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{earn}."
-      failure: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+      failure:
+        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>!"
+        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
 
 version: 1

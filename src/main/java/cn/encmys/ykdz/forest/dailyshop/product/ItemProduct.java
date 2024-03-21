@@ -1,11 +1,13 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
@@ -31,20 +33,28 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean sellTo(@Nullable String shopId, Player player) {
-        if (!canSellTo(shopId, player)) {
-            return false;
+    public FailureReason sellTo(@Nullable String shopId, Player player) {
+        FailureReason failure = canSellTo(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
         }
 
         BalanceUtils.removeBalance(player, DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId()));
         give(shopId, player);
 
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
-    public boolean canSellTo(@Nullable String shopId, Player player) {
-        return BalanceUtils.checkBalance(player) >= DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
+    public FailureReason canSellTo(@Nullable String shopId, Player player) {
+        double price = DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
+        if (price == -1d) {
+            return FailureReason.DISABLE;
+        }
+        if (BalanceUtils.checkBalance(player) <= price) {
+            return FailureReason.MONEY;
+        }
+        return FailureReason.SUCCESS;
     }
 
     @Override
@@ -62,23 +72,22 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean buyFrom(@Nullable String shopId, Player player) {
-        if (!canBuyFrom(shopId, player)) {
-            return false;
+    public FailureReason buyFrom(@Nullable String shopId, Player player) {
+        FailureReason failure = canBuyFrom(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
         }
 
-        if (!take(player, 1)) {
-            return false;
-        }
-
+        take(player, 1);
         BalanceUtils.addBalance(player, DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()));
 
-        return true;
+        return FailureReason.SUCCESS;
     }
 
     @Override
     public int buyAllFrom(@Nullable String shopId, Player player) {
-        if (!canBuyFrom(shopId, player)) {
+        FailureReason failure = canBuyFrom(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
             return 0;
         }
 
@@ -94,26 +103,31 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean canBuyFrom(@Nullable String shopId, Player player) {
+    public FailureReason canBuyFrom(@Nullable String shopId, Player player) {
+        if (DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()) == -1d) {
+            return FailureReason.DISABLE;
+        }
+
         int needed = getProductItemBuilder().getAmount();
+        ProductItem item = getProductItemBuilder().getItem();
         for (ItemStack check : player.getInventory()) {
-            if (check != null && needed > 0 && getProductItemBuilder().getItem().isSimilar(check)) {
+            if (check != null && needed > 0 && item.isSimilar(check)) {
                 int has = check.getAmount();
                 if (needed <= has) {
-                    return true;
+                    return FailureReason.SUCCESS;
                 } else {
                     needed -= has;
                 }
             }
         }
-        return false;
+        return FailureReason.NOT_ENOUGH;
     }
 
     @Override
-    public boolean take(Player player, int stack) {
+    public void take(Player player, int stack) {
         int needed = getProductItemBuilder().getAmount() * stack;
         if (getAmount(player.getInventory()) < needed) {
-            return false;
+            return;
         }
 
         for (ItemStack check : player.getInventory()) {
@@ -128,7 +142,6 @@ public class ItemProduct extends Product {
                 }
             }
         }
-        return true;
     }
 
     @Override

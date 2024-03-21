@@ -28,6 +28,8 @@ products:
       - "<gray>all the <gold>warm color <gray>wool x 16."
     buy-price:
       bundle-auto-new: true
+    sell-price:
+      disable: true
     bundle-contents:
       - ORANGE_WOOL
       - YELLOW_WOOL
@@ -61,6 +63,9 @@ products:
       - "<gray>Unlike other wools, this wool"
       - "<gray>will carry these lore and custom name"
       - "<gray>when purchased by the player."
+    # Player can not sell this wool to shop.
+    sell-price:
+      disable: true
 
   MAGENTA_WOOL:
     item: MAGENTA_WOOL

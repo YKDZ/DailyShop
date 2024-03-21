@@ -25,12 +25,15 @@ shop-gui:
       lore:
         - "<dark_gray>Wall of Black Market."
         - " "
+      commands:
+        left:
+          - "tell %player_name% Knock knock."
     "@":
       item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-timer: 10
   product:
-    name-format: "<dark_gray>Name: <reset>{name} x {amount}"
+    name-format: "<dark_gray>Name: <reset>{name} <dark_gray>x {amount}"
     lore-format:
       - " "
       - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
@@ -42,7 +45,7 @@ shop-gui:
       - "{desc-lore}"
       - " "
       - "<gray>Rarity: <reset>{rarity}"
-    bundle-contents-line-format: " <dark_gray>- <reset>{name} <gray>x <white>{amount}"
+    bundle-contents-line-format: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 products:
   - WARM_WELCOME

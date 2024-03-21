@@ -1,12 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.builder;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
+import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.item.ItemsAdderItem;
 import cn.encmys.ykdz.forest.dailyshop.item.MMOItemsItem;
 import cn.encmys.ykdz.forest.dailyshop.item.OraxenItem;
 import cn.encmys.ykdz.forest.dailyshop.item.VanillaItem;
+import cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,14 +18,32 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ProductItemBuilder {
-    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private ProductItem productItem;
     private String name;
     private List<String> lores;
     private int amount;
-    private List<String> itemFLags;
+    private List<String> itemFlags;
+    private Integer customModelData;
 
     private ProductItemBuilder() {
+    }
+
+    public static ProductItemBuilder get(String item) {
+        if (item.startsWith("MI:") && MMOItemsHook.isHooked()) {
+            String[] typeId = item.substring(3).split(":");
+            String type = typeId[0];
+            String id = typeId[1];
+            return ProductItemBuilder.mmoitems(type, id);
+        } else if (item.startsWith("IA:") && ItemsAdderHook.isHooked()) {
+            String namespacedId = item.substring(3);
+            return ProductItemBuilder.itemsadder(namespacedId);
+        } else if (item.startsWith("OXN:") && OraxenHook.isHooked()) {
+            String id = item.substring(3);
+            return ProductItemBuilder.oraxen(id);
+        } else {
+            Material material = Material.valueOf(item);
+            return ProductItemBuilder.vanilla(material);
+        }
     }
 
     public static ProductItemBuilder mmoitems(String type, String id) {
@@ -67,12 +88,12 @@ public class ProductItemBuilder {
         return name;
     }
 
-    public List<String> getItemFLags() {
-        return itemFLags;
+    public List<String> getItemFlags() {
+        return itemFlags;
     }
 
-    public ProductItemBuilder setItemFLags(List<String> itemFLags) {
-        this.itemFLags = itemFLags;
+    public ProductItemBuilder setItemFlags(List<String> itemFlags) {
+        this.itemFlags = itemFlags;
         return this;
     }
 
@@ -94,11 +115,21 @@ public class ProductItemBuilder {
         return this;
     }
 
+    public ProductItemBuilder setCustomModelData(Integer data) {
+        this.customModelData = data;
+        return this;
+    }
+
+    public int getCustomModelData() {
+        return customModelData;
+    }
+
     public ItemStack build(@Nullable Player player) {
-        ItemStack base = getItem().build(player);
-
-        base.setAmount(getAmount());
-
-        return base;
+        return new ItemBuilder(getItem().build(player))
+                .setDisplayName(TextUtils.decorateText(getName(), player))
+                .setLore(TextUtils.decorateText(getLore(), player))
+                .setItemFlags(getItemFlags())
+                .setCustomModelData(getCustomModelData())
+                .build(getAmount());
     }
 }

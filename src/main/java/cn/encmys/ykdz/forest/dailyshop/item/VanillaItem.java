@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
 import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import org.bukkit.Material;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class VanillaItem implements ProductItem {
+    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final Material material;
 
     public VanillaItem(@NotNull Material material) {
@@ -23,7 +25,7 @@ public class VanillaItem implements ProductItem {
 
     @Override
     public String getDisplayName() {
-        return DailyShop.getItemsLangAPI().translate(material, Config.language);
+        return adventureManager.legacyToMiniMessage(DailyShop.getItemsLangAPI().translate(material, Config.language));
     }
 
     @Override

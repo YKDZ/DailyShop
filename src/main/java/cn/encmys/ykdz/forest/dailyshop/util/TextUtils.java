@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,25 +17,73 @@ public class TextUtils {
     private static final String listMarker = "|";
 
     public static List<String> decorateText(List<String> text, @Nullable Player player) {
+        if (text == null) {
+            return null;
+        }
+
         List<String> result = new ArrayList<>();
         for (String line : text) {
-            result.add(decorateText(line, player));
+            if (line != null) {
+                result.add(decorateText(line, player));
+            }
         }
         return result;
     }
 
     public static String decorateText(String text, @Nullable Player player) {
+        if (text == null) {
+            return null;
+        }
         return adventureManager.componentToLegacy(adventureManager.getComponentFromMiniMessage(PlaceholderAPI.setPlaceholders(player, text)));
     }
 
-    public static List<String> parseInternalVariables(List<String> lines, Map<String, String> vars) {
-        if (lines == null) {
+    public static String decorateTextWithVar(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
+        text = parseInternalVariables(text, vars);
+
+        if (text == null) {
+            return null;
+        }
+
+        return adventureManager.componentToLegacy(adventureManager.getComponentFromMiniMessage(PlaceholderAPI.setPlaceholders(player, text)));
+    }
+
+    public static String decorateTextInMiniMessage(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
+        if (text == null) {
+            return null;
+        }
+        return PlaceholderAPI.setPlaceholders(player, parseInternalVariables(text, vars));
+    }
+
+    public static List<String> decorateTextWithVar(List<String> text, @Nullable Player player, @NotNull Map<String, String> vars) {
+        if (text == null) {
             return null;
         }
 
         List<String> result = new ArrayList<>();
-        for (String line : lines) {
-            result.add(parseInternalVariables(line, vars));
+        for (String line : text) {
+            if (line != null) {
+                result.add(decorateTextWithVar(line, player, vars));
+            }
+        }
+        return result;
+    }
+
+    public static List<String> decorateTextWithListVar(List<String> text, @Nullable Player player, @NotNull Map<String, List<String>> listVars, @NotNull Map<String, String> normalVars ) {
+        if (text == null) {
+            return null;
+        }
+
+        text = insertListInternalVariables(text, listVars);
+
+        if (text == null) {
+            return null;
+        }
+
+        List<String> result = new ArrayList<>();
+        for (String line : text) {
+            if (line != null) {
+                result.add(decorateTextWithVar(line, player, normalVars));
+            }
         }
         return result;
     }
@@ -46,6 +95,7 @@ public class TextUtils {
                     return null;
                 }
             }
+            line = line.substring(1);
         }
         if (line != null) {
             for (Map.Entry<String, String> entry : vars.entrySet()) {
@@ -56,10 +106,18 @@ public class TextUtils {
     }
 
     public static List<String> insertListInternalVariables(List<String> lines, Map<String, List<String>> vars) {
+        if (lines == null) {
+            return null;
+        }
+
         List<String> result = new ArrayList<>();
         Set<Map.Entry<String, List<String>>> entries = vars.entrySet();
 
         for (String line : lines) {
+            if (line == null) {
+                continue;
+            }
+
             boolean keyLine = false;
 
             for (Map.Entry<String, List<String>> entry : entries) {
