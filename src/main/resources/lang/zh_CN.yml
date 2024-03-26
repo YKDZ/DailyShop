@@ -3,7 +3,7 @@
 # https://docs.adventure.kyori.net/minimessage/format.html
 
 messages:
-  prefix: "<gold>DailyShop <dark_gray>- "
+  prefix: "<dark_gray>[<gold>🔔<dark_gray>] "
   no-permission: "<red>你没有这么做的权限."
   command:
     reload:

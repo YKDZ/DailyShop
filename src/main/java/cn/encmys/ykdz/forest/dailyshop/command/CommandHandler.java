@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.command;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.command.sub.ProductCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.ShopCommand;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -14,10 +15,10 @@ public class CommandHandler {
 
     public void load() {
         new CommandAPICommand("dailyshop")
-                .withPermission("dailyshop.admin")
                 .withSubcommands(
                         getReloadCommand(),
-                        ShopCommand.INSTANCE.getShopCommand()
+                        ShopCommand.INSTANCE.getShopCommand(),
+                        ProductCommand.INSTANCE.getShopCommand()
                 )
                 .register();
     }

@@ -15,6 +15,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven(url = "https://mvn.lumine.io/repository/maven-public/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://maven.aliyun.com/repository/public/")
@@ -65,6 +66,8 @@ dependencies {
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 
     compileOnly("io.th0rgal:oraxen:1.171.0")
+
+    compileOnly("io.lumine:Mythic-Dist:5.6.1")
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 

@@ -3,7 +3,8 @@
 # This makes maintaining a large number of
 # similar products very easy.
 default-settings:
-  amount: 16
+  item:
+    amount: 16
   buy-price:
     mean: 150
     dev: 20
@@ -20,12 +21,13 @@ default-settings:
 
 products:
   WARM_COLOR_CONCRETE_BUNDLE:
-    item: ORANGE_SHULKER_BOX
-    amount: 1
-    name: "<white>Warm Color Concrete Bundle"
-    desc-lore:
-      - "<gray>A product bundle that contains"
-      - "<gray>all the <gold>warm color <gray>concrete x 16."
+    icon:
+      base: ORANGE_SHULKER_BOX
+      amount: 1
+      name: "<white>Warm Color Concrete Bundle"
+      lore:
+        - "<gray>A product bundle that contains"
+        - "<gray>all the <gold>warm color <gray>concrete x 16."
     bundle-contents:
       - ORANGE_CONCRETE
       - YELLOW_CONCRETE
@@ -34,12 +36,13 @@ products:
     rarity: rare
 
   COLD_COLOR_CONCRETE_BUNDLE:
-    item: BLUE_SHULKER_BOX
-    amount: 1
-    name: "<white>Cold Color Concrete Bundle"
-    desc-lore:
-      - "<gray>A product bundle that contains"
-      - "<gray>all the <blue>cold color <gray>concrete x 16."
+    icon:
+      base: BLUE_SHULKER_BOX
+      amount: 1
+      name: "<white>Cold Color Concrete Bundle"
+      lore:
+        - "<gray>A product bundle that contains"
+        - "<gray>all the <blue>cold color <gray>concrete x 16."
     bundle-contents:
       - MAGENTA_CONCRETE
       - LIGHT_BLUE_CONCRETE
@@ -50,49 +53,65 @@ products:
     rarity: rare
 
   WHITE_CONCRETE:
-    item: WHITE_CONCRETE
+    item:
+      base: WHITE_CONCRETE
 
   ORANGE_CONCRETE:
-    item: ORANGE_CONCRETE
+    item:
+      base: ORANGE_CONCRETE
 
   MAGENTA_CONCRETE:
-    item: MAGENTA_CONCRETE
+    item:
+      base: MAGENTA_CONCRETE
 
   LIGHT_BLUE_CONCRETE:
-    item: LIGHT_BLUE_CONCRETE
+    item:
+      base: LIGHT_BLUE_CONCRETE
 
   YELLOW_CONCRETE:
-    item: YELLOW_CONCRETE
+    item:
+      base: YELLOW_CONCRETE
 
   LIME_CONCRETE:
-    item: LIME_CONCRETE
+    item:
+      base: LIME_CONCRETE
 
   PINK_CONCRETE:
-    item: PINK_CONCRETE
+    item:
+      base: PINK_CONCRETE
 
   GRAY_CONCRETE:
-    item: GRAY_CONCRETE
+    item:
+      base: GRAY_CONCRETE
 
   LIGHT_GRAY_CONCRETE:
-    item: LIGHT_GRAY_CONCRETE
+    item:
+      base: LIGHT_GRAY_CONCRETE
 
   CYAN_CONCRETE:
-    item: CYAN_CONCRETE
+    item:
+      base: CYAN_CONCRETE
 
   PURPLE_CONCRETE:
-    item: PURPLE_CONCRETE
+    item:
+      base: PURPLE_CONCRETE
 
   BLUE_CONCRETE:
-    item: BLUE_CONCRETE
+    item:
+      base: BLUE_CONCRETE
 
   BROWN_CONCRETE:
-    item: BROWN_CONCRETE
+    item:
+      base: BROWN_CONCRETE
 
   GREEN_CONCRETE:
-    item: GREEN_CONCRETE
+    item:
+      base: GREEN_CONCRETE
 
   RED_CONCRETE:
-    item: RED_CONCRETE
+    item:
+      base: RED_CONCRETE
 
   BLACK_CONCRETE:
-    item: BLACK_CONCRETE
+    item:
+      base: BLACK_CONCRETE

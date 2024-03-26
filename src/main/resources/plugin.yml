@@ -8,6 +8,8 @@ softdepend:
   - PlaceholderAPI
   - MMOItems
   - ItemsAdder
+  - Oraxen
+  - MythicMobs
 permissions:
   dailyshop.*:
     children:
@@ -16,15 +18,15 @@ permissions:
 
   dailyshop.command.*:
     children:
-      dailyshop.command.open: true
-      dailyshop.command.restock: true
-      dailyshop.command.save: true
+      dailyshop.command.shop.open: true
+      dailyshop.command.shop.restock: true
+      dailyshop.command.shop.save: true
       dailyshop.command.reload: true
 
   dailyshop.shop.open.*:
     default: true
 
-  dailyshop.command.open:
+  dailyshop.command.shop.open:
     default: true
 
   dailyshop.command.restock:

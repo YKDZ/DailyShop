@@ -1,15 +1,16 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
+import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.item.enums.BaseItemType;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -26,10 +27,10 @@ public class ItemProduct extends Product {
             Price buyPrice,
             Price sellPrice,
             Rarity rarity,
-            ProductIconBuilder productIconBuilder,
-            ProductItemBuilder productItemBuilder,
+            BaseItemDecorator iconBuilder,
+            BaseItemDecorator productItemBuilder,
             boolean isCacheable) {
-        super(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, isCacheable);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, productItemBuilder, isCacheable);
     }
 
     @Override
@@ -59,11 +60,14 @@ public class ItemProduct extends Product {
 
     @Override
     public void give(@Nullable String shopId, @NotNull Player player) {
-        if (!isCached(shopId) && isCacheable()) {
-            cacheProductItem(shopId, player);
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+        ItemStack item = shop.getCachedProductItem(this);
+
+        if (item == null) {
+            item = getProductItemBuilder().buildProductItem(player);
         }
 
-        HashMap<Integer, ItemStack> left = player.getInventory().addItem(getCachedItem(shopId, player));
+        HashMap<Integer, ItemStack> left = player.getInventory().addItem(item);
         if (!left.isEmpty()) {
             for (Map.Entry<Integer, ItemStack> entry : left.entrySet()) {
                 player.getWorld().dropItem(player.getLocation().add(0, 0.5, 0), entry.getValue());
@@ -78,7 +82,7 @@ public class ItemProduct extends Product {
             return failure;
         }
 
-        take(player, 1);
+        take(shopId, player, 1);
         BalanceUtils.addBalance(player, DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()));
 
         return FailureReason.SUCCESS;
@@ -91,7 +95,7 @@ public class ItemProduct extends Product {
             return 0;
         }
 
-        int stack = takeAll(player);
+        int stack = takeAll(shopId, player);
 
         if (stack == 0) {
             return 0;
@@ -109,9 +113,8 @@ public class ItemProduct extends Product {
         }
 
         int needed = getProductItemBuilder().getAmount();
-        ProductItem item = getProductItemBuilder().getItem();
         for (ItemStack check : player.getInventory()) {
-            if (check != null && needed > 0 && item.isSimilar(check)) {
+            if (check != null && needed > 0 && isMatch(shopId, check, player)) {
                 int has = check.getAmount();
                 if (needed <= has) {
                     return FailureReason.SUCCESS;
@@ -124,14 +127,14 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public void take(Player player, int stack) {
+    public void take(String shopId, Player player, int stack) {
         int needed = getProductItemBuilder().getAmount() * stack;
         if (getAmount(player.getInventory()) < needed) {
             return;
         }
 
         for (ItemStack check : player.getInventory()) {
-            if (check != null && needed > 0 && getProductItemBuilder().getItem().isSimilar(check)) {
+            if (check != null && needed > 0 && isMatch(shopId, check, player)) {
                 int has = check.getAmount();
                 if (needed <= has) {
                     check.setAmount(has - needed);
@@ -145,15 +148,15 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public int takeAll(Player player) {
+    public int takeAll(String shopId, Player player) {
         int stack = getAmount(player.getInventory()) / getProductItemBuilder().getAmount();
-        take(player, stack);
+        take(shopId, player, stack);
         return stack;
     }
 
     @Override
     public ProductType getType() {
-        return ProductType.VANILLA;
+        return ProductType.ITEM;
     }
 
     @Override
@@ -171,15 +174,17 @@ public class ItemProduct extends Product {
         return total;
     }
 
-    public ItemStack getCachedItem(String shopId, Player player) {
-        if (!isCached(shopId)) {
-            if (isCacheable()) {
-                return cacheProductItem(shopId, player);
-            } else {
-                return getProductItemBuilder().build(player);
-            }
+    public boolean isMatch(String shopId, ItemStack item, @Nullable Player player) {
+        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+        BaseItem baseItem = getProductItemBuilder().getItem();
+        if (baseItem.getItemType() != BaseItemType.VANILLA) {
+            return baseItem.isSimilar(item);
         } else {
-            return getProductItemCache().get(shopId);
+            ItemStack target = shop.getCachedProductItem(this);
+            if (target == null) {
+                target = getProductItemBuilder().buildProductItem(player);
+            }
+            return baseItem.isSimilar(item) && target.isSimilar(item);
         }
     }
 }

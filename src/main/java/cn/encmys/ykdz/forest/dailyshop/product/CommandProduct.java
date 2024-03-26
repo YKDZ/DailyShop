@@ -2,8 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
@@ -26,11 +25,10 @@ public class CommandProduct extends Product {
             Price buyPrice,
             Price sellPrice,
             Rarity rarity,
-            ProductIconBuilder productIconBuilder,
-            ProductItemBuilder productItemBuilder,
+            BaseItemDecorator iconBuilder,
             List<String> buyCommands,
             List<String> sellCommands) {
-        super(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
         this.buyCommands = buyCommands;
         this.sellCommands = sellCommands;
     }
@@ -72,13 +70,13 @@ public class CommandProduct extends Product {
 
     @Override
     public FailureReason buyFrom(@Nullable String shopId, Player player) {
-        take(player, 1);
+        take(shopId, player, 1);
         return FailureReason.SUCCESS;
     }
 
     @Override
     public int buyAllFrom(@Nullable String shopId, Player player) {
-        return takeAll(player);
+        return takeAll(shopId, player);
     }
 
     @Override
@@ -91,12 +89,12 @@ public class CommandProduct extends Product {
     }
 
     @Override
-    public void take(Player player, int stack) {
+    public void take(String shopId, Player player, int stack) {
         CommandUtils.dispatchCommands(player, getSellCommands());
     }
 
     @Override
-    public int takeAll(Player player) {
+    public int takeAll(String shopId, Player player) {
         CommandUtils.dispatchCommands(player, getSellCommands());
         return 1;
     }

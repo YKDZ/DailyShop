@@ -2,8 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
@@ -25,10 +24,9 @@ public class BundleProduct extends Product {
             Price buyPrice,
             Price sellPrice,
             Rarity rarity,
-            ProductIconBuilder productIconBuilder,
-            ProductItemBuilder productItemBuilder,
+            BaseItemDecorator iconBuilder,
             List<String> bundleContents) {
-        super(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
         this.bundleContents = bundleContents;
     }
 
@@ -81,7 +79,7 @@ public class BundleProduct extends Product {
             return failure;
         }
 
-        take(player, 1);
+        take(shopId, player, 1);
 
         return FailureReason.SUCCESS;
     }
@@ -107,14 +105,14 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public void take(Player player, int stack) {
+    public void take(String shopId, Player player, int stack) {
         for (String id : getBundleContents()) {
-            DailyShop.getProductFactory().getProduct(id).take(player, stack);
+            DailyShop.getProductFactory().getProduct(id).take(shopId, player, stack);
         }
     }
 
     @Override
-    public int takeAll(Player player) {
+    public int takeAll(String shopId, Player player) {
         return 0;
     }
 

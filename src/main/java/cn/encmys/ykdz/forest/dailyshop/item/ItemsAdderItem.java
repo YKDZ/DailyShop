@@ -2,7 +2,8 @@ package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
+import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import cn.encmys.ykdz.forest.dailyshop.item.enums.BaseItemType;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemsAdderItem implements ProductItem {
+public class ItemsAdderItem implements BaseItem {
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final String namespacedId;
 
@@ -30,6 +31,11 @@ public class ItemsAdderItem implements ProductItem {
     @Override
     public boolean isSimilar(ItemStack item) {
         return false;
+    }
+
+    @Override
+    public BaseItemType getItemType() {
+        return BaseItemType.ITEMSADDER;
     }
 
     @Override

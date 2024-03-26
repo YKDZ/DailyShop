@@ -69,7 +69,7 @@ public class ShopConfig {
         return getConfig(shopId).getString("shop-gui.title");
     }
 
-    public static String @NotNull [] getGUILayout(String shopId) {
+    public static String[] getGUILayout(String shopId) {
         return getConfig(shopId).getStringList("shop-gui.layout").toArray(new String[0]);
     }
 
@@ -82,15 +82,15 @@ public class ShopConfig {
     }
 
     public static String getProductNameFormat(String shopId) {
-        return getGUISection(shopId).getString("product.name-format", "{name}");
+        return getGUISection(shopId).getString("product-icon.name-format", "{name}");
     }
 
     public static String getBundleContentsLineFormat(String shopId) {
-        return getGUISection(shopId).getString("product.bundle-contents-line-format", "<dark_gray>- {name} x {amount}");
+        return getGUISection(shopId).getString("product-icon.bundle-contents-line-format", "<dark_gray>- {name} x {amount}");
     }
 
     public static List<String> getProductLoreFormat(String shopId) {
-        return getGUISection(shopId).getStringList("product.lore-format");
+        return getGUISection(shopId).getStringList("product-icon.lore-format");
     }
 
     public static ConfigurationSection getGUISection(String shopId) {

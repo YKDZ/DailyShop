@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import com.google.gson.annotations.Expose;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -28,6 +29,7 @@ public class Shop {
     private List<String> listedProducts = new ArrayList<>();
     @Expose
     private Map<String, PricePair> cachedPrice = new HashMap<>();
+    private Map<String, ItemStack> cachedProduct = new HashMap<>();
     @Expose
     private long lastRestocking;
 
@@ -64,7 +66,7 @@ public class Shop {
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
                 Product product = allProducts.get(productId);
-                cachePrice(productId, product.getNewPricePair(getId()));
+                cachePrice(product);
                 listedProducts.add(productId);
             }
         } else {
@@ -79,7 +81,7 @@ public class Shop {
                     Product product = allProducts.get(productId);
                     runningWeight += product.getRarity().getWeight();
                     if (needed <= runningWeight) {
-                        handleProduct(product);
+                        listProduct(product);
                         totalWeight -= product.getRarity().getWeight();
                         temp.remove(productId);
                         break;
@@ -94,23 +96,18 @@ public class Shop {
         lastRestocking = System.currentTimeMillis();
     }
 
-    private void handleProduct(Product product) {
+    private void listProduct(Product product) {
         String productId = product.getId();
 
-        cachePrice(productId, product.getNewPricePair(getId()));
-
-        if (product.isCacheable()) {
-            product.cacheProductItem(getId(), null);
-        }
+        cachePrice(product);
+        cacheProductItem(product);
 
         // Make sure that every bundle contents have its price.
         if (product.getType() == ProductType.BUNDLE) {
             for (String contentId : ((BundleProduct) product).getBundleContents()) {
                 Product content = productFactory.getProduct(contentId);
-                if (content.isCacheable()) {
-                    content.cacheProductItem(getId(), null);
-                }
-                cachePrice(contentId, content.getNewPricePair(getId()));
+                cacheProductItem(content);
+                cachePrice(content);
             }
         }
 
@@ -161,8 +158,8 @@ public class Shop {
         this.cachedPrice = cachedPrice;
     }
 
-    public void cachePrice(String id, PricePair pricePair) {
-        getCachedPrice().put(id, pricePair);
+    public void cachePrice(Product product) {
+        getCachedPrice().put(product.getId(), product.getNewPricePair(getId()));
     }
 
     public double getBuyPrice(String productId) {
@@ -175,5 +172,31 @@ public class Shop {
 
     public ShopGUI getShopGUI() {
         return shopGUI;
+    }
+
+    public Map<String, ItemStack> getCachedProductItems() {
+        return cachedProduct;
+    }
+
+    public boolean hasCachedPrice(String productId) {
+        return getCachedPrice().containsKey(productId);
+    }
+
+    public boolean hasCachedProductItem(String productId) {
+        return getCachedProductItems().containsKey(productId);
+    }
+
+    public void cacheProductItem(Product product) {
+        if (product.isCacheable()) {
+            getCachedProductItems().put(product.getId(), product.getProductItemBuilder().buildProductItem(null));
+        }
+    }
+
+    public ItemStack getCachedProductItem(Product product) {
+        String id = product.getId();
+        if (product.isCacheable() && !hasCachedProductItem(id)) {
+            cacheProductItem(product);
+        }
+        return getCachedProductItems().get(id);
     }
 }

@@ -7,10 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.database.Database;
 import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.factory.ShopFactory;
-import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.*;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
@@ -62,6 +59,7 @@ public final class DailyShop extends JavaPlugin implements Listener {
         new MMOItemsHook();
         new ItemsAdderHook();
         new OraxenHook();
+        new MythicMobsHook();
 
         Config.load();
         MessageConfig.load();

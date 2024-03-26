@@ -29,7 +29,7 @@ public class ShopCommand {
 
     private CommandAPICommand getShopOpenCommand() {
         return new CommandAPICommand("open")
-                .withPermission("dailyshop.command.open")
+                .withPermission("dailyshop.command.shop.open")
                 .withArguments(
                         new StringArgument("shop")
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId())),
@@ -43,7 +43,7 @@ public class ShopCommand {
                         return;
                     }
                     if (shop == null) {
-                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_open_invalidShop, new HashMap<>() {{
+                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_open_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));
                         }}));
                         return;
@@ -54,7 +54,7 @@ public class ShopCommand {
 
     private CommandAPICommand getShopRestockCommand() {
         return new CommandAPICommand("restock")
-                .withPermission("dailyshop.command.restock")
+                .withPermission("dailyshop.command.shop.restock")
                 .withArguments(
                         new StringArgument("shop")
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
@@ -62,7 +62,7 @@ public class ShopCommand {
                 .executes((sender, args) -> {
                     Shop shop = DailyShop.getShopFactory().getShop((String) args.get("shop"));
                     if (shop == null) {
-                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_invalidShop, new HashMap<>() {{
+                        adventureManager.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));
                         }}));
                         return;
@@ -76,7 +76,7 @@ public class ShopCommand {
 
     private CommandAPICommand getShopSaveCommand() {
         return new CommandAPICommand("save")
-                .withPermission("dailyshop.command.save")
+                .withPermission("dailyshop.command.shop.save")
                 .executes((sender, args) -> {
                     adventureManager.sendMessageWithPrefix(sender, MessageConfig.messages_command_shop_save_success);
                 });

@@ -2,7 +2,8 @@ package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.api.item.ProductItem;
+import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import cn.encmys.ykdz.forest.dailyshop.item.enums.BaseItemType;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-public class MMOItemsItem implements ProductItem {
+public class MMOItemsItem implements BaseItem {
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final String type;
     private final String id;
@@ -52,6 +53,11 @@ public class MMOItemsItem implements ProductItem {
     }
 
     @Override
+    public BaseItemType getItemType() {
+        return BaseItemType.MMOITEMS;
+    }
+
+    @Override
     public ItemStack build(@Nullable Player player) {
         MMOItem mmoItem;
         if (player == null) {
@@ -62,7 +68,7 @@ public class MMOItemsItem implements ProductItem {
         return mmoItem == null ? new ItemStack(Material.AIR) : mmoItem.newBuilder().build();
     }
 
-    public String getType() {
+    public String getType()  {
         return type;
     }
 

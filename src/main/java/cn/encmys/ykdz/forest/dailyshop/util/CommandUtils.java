@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,8 @@ public class CommandUtils {
     }
 
     public static void dispatchCommand(Player player, String command) {
+        command = PlaceholderAPI.setPlaceholders(player, command);
+
         Map<String, String> params = new HashMap<>();
 
         Matcher matcher = Pattern.compile("^(-\\w+:[^\\s]+\\s+)+").matcher(command);
@@ -35,13 +38,32 @@ public class CommandUtils {
             params.put(pairMatcher.group(1), pairMatcher.group(2));
         }
 
-        String parsedCommand = PlaceholderAPI.setPlaceholders(player, command.substring(paramsPart.length()).trim());
+        String parsedCommand = command.substring(paramsPart.length()).trim();
 
-        CommandSender commandSender = params.getOrDefault("p", "false").equals("true") ? player : Bukkit.getConsoleSender();
-        // OP / Delay
-        int repeat = params.containsKey("repeat") ? Integer.parseInt(params.get("repeat")) : 1;
+        CommandSender commandSender = null;
 
-        IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(commandSender, parsedCommand));
+        if (params.getOrDefault("p", "false").equals("true")) {
+            commandSender = player;
+            if (params.getOrDefault("op", "false").equals("true")) {
+                commandSender.setOp(true);
+            }
+        } else {
+            commandSender = Bukkit.getConsoleSender();
+        }
+
+        int repeat = params.containsKey("r") ? Integer.parseInt(params.get("r")) : 1;
+        int delay = params.containsKey("d") ? Integer.parseInt(params.get("d")) : 0;
+
+        CommandSender finalCommandSender = commandSender;
+        if (delay > 0) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(
+                   DailyShop.getInstance(),
+                    () -> IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand)),
+                   delay
+           );
+        } else {
+            IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand));
+        }
     }
 
 }

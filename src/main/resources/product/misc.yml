@@ -1,5 +1,6 @@
 default-settings:
-  amount: 16
+  item:
+    amount: 16
   buy-price:
     mean: 200
     dev: 20
@@ -11,10 +12,21 @@ default-settings:
   cacheable: true
 
 products:
+  A_JOKE:
+    item:
+      base: DIRT
+      name: "<white>Just Dirt :)"
+      amount: 1
+    icon:
+      base: DIAMOND
+      name: "<white>Diamond"
+      amount: 1
+
   WARM_WELCOME:
-    item: SUNFLOWER
-    amount: 1
-    name: "<white>Warm Welcome from server"
+    icon:
+      base: SUNFLOWER
+      amount: 1
+      name: "<white>Warm Welcome from server"
     buy-commands:
       - "tell %player_name% Welcome %player_name%!"
       - "-p:true -repeat:3 tell %player_name% Have fun!"
@@ -25,9 +37,10 @@ products:
   # You can use command product to do various of things
   # like sell a permission.
   FLY_PERMISSION:
-    item: FEATHER
-    amount: 1
-    name: "<white>Fly for 30 minutes"
+    icon:
+      base: FEATHER
+      amount: 1
+      name: "<white>Fly for 30 minutes"
     buy-commands:
       - "lp user %player_name% permission settemp cmi.command.fly true 30m"
       - "tell %player_name% Now you can fly in 30 minutes!"
@@ -37,11 +50,13 @@ products:
 
   # This product will not load if MMOItems plugin is not installed.
   LONG_SWORD:
-    item: MI:SWORD:LONG_SWORD
-    amount: 1
-    desc-lore:
-      - "<gray>This is a Long Sword from <white>MMOItems<gray>."
-      - "<gray>These lore will not be applied to the product item."
+    item:
+      base: MI:SWORD:LONG_SWORD
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Long Sword from <white>MMOItems<gray>."
+        - "<gray>These lore will not be applied to the product item."
     # For the mmoitem that has random modifier, level or stat value things,
     # you need to disable cache to enable it, or every product item
     # that player buy will be the same without any random.
@@ -49,21 +64,111 @@ products:
 
   # This product will not load if MMOItems plugin is not installed.
   STEEL_INGOT:
-    item: MI:MATERIAL:STEEL_INGOT
-    amount: 16
-    desc-lore:
-      - "<gray>This is a Steel Ingot from <white>MMOItems<gray>."
-      - "<gray>These lore will not be applied to the product item."
+    item:
+      base: MI:MATERIAL:STEEL_INGOT
+      amount: 16
+    icon:
+      lore:
+        - "<gray>This is a Steel Ingot from <white>MMOItems<gray>."
+        - "<gray>These lore will not be applied to the product item."
     # For the static mmoitem item like material, you should
     # enable cache to reduce the lag.
     cacheable: true
 
   # This product will not load if ItemsAdder plugin is not installed.
   PIZZA:
-    item: IA:iasurvival:pizza
-    amount: 1
-    desc-lore:
-      - "<gray>This is a Steel Ingot from <white>ItemsAdder<gray>."
-      - "<gray>These lore will not be applied to the product item."
+    item:
+      base: IA:iasurvival:pizza
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Steel Ingot from <white>ItemsAdder<gray>."
+        - "<gray>These lore will not be applied to the product item."
 
+  # This product will not load if Oraxen plugin is not installed.
+  OBSIDIAN_PICKAXE:
+    item:
+      base: OXN:obsidian_pickaxe
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Obsidian Pickaxe from <white>Oraxen<gray>."
+        - "<gray>These lore will not be applied to the product item."
 
+  # This product will not load if MythicMobs plugin is not installed.
+  SkeletonKingSword:
+    item:
+      base: MM:SkeletonKingSword
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Skeleton King Sword from <white>MythicMobs<gray>."
+        - "<gray>These lore will not be applied to the product item."
+
+  CUSTOM_BANNER:
+    item:
+      base: RED_BANNER
+      banner-patterns:
+        - "YELLOW:BRICKS"
+        - "RED:STRIPE_SMALL"
+        - "RED:BORDER"
+        - "RED:DIAGONAL_LEFT_MIRROR"
+        - "RED:HALF_VERTICAL_MIRROR"
+        - "RED:RHOMBUS_MIDDLE"
+      name: "<red>The Flag of China"
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Custom Banner with 3 patterns."
+        - "<gray>These lore will not be applied to the product item."
+      # Prevent too long product icon lore.
+      # (Hide the banner pattern lore)
+      item-flags:
+        - "HIDE_POTION_EFFECTS"
+
+  CUSTOM_SKULL:
+    item:
+      base: SKULL:f0f2185c51b6d7cee7e17042de2ddf8a448552af7b4af1804986fbdd09e9bc08
+      name: "<white>Lightning in a Bottle"
+      amount: 1
+    icon:
+      lore:
+        - "<gray>This is a Custom Head."
+        - "<gray>These lore will not be applied to the product item."
+
+  SPLASH_POTION_OF_LEAPING:
+    item:
+      # Base potion data
+      base: POTION:SPLASH:JUMP:false:true
+      amount: 1
+    icon:
+      # Due to certain reasons, it is not possible to
+      # automatically obtain the name of the potion and
+      # use it for icons. You need to manually set the name.
+      name: "<white>Splash Potion of Leaping"
+      lore:
+        - "<gray>This is a Vanilla Potion."
+        - "<gray>These lore will not be applied to the product item."
+
+  TROPICAL_FISH_BUCKET:
+    item:
+      base: FISH_BUCKET:CLAYFISH:RED:YELLOW
+      amount: 1
+    icon:
+      name: "<white>Tropical Fish Bucket"
+      lore:
+        - "<gray>This is a Tropical Fish Bucket."
+        - "<gray>These lore will not be applied to the product item."
+
+  CUSTOM_FIREWORK:
+    item:
+      base: FIREWORK:64
+      amount: 1
+      firework-effects:
+        - "-t:BALL -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:false -flicker:true"
+        - "-t:CREEPER -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:true -flicker:false"
+    icon:
+      name: "<white>Tropical Fish Bucket"
+      lore:
+        - "<gray>This is a Tropical Fish Bucket."
+        - "<gray>These lore will not be applied to the product item."

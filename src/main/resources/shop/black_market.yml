@@ -1,7 +1,7 @@
 settings:
   name: "<gray>Black Market"
   restock-timer: 10
-  size: 7
+  size: 14
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
@@ -12,10 +12,13 @@ sounds:
 
 shop-gui:
   title: "Accede to Every Plea"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
   # The x character is the placeholder
   # for the product slot.
   layout:
     - "# # # # # # # # #"
+    - "# x x x x x x x #"
     - "# x x x x x x x #"
     - "# # # # @ # # # #"
   icons:
@@ -32,8 +35,8 @@ shop-gui:
       item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-timer: 10
-  product:
-    name-format: "<dark_gray>Name: <reset>{name} <dark_gray>x {amount}"
+  product-icon:
+    name-format: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
     lore-format:
       - " "
       - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
@@ -53,3 +56,11 @@ products:
   - LONG_SWORD
   - STEEL_INGOT
   - PIZZA
+  - OBSIDIAN_PICKAXE
+  - SkeletonKingSword
+  - CUSTOM_BANNER
+  - CUSTOM_SKULL
+  - SPLASH_POTION_OF_LEAPING
+  - A_JOKE
+  - TROPICAL_FISH_BUCKET
+  - CUSTOM_FIREWORK

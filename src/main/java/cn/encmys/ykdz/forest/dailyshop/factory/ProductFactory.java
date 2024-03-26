@@ -2,8 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
@@ -11,16 +10,15 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.management.openmbean.InvalidKeyException;
 import java.util.HashMap;
-import java.util.List;
 
 public class ProductFactory {
     private static final RarityFactory rarityFactory = DailyShop.getRarityFactory();
-    private static final HashMap<String, Product> products = new HashMap<>();
+    private static final HashMap<String, Product> allProducts = new HashMap<>();
 
     public ProductFactory() {
         for (String configId : ProductConfig.getAllPacksId()) {
@@ -28,58 +26,28 @@ public class ProductFactory {
             ConfigurationSection products = config.getConfigurationSection("products");
             ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
+            // Empty product pack is allowed
+            if (products == null) {
+                continue;
+            }
+
             for (String productId : products.getKeys(false)) {
                 ConfigurationSection productSection = products.getConfigurationSection(productId);
-
-                if (!productSection.getStringList("bundle-contents").isEmpty()) {
-                    buildBundleProduct(productId, productSection, defaultSettings);
-                } else if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
-                    buildCommandProduct(productId, productSection, defaultSettings);
-                } else {
-                    buildItemProduct(productId, productSection, defaultSettings);
-                }
+                buildProduct(productId, productSection, defaultSettings);
             }
         }
     }
 
-    public ProductIconBuilder buildProductIconBuilder(ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        String item = productSection.getString("item", "DIRT");
-        List<String> descLore = productSection.getStringList("desc-lore");
-        int amount = productSection.getInt("amount", defaultSettings.getInt("amount", 1));
-        String name = productSection.getString("name");
-        Integer customModelData = productSection.getInt("custom-model-data");
-        List<String> itemFlags = productSection.getStringList("item-flags");
-
-        return ProductIconBuilder.get(item)
-                .setName(name)
-                .setDescLore(descLore)
-                .setAmount(amount)
-                .setCustomModelData(customModelData)
-                .setItemFlags(itemFlags);
-    }
-
-    public ProductItemBuilder buildProductItemBuilder(ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        String item = productSection.getString("item", "DIRT");
-        List<String> lore = productSection.getStringList("lore");
-        int amount = productSection.getInt("amount", defaultSettings.getInt("amount", 1));
-        String name = productSection.getString("name");
-        int customModelData = productSection.getInt("custom-model-data", 0);
-        List<String> itemFlags = productSection.getStringList("item-flags");
-
-        return ProductItemBuilder.get(item)
-                .setName(name)
-                .setLore(lore)
-                .setAmount(amount)
-                .setCustomModelData(customModelData)
-                .setItemFlags(itemFlags);
-    }
-
-    public Product buildBundleProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        if (products.containsKey(id)) {
-            throw new InvalidKeyException("Product ID is duplicated: " + id);
+    public void buildProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
+        if (containsProduct(id)) {
+            LogUtils.warn("Product ID is duplicated: " + id + ". Ignore this product.");
+            return;
         }
 
-        // Price
+        ConfigurationSection itemSection = productSection.getConfigurationSection("item");
+        ConfigurationSection iconSection = productSection.getConfigurationSection("icon");
+
+        // Price (can default)
         Price buyPrice = new Price(
                 productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
         );
@@ -87,93 +55,131 @@ public class ProductFactory {
                 productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
         );
 
-        // Icon Builder
-        ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
-
-        // ProductItem Builder
-        ProductItemBuilder productItemBuilder = null;
-
-        // Rarity
+        // Rarity (can default)
         Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
-        // Bundle Contents
-        List<String> bundleContents = productSection.getStringList("bundle-contents");
-
-        Product product = new BundleProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, bundleContents);
-        products.put(id, product);
-        return product;
-    }
-
-    public Product buildCommandProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        if (products.containsKey(id)) {
-            throw new InvalidKeyException("Product ID is duplicated: " + id);
-        }
-
-        // Price
-        Price buyPrice = new Price(
-                productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
-        );
-        Price sellPrice = new Price(
-                productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
-        );
-
-        // Icon Builder
-        ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
-
-        // ProductItem Builder
-        ProductItemBuilder productItemBuilder = null;
-
-        // Rarity
-        Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
-
-        // Commands
-        List<String> buyCommands = productSection.getStringList("buy-commands");
-        List<String> sellCommands = productSection.getStringList("sell-commands");
-
-        Product product = new CommandProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, buyCommands, sellCommands);
-        products.put(id, product);
-        return product;
-    }
-
-    public Product buildItemProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
-        if (products.containsKey(id)) {
-            throw new InvalidKeyException("Product ID is duplicated: " + id);
-        }
-
-        // Price
-        Price buyPrice = new Price(
-                productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
-        );
-        Price sellPrice = new Price(
-                productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
-        );
-
-        // Icon Builder
-        ProductIconBuilder productIconBuilder = buildProductIconBuilder(productSection, defaultSettings);
-
-        // ProductItem Builder
-        ProductItemBuilder productItemBuilder = buildProductItemBuilder(productSection, defaultSettings);
-
-        // Rarity
-        Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
-
-        // Cache ProductItem
+        // Cacheable (can default)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
 
-        Product product = new ItemProduct(id, buyPrice, sellPrice, rarity, productIconBuilder, productItemBuilder, isCacheable);
-        products.put(id, product);
-        return product;
+        // Item (Only ItemProduct need it)
+        BaseItemDecorator itemBuilder = null;
+        if (!productSection.contains("buy-commands") && !productSection.contains("buy-commands") && !productSection.contains("bundle-contents")) {
+            itemBuilder = BaseItemDecorator.get(itemSection.getString("base", "DIRT"), false);
+
+            if (itemBuilder == null) {
+                LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");
+                return;
+            } else {
+                itemBuilder
+                        .setName(itemSection.getString("name"))
+                        .setLore(itemSection.getStringList("lore"))
+                        .setAmount(itemSection.getInt("amount", defaultSettings.getInt("item.amount", 1)))
+                        .setItemFlags(itemSection.getStringList("item-flags"))
+                        .setCustomModelData((Integer) itemSection.get("custom-model-data"))
+                        .setPatternsData(itemSection.getStringList("banner-patterns"))
+                        .setFireworkEffectData(itemSection.getStringList("firework-effects"));
+            }
+        }
+
+        // Icon (use item section as fall back)
+        if (iconSection == null) {
+            if (itemSection != null) {
+                iconSection = itemSection;
+            } else {
+                LogUtils.warn("Product " + id + " has invalid config.");
+                return;
+            }
+        }
+
+        // inherit
+        if (itemSection != null) {
+            // base
+            if (!iconSection.contains("base")) {
+                if (itemSection.isString("base")) {
+                    iconSection.set("base", itemSection.getString("base"));
+                } else {
+                    LogUtils.warn("Can not find base item for product " + id + ".");
+                    return;
+                }
+            }
+            // name
+            if (!iconSection.contains("name")) {
+                if (itemSection.isString("name")) {
+                    iconSection.set("name", itemSection.getString("name"));
+                }
+            }
+            // amount
+            if (!iconSection.contains("amount")) {
+                if (itemSection.isInt("amount")) {
+                    iconSection.set("amount", itemSection.getInt("amount"));
+                } else if (defaultSettings.isInt("item.amount")) {
+                    iconSection.set("amount", defaultSettings.getInt("item.amount"));
+                }
+            }
+            // custom-model-data
+            if (!iconSection.contains("custom-model-data")) {
+                if (itemSection.isInt("custom-model-data")) {
+                    iconSection.set("custom-model-data", itemSection.getInt("custom-model-data"));
+                }
+            }
+            // banner-patterns
+            if (!iconSection.contains("banner-patterns")) {
+                if (itemSection.isList("banner-patterns")) {
+                    iconSection.set("banner-patterns", itemSection.getStringList("banner-patterns"));
+                }
+            }
+            // banner-patterns
+            if (!iconSection.contains("firework-effects")) {
+                if (itemSection.isList("firework-effects")) {
+                    iconSection.set("firework-effects", itemSection.getStringList("firework-effects"));
+                }
+            }
+        }
+
+        BaseItemDecorator iconBuilder = BaseItemDecorator.get(iconSection.getString("base", "DIRT"), true);
+
+        if (iconBuilder == null) {
+            LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");
+            return;
+        } else {
+            iconBuilder
+                    .setAmount(iconSection.getInt("amount", 1))
+                    .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
+                    .setName(iconSection.getString("name"))
+                    .setItemFlags(iconSection.getStringList("item-flags"))
+                    .setCustomModelData((Integer) iconSection.get("custom-model-data"))
+                    .setPatternsData(iconSection.getStringList("banner-patterns"))
+                    .setFireworkEffectData(iconSection.getStringList("firework-effects"));
+        }
+
+        if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
+            getAllProducts().put(id,
+                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconBuilder,
+                            productSection.getStringList("buy-commands"),
+                            productSection.getStringList("sell-commands")));
+        } else if (productSection.contains("bundle-contents")) {
+            getAllProducts().put(id,
+                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder,
+                            productSection.getStringList("bundle-contents")));
+        } else {
+            getAllProducts().put(id,
+                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, isCacheable));
+        }
+    }
+
+    public static HashMap<String, Product> getAllProducts() {
+        return allProducts;
     }
 
     public Product getProduct(String id) {
-        return products.get(id);
+        return allProducts.get(id);
     }
 
     public boolean containsProduct(String id) {
-        return products.containsKey(id);
+        return allProducts.containsKey(id);
     }
 
     public void unload() {
-        products.clear();
+        allProducts.clear();
     }
 }

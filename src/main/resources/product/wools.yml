@@ -3,7 +3,8 @@
 # This makes maintaining a large number of
 # similar products very easy.
 default-settings:
-  amount: 16
+  item:
+    amount: 16
   buy-price:
     mean: 80
     dev: 10
@@ -20,12 +21,13 @@ default-settings:
 
 products:
   WARM_COLOR_WOOL_BUNDLE:
-    item: ORANGE_SHULKER_BOX
-    amount: 1
-    name: "<white>Warm Color Wool Bundle"
-    desc-lore:
-      - "<gray>A product bundle that contains"
-      - "<gray>all the <gold>warm color <gray>wool x 16."
+    icon:
+      base: ORANGE_SHULKER_BOX
+      amount: 1
+      name: "<white>Warm Color Wool Bundle"
+      lore:
+        - "<gray>A product bundle that contains"
+        - "<gray>all the <gold>warm color <gray>wool x 16."
     buy-price:
       bundle-auto-new: true
     sell-price:
@@ -38,12 +40,13 @@ products:
     rarity: rare
 
   COLD_COLOR_WOOL_BUNDLE:
-    item: BLUE_SHULKER_BOX
-    amount: 1
-    name: "<white>Cold Color Wool Bundle"
-    desc-lore:
-      - "<gray>A product bundle that contains"
-      - "<gray>all the <blue>cold color <gray>wool x 16."
+    icon:
+      base: BLUE_SHULKER_BOX
+      amount: 1
+      name: "<white>Cold Color Wool Bundle"
+      lore:
+        - "<gray>A product bundle that contains"
+        - "<gray>all the <blue>cold color <gray>wool x 16."
     bundle-contents:
       - MAGENTA_WOOL
       - LIGHT_BLUE_WOOL
@@ -54,63 +57,80 @@ products:
     rarity: rare
 
   WHITE_WOOL:
-    item: WHITE_WOOL
+    item:
+      base: WHITE_WOOL
 
   ORANGE_WOOL:
-    item: ORANGE_WOOL
-    name: "<green>Magic Orange Wool"
-    lore:
-      - "<gray>Unlike other wools, this wool"
-      - "<gray>will carry these lore and custom name"
-      - "<gray>when purchased by the player."
+    item:
+      base: ORANGE_WOOL
+      name: "<green>Magic Orange Wool"
+      lore:
+        - "<gray>Unlike other wools, this wool"
+        - "<gray>will carry these lore and custom name"
+        - "<gray>when purchased by the player."
     # Player can not sell this wool to shop.
     sell-price:
       disable: true
 
   MAGENTA_WOOL:
-    item: MAGENTA_WOOL
-    desc-lore:
-      - "<gray>Unlike the orange wool,"
-      - "<gray>this wool will not carry the lore"
-      - "<gray>when it is purchased by the player,"
-      - "<gray>as desc-lore is only displayed"
-      - "<gray>in the shop ShopGUI."
+    item:
+      base: MAGENTA_WOOL
+    icon:
+      lore:
+        - "<gray>Unlike the orange wool,"
+        - "<gray>this wool will not carry the lore"
+        - "<gray>when it is purchased by the player,"
+        - "<gray>as icon lore is only displayed"
+        - "<gray>in the shop gui."
 
   LIGHT_BLUE_WOOL:
-    item: LIGHT_BLUE_WOOL
+    item:
+      base: LIGHT_BLUE_WOOL
 
   YELLOW_WOOL:
-    item: YELLOW_WOOL
+    item:
+      base: YELLOW_WOOL
 
   LIME_WOOL:
-    item: LIME_WOOL
+    item:
+      base: LIME_WOOL
 
   PINK_WOOL:
-    item: PINK_WOOL
+    item:
+      base: PINK_WOOL
 
   GRAY_WOOL:
-    item: GRAY_WOOL
+    item:
+      base: GRAY_WOOL
 
   LIGHT_GRAY_WOOL:
-    item: LIGHT_GRAY_WOOL
+    item:
+      base: LIGHT_GRAY_WOOL
 
   CYAN_WOOL:
-    item: CYAN_WOOL
+    item:
+      base: CYAN_WOOL
 
   PURPLE_WOOL:
-    item: PURPLE_WOOL
+    item:
+      base: PURPLE_WOOL
 
   BLUE_WOOL:
-    item: BLUE_WOOL
+    item:
+      base: BLUE_WOOL
 
   BROWN_WOOL:
-    item: BROWN_WOOL
+    item:
+      base: BROWN_WOOL
 
   GREEN_WOOL:
-    item: GREEN_WOOL
+    item:
+      base: GREEN_WOOL
 
   RED_WOOL:
-    item: RED_WOOL
+    item:
+      base: RED_WOOL
 
   BLACK_WOOL:
-    item: BLACK_WOOL
+    item:
+      base: BLACK_WOOL

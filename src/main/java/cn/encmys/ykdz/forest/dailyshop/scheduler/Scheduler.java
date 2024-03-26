@@ -35,6 +35,7 @@ public class Scheduler {
                             put("shop", shop.getName());
                         }}));
                     }
+                    LogUtils.info("Successfully restock shop " + shop.getId() + " automatically.");
                 }
             }
         }, 0, 10);
