@@ -70,6 +70,11 @@ public class CommandProduct extends Product {
 
     @Override
     public FailureReason buyFrom(@Nullable String shopId, Player player) {
+        FailureReason failure = canBuyFrom(shopId, player);
+        if (failure != FailureReason.SUCCESS) {
+            return failure;
+        }
+
         take(shopId, player, 1);
         return FailureReason.SUCCESS;
     }

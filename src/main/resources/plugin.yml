@@ -10,6 +10,9 @@ softdepend:
   - ItemsAdder
   - Oraxen
   - MythicMobs
+  - NeigeItems
+  - CustomCrops
+  - CustomFishing
 permissions:
   dailyshop.*:
     children:

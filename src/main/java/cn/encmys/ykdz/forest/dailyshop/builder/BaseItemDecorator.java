@@ -145,6 +145,24 @@ public class BaseItemDecorator {
                 .setItem(item, setDefaultName);
     }
 
+    public static BaseItemDecorator neigeitems(String id, boolean setDefaultName) {
+        BaseItem item = new NeigeItemsItem(id);
+        return new BaseItemDecorator()
+                .setItem(item, setDefaultName);
+    }
+
+    public static BaseItemDecorator customcrops(String id, boolean setDefaultName) {
+        BaseItem item = new CustomCropsItem(id);
+        return new BaseItemDecorator()
+                .setItem(item, setDefaultName);
+    }
+
+    public static BaseItemDecorator customfishing(String namespace, String id, boolean setDefaultName) {
+        BaseItem item = new CustomFishingItem(namespace, id);
+        return new BaseItemDecorator()
+                .setItem(item, setDefaultName);
+    }
+
     public static BaseItemDecorator vanilla(Material material, boolean setDefaultName) {
         BaseItem item = new VanillaItem(material);
         return new BaseItemDecorator()

@@ -60,6 +60,9 @@ public final class DailyShop extends JavaPlugin implements Listener {
         new ItemsAdderHook();
         new OraxenHook();
         new MythicMobsHook();
+        new NeigeItemsHook();
+        new CustomCropsHook();
+        new CustomFishingHook();
 
         Config.load();
         MessageConfig.load();

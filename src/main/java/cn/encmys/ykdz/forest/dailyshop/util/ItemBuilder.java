@@ -101,19 +101,11 @@ public class ItemBuilder {
             List<Color> fadeColors = new ArrayList<>();
 
             for (String hex : listParams.get("c")) {
-                int color = Integer.parseInt(hex.replace("#", ""), 16);
-                int b = (color >> 16) & 0xFF;
-                int g = (color >> 8) & 0xFF;
-                int r = color & 0xFF;
-                colors.add(Color.fromBGR(r, g, b));
+                colors.add(ColorUtils.getFromHex(hex));
             }
 
             for (String hex : listParams.get("fc")) {
-                int color = Integer.parseInt(hex.replace("#", ""), 16);
-                int b = (color >> 16) & 0xFF;
-                int g = (color >> 8) & 0xFF;
-                int r = color & 0xFF;
-                colors.add(Color.fromBGR(r, g, b));
+                fadeColors.add(ColorUtils.getFromHex(hex));
             }
 
             effects.add(FireworkEffect.builder()

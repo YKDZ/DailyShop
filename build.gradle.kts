@@ -40,6 +40,7 @@ allprojects {
         maven("https://repo.dmulloy2.net/repository/public/")
         maven("https://repo.xenondevs.xyz/releases")
         maven("https://repo.oraxen.com/releases")
+        maven("https://r.irepo.space/maven/")
     }
 
     tasks.processResources {
@@ -68,6 +69,11 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.171.0")
 
     compileOnly("io.lumine:Mythic-Dist:5.6.1")
+
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
+
+    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:2.1.2")
+    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.3")
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 

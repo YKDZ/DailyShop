@@ -5,5 +5,8 @@ public enum BaseItemType {
     MMOITEMS,
     ITEMSADDER,
     ORAXEN,
-    MYTHICMOBS;
+    MYTHICMOBS,
+    NEIGEITEMS,
+    CUSTOMCROPS,
+    CUSTOMFISHING;
 }

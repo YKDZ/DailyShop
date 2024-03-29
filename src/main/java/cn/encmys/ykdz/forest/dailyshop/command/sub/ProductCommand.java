@@ -3,12 +3,17 @@ package cn.encmys.ykdz.forest.dailyshop.command.sub;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.util.ColorUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 
@@ -68,6 +73,52 @@ public class ProductCommand {
                         PotionData data = meta.getBasePotionData();
                         String finalType = type;
                         keyValue.add("<#C28456>base: <#346659>POTION:" + finalType + ":" + data.getType() + ":" + data.isUpgraded() + ":" + data.isExtended());
+                    }
+                    // Firework
+                    else if (item.getType() == Material.FIREWORK_ROCKET) {
+                        vars.put("keys", "base, firework-effects");
+                        FireworkMeta meta = (FireworkMeta) item.getItemMeta();
+                        if (meta == null) {
+                            adventureManager.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            return;
+                        }
+                        keyValue.add("<#C28456>base: <#346659>FIREWORK:" + meta.getPower());
+                        keyValue.add("<#C28456>firework-effects:");
+                        for (FireworkEffect effect : meta.getEffects()) {
+                            List<Color> colors = effect.getColors();
+                            List<Color> fadeColors = effect.getFadeColors();
+                            boolean trail = effect.hasTrail();
+                            boolean flicker = effect.hasFlicker();
+                            FireworkEffect.Type type = effect.getType();
+                            StringBuilder builder = new StringBuilder("  <#346659>- \"-t:" + type);
+
+                            // 处理 -c 和 -fc 表格样式
+                            List<String> hexColors = colors
+                                    .stream()
+                                    .map(ColorUtils::getHex)
+                                    .toList();
+
+                            List<String> hexFadeColors = fadeColors
+                                    .stream()
+                                    .map(ColorUtils::getHex)
+                                    .toList();
+
+                            if (!hexColors.isEmpty()) {
+                                builder.append(" -c:").append(hexColors);
+                            }
+
+                            if (!fadeColors.isEmpty()) {
+                                builder.append(" -cf:").append(hexFadeColors);
+                            }
+
+                            if (trail) {
+                                builder.append(" -trail:true");
+                            }
+                            if (flicker) {
+                                builder.append(" -flicker:true");
+                            }
+                            keyValue.add(builder.append("\"").toString());
+                        }
                     }
                     // Send Config key value list
                     for (String out : keyValue) {

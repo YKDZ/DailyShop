@@ -162,7 +162,7 @@ products:
 
   CUSTOM_FIREWORK:
     item:
-      base: FIREWORK:64
+      base: FIREWORK:3
       amount: 1
       firework-effects:
         - "-t:BALL -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:false -flicker:true"
