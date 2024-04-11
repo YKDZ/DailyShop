@@ -2,11 +2,11 @@ package cn.encmys.ykdz.forest.dailyshop.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import com.google.gson.annotations.Expose;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -18,6 +18,7 @@ public class Shop {
     /**
      * Product slot marker icon in the layout
      */
+    private static final Random random = new Random();
     private static final ProductFactory productFactory = DailyShop.getProductFactory();
     private final String id;
     private final String name;
@@ -54,7 +55,6 @@ public class Shop {
     }
 
     public void restock() {
-        Random random = new Random();
         ProductFactory productFactory = DailyShop.getProductFactory();
 
         listedProducts.clear();

@@ -6,11 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface BaseItem {
-    String getDisplayName();
-
-    boolean isSimilar(ItemStack item);
-
     BaseItemType getItemType();
-
+    String getDisplayName();
     ItemStack build(@Nullable Player player);
+    boolean isSimilar(ItemStack item);
+    boolean isExist();
 }

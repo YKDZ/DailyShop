@@ -37,6 +37,11 @@ public class MythicMobsItem implements BaseItem {
     }
 
     @Override
+    public boolean isExist() {
+        return false;
+    }
+
+    @Override
     public BaseItemType getItemType() {
         return BaseItemType.MYTHICMOBS;
     }

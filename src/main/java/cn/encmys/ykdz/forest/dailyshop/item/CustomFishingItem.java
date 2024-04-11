@@ -29,6 +29,11 @@ public class CustomFishingItem implements BaseItem {
     }
 
     @Override
+    public boolean isExist() {
+        return false;
+    }
+
+    @Override
     public BaseItemType getItemType() {
         return BaseItemType.CUSTOMFISHING;
     }

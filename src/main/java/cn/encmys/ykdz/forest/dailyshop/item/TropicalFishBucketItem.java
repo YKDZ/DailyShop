@@ -35,6 +35,11 @@ public class TropicalFishBucketItem extends VanillaItem implements BaseItem {
         return bucket;
     }
 
+    @Override
+    public boolean isExist() {
+        return true;
+    }
+
     public TropicalFish.Pattern getPattern() {
         return pattern;
     }

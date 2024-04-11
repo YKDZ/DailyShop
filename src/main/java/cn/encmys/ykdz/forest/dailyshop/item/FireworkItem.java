@@ -27,6 +27,11 @@ public class FireworkItem extends VanillaItem implements BaseItem {
         return firework;
     }
 
+    @Override
+    public boolean isExist() {
+        return true;
+    }
+
     public int getPower() {
         return power;
     }

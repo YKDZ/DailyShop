@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.util;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemFlag;
@@ -20,7 +21,8 @@ public class ItemBuilder {
 
     public ItemBuilder(ItemStack raw) {
         this.raw = raw;
-        this.meta = raw.getItemMeta();
+        this.meta = Optional.ofNullable(raw.getItemMeta())
+                .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
     }
 
     public ItemBuilder setDisplayName(String displayName) {
@@ -82,7 +84,7 @@ public class ItemBuilder {
             Map<String, String> params = new HashMap<>();
             Map<String, List<String>> listParams = new HashMap<>();
 
-            java.util.regex.Pattern p = java.util.regex.Pattern.compile("-(\\w+):(\\[.*?\\]|\\w+)");
+            java.util.regex.Pattern p = java.util.regex.Pattern.compile("-(\\w+):(\\[.*?]|\\w+)");
             Matcher m = p.matcher(data);
 
             while (m.find()) {

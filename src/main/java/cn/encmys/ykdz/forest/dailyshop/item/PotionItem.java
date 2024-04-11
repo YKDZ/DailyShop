@@ -38,6 +38,11 @@ public class PotionItem extends VanillaItem implements BaseItem {
         return potion;
     }
 
+    @Override
+    public boolean isExist() {
+        return false;
+    }
+
     public Material getPotionType() {
         return potionType;
     }

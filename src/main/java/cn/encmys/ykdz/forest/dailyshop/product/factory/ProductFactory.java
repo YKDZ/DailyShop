@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.factory;
+package cn.encmys.ykdz.forest.dailyshop.product.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactory;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

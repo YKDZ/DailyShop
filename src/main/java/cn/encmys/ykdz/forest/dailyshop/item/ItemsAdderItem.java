@@ -21,7 +21,7 @@ public class ItemsAdderItem implements BaseItem {
 
     @Override
     public String getDisplayName() {
-        if (CustomStack.isInRegistry(namespacedId)) {
+        if (isExist()) {
             return adventureManager.legacyToMiniMessage(CustomStack.getInstance(namespacedId).getDisplayName());
         } else {
             return null;
@@ -31,6 +31,11 @@ public class ItemsAdderItem implements BaseItem {
     @Override
     public boolean isSimilar(ItemStack item) {
         return false;
+    }
+
+    @Override
+    public boolean isExist() {
+        return CustomStack.isInRegistry(namespacedId);
     }
 
     @Override

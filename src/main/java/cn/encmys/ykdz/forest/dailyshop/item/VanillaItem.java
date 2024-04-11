@@ -39,6 +39,11 @@ public class VanillaItem implements BaseItem {
     }
 
     @Override
+    public boolean isExist() {
+        return true;
+    }
+
+    @Override
     public BaseItemType getItemType() {
         return BaseItemType.VANILLA;
     }

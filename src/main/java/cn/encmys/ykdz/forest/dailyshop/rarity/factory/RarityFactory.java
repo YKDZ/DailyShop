@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.factory;
+package cn.encmys.ykdz.forest.dailyshop.rarity.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;

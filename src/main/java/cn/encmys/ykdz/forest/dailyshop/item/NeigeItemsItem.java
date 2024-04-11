@@ -27,6 +27,11 @@ public class NeigeItemsItem implements BaseItem {
     }
 
     @Override
+    public boolean isExist() {
+        return false;
+    }
+
+    @Override
     public BaseItemType getItemType() {
         return BaseItemType.NEIGEITEMS;
     }

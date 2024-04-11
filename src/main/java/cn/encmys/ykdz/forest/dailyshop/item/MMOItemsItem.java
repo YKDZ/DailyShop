@@ -20,17 +20,17 @@ import java.util.Locale;
 
 public class MMOItemsItem implements BaseItem {
     private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
-    private final String type;
+    private final Type type;
     private final String id;
 
     public MMOItemsItem(@NotNull String type, @NotNull String id) {
-        this.type = type;
+        this.type = Type.get(type);
         this.id = id;
     }
 
     @Override
     public String getDisplayName() {
-        MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(getType()), getId().toUpperCase(Locale.ENGLISH));
+        MMOItem mmoItem = MMOItems.plugin.getMMOItem(getType(), getId().toUpperCase(Locale.ENGLISH));
 
         if (mmoItem == null) {
             return null;
@@ -47,9 +47,14 @@ public class MMOItemsItem implements BaseItem {
 
     @Override
     public boolean isSimilar(ItemStack item) {
-        String itemType = MMOItems.getTypeName(item);
+        Type itemType = Type.get(MMOItems.getTypeName(item));
         String itemId = MMOItems.getID(item);
         return itemType.equals(getType()) && itemId.equals(getId());
+    }
+
+    @Override
+    public boolean isExist() {
+        return MMOItems.plugin.getMMOItem(type, id) != null;
     }
 
     @Override
@@ -61,14 +66,14 @@ public class MMOItemsItem implements BaseItem {
     public ItemStack build(@Nullable Player player) {
         MMOItem mmoItem;
         if (player == null) {
-            mmoItem = MMOItems.plugin.getMMOItem(Type.get(getType()), getId().toUpperCase(Locale.ENGLISH));
+            mmoItem = MMOItems.plugin.getMMOItem(getType(), getId().toUpperCase(Locale.ENGLISH));
         } else {
-            mmoItem = MMOItems.plugin.getMMOItem(Type.get(getType()), getId().toUpperCase(Locale.ENGLISH), PlayerData.get(player));
+            mmoItem = MMOItems.plugin.getMMOItem(getType(), getId().toUpperCase(Locale.ENGLISH), PlayerData.get(player));
         }
         return mmoItem == null ? new ItemStack(Material.AIR) : mmoItem.newBuilder().build();
     }
 
-    public String getType()  {
+    public Type getType()  {
         return type;
     }
 

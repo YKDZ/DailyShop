@@ -20,6 +20,11 @@ public class SkullItem extends VanillaItem implements BaseItem {
         return SkullUtils.generateSkullFromURLTexture(getUrl());
     }
 
+    @Override
+    public boolean isExist() {
+        return true;
+    }
+
     public String getUrl() {
         return url;
     }

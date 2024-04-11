@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.factory;
+package cn.encmys.ykdz.forest.dailyshop.shop.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
@@ -7,7 +7,10 @@ import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
 import javax.management.openmbean.InvalidKeyException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ShopFactory {
     private static final HashMap<String, Shop> shops = new HashMap<>();
@@ -34,14 +37,15 @@ public class ShopFactory {
         }
 
         // Check whether the product actually exist.
-        Iterator<String> iterator = products.iterator();
-        while (iterator.hasNext()) {
-            String productId = iterator.next();
-            if (!DailyShop.getProductFactory().containsProduct(productId)) {
-                iterator.remove();
-                LogUtils.warn("Product " + productId + " in shop " + id + " not exist.");
-            }
-        }
+        products = products.stream()
+                .filter(productId -> {
+                    if (!DailyShop.getProductFactory().containsProduct(productId)) {
+                        LogUtils.warn("Product " + productId + " in shop " + id + " not exist.");
+                        return false;
+                    }
+                    return true;
+                })
+                .toList();
 
         Shop shop = new Shop(
                 id,

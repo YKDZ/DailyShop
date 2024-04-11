@@ -4,7 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
