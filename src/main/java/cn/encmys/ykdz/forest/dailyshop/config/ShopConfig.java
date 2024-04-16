@@ -61,7 +61,7 @@ public class ShopConfig {
         return getConfig(shopId).getString("settings.name");
     }
 
-    public static int getRestockTimer(String shopId) {
+    public static int getRestockTimerSection(String shopId) {
         return getConfig(shopId).getInt("settings.restock-timer");
     }
 

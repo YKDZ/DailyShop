@@ -5,7 +5,6 @@ import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 
 public class LogUtils {
     private final static AdventureManager adventureManager = DailyShop.getAdventureManager();
-    private final static DailyShop plugin = DailyShop.getInstance();
 
     public static void info(String log) {
         adventureManager.sendConsoleMessage("[DailyShop] " + log);

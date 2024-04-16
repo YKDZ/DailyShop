@@ -1,5 +1,4 @@
-# 传统的颜色格式 (使用 & 符号) 不受支持,
-# 请使用 MiniMessage 格式, 参考以下页面:
+# 传统的颜色格式 (使用 & 符号) 不受支持,# 请使用 MiniMessage 格式, 参考以下页面:
 # https://docs.adventure.kyori.net/minimessage/format.html
 
 messages:
@@ -19,19 +18,19 @@ messages:
         success: "<green>成功手动保存了所有商店数据!"
   action:
     buy:
-      success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{cost}."
+      success: "<gray>成功在商店 <reset>{shop}<gray> 购买了<reset>{name} <gray>x <white>{amount}<gray>. 共花费 <white>{cost}."
       failure:
-        money: "<gray>You do not have enough <red>money <gray>to buy <reset>{name} <gray>x <white>{amount}<gray>."
-        disable: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>."
+        money: "<gray>你没有足够的 <red>余额 <gray>来购买 <reset>{name} <gray>x <white>{amount}<gray>."
+        disable: "<gray>你不能从商店 <reset>{shop}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>."
     sell:
-      success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{earn}."
+      success: "<gray>成功向商店 <reset>{shop}<gray> 出售了 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
       failure:
-        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>."
-        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+        disable: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
+        not-enough: "<gray>你的背包中没有足够的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
     sell-all:
-      success: "<gray>Successfully sell <white>{stack} <gray>stack of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{earn}."
+      success: "<gray>成功向商店 <reset>{shop}<gray> 出售了背包中全部 <white>{stack} <gray>份的 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
       failure:
-        disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>!"
-        not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+        disable: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
+        not-enough: "<gray>你的背包中没有任何一份的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
 
 version: 1

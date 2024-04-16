@@ -91,9 +91,7 @@ public class BaseItemDecorator {
         } else if (base.startsWith("POTION:")) {
             String[] data = base.substring(7).split(":");
             Material potionType = Material.POTION;
-            if (data[0].equalsIgnoreCase("DRINK")) {
-                potionType = Material.POTION;
-            } else if (data[0].equalsIgnoreCase("LINGERING")) {
+            if (data[0].equalsIgnoreCase("LINGERING")) {
                 potionType = Material.LINGERING_POTION;
             } else if (data[0].equalsIgnoreCase("SPLASH")) {
                 potionType = Material.SPLASH_POTION;
@@ -123,72 +121,108 @@ public class BaseItemDecorator {
 
     public static BaseItemDecorator mmoitems(String type, String id, boolean setDefaultName) {
         BaseItem item = new MMOItemsItem(type, id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator itemsadder(String namespacedId, boolean setDefaultName) {
         BaseItem item = new ItemsAdderItem(namespacedId);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator oraxen(String id, boolean setDefaultName) {
         BaseItem item = new OraxenItem(id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator mythicmobs(String id, boolean setDefaultName) {
         BaseItem item = new MythicMobsItem(id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator neigeitems(String id, boolean setDefaultName) {
         BaseItem item = new NeigeItemsItem(id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator customcrops(String id, boolean setDefaultName) {
         BaseItem item = new CustomCropsItem(id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator customfishing(String namespace, String id, boolean setDefaultName) {
         BaseItem item = new CustomFishingItem(namespace, id);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator vanilla(Material material, boolean setDefaultName) {
         BaseItem item = new VanillaItem(material);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator skull(String url, boolean setDefaultName) {
         BaseItem item = new SkullItem(url);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator firework(int power, boolean setDefaultName) {
         BaseItem item = new FireworkItem(power);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator potion(Material potionType, String effectType, boolean upgradeable, boolean extendable, boolean setDefaultName) {
         BaseItem item = new PotionItem(potionType, effectType, upgradeable, extendable);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }
 
     public static BaseItemDecorator tropicalFishBucket(TropicalFish.Pattern pattern, DyeColor patternColor, DyeColor bodyColor, boolean setDefaultName) {
         BaseItem item = new TropicalFishBucketItem(pattern, patternColor, bodyColor);
+        if (!item.isExist()) {
+            return null;
+        }
         return new BaseItemDecorator()
                 .setItem(item, setDefaultName);
     }

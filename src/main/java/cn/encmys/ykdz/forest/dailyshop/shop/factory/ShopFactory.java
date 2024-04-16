@@ -50,7 +50,7 @@ public class ShopFactory {
         Shop shop = new Shop(
                 id,
                 ShopConfig.getName(id),
-                ShopConfig.getRestockTimer(id),
+                ShopConfig.getRestockTimerSection(id),
                 products,
                 ShopConfig.getSize(id),
                 ShopConfig.getGUISection(id)
@@ -85,8 +85,11 @@ public class ShopFactory {
                 continue;
             }
             shop.setLastRestocking(dataShop.getLastRestocking());
-            shop.setListedProducts(dataShop.getListedProducts());
             shop.setCachedPrice(dataShop.getCachedPrice());
+            // Make sure the product is still exist
+            shop.addListedProducts(dataShop.getListedProducts().stream()
+                    .filter(productId -> DailyShop.getProductFactory().containsProduct(productId))
+                    .toList());
         }
 
         // Build shop gui

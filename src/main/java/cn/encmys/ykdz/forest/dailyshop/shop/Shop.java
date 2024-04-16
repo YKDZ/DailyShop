@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Shop {
     /**
@@ -58,16 +59,17 @@ public class Shop {
         ProductFactory productFactory = DailyShop.getProductFactory();
 
         listedProducts.clear();
-        Map<String, Product> allProducts = new HashMap<>();
-        for (String productId : allProductsId) {
-            allProducts.put(productId, productFactory.getProduct(productId));
-        }
+        // Make map of product id and product
+        Map<String, Product> allProducts = allProductsId.stream()
+                .collect(Collectors.toMap(
+                        productId -> productId,
+                        productFactory::getProduct
+                ));
 
         if (size >= allProductsId.size()) {
             for (String productId : allProductsId) {
                 Product product = allProducts.get(productId);
-                cachePrice(product);
-                listedProducts.add(productId);
+                listProduct(product);
             }
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
@@ -146,8 +148,8 @@ public class Shop {
         this.lastRestocking = lastRestocking;
     }
 
-    public void setListedProducts(List<String> listedProducts) {
-        this.listedProducts = listedProducts;
+    public void addListedProducts(List<String> listedProducts) {
+        this.listedProducts.addAll(listedProducts);
     }
 
     public Map<String, PricePair> getCachedPrice() {

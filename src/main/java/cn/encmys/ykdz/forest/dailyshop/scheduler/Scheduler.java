@@ -28,7 +28,7 @@ public class Scheduler {
         scheduler.runTaskTimer(plugin, task -> {
             long now = System.currentTimeMillis();
             for (Shop shop : DailyShop.getShopFactory().getAllShops().values()) {
-                if (now - shop.getLastRestocking() >= shop.getRestockTime() * 60L * 1000L) {
+                if (shop.getLastRestocking() + (long) shop.getRestockTime() * 60 * 1000 <= now) {
                     shop.restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         adventuremanager.sendPlayerMessage(player, TextUtils.parseInternalVariables(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{

@@ -1,7 +1,8 @@
 settings:
   name: "<gray>Black Market"
-  restock-timer: 10
   size: 14
+  # Restock interval in minutes
+  restock-timer: 10
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"

@@ -9,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.TimeUnit;
-
 public class PlaceholderAPIHook extends PlaceholderExpansion {
     public PlaceholderAPIHook() {
         if (isHooked()) {
@@ -51,12 +49,13 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             if (shop == null) {
                 return "Shop " + shopId + " not exist.";
             }
-            long remain = shop.getRestockTime() * 60L * 1000L - (System.currentTimeMillis() - shop.getLastRestocking());
-            return String.format(Config.timeFormat,
-                    TimeUnit.MILLISECONDS.toHours(remain),
-                    TimeUnit.MILLISECONDS.toMinutes(remain) % 60,
-                    TimeUnit.MILLISECONDS.toSeconds(remain) % 60
-            );
+            long timeRemaining = (shop.getLastRestocking() + shop.getRestockTime() * 60L * 1000L) - System.currentTimeMillis();
+            if (timeRemaining > 0) {
+                long hours = timeRemaining / (60 * 60 * 1000);
+                long minutes = (timeRemaining % (60 * 60 * 1000)) / (60 * 1000);
+                long seconds = (timeRemaining % (60 * 1000)) / 1000;
+                return String.format(Config.timeFormat, hours, minutes, seconds);
+            }
         }
         return null;
     }

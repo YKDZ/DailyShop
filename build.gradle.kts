@@ -6,7 +6,7 @@ plugins {
 allprojects {
 
     project.group = "cn.encmys.ykdz.forest"
-    project.version = "0.1.0"
+    project.version = "BETA.1"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -94,6 +94,8 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
+
+    implementation("com.cronutils:cron-utils:9.2.1")
 }
 
 tasks {
