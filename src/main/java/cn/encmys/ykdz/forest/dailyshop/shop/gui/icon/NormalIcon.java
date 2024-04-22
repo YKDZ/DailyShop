@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.gui.icon;
+package cn.encmys.ykdz.forest.dailyshop.shop.gui.icon;
 
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import org.bukkit.Bukkit;

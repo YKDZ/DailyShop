@@ -2,13 +2,11 @@ package cn.encmys.ykdz.forest.dailyshop.api.product;
 
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class Product {
     private final String id;
@@ -62,41 +60,15 @@ public abstract class Product {
         return productItemBuilder;
     }
 
-    /**
-     * @param shopId Seller
-     * @param player Buyer
-     */
-    public abstract FailureReason sellTo(@Nullable String shopId, Player player);
+    public abstract void give(@NotNull Shop shop, @NotNull Player player, int stack);
 
-    public abstract FailureReason canSellTo(@Nullable String shopId, Player player);
+    public abstract void take(@NotNull Shop shop, @NotNull Player player, int stack);
 
-    public abstract void give(@Nullable String shopId, @NotNull Player player);
+    public abstract int has(@NotNull Shop shop, @NotNull Player player, int stack);
 
-    /**
-     * @param shopId Buyer
-     * @param player Seller
-     */
-    public abstract FailureReason buyFrom(@Nullable String shopId, Player player);
-
-    /**
-     * @param shopId Buyer
-     * @param player Seller
-     */
-    public abstract int buyAllFrom(@Nullable String shopId, Player player);
-
-    /**
-     * @param shopId Buyer
-     * @param player Seller
-     */
-    public abstract FailureReason canBuyFrom(@Nullable String shopId, Player player);
-
-    public abstract void take(String shopId, Player player, int stack);
-
-    public abstract int takeAll(String shopId, Player player);
+    public abstract boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack);
 
     public boolean isCacheable() {
         return isCacheable;
     }
-
-    public abstract PricePair getNewPricePair(@Nullable String shopId);
 }

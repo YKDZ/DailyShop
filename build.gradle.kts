@@ -6,7 +6,7 @@ plugins {
 allprojects {
 
     project.group = "cn.encmys.ykdz.forest"
-    project.version = "BETA.1"
+    project.version = "0.1.0 Beta"
 
     apply<JavaPlugin>()
     apply(plugin = "java")

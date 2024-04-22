@@ -32,7 +32,9 @@ products:
       - ORANGE_CONCRETE
       - YELLOW_CONCRETE
       - BROWN_CONCRETE
-      - RED_CONCRETE
+      # Three "stack" of red_concrete.
+      # In this case, means 16 * 3 in total.
+      - RED_CONCRETE:3
     rarity: rare
 
   COLD_COLOR_CONCRETE_BUNDLE:
@@ -49,7 +51,9 @@ products:
       - LIME_CONCRETE
       - PURPLE_CONCRETE
       - BLUE_CONCRETE
-      - GREEN_CONCRETE
+      # Three "stack" of green_concrete.
+      # In this case, means 16 * 3 in total.
+      - GREEN_CONCRETE:3
     rarity: rare
 
   WHITE_CONCRETE:

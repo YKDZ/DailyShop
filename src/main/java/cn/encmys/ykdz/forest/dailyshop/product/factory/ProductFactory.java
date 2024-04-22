@@ -16,6 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ProductFactory {
     private static final RarityFactory rarityFactory = DailyShop.getRarityFactory();
@@ -159,9 +160,19 @@ public class ProductFactory {
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
         } else if (productSection.contains("bundle-contents")) {
+            Map<String, Integer> bundleContents = new HashMap<>();
+            for (String contentData : productSection.getStringList("bundle-contents")) {
+                String[] parsedContentData = contentData.split(":");
+                if (parsedContentData.length == 1) {
+                    bundleContents.put(parsedContentData[0], 1);
+                } else if (parsedContentData.length == 2) {
+                    bundleContents.put(parsedContentData[0], Integer.parseInt(parsedContentData[1]));
+                } else {
+                    LogUtils.warn("Product " + id + " has invalid bundle-contents. The invalid line is: " + contentData + ".");
+                }
+            }
             getAllProducts().put(id,
-                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder,
-                            productSection.getStringList("bundle-contents")));
+                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder, bundleContents));
         } else {
             getAllProducts().put(id,
                     new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, isCacheable));

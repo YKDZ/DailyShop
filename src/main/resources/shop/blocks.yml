@@ -41,19 +41,22 @@ shop-gui:
       name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
       scroll: 1
   product-icon:
-    name-format: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
-    lore-format:
-      - " "
-      - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
-      - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
-      - "|"
-      - "|<gray>Bundle Contents:"
-      - "{bundle-contents}"
-      - "|"
-      - "{desc-lore}"
-      - " "
-      - "<gray>Rarity: <reset>{rarity}"
-    bundle-contents-line-format: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+    format:
+      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
+      lore:
+        - " "
+        - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
+        - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+        - "|"
+        - "|<gray>Bundle Contents:"
+        - "{bundle-contents}"
+        - "|"
+        - "{desc-lore}"
+        - " "
+        - "<gray>Rarity: <reset>{rarity}"
+      bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+    misc:
+      disabled-price: "<red>✘"
 
 products:
   # Use PACK: as prefix to import the entire

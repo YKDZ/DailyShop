@@ -4,20 +4,16 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Map;
 
 public class BundleProduct extends Product {
-    private final List<String> bundleContents;
+    private final Map<String, Integer> bundleContents;
 
     public BundleProduct(
             String id,
@@ -25,7 +21,7 @@ public class BundleProduct extends Product {
             Price sellPrice,
             Rarity rarity,
             BaseItemDecorator iconBuilder,
-            List<String> bundleContents) {
+            Map<String, Integer> bundleContents) {
         super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
         this.bundleContents = bundleContents;
     }
@@ -35,122 +31,59 @@ public class BundleProduct extends Product {
         return ProductType.BUNDLE;
     }
 
-    public List<String> getBundleContents() {
+    public Map<String, Integer> getBundleContents() {
         return bundleContents;
     }
 
     @Override
-    public FailureReason sellTo(@Nullable String shopId, Player player) {
-        FailureReason failure = canSellTo(shopId, player);
-        if (failure != FailureReason.SUCCESS) {
-            return failure;
-        }
-        Shop shop = DailyShop.getShopFactory().getShop(shopId);
-
-        BalanceUtils.removeBalance(player, shop.getBuyPrice(getId()));
-        give(shopId, player);
-
-        return FailureReason.SUCCESS;
-    }
-
-    @Override
-    public FailureReason canSellTo(@Nullable String shopId, Player player) {
-        double price = DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
-        if (price == -1d) {
-            return FailureReason.DISABLE;
-        }
-        if (BalanceUtils.checkBalance(player) <= price) {
-            return FailureReason.MONEY;
-        }
-        return FailureReason.SUCCESS;
-    }
-
-    @Override
-    public void give(@Nullable String shopId, @NotNull Player player) {
-        for (String productId : getBundleContents()) {
-            DailyShop.getProductFactory().getProduct(productId).give(shopId, player);
+    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+        for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
+            String contentId = entry.getKey();
+            int contentStack = entry.getValue();
+            DailyShop.getProductFactory().getProduct(contentId).give(shop, player, contentStack);
         }
     }
 
     @Override
-    public FailureReason buyFrom(@Nullable String shopId, Player player) {
-        FailureReason failure = canBuyFrom(shopId, player);
-        if (failure != FailureReason.SUCCESS) {
-            return failure;
+    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+        for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
+            String contentId = entry.getKey();
+            int contentStack = entry.getValue();
+
+            DailyShop.getProductFactory().getProduct(contentId).take(shop, player, contentStack);
         }
-
-        take(shopId, player, 1);
-
-        return FailureReason.SUCCESS;
     }
 
     @Override
-    public int buyAllFrom(@Nullable String shopId, Player player) {
-        return 0;
+    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+        int count = Integer.MAX_VALUE;
+
+        for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
+            String contentId = entry.getKey();
+            Product content = DailyShop.getProductFactory().getProduct(contentId);
+            int contentStack = entry.getValue();
+
+            if (content.has(shop, player, 1) < contentStack) {
+                count = 0;
+                break;
+            }
+
+            count = Math.min(count, content.has(shop, player, 1) / contentStack);
+        }
+
+        return count;
     }
 
     @Override
-    public FailureReason canBuyFrom(@Nullable String shopId, Player player) {
-        if (DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId()) == -1d) {
-            return FailureReason.DISABLE;
-        }
-
-        for (String id : bundleContents) {
-            FailureReason failure = DailyShop.getProductFactory().getProduct(id).canBuyFrom(shopId, player);
-            if (failure != FailureReason.SUCCESS) {
-                return failure;
+    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+        for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
+            String contentId = entry.getKey();
+            int contentStack = entry.getValue();
+            Product content = DailyShop.getProductFactory().getProduct(contentId);
+            if (!content.canHold(shop, player, contentStack)) {
+                return false;
             }
         }
-        return FailureReason.SUCCESS;
-    }
-
-    @Override
-    public void take(String shopId, Player player, int stack) {
-        for (String id : getBundleContents()) {
-            DailyShop.getProductFactory().getProduct(id).take(shopId, player, stack);
-        }
-    }
-
-    @Override
-    public int takeAll(String shopId, Player player) {
-        return 0;
-    }
-
-    @Override
-    public PricePair getNewPricePair(@Nullable String shopId) {
-        Price buyPrice = getBuyPrice();
-        Price sellPrice = getSellPrice();
-        double buy = 0d;
-        double sell = 0d;
-
-        switch (buyPrice.getPriceMode()) {
-            case BUNDLE_AUTO_NEW -> {
-                for (String contentId : getBundleContents()) {
-                    Product content = DailyShop.getProductFactory().getProduct(contentId);
-                    buy += content.getBuyPrice().getNewPrice();
-                }
-            } case BUNDLE_AUTO_REUSE -> {
-                Shop shop = DailyShop.getShopFactory().getShop(shopId);
-                for (String contentId : getBundleContents()) {
-                    buy += shop.getBuyPrice(contentId);
-                }
-            } default -> buy = buyPrice.getNewPrice();
-        }
-
-        switch (sellPrice.getPriceMode()) {
-            case BUNDLE_AUTO_NEW -> {
-                for (String contentId : getBundleContents()) {
-                    Product content = DailyShop.getProductFactory().getProduct(contentId);
-                    sell += content.getSellPrice().getNewPrice();
-                }
-            } case BUNDLE_AUTO_REUSE -> {
-                Shop shop = DailyShop.getShopFactory().getShop(shopId);
-                for (String contentId : getBundleContents()) {
-                    sell += shop.getSellPrice(contentId);
-                }
-            } default -> sell = sellPrice.getNewPrice();
-        }
-
-        return new PricePair(buy, sell);
+        return true;
     }
 }

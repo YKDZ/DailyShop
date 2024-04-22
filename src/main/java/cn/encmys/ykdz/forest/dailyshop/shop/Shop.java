@@ -2,23 +2,23 @@ package cn.encmys.ykdz.forest.dailyshop.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.shop.gui.ShopGUI;
+import cn.encmys.ykdz.forest.dailyshop.shop.logger.ShopLogger;
+import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
 import com.google.gson.annotations.Expose;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Shop {
-    /**
-     * Product slot marker icon in the layout
-     */
     private static final Random random = new Random();
     private static final ProductFactory productFactory = DailyShop.getProductFactory();
     private final String id;
@@ -26,11 +26,13 @@ public class Shop {
     private final int restockTime;
     private final List<String> allProductsId;
     private final int size;
-    private ShopGUI shopGUI;
+    private final ShopGUI shopGUI;
+    @Expose
+    private final ShopPricer shopPricer;
+    @Expose
+    private final ShopLogger shopLogger;
     @Expose
     private List<String> listedProducts = new ArrayList<>();
-    @Expose
-    private Map<String, PricePair> cachedPrice = new HashMap<>();
     private Map<String, ItemStack> cachedProduct = new HashMap<>();
     @Expose
     private long lastRestocking;
@@ -48,7 +50,9 @@ public class Shop {
         this.restockTime = restockTime;
         this.allProductsId = allProductsId;
         this.size = size;
-        this.shopGUI = new ShopGUI(getId(), guiSection);
+        shopGUI = new ShopGUI(getId(), guiSection);
+        shopPricer = new ShopPricer(this);
+        shopLogger = new ShopLogger(this);
     }
 
     public void open(Player player) {
@@ -101,15 +105,15 @@ public class Shop {
     private void listProduct(Product product) {
         String productId = product.getId();
 
-        cachePrice(product);
+        shopPricer.cachePrice(productId);
         cacheProductItem(product);
 
         // Make sure that every bundle contents have its price.
         if (product.getType() == ProductType.BUNDLE) {
-            for (String contentId : ((BundleProduct) product).getBundleContents()) {
+            for (String contentId : ((BundleProduct) product).getBundleContents().keySet()) {
                 Product content = productFactory.getProduct(contentId);
                 cacheProductItem(content);
-                cachePrice(content);
+                shopPricer.cachePrice(contentId);
             }
         }
 
@@ -152,36 +156,12 @@ public class Shop {
         this.listedProducts.addAll(listedProducts);
     }
 
-    public Map<String, PricePair> getCachedPrice() {
-        return cachedPrice;
-    }
-
-    public void setCachedPrice(Map<String, PricePair> cachedPrice) {
-        this.cachedPrice = cachedPrice;
-    }
-
-    public void cachePrice(Product product) {
-        getCachedPrice().put(product.getId(), product.getNewPricePair(getId()));
-    }
-
-    public double getBuyPrice(String productId) {
-        return getCachedPrice().get(productId).getBuy();
-    }
-
-    public double getSellPrice(String productId) {
-        return getCachedPrice().get(productId).getSell();
-    }
-
     public ShopGUI getShopGUI() {
         return shopGUI;
     }
 
     public Map<String, ItemStack> getCachedProductItems() {
         return cachedProduct;
-    }
-
-    public boolean hasCachedPrice(String productId) {
-        return getCachedPrice().containsKey(productId);
     }
 
     public boolean hasCachedProductItem(String productId) {
@@ -194,11 +174,22 @@ public class Shop {
         }
     }
 
-    public ItemStack getCachedProductItem(Product product) {
+    @Nullable
+    public ItemStack getCachedProductItem(@NotNull Product product) {
         String id = product.getId();
         if (product.isCacheable() && !hasCachedProductItem(id)) {
             cacheProductItem(product);
         }
         return getCachedProductItems().get(id);
+    }
+
+    @NotNull
+    public ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, @Nullable Player player) {
+        return Optional.ofNullable(getCachedProductItem(product))
+                .orElse(product.getProductItemBuilder().buildProductItem(player));
+    }
+
+    public ShopPricer getShopPricer() {
+        return shopPricer;
     }
 }

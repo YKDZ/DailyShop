@@ -1,20 +1,17 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.product.enums.FailureReason;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
+import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class CommandProduct extends Product {
     private final List<String> buyCommands;
@@ -39,74 +36,24 @@ public class CommandProduct extends Product {
     }
 
     @Override
-    public FailureReason sellTo(@Nullable String shopId, Player player) {
-        FailureReason failure = canSellTo(shopId, player);
-        if (failure != FailureReason.SUCCESS) {
-            return failure;
-        }
-
-        BalanceUtils.removeBalance(player, DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId()));
-        give(shopId, player);
-
-        return FailureReason.SUCCESS;
+    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+        IntStream.range(0, stack).forEach(i -> CommandUtils.dispatchCommands(player, getBuyCommands()));
     }
 
     @Override
-    public FailureReason canSellTo(@Nullable String shopId, Player player) {
-        double price = DailyShop.getShopFactory().getShop(shopId).getBuyPrice(getId());
-        if (price == -1d) {
-            return FailureReason.DISABLE;
-        }
-        if (BalanceUtils.checkBalance(player) <= price) {
-            return FailureReason.MONEY;
-        }
-        return FailureReason.SUCCESS;
+    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+        IntStream.range(0, stack).forEach(i -> CommandUtils.dispatchCommands(player, getSellCommands()));
+    }
+
+    // Player can not "have" a command
+    @Override
+    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+        return Integer.MAX_VALUE;
     }
 
     @Override
-    public void give(@Nullable String shopId, @NotNull Player player) {
-        CommandUtils.dispatchCommands(player, getBuyCommands());
-    }
-
-    @Override
-    public FailureReason buyFrom(@Nullable String shopId, Player player) {
-        FailureReason failure = canBuyFrom(shopId, player);
-        if (failure != FailureReason.SUCCESS) {
-            return failure;
-        }
-
-        take(shopId, player, 1);
-        return FailureReason.SUCCESS;
-    }
-
-    @Override
-    public int buyAllFrom(@Nullable String shopId, Player player) {
-        return takeAll(shopId, player);
-    }
-
-    @Override
-    public FailureReason canBuyFrom(@Nullable String shopId, Player player) {
-        double price = DailyShop.getShopFactory().getShop(shopId).getSellPrice(getId());
-        if (price == -1d) {
-            return FailureReason.DISABLE;
-        }
-        return FailureReason.SUCCESS;
-    }
-
-    @Override
-    public void take(String shopId, Player player, int stack) {
-        CommandUtils.dispatchCommands(player, getSellCommands());
-    }
-
-    @Override
-    public int takeAll(String shopId, Player player) {
-        CommandUtils.dispatchCommands(player, getSellCommands());
-        return 1;
-    }
-
-    @Override
-    public PricePair getNewPricePair(@Nullable String shopId) {
-        return new PricePair(getBuyPrice().getNewPrice(), getSellPrice().getNewPrice());
+    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+        return true;
     }
 
     public List<String> getBuyCommands() {

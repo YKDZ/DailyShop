@@ -36,7 +36,9 @@ products:
       - ORANGE_WOOL
       - YELLOW_WOOL
       - BROWN_WOOL
-      - RED_WOOL
+      # Three "stack" of red_wool.
+      # In this case, means 16 * 3 in total.
+      - RED_WOOL:3
     rarity: rare
 
   COLD_COLOR_WOOL_BUNDLE:
@@ -53,7 +55,9 @@ products:
       - LIME_WOOL
       - PURPLE_WOOL
       - BLUE_WOOL
-      - GREEN_WOOL
+      # Three "stack" of green_wool.
+      # In this case, means 16 * 3 in total.
+      - GREEN_WOOL:3
     rarity: rare
 
   WHITE_WOOL:

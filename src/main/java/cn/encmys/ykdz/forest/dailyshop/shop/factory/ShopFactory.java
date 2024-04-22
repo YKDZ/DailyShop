@@ -75,7 +75,7 @@ public class ShopFactory {
             buildShop(id);
         }
 
-        // Load data to built shop
+        // Load data to shop
         Map<String, Shop> data = DailyShop.getDatabase().loadShopData();
         for (Map.Entry<String, Shop> entry : data.entrySet()) {
             String id = entry.getKey();
@@ -85,7 +85,7 @@ public class ShopFactory {
                 continue;
             }
             shop.setLastRestocking(dataShop.getLastRestocking());
-            shop.setCachedPrice(dataShop.getCachedPrice());
+            shop.getShopPricer().setCachedPrices(dataShop.getShopPricer().getCachedPrices());
             // Make sure the product is still exist
             shop.addListedProducts(dataShop.getListedProducts().stream()
                     .filter(productId -> DailyShop.getProductFactory().containsProduct(productId))
@@ -104,7 +104,7 @@ public class ShopFactory {
     }
 
     public void save() {
-        HashMap<String, Shop> dataMap = new HashMap();
+        HashMap<String, Shop> dataMap = new HashMap<>();
         for (Shop shop : getAllShops().values()) {
             dataMap.put(shop.getId(), shop);
         }

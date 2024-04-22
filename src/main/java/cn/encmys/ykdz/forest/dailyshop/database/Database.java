@@ -13,17 +13,21 @@ import java.util.Map;
 public class Database {
     private final DailyShop plugin = DailyShop.getInstance();
     private final File shopsData;
+    private final File transitionLog;
     private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public Database(String path) {
-        this.shopsData = new File(path + "/data/shop-data.json");
-        createDatabaseFileIfNotExists(shopsData);
+        shopsData = new File(path + "/data/shop-data.json");
+        transitionLog = new File(path + "/data/transition-log.json");
+        createDatabaseFileIfNotExists(shopsData, transitionLog);
     }
 
-    private void createDatabaseFileIfNotExists(File file) {
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            plugin.saveResource("data/" + file.getName(), false);
+    private void createDatabaseFileIfNotExists(File... files) {
+        for (File file : files) {
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                plugin.saveResource("data/" + file.getName(), false);
+            }
         }
     }
 

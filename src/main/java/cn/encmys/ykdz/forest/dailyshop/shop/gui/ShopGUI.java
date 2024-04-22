@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.gui;
+package cn.encmys.ykdz.forest.dailyshop.shop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;

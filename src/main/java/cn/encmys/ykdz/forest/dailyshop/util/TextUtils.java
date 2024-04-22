@@ -91,7 +91,7 @@ public class TextUtils {
     public static String parseInternalVariables(String line, Map<String, String> vars) {
         if (line != null && line.startsWith("?")) {
             for (String key : vars.keySet()) {
-                if (line.contains("{" + key + "}") && vars.get(key) == null) {
+                if (line.contains("{" + key + "}") && (vars.get(key) == null || vars.get(key).isEmpty())) {
                     return null;
                 }
             }
