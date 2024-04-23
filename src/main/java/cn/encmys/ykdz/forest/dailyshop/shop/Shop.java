@@ -5,8 +5,8 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.shop.gui.ShopGUI;
-import cn.encmys.ykdz.forest.dailyshop.shop.logger.ShopLogger;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
 import com.google.gson.annotations.Expose;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,7 +30,7 @@ public class Shop {
     @Expose
     private final ShopPricer shopPricer;
     @Expose
-    private final ShopLogger shopLogger;
+    private final ShopCashier shopCashier;
     @Expose
     private List<String> listedProducts = new ArrayList<>();
     private Map<String, ItemStack> cachedProduct = new HashMap<>();
@@ -52,7 +52,7 @@ public class Shop {
         this.size = size;
         shopGUI = new ShopGUI(getId(), guiSection);
         shopPricer = new ShopPricer(this);
-        shopLogger = new ShopLogger(this);
+        shopCashier = new ShopCashier(this);
     }
 
     public void open(Player player) {
@@ -191,5 +191,9 @@ public class Shop {
 
     public ShopPricer getShopPricer() {
         return shopPricer;
+    }
+
+    public ShopCashier getShopCashier() {
+        return shopCashier;
     }
 }

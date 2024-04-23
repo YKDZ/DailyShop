@@ -17,9 +17,10 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashier;
-import cn.encmys.ykdz.forest.dailyshop.shop.enums.TransitionResult;
 import cn.encmys.ykdz.forest.dailyshop.shop.gui.icon.NormalIcon;
 import cn.encmys.ykdz.forest.dailyshop.shop.gui.icon.ScrollIcon;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
@@ -425,8 +426,7 @@ public class BaseItemDecorator {
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
                 Shop shop = DailyShop.getShopFactory().getShop(shopId);
                 ShopPricer shopPricer = shop.getShopPricer();
-                ShopCashier settler = new ShopCashier(shop, player)
-                        .addProduct(product, 1);
+                ShopCashier shopCashier = shop.getShopCashier();
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
@@ -436,9 +436,10 @@ public class BaseItemDecorator {
                 }};
 
                 if (clickType == ClickType.LEFT) {
-                    TransitionResult failure = settler.sellTo();
-                    if (failure != TransitionResult.SUCCESS) {
-                        switch (failure) {
+                    SettlementResult result = shopCashier.settle(ShopOrder.sellToOrder(player)
+                            .addProduct(product, 1));
+                    if (result != SettlementResult.SUCCESS) {
+                        switch (result) {
                             case TRANSITION_DISABLED -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
                             case NOT_ENOUGH_MONEY -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
                         }
@@ -447,9 +448,10 @@ public class BaseItemDecorator {
                     adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
-                    TransitionResult failure = settler.buyFrom();
-                    if (failure != TransitionResult.SUCCESS) {
-                        switch (failure) {
+                    SettlementResult result = shopCashier.settle(ShopOrder.buyFromOrder(player)
+                            .addProduct(product, 1));
+                    if (result != SettlementResult.SUCCESS) {
+                        switch (result) {
                             case TRANSITION_DISABLED -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
                             case NOT_ENOUGH_PRODUCT -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
                         }
@@ -458,12 +460,14 @@ public class BaseItemDecorator {
                     adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
-                    TransitionResult result = settler.buyAllFrom();
-                    if (result == TransitionResult.NOT_ENOUGH_PRODUCT) {
+                    ShopOrder order = ShopOrder.buyAllFromOrder(player)
+                            .addProduct(product, 1);
+                    SettlementResult result = shopCashier.settle(order);
+                    if (result == SettlementResult.NOT_ENOUGH_PRODUCT) {
                         adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
                         return;
                     }
-                    int stack = settler.getTotalBuyStack();
+                    int stack = order.getTotalStack();
                     vars.put("earn", decimalFormat.format(shopPricer.getSellPrice(product.getId()) * stack));
                     vars.put("stack", String.valueOf(stack));
                     adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_success, player, vars));

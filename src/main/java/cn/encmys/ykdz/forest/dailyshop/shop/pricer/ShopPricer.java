@@ -71,10 +71,10 @@ public class ShopPricer {
             } default -> sell = sellPrice.getNewPrice();
         }
 
-        cachedPrices.put(productId, getModifiedPricePair(new PricePair(buy, sell)));
+        cachedPrices.put(productId, getModifiedPricePair(productId, new PricePair(buy, sell)));
     }
 
-    public PricePair getModifiedPricePair(@NotNull PricePair pricePair) {
+    public PricePair getModifiedPricePair(@NotNull String productId, @NotNull PricePair pricePair) {
         return pricePair;
     }
 

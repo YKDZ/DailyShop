@@ -58,6 +58,50 @@ shop-gui:
     misc:
       disabled-price: "<red>✘"
 
+history-gui:
+  title: "Here is your trading history on {shop}"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
+  # The x character is the placeholder
+  # for the history slot.
+  layout:
+    - "# # # # # # # # u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x n"
+    - "# x x x x x x x n"
+    - "# # # # # # # # n"
+  icons:
+    "#":
+      item: BROWN_STAINED_GLASS_PANE
+      name: " "
+      lore:
+        - "<dark_gray>Wall of History"
+        - " "
+    "u":
+      item: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      scroll: -1
+    "n":
+      item: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      scroll: 1
+  history-icon:
+    format:
+      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
+      lore:
+        - " "
+        - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
+        - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+        - "|"
+        - "|<gray>Bundle Contents:"
+        - "{bundle-contents}"
+        - "|"
+        - "{desc-lore}"
+        - " "
+        - "<gray>Rarity: <reset>{rarity}"
+      bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+
 products:
   # Use PACK: as prefix to import the entire
   # product pack to this shop.
