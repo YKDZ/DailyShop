@@ -4,10 +4,10 @@ import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class LogStream {
@@ -17,8 +17,8 @@ public class LogStream {
         this.stream = stream;
     }
 
-    public static LogStream of(List<SettlementLog> logs) {
-        return new LogStream(logs.stream());
+    public static LogStream of(Stream<SettlementLog> logStream) {
+        return new LogStream(logStream);
     }
 
     public LogStream after(Date date) {
@@ -34,16 +34,20 @@ public class LogStream {
         return new LogStream(stream.filter(log -> typeSet.contains(log.getType())));
     }
 
-    public LogStream withProduct(String... products) {
-        Set<String> idSet = Set.of(products);
-        return new LogStream(stream.filter(log -> idSet.containsAll(log.getOrderedProductIds())));
+    public LogStream withProduct(String... productIds) {
+        Set<String> idSet = Set.of(productIds);
+        return new LogStream(stream.filter(log -> new HashSet<>(log.getOrderedProductIds()).containsAll(idSet)));
     }
 
     public double totalPrice() {
         return stream.mapToDouble(SettlementLog::getPrice).sum();
     }
 
-    public List<SettlementLog> toList() {
-        return stream.collect(Collectors.toList());
+    public void forEach(Consumer<SettlementLog> action) {
+        stream.forEach(action);
+    }
+
+    public Stream<SettlementLog> getStream() {
+        return stream;
     }
 }

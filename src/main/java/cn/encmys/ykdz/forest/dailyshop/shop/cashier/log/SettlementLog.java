@@ -1,30 +1,36 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier.log;
 
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
-import com.google.gson.annotations.Expose;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class SettlementLog {
-    @Expose
     private UUID customer;
-    @Expose
     private SettlementLogType type;
-    @Expose
     private Date transitionTime;
-    @Expose
     private double price;
-    @Expose
-    private Map<String, Integer> orderedProductsNameAndStack;
-    @Expose
     private List<String> orderedProductIds;
-    @Expose
+    private List<String> orderedProductNames;
+    private List<Integer> orderedProductStacks;
     private int totalStack;
 
     private SettlementLog() {}
+
+    public static SettlementLog of(SettlementLogType type, UUID customer) {
+        switch (type) {
+            case SELL_TO -> {
+                return sellToLog(customer);
+            }
+            case BUY_ALL_FROM -> {
+                return buyAllFromLog(customer);
+            }
+            default -> {
+                return buyFromLog(customer);
+            }
+        }
+    }
 
     public static SettlementLog buyFromLog(UUID customer) {
         return new SettlementLog()
@@ -67,19 +73,6 @@ public class SettlementLog {
         return this;
     }
 
-    public SettlementLog setStack(int stack) {
-        return this;
-    }
-
-    public Map<String, Integer> getOrderedProductsNameAndStack() {
-        return orderedProductsNameAndStack;
-    }
-
-    public SettlementLog setOrderedProductsNameAndStack(Map<String, Integer> orderedProductsNameAndStack) {
-        this.orderedProductsNameAndStack = orderedProductsNameAndStack;
-        return this;
-    }
-
     public int getTotalStack() {
         return totalStack;
     }
@@ -107,6 +100,24 @@ public class SettlementLog {
 
     public List<String> getOrderedProductIds() {
         return orderedProductIds;
+    }
+
+    public List<String> getOrderedProductNames() {
+        return orderedProductNames;
+    }
+
+    public SettlementLog setOrderedProductNames(List<String> orderedProductNames) {
+        this.orderedProductNames = orderedProductNames;
+        return this;
+    }
+
+    public List<Integer> getOrderedProductStacks() {
+        return orderedProductStacks;
+    }
+
+    public SettlementLog setOrderedProductStacks(List<Integer> orderedProductStacks) {
+        this.orderedProductStacks = orderedProductStacks;
+        return this;
     }
 
     public SettlementLog setOrderedProductIds(List<String> orderedProductIds) {

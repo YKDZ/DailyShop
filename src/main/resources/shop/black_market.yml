@@ -54,6 +54,35 @@ shop-gui:
     misc:
       disabled-price: "<red>✘"
 
+history-gui:
+  title: "Here is your trading history on {shop}"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
+  # The x character is the placeholder
+  # for the history slot.
+  layout:
+    - "# # # # # # # # u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x n"
+    - "# x x x x x x x n"
+    - "# # # # # # # # n"
+  icons:
+    "#":
+      item: BROWN_STAINED_GLASS_PANE
+      name: " "
+      lore:
+        - "<dark_gray>Wall of History"
+        - " "
+    "u":
+      item: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      scroll: -1
+    "n":
+      item: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      scroll: 1
+
 products:
   - WARM_WELCOME
   - FLY_PERMISSION

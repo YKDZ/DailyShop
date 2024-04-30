@@ -1,9 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop;
 
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
 import cn.encmys.ykdz.forest.dailyshop.config.*;
-import cn.encmys.ykdz.forest.dailyshop.database.Database;
+import cn.encmys.ykdz.forest.dailyshop.database.SQLiteDatabase;
 import cn.encmys.ykdz.forest.dailyshop.hook.*;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactory;
@@ -24,30 +25,31 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DailyShop extends JavaPlugin implements Listener {
-    private static DailyShop instance;
-    private static RarityFactory rarityFactory;
-    private static ProductFactory productFactory;
-    private static ShopFactory shopFactory;
-    private static Scheduler scheduler;
-    private static Database database;
-    private static Economy economy;
-    private static AdventureManager adventureManager;
-    private static ItemsLangAPI itemsLangAPI;
+    public static DailyShop INSTANCE;
+    public static RarityFactory RARITY_FACTORY;
+    public static ProductFactory PRODUCT_FACTORY;
+    public static ShopFactory SHOP_FACTORY;
+    public static Scheduler SCHEDULER;
+    public static Database DATABASE;
+    public static Economy ECONOMY;
+    public static AdventureManager ADVENTURE_MANAGER;
+    public static ItemsLangAPI ITEMSLANG_API;
+    public static Metrics METRICS;
 
     @Override
     public void onLoad() {
-        instance = this;
+        INSTANCE = this;
 
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(instance));
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(INSTANCE));
     }
 
     @Override
     public void onEnable() {
         if (ItemsAdderHook.isHooked()) {
-            Bukkit.getPluginManager().registerEvents(this, instance);
+            Bukkit.getPluginManager().registerEvents(this, INSTANCE);
         }
 
-        adventureManager = new AdventureManager(instance);
+        ADVENTURE_MANAGER = new AdventureManager(INSTANCE);
 
         if (!setupEconomy()) {
             LogUtils.error("Disabled due to no Vault dependency found!");
@@ -74,14 +76,14 @@ public final class DailyShop extends JavaPlugin implements Listener {
             return;
         }
 
-        database = new Database(instance.getDataFolder().getPath());
+        DATABASE = new SQLiteDatabase();
 
         if (!ItemsAdderHook.isHooked()) {
             init();
         }
 
         CommandAPI.onEnable();
-        new CommandHandler(instance).load();
+        new CommandHandler(INSTANCE).load();
 
         if (!setupBStats()) {
             return;
@@ -94,17 +96,17 @@ public final class DailyShop extends JavaPlugin implements Listener {
     }
 
     private void init() {
-        rarityFactory = new RarityFactory();
-        productFactory = new ProductFactory();
-        shopFactory = new ShopFactory();
+        RARITY_FACTORY = new RarityFactory();
+        PRODUCT_FACTORY = new ProductFactory();
+        SHOP_FACTORY = new ShopFactory();
 
-        scheduler = new Scheduler(instance);
+        SCHEDULER = new Scheduler();
     }
 
     @Override
     public void onDisable() {
-        shopFactory.unload();
-        productFactory.unload();
+        SHOP_FACTORY.unload();
+        PRODUCT_FACTORY.unload();
 
         CommandAPI.onDisable();
     }
@@ -117,61 +119,25 @@ public final class DailyShop extends JavaPlugin implements Listener {
         if (rsp == null) {
             return false;
         }
-        economy = rsp.getProvider();
-        return economy != null;
+        ECONOMY = rsp.getProvider();
+        return ECONOMY != null;
     }
 
     private boolean setupItemsLangAPI() {
-        itemsLangAPI = ItemsLangAPI.getApi();
-        itemsLangAPI.load(Lang.valueOf(Config.language.toUpperCase()));
+        ITEMSLANG_API = ItemsLangAPI.getApi();
+        ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
         return true;
     }
 
     private boolean setupBStats() {
         int pluginId = 21305;
-        Metrics metrics = new Metrics(this, pluginId);
+        METRICS = new Metrics(this, pluginId);
         return true;
     }
 
-    public static DailyShop getInstance() {
-        return instance;
-    }
-
-    public static RarityFactory getRarityFactory() {
-        return rarityFactory;
-    }
-
-    public static ProductFactory getProductFactory() {
-        return productFactory;
-    }
-
-    public static ShopFactory getShopFactory() {
-        return shopFactory;
-    }
-
-    public static Economy getEconomy() {
-        return economy;
-    }
-
-    public static Database getDatabase() {
-        return database;
-    }
-
-    public static Scheduler getScheduler() {
-        return scheduler;
-    }
-
-    public static AdventureManager getAdventureManager() {
-        return adventureManager;
-    }
-
-    public static ItemsLangAPI getItemsLangAPI() {
-        return itemsLangAPI;
-    }
-
     public static void reload() {
-        shopFactory.unload();
-        productFactory.unload();
+        SHOP_FACTORY.unload();
+        PRODUCT_FACTORY.unload();
 
         Config.load();
         MessageConfig.load();
@@ -179,10 +145,10 @@ public final class DailyShop extends JavaPlugin implements Listener {
         ProductConfig.load();
         ShopConfig.load();
 
-        itemsLangAPI.load(Lang.valueOf(Config.language.toUpperCase()));
+        ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
 
-        rarityFactory = new RarityFactory();
-        productFactory = new ProductFactory();
-        shopFactory = new ShopFactory();
+        RARITY_FACTORY = new RarityFactory();
+        PRODUCT_FACTORY = new ProductFactory();
+        SHOP_FACTORY = new ShopFactory();
     }
 }

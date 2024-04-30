@@ -2,6 +2,10 @@
 # please use the MiniMessage format, refer to the following page:
 # https://docs.adventure.kyori.net/minimessage/format.html
 
+format:
+  decimal: "###,###.##"
+  time: "%02dh:%02dm:%02ds"
+
 messages:
   prefix: "<dark_gray>[<gold>🔔<dark_gray>] "
   no-permission: "<red>You do not have enough permission to do this."
@@ -11,6 +15,10 @@ messages:
     shop:
       open:
         success: "" # <gray>Successfully open shop <reset>{shop}<gray>!
+        failure:
+          invalid-shop: "<red>Shop {shop} <red>do not exist!"
+      history:
+        success: ""
         failure:
           invalid-shop: "<red>Shop {shop} <red>do not exist!"
       restock:

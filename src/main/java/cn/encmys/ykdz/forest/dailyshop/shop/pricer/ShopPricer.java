@@ -2,11 +2,13 @@ package cn.encmys.ykdz.forest.dailyshop.shop.pricer;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
-import com.google.gson.annotations.Expose;
+import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -14,7 +16,6 @@ import java.util.Map;
 
 public class ShopPricer {
     private final Shop shop;
-    @Expose
     private Map<String, PricePair> cachedPrices = new HashMap<>();
 
     public ShopPricer(@NotNull Shop shop) {
@@ -30,19 +31,28 @@ public class ShopPricer {
     }
 
     public void cachePrice(@NotNull String productId) {
-        Product product = DailyShop.getProductFactory().getProduct(productId);
+        Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
         Price buyPrice = product.getBuyPrice();
         Price sellPrice = product.getSellPrice();
         double buy = 0d;
         double sell = 0d;
 
-        // Handle bundle price mode
+        int historyBuy = DailyShop.DATABASE.queryHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.SELL_TO);
+        int historySell = DailyShop.DATABASE.queryHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
+
+        // Handle special price mode
         switch (buyPrice.getPriceMode()) {
-            case BUNDLE_AUTO_NEW -> {
+            case FORMULA -> {
+                Map<String, String> vars = buyPrice.getFormulaVars();
+                vars.put("history-buy", Integer.toString(historyBuy));
+                vars.put("history-sell", Integer.toString(historySell));
+                double price = TextUtils.evaluateFormula(buyPrice.getFormula(), vars);
+                buy = buyPrice.isRound() ? Math.round(price) : price;
+            } case BUNDLE_AUTO_NEW -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
-                    Product content = DailyShop.getProductFactory().getProduct(contentId);
+                    Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
                     buy += content.getBuyPrice().getNewPrice() * contentStack;
                 }
             } case BUNDLE_AUTO_REUSE -> {
@@ -55,11 +65,17 @@ public class ShopPricer {
         }
 
         switch (sellPrice.getPriceMode()) {
-            case BUNDLE_AUTO_NEW -> {
+            case FORMULA -> {
+                Map<String, String> vars = sellPrice.getFormulaVars();
+                vars.put("history-buy", Integer.toString(historyBuy));
+                vars.put("history-sell", Integer.toString(historySell));
+                double price = TextUtils.evaluateFormula(sellPrice.getFormula(), vars);
+                sell = sellPrice.isRound() ? Math.round(price) : price;
+            } case BUNDLE_AUTO_NEW -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
-                    Product content = DailyShop.getProductFactory().getProduct(contentId);
+                    Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
                     sell += content.getSellPrice().getNewPrice() * contentStack;
                 }
             } case BUNDLE_AUTO_REUSE -> {
@@ -71,9 +87,15 @@ public class ShopPricer {
             } default -> sell = sellPrice.getNewPrice();
         }
 
+        // Avoid buy-price <= sell-price
+        if (buy <= sell) {
+            sell = -1d;
+        }
+
         cachedPrices.put(productId, getModifiedPricePair(productId, new PricePair(buy, sell)));
     }
 
+    // Todo Discount or something
     public PricePair getModifiedPricePair(@NotNull String productId, @NotNull PricePair pricePair) {
         return pricePair;
     }

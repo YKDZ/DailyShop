@@ -1,0 +1,178 @@
+# In this product pack, nearly all product data
+# except "item" is set at "default-settings".
+# This makes maintaining a large number of
+# similar products very easy.
+default-settings:
+  item:
+    amount: 16
+  buy-price:
+    formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * Math.pow(1 + ({history-buy} - {history-sell}) / ({history-sell} + {history-buy} + 1), 2)))"
+  sell-price:
+    formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * Math.pow(1 + ({history-sell} - {history-buy}) / ({history-sell} + {history-buy} + 1), 2)))"
+  rarity: uncommon
+  # Whether to cache the product item.
+  # This will reduce the lag of plugin,
+  # but will ignore the player-targeted placeholder
+  # like %player_name% in the name or lore of the item.
+  cacheable: true
+
+products:
+  COAL_ORE:
+    item:
+      base: COAL_ORE
+    buy-price:
+      vars:
+        - "base:30"
+    sell-price:
+      vars:
+        - "base:10"
+
+  COPPER_ORE:
+    item:
+      base: COPPER_ORE
+    buy-price:
+      vars:
+        - "base:60"
+    sell-price:
+      vars:
+        - "base:20"
+
+  IRON_ORE:
+    item:
+      base: IRON_ORE
+    buy-price:
+      vars:
+        - "base:90"
+    sell-price:
+      vars:
+        - "base:30"
+
+  LAPIS_ORE:
+    item:
+      base: LAPIS_ORE
+    buy-price:
+      vars:
+        - "base:120"
+    sell-price:
+      vars:
+        - "base:40"
+
+  REDSTONE_ORE:
+    item:
+      base: REDSTONE_ORE
+    buy-price:
+      vars:
+        - "base:150"
+    sell-price:
+      vars:
+        - "base:50"
+
+  EMERALD_ORE:
+    item:
+      base: EMERALD_ORE
+    buy-price:
+      vars:
+        - "base:180"
+    sell-price:
+      vars:
+        - "base:60"
+
+  GOLD_ORE:
+    item:
+      base: GOLD_ORE
+    buy-price:
+      vars:
+        - "base:210"
+    sell-price:
+      vars:
+        - "base:70"
+
+  DIAMOND_ORE:
+    item:
+      base: DIAMOND_ORE
+    buy-price:
+      vars:
+        - "base:240"
+    sell-price:
+      vars:
+        - "base:80"
+
+  DEEPSLATE_COAL_ORE:
+    item:
+      base: DEEPSLATE_COAL_ORE
+    buy-price:
+      vars:
+        - "base:30"
+    sell-price:
+      vars:
+        - "base:10"
+
+  DEEPSLATE_COPPER_ORE:
+    item:
+      base: DEEPSLATE_COPPER_ORE
+    buy-price:
+      vars:
+        - "base:60"
+    sell-price:
+      vars:
+        - "base:20"
+
+  DEEPSLATE_IRON_ORE:
+    item:
+      base: DEEPSLATE_IRON_ORE
+    buy-price:
+      vars:
+        - "base:90"
+    sell-price:
+      vars:
+        - "base:30"
+
+  DEEPSLATE_LAPIS_ORE:
+    item:
+      base: DEEPSLATE_LAPIS_ORE
+    buy-price:
+      vars:
+        - "base:120"
+    sell-price:
+      vars:
+        - "base:40"
+
+  DEEPSLATE_REDSTONE_ORE:
+    item:
+      base: DEEPSLATE_REDSTONE_ORE
+    buy-price:
+      vars:
+        - "base:150"
+    sell-price:
+      vars:
+        - "base:50"
+
+  DEEPSLATE_EMERALD_ORE:
+    item:
+      base: DEEPSLATE_EMERALD_ORE
+    buy-price:
+      vars:
+        - "base:180"
+    sell-price:
+      vars:
+        - "base:60"
+
+  DEEPSLATE_GOLD_ORE:
+    item:
+      base: DEEPSLATE_GOLD_ORE
+    buy-price:
+      vars:
+        - "base:210"
+    sell-price:
+      vars:
+        - "base:70"
+
+  DEEPSLATE_DIAMOND_ORE:
+    item:
+      base: DEEPSLATE_DIAMOND_ORE
+    buy-price:
+      vars:
+        - "base:240"
+    sell-price:
+      vars:
+        - "base:80"

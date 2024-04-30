@@ -1,24 +1,22 @@
 package cn.encmys.ykdz.forest.dailyshop.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.gui.icon.NormalIcon;
+import cn.encmys.ykdz.forest.dailyshop.gui.icon.ScrollIcon;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
+import cn.encmys.ykdz.forest.dailyshop.icon.Icon;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashier;
-import cn.encmys.ykdz.forest.dailyshop.shop.gui.icon.NormalIcon;
-import cn.encmys.ykdz.forest.dailyshop.shop.gui.icon.ScrollIcon;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
@@ -39,12 +37,9 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class BaseItemDecorator {
-    private static final DecimalFormat decimalFormat = Config.getDecimalFormat();
-    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private BaseItem item;
     // Global
     private String name;
@@ -372,11 +367,11 @@ public class BaseItemDecorator {
     }
 
     public Item buildProductIcon(String shopId, Product product) {
-        ProductFactory productFactory = DailyShop.getProductFactory();
+        ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
         return new AbstractItem() {
             @Override
             public ItemProvider getItemProvider() {
-                Shop shop = DailyShop.getShopFactory().getShop(shopId);
+                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 setNameFormat(ShopConfig.getProductNameFormat(shopId));
                 setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
                 setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
@@ -401,8 +396,8 @@ public class BaseItemDecorator {
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
-                    put("buy-price", shopPricer.getBuyPrice(product.getId()) != -1d ? decimalFormat.format(shopPricer.getBuyPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
-                    put("sell-price", shopPricer.getSellPrice(product.getId()) != -1d ? decimalFormat.format(shopPricer.getSellPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
+                    put("buy-price", shopPricer.getBuyPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
+                    put("sell-price", shopPricer.getSellPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
                     put("rarity", product.getRarity().getName());
                 }};
 
@@ -424,15 +419,15 @@ public class BaseItemDecorator {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-                Shop shop = DailyShop.getShopFactory().getShop(shopId);
+                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 ShopPricer shopPricer = shop.getShopPricer();
                 ShopCashier shopCashier = shop.getShopCashier();
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
-                    put("shop", DailyShop.getShopFactory().getShop(shopId).getName());
-                    put("cost", decimalFormat.format(shopPricer.getBuyPrice(product.getId())));
-                    put("earn", decimalFormat.format(shopPricer.getSellPrice(product.getId())));
+                    put("shop", DailyShop.SHOP_FACTORY.getShop(shopId).getName());
+                    put("cost", MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())));
+                    put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())));
                 }};
 
                 if (clickType == ClickType.LEFT) {
@@ -440,37 +435,40 @@ public class BaseItemDecorator {
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
-                            case TRANSITION_DISABLED -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
-                            case NOT_ENOUGH_MONEY -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
+                            case TRANSITION_DISABLED -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
+                            case NOT_ENOUGH_MONEY -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
                         }
                         return;
                     }
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
                     SettlementResult result = shopCashier.settle(ShopOrder.buyFromOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
-                            case TRANSITION_DISABLED -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
-                            case NOT_ENOUGH_PRODUCT -> adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
+                            case TRANSITION_DISABLED -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
+                            case NOT_ENOUGH_PRODUCT -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
                         }
                         return;
                     }
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
                     ShopOrder order = ShopOrder.buyAllFromOrder(player)
                             .addProduct(product, 1);
                     SettlementResult result = shopCashier.settle(order);
-                    if (result == SettlementResult.NOT_ENOUGH_PRODUCT) {
-                        adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
+                    if (result != SettlementResult.SUCCESS) {
+                        switch (result) {
+                            case NOT_ENOUGH_PRODUCT -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
+                            case TRANSITION_DISABLED -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_disable, player, vars));
+                        }
                         return;
                     }
                     int stack = order.getTotalStack();
-                    vars.put("earn", decimalFormat.format(shopPricer.getSellPrice(product.getId()) * stack));
+                    vars.put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId()) * stack));
                     vars.put("stack", String.valueOf(stack));
-                    adventureManager.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_success, player, vars));
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 
@@ -481,7 +479,7 @@ public class BaseItemDecorator {
     }
 
     public Item buildNormalIcon() {
-        Item icon = null;
+        Item icon;
 
         if (getScroll() == 0) {
             icon = new NormalIcon() {

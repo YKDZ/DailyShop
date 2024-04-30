@@ -25,6 +25,12 @@ public class ItemBuilder {
                 .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
     }
 
+    public ItemBuilder(Material material) {
+        this.raw = new ItemStack(material);
+        this.meta = Optional.ofNullable(raw.getItemMeta())
+                .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
+    }
+
     public ItemBuilder setDisplayName(String displayName) {
         if (displayName != null) {
             meta.setDisplayName(displayName);

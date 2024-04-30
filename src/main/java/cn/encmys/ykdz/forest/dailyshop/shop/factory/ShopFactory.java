@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.shop.factory;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
@@ -17,6 +18,19 @@ public class ShopFactory {
 
     public ShopFactory() {
         load();
+    }
+
+    public void load() {
+        // Build shop
+        for (String id : ShopConfig.getAllId()) {
+            buildShop(id);
+        }
+
+        // Build shop gui
+        for (Shop shop : getAllShops().values()) {
+            shop.getShopGUI().buildGUIBuilder();
+            shop.getHistoryGUI().buildGUIBuilder();
+        }
     }
 
     public Shop buildShop(String id) {
@@ -39,7 +53,7 @@ public class ShopFactory {
         // Check whether the product actually exist.
         products = products.stream()
                 .filter(productId -> {
-                    if (!DailyShop.getProductFactory().containsProduct(productId)) {
+                    if (!DailyShop.PRODUCT_FACTORY.containsProduct(productId)) {
                         LogUtils.warn("Product " + productId + " in shop " + id + " not exist.");
                         return false;
                     }
@@ -52,9 +66,24 @@ public class ShopFactory {
                 ShopConfig.getName(id),
                 ShopConfig.getRestockTimerSection(id),
                 products,
-                ShopConfig.getSize(id),
-                ShopConfig.getGUISection(id)
+                ShopConfig.getSize(id)
         );
+
+        // Load data from database
+        shop.setLastRestocking(DailyShop.DATABASE.queryShopLastRestocking(id));
+
+        List<String> dataListedProducts = DailyShop.DATABASE.queryShopListedProducts(id);
+        if (!dataListedProducts.isEmpty()) {
+            shop.addListedProducts(dataListedProducts);
+        } else {
+            shop.restock();
+        }
+
+        Map<String, PricePair> dataCachedPrices = DailyShop.DATABASE.queryShopCachedPrices(id);
+        if (!dataListedProducts.isEmpty()) {
+            shop.getShopPricer().setCachedPrices(dataCachedPrices);
+        }
+        // Finish
 
         shops.put(id, shop);
         LogUtils.info("Successfully load shop " + id + " with " + products.size() + " products.");
@@ -69,35 +98,6 @@ public class ShopFactory {
         return shops;
     }
 
-    public void load() {
-        // Build shop
-        for (String id : ShopConfig.getAllId()) {
-            buildShop(id);
-        }
-
-        // Load data to shop
-        Map<String, Shop> data = DailyShop.getDatabase().loadShopData();
-        for (Map.Entry<String, Shop> entry : data.entrySet()) {
-            String id = entry.getKey();
-            Shop dataShop = entry.getValue();
-            Shop shop = getShop(id);
-            if (shop == null) {
-                continue;
-            }
-            shop.setLastRestocking(dataShop.getLastRestocking());
-            shop.getShopPricer().setCachedPrices(dataShop.getShopPricer().getCachedPrices());
-            // Make sure the product is still exist
-            shop.addListedProducts(dataShop.getListedProducts().stream()
-                    .filter(productId -> DailyShop.getProductFactory().containsProduct(productId))
-                    .toList());
-        }
-
-        // Build shop gui
-        for (Shop shop : getAllShops().values()) {
-            shop.getShopGUI().build(shop.getListedProducts());
-        }
-    }
-
     public void unload() {
         save();
         shops.clear();
@@ -108,6 +108,6 @@ public class ShopFactory {
         for (Shop shop : getAllShops().values()) {
             dataMap.put(shop.getId(), shop);
         }
-        DailyShop.getDatabase().saveShopData(dataMap);
+        DailyShop.DATABASE.saveShopData(dataMap);
     }
 }

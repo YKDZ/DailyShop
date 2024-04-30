@@ -106,4 +106,8 @@ public class ShopOrder {
     public int getTotalStack() {
         return totalStack;
     }
+
+    public double getBill(Product product) {
+        return bill.getOrDefault(product, -1d);
+    }
 }

@@ -40,7 +40,7 @@ public class BundleProduct extends Product {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
-            DailyShop.getProductFactory().getProduct(contentId).give(shop, player, contentStack);
+            DailyShop.PRODUCT_FACTORY.getProduct(contentId).give(shop, player, contentStack);
         }
     }
 
@@ -50,7 +50,7 @@ public class BundleProduct extends Product {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
 
-            DailyShop.getProductFactory().getProduct(contentId).take(shop, player, contentStack);
+            DailyShop.PRODUCT_FACTORY.getProduct(contentId).take(shop, player, contentStack);
         }
     }
 
@@ -60,7 +60,7 @@ public class BundleProduct extends Product {
 
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
-            Product content = DailyShop.getProductFactory().getProduct(contentId);
+            Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
             int contentStack = entry.getValue();
 
             if (content.has(shop, player, 1) < contentStack) {
@@ -79,7 +79,7 @@ public class BundleProduct extends Product {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
-            Product content = DailyShop.getProductFactory().getProduct(contentId);
+            Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
             if (!content.canHold(shop, player, contentStack)) {
                 return false;
             }

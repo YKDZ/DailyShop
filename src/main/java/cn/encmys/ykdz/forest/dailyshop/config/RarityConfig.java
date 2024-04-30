@@ -10,16 +10,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RarityConfig {
-    private static final DailyShop plugin = DailyShop.getInstance();
-    private static YamlConfiguration config;
+    private static String path = DailyShop.INSTANCE.getDataFolder() + "/rarities.yml";
+    private static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(plugin.getDataFolder(), "rarities.yml");
-        config = new YamlConfiguration();
+        File file = new File(path);
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            plugin.saveResource("rarities.yml", false);
+            DailyShop.INSTANCE.saveResource("rarities.yml", false);
         }
 
         try {

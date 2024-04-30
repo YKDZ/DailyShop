@@ -2,14 +2,13 @@ package cn.encmys.ykdz.forest.dailyshop.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
+import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashier;
-import cn.encmys.ykdz.forest.dailyshop.shop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
-import com.google.gson.annotations.Expose;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,21 +19,17 @@ import java.util.stream.Collectors;
 
 public class Shop {
     private static final Random random = new Random();
-    private static final ProductFactory productFactory = DailyShop.getProductFactory();
     private final String id;
     private final String name;
     private final int restockTime;
     private final List<String> allProductsId;
     private final int size;
     private final ShopGUI shopGUI;
-    @Expose
+    private final HistoryGUI historyGUI;
     private final ShopPricer shopPricer;
-    @Expose
     private final ShopCashier shopCashier;
-    @Expose
     private List<String> listedProducts = new ArrayList<>();
     private Map<String, ItemStack> cachedProduct = new HashMap<>();
-    @Expose
     private long lastRestocking;
 
     /**
@@ -42,25 +37,21 @@ public class Shop {
      * @param restockTime   Shop restock time in minutes
      * @param allProductsId ID of all possible products
      * @param size          Maximum number of items in the shop at the same time
-     * @param guiSection    Shop gui configuration section
      */
-    public Shop(String id, String name, int restockTime, List<String> allProductsId, int size, ConfigurationSection guiSection) {
+    public Shop(String id, String name, int restockTime, List<String> allProductsId, int size) {
         this.id = id;
         this.name = name;
         this.restockTime = restockTime;
         this.allProductsId = allProductsId;
         this.size = size;
-        shopGUI = new ShopGUI(getId(), guiSection);
+        shopGUI = new ShopGUI(this);
+        historyGUI = new HistoryGUI(this);
         shopPricer = new ShopPricer(this);
         shopCashier = new ShopCashier(this);
     }
 
-    public void open(Player player) {
-        shopGUI.open(player);
-    }
-
     public void restock() {
-        ProductFactory productFactory = DailyShop.getProductFactory();
+        ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
 
         listedProducts.clear();
         // Make map of product id and product
@@ -97,7 +88,7 @@ public class Shop {
         }
 
         getShopGUI().closeAll();
-        getShopGUI().build(getListedProducts());
+        getShopGUI().buildGUIBuilder();
 
         lastRestocking = System.currentTimeMillis();
     }
@@ -111,7 +102,7 @@ public class Shop {
         // Make sure that every bundle contents have its price.
         if (product.getType() == ProductType.BUNDLE) {
             for (String contentId : ((BundleProduct) product).getBundleContents().keySet()) {
-                Product content = productFactory.getProduct(contentId);
+                Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
                 cacheProductItem(content);
                 shopPricer.cachePrice(contentId);
             }
@@ -195,5 +186,9 @@ public class Shop {
 
     public ShopCashier getShopCashier() {
         return shopCashier;
+    }
+
+    public HistoryGUI getHistoryGUI() {
+        return historyGUI;
     }
 }

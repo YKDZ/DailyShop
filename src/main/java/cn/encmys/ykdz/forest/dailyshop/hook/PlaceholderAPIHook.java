@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.hook;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -45,7 +45,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         if(params.contains("restock_timer_")){
             String shopId = params.replace("restock_timer_", "");
-            Shop shop = DailyShop.getShopFactory().getShop(shopId);
+            Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
             if (shop == null) {
                 return "Shop " + shopId + " not exist.";
             }
@@ -54,7 +54,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 long hours = timeRemaining / (60 * 60 * 1000);
                 long minutes = (timeRemaining % (60 * 60 * 1000)) / (60 * 1000);
                 long seconds = (timeRemaining % (60 * 1000)) / 1000;
-                return String.format(Config.timeFormat, hours, minutes, seconds);
+                return String.format(MessageConfig.format_time, hours, minutes, seconds);
             }
         }
         return null;

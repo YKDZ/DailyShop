@@ -80,7 +80,7 @@ public class ItemProduct extends Product {
     }
 
     public boolean isMatch(String shopId, ItemStack item, @Nullable Player player) {
-        Shop shop = DailyShop.getShopFactory().getShop(shopId);
+        Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
         BaseItem baseItem = getProductItemBuilder().getItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);

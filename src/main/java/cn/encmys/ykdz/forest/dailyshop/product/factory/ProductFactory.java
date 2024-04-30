@@ -10,7 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactory;
+import cn.encmys.ykdz.forest.dailyshop.util.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProductFactory {
-    private static final RarityFactory rarityFactory = DailyShop.getRarityFactory();
     private static final HashMap<String, Product> allProducts = new HashMap<>();
 
     public ProductFactory() {
@@ -51,21 +50,21 @@ public class ProductFactory {
 
         // Price (can default)
         Price buyPrice = new Price(
-                productSection.getConfigurationSection( "buy-price") != null ? productSection.getConfigurationSection( "buy-price") : defaultSettings.getConfigurationSection("buy-price")
+                ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("buy-price"), defaultSettings.getConfigurationSection("buy-price"))
         );
         Price sellPrice = new Price(
-                productSection.getConfigurationSection( "sell-price") != null ? productSection.getConfigurationSection( "sell-price") : defaultSettings.getConfigurationSection("sell-price")
+                ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("sell-price"), defaultSettings.getConfigurationSection("sell-price"))
         );
 
         // Rarity (can default)
-        Rarity rarity = rarityFactory.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
+        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
         // Cacheable (can default)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
 
         // Item (Only ItemProduct need it)
         BaseItemDecorator itemBuilder = null;
-        if (!productSection.contains("buy-commands") && !productSection.contains("buy-commands") && !productSection.contains("bundle-contents")) {
+        if (productSection.contains("item")) {
             itemBuilder = BaseItemDecorator.get(itemSection.getString("base", "DIRT"), false);
 
             if (itemBuilder == null) {

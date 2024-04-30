@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.api.gui.icon;
+package cn.encmys.ykdz.forest.dailyshop.icon;
 
 public interface Icon {
 

@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier;
 
+import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.price.enums.PriceMode;
 import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
@@ -10,7 +11,6 @@ import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
-import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -18,8 +18,6 @@ import java.util.stream.IntStream;
 
 public class ShopCashier {
     private final Shop shop;
-    @Expose
-    private final List<SettlementLog> settlementLogs = new ArrayList<>();
 
     public ShopCashier(@NotNull Shop shop) {
         this.shop = shop;
@@ -103,12 +101,10 @@ public class ShopCashier {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
 
-            if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE) {
+            if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             } else if (BalanceUtils.checkBalance(order.getCustomer()) < order.getBilledPrice(product)) {
                 return SettlementResult.NOT_ENOUGH_MONEY;
-            } else if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE) {
-                return SettlementResult.TRANSITION_DISABLED;
             } else if (!canHold(order)) {
                 return SettlementResult.NOT_ENOUGH_MONEY;
             }
@@ -121,12 +117,10 @@ public class ShopCashier {
             Product product = entry.getKey();
             int stack = entry.getValue();
 
-            if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE) {
+            if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             } else if (product.has(shop, order.getCustomer(), stack) == 0) {
                 return SettlementResult.NOT_ENOUGH_PRODUCT;
-            } else if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE) {
-                return SettlementResult.TRANSITION_DISABLED;
             }
         }
         return SettlementResult.SUCCESS;
@@ -160,30 +154,32 @@ public class ShopCashier {
     }
 
     public void logSettlement(@NotNull ShopOrder order) {
-        Map<String, Integer> orderedProductsNameAndStack = new HashMap<>();
         List<String> orderedProductIds = new ArrayList<>();
+        List<String> orderedProductNames = new ArrayList<>();
+        List<Integer> orderedProductStacks = new ArrayList<>();
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
             int stack = entry.getValue();
-
-            orderedProductsNameAndStack.put(product.getIconBuilder().getName(), stack);
             orderedProductIds.add(product.getId());
+            orderedProductNames.add(product.getIconBuilder().getName());
+            orderedProductStacks.add(stack);
         }
 
         SettlementLog log;
         UUID customerUUID = order.getCustomer().getUniqueId();
 
         switch (order.getOrderType()) {
-            case BUY_FROM -> log = SettlementLog.buyFromLog(customerUUID);
             case BUY_ALL_FROM -> log = SettlementLog.buyAllFromLog(customerUUID);
             case SELL_TO -> log = SettlementLog.sellToLog(customerUUID);
             default -> log = SettlementLog.buyFromLog(customerUUID);
         }
 
-        settlementLogs.add(log
+        DailyShop.DATABASE.insertSettlementLog(shop.getId(), log
                 .setPrice(order.getTotalPrice())
                 .setType(SettlementLogType.getFromOrderType(order.getOrderType()))
-                .setOrderedProductsNameAndStack(orderedProductsNameAndStack)
+                .setOrderedProductIds(orderedProductIds)
+                .setOrderedProductNames(orderedProductNames)
+                .setOrderedProductStacks(orderedProductStacks)
                 .setOrderedProductIds(orderedProductIds)
                 .setTotalStack(order.getTotalStack()));
     }

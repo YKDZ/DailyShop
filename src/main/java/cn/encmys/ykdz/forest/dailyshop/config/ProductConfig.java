@@ -12,29 +12,24 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ProductConfig {
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static String path = DailyShop.INSTANCE.getDataFolder() + "/product";
     private static final HashMap<String, YamlConfiguration> packs = new HashMap<>();
 
     public static void load() {
-        File directory = new File(plugin.getDataFolder() + "/product");
-
-        if (!directory.exists() || !directory.isDirectory()) {
-            directory.getParentFile().mkdirs();
-        }
+        File directory = new File(path);
 
         File[] files = directory.listFiles();
-        if (files == null) {
-            return;
-        }
 
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".yml")) {
-                YamlConfiguration config = new YamlConfiguration();
-                try {
-                    config.load(file);
-                    packs.put(file.getName().replace(".yml", ""), config);
-                } catch (IOException | InvalidConfigurationException error) {
-                    error.printStackTrace();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".yml")) {
+                    YamlConfiguration config = new YamlConfiguration();
+                    try {
+                        config.load(file);
+                        packs.put(file.getName().replace(".yml", ""), config);
+                    } catch (IOException | InvalidConfigurationException error) {
+                        error.printStackTrace();
+                    }
                 }
             }
         }

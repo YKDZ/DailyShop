@@ -6,14 +6,18 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 public class MessageConfig {
-    private static final DailyShop plugin = DailyShop.getInstance();
+    public static DecimalFormat format_decimal;
+    public static String format_time;
     public static String messages_prefix;
     public static String messages_noPermission;
     public static String messages_command_reload_success;
     public static String messages_command_shop_open_success;
     public static String messages_command_shop_open_failure_invalidShop;
+    public static String messages_command_shop_history_success;
+    public static String messages_command_shop_history_failure_invalidShop;
     public static String messages_command_shop_restock_success;
     public static String messages_command_shop_restock_failure_invalidShop;
     public static String messages_command_shop_save_success;
@@ -29,15 +33,14 @@ public class MessageConfig {
     public static String messages_action_sellAll_failure_disable;
     public static String messages_action_sellAll_failure_notEnough;
     public static int version;
-    private static YamlConfiguration config;
+    private static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(plugin.getDataFolder(), "lang/" + Config.language + ".yml");
-        config = new YamlConfiguration();
+        File file = new File(DailyShop.INSTANCE.getDataFolder(), "lang/" + Config.language + ".yml");
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            plugin.saveResource("lang/" + Config.language + ".yml", false);
+            DailyShop.INSTANCE.saveResource("lang/" + Config.language + ".yml", false);
         }
 
         try {
@@ -49,12 +52,17 @@ public class MessageConfig {
     }
 
     private static void setUp() {
+        format_decimal = new DecimalFormat(config.getString("format.decimal", "###,###.##"));
+        format_time = config.getString("format.time", "%02dh:%02dm:%02ds");
+
         String error = "<red>There may be an error in your language file.";
         messages_prefix = config.getString("messages.prefix", "<gold>DailyShop <gray>-");
         messages_noPermission = config.getString("messages.no-permission", error);
         messages_command_reload_success = config.getString("messages.command.reload.success", error);
         messages_command_shop_open_success = config.getString("messages.command.shop.open.success", error);
         messages_command_shop_open_failure_invalidShop = config.getString("messages.command.shop.open.failure.invalid-shop", error);
+        messages_command_shop_history_success = config.getString("messages.command.shop.history.success", error);
+        messages_command_shop_history_failure_invalidShop = config.getString("messages.command.shop.history.failure.invalid-shop", error);
         messages_command_shop_restock_success = config.getString("messages.command.shop.restock.success", error);
         messages_command_shop_restock_failure_invalidShop = config.getString("messages.command.shop.restock.failure.invalid-shop", error);
         messages_command_shop_save_success = config.getString("messages.command.shop.save", error);

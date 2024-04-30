@@ -1,7 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.util.ColorUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductCommand {
-    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     public static ProductCommand INSTANCE = new ProductCommand();
 
     public CommandAPICommand getShopCommand() {
@@ -48,7 +46,7 @@ public class ProductCommand {
                         vars.put("keys", "base, banner-patterns");
                         BannerMeta meta = (BannerMeta) item.getItemMeta();
                         if (meta == null) {
-                            adventureManager.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
                         List<Pattern> patterns = meta.getPatterns();
@@ -67,7 +65,7 @@ public class ProductCommand {
                         }
                         PotionMeta meta = (PotionMeta) item.getItemMeta();
                         if (meta == null) {
-                            adventureManager.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
                         PotionData data = meta.getBasePotionData();
@@ -79,7 +77,7 @@ public class ProductCommand {
                         vars.put("keys", "base, firework-effects");
                         FireworkMeta meta = (FireworkMeta) item.getItemMeta();
                         if (meta == null) {
-                            adventureManager.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
                         keyValue.add("<#C28456>base: <#346659>FIREWORK:" + meta.getPower());
@@ -122,13 +120,13 @@ public class ProductCommand {
                     }
                     // Send Config key value list
                     for (String out : keyValue) {
-                        adventureManager.sendConsoleMessage(out);
+                        DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
                     }
                     if (!keyValue.isEmpty()) {
-                        adventureManager.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_command_product_check_success, vars));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_command_product_check_success, vars));
                         return;
                     }
-                    adventureManager.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
                 });
     }
 

@@ -1,6 +1,6 @@
-package cn.encmys.ykdz.forest.dailyshop.shop.gui.icon;
+package cn.encmys.ykdz.forest.dailyshop.gui.icon;
 
-import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
+import cn.encmys.ykdz.forest.dailyshop.icon.Icon;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import xyz.xenondevs.invui.InvUI;

@@ -1,6 +1,10 @@
 # 传统的颜色格式 (使用 & 符号) 不受支持,# 请使用 MiniMessage 格式, 参考以下页面:
 # https://docs.adventure.kyori.net/minimessage/format.html
 
+format:
+  decimal: "###,###.##"
+  time: "%02dh:%02dm:%02ds"
+
 messages:
   prefix: "<dark_gray>[<gold>🔔<dark_gray>] "
   no-permission: "<red>你没有这么做的权限."
@@ -9,6 +13,9 @@ messages:
       success: "<green>成功重载插件!"
     shop:
       open:
+        success: "" # <gray>成功进入商店 <reset>{shop}<gray>!
+        invalid-shop: "<red>商店 {shop} <red>不存在!"
+      history:
         success: "" # <gray>成功进入商店 <reset>{shop}<gray>!
         invalid-shop: "<red>商店 {shop} <red>不存在!"
       restock:

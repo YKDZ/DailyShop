@@ -6,31 +6,30 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 public class Config {
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
     public static String language;
-    private static String decimalFormat;
-    public static String timeFormat;
+    public static int logDataLimit_entryAmount;
+    public static double logDataLimit_timeRange;
+    public static boolean priceCorrectByDisableSellOrBuy;
     public static int dataSaveTimer;
     public static int version;
-    private static YamlConfiguration config;
+    private static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(plugin.getDataFolder(), "config.yml");
-        config = new YamlConfiguration();
+        File file = new File(path);
 
         // Initialize Data folder when config.yml not exists
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            plugin.saveResource("config.yml", false);
-            plugin.saveResource("product/concretes.yml", false);
-            plugin.saveResource("product/wools.yml", false);
-            plugin.saveResource("product/misc.yml", false);
-            plugin.saveResource("shop/black_market.yml", false);
-            plugin.saveResource("shop/blocks.yml", false);
-            plugin.saveResource("lang/en_US.yml", false);
+            DailyShop.INSTANCE.saveResource("config.yml", false);
+            DailyShop.INSTANCE.saveResource("product/ores.yml", false);
+            DailyShop.INSTANCE.saveResource("product/wools.yml", false);
+            DailyShop.INSTANCE.saveResource("product/misc.yml", false);
+            DailyShop.INSTANCE.saveResource("shop/black_market.yml", false);
+            DailyShop.INSTANCE.saveResource("shop/blocks.yml", false);
+            DailyShop.INSTANCE.saveResource("lang/en_US.yml", false);
         }
 
         try {
@@ -43,17 +42,14 @@ public class Config {
 
     private static void setUp() {
         language = config.getString("language", "en_US");
-        decimalFormat = config.getString("decimal-format", "###,###.##");
-        timeFormat = config.getString("time-format", "%02dh:%02dm:%02ds");
         dataSaveTimer = config.getInt("data-save-timer", 5);
+        priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
+        logDataLimit_entryAmount = config.getInt("log-data-limit.entry-amount", 500);
+        logDataLimit_timeRange = config.getDouble("log-data-limit.time-range", 7);
         version = config.getInt("version");
     }
 
     public static YamlConfiguration getConfig() {
         return config;
-    }
-
-    public static DecimalFormat getDecimalFormat() {
-        return new DecimalFormat(decimalFormat);
     }
 }

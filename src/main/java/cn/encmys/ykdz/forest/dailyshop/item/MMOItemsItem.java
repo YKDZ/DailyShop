@@ -1,7 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.item.enums.BaseItemType;
 import net.Indyuce.mmoitems.MMOItems;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 public class MMOItemsItem implements BaseItem {
-    private static final AdventureManager adventureManager = DailyShop.getAdventureManager();
     private final Type type;
     private final String id;
 
@@ -38,7 +36,7 @@ public class MMOItemsItem implements BaseItem {
 
         for (ItemStat stat : mmoItem.getStats()) {
             if (stat.getId().equals("NAME")) {
-                return adventureManager.legacyToMiniMessage(((NameData) mmoItem.getData(stat)).getMainName());
+                return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(((NameData) mmoItem.getData(stat)).getMainName());
             }
         }
 

@@ -57,7 +57,7 @@ public class CommandUtils {
         CommandSender finalCommandSender = commandSender;
         if (delay > 0) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(
-                   DailyShop.getInstance(),
+                    DailyShop.INSTANCE,
                     () -> IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand)),
                    delay
            );

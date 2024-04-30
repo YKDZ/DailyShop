@@ -96,6 +96,8 @@ dependencies {
     implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
 
     implementation("com.cronutils:cron-utils:9.2.1")
+
+    implementation("org.xerial:sqlite-jdbc:3.45.3.0")
 }
 
 tasks {

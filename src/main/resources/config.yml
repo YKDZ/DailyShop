@@ -1,8 +1,7 @@
 language: en_US
-
-decimal-format: "###,###.##"
-time-format: "%02dh:%02dm:%02ds"
-
 data-save-timer: 5
-
+log-data-limit:
+  entry-amount: 500
+  time-range: 7.0
+price-correct-by-disable-sell-or-buy: true
 version: 1

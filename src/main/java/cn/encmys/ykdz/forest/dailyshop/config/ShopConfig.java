@@ -5,7 +5,6 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -13,32 +12,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class ShopConfig {
-    private static final DailyShop plugin = DailyShop.getInstance();
+    private static String path = DailyShop.INSTANCE.getDataFolder() + "/shop";
     private static final HashMap<String, YamlConfiguration> configs = new HashMap<>();
 
     public static void load() {
-        File directory = new File(plugin.getDataFolder() + "/shop");
+        File directory = new File(path);
 
         if (!directory.exists() || !directory.isDirectory()) {
             directory.getParentFile().mkdirs();
         }
 
         File[] files = directory.listFiles();
-        if (files == null) {
-            return;
-        }
-
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".yml")) {
-                YamlConfiguration config = new YamlConfiguration();
-                try {
-                    config.load(file);
-                    configs.put(file.getName().replace(".yml", ""), config);
-                } catch (IOException | InvalidConfigurationException error) {
-                    error.printStackTrace();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".yml")) {
+                    YamlConfiguration config = new YamlConfiguration();
+                    try {
+                        config.load(file);
+                        configs.put(file.getName().replace(".yml", ""), config);
+                    } catch (IOException | InvalidConfigurationException error) {
+                        error.printStackTrace();
+                    }
                 }
             }
         }
@@ -48,8 +44,8 @@ public class ShopConfig {
         return configs.get(shopId);
     }
 
-    @Contract(" -> new")
-    public static @NotNull List<String> getAllId() {
+    @NotNull
+    public static List<String> getAllId() {
         return new ArrayList<>(configs.keySet());
     }
 
@@ -65,42 +61,36 @@ public class ShopConfig {
         return getConfig(shopId).getInt("settings.restock-timer");
     }
 
-    public static String getGUITitle(String shopId) {
-        return getConfig(shopId).getString("shop-gui.title");
+    public static String getShopGUITitle(String shopId) {
+        return getShopGUISection(shopId).getString("title");
     }
 
-    public static String[] getGUILayout(String shopId) {
-        return getConfig(shopId).getStringList("shop-gui.layout").toArray(new String[0]);
-    }
-
-    public static @NotNull Set<String> getGUIIcons(String shopId) {
-        return getConfig(shopId).getConfigurationSection("shop-gui.icons").getKeys(false);
-    }
-
-    public static ConfigurationSection getGUIIconSection(String shopId, char iconId) {
-        return getGUISection(shopId).getConfigurationSection("icons." + iconId);
+    public static String getHistoryGUITitle(String shopId) {
+        return getHistoryGuiSection(shopId).getString("title");
     }
 
     public static String getProductNameFormat(String shopId) {
-        return getGUISection(shopId).getString("product-icon.format.name", "{name}");
+        return getShopGUISection(shopId).getString("product-icon.format.name", "{name}");
     }
 
     public static String getBundleContentsLineFormat(String shopId) {
-        return getGUISection(shopId).getString("product-icon.format.bundle-contents-line", "<dark_gray>- {name} x {amount}");
+        return getShopGUISection(shopId).getString("product-icon.format.bundle-contents-line", "<dark_gray>- {name} x {amount}");
     }
 
+    @NotNull
     public static List<String> getProductLoreFormat(String shopId) {
-        return getGUISection(shopId).getStringList("product-icon.format.lore");
+        return getShopGUISection(shopId).getStringList("product-icon.format.lore");
     }
 
     public static String getDisabledPrice(String shopId) {
-        return getGUISection(shopId).getString("product-icon.misc.disabled-price");
+        return getShopGUISection(shopId).getString("product-icon.misc.disabled-price");
     }
 
-    public static ConfigurationSection getGUISection(String shopId) {
+    public static ConfigurationSection getShopGUISection(String shopId) {
         return getConfig(shopId).getConfigurationSection("shop-gui");
     }
 
+    @NotNull
     public static List<String> getAllProductsId(String shopId) {
         return getConfig(shopId).getStringList("products");
     }
@@ -117,5 +107,9 @@ public class ShopConfig {
     public static Sound getSellSound(String shopId) {
         String sound = getConfig(shopId).getString("sounds.sell", "ENTITY_VILLAGER_YES").toUpperCase();
         return Sound.valueOf(sound);
+    }
+
+    public static ConfigurationSection getHistoryGuiSection(String shopId) {
+        return getConfig(shopId).getConfigurationSection("history-gui");
     }
 }
