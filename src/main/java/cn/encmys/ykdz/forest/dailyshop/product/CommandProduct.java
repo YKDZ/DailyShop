@@ -4,8 +4,8 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
-import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class CommandProduct extends Product {
             String id,
             Price buyPrice,
             Price sellPrice,
-            Rarity rarity,
+            RarityImpl rarity,
             BaseItemDecorator iconBuilder,
             List<String> buyCommands,
             List<String> sellCommands) {
@@ -36,23 +36,23 @@ public class CommandProduct extends Product {
     }
 
     @Override
-    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void give(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
         IntStream.range(0, stack).forEach(i -> CommandUtils.dispatchCommands(player, getBuyCommands()));
     }
 
     @Override
-    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void take(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
         IntStream.range(0, stack).forEach(i -> CommandUtils.dispatchCommands(player, getSellCommands()));
     }
 
     // Player can not "have" a command
     @Override
-    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public int has(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public boolean canHold(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
         return true;
     }
 

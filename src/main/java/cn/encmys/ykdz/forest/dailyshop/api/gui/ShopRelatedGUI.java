@@ -2,7 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.ClickType;
@@ -13,9 +13,9 @@ import java.util.List;
 
 public abstract class ShopRelatedGUI extends GUI {
     protected static final char markerIdentifier = 'x';
-    protected final Shop shop;
+    protected final ShopImpl shop;
 
-    public ShopRelatedGUI(Shop shop) {
+    public ShopRelatedGUI(ShopImpl shop) {
         this.shop = shop;
     }
 
@@ -102,7 +102,7 @@ public abstract class ShopRelatedGUI extends GUI {
         return colCount;
     }
 
-    public Shop getShop() {
+    public ShopImpl getShop() {
         return shop;
     }
 }

@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.product.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
@@ -9,7 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
-import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,10 +19,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductFactory {
+public class ProductFactoryImpl implements ProductFactory {
     private static final HashMap<String, Product> allProducts = new HashMap<>();
 
-    public ProductFactory() {
+    public ProductFactoryImpl() {
         for (String configId : ProductConfig.getAllPacksId()) {
             YamlConfiguration config = ProductConfig.getConfig(configId);
             ConfigurationSection products = config.getConfigurationSection("products");
@@ -39,6 +40,7 @@ public class ProductFactory {
         }
     }
 
+    @Override
     public void buildProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings) {
         if (containsProduct(id)) {
             LogUtils.warn("Product ID is duplicated: " + id + ". Ignore this product.");
@@ -57,7 +59,7 @@ public class ProductFactory {
         );
 
         // Rarity (can default)
-        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
+        RarityImpl rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
         // Cacheable (can default)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
@@ -178,18 +180,22 @@ public class ProductFactory {
         }
     }
 
-    public static HashMap<String, Product> getAllProducts() {
+    @Override
+    public HashMap<String, Product> getAllProducts() {
         return allProducts;
     }
 
+    @Override
     public Product getProduct(String id) {
         return allProducts.get(id);
     }
 
+    @Override
     public boolean containsProduct(String id) {
         return allProducts.containsKey(id);
     }
 
+    @Override
     public void unload() {
         allProducts.clear();
     }

@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.util.SettlementLogUtils;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryGUI extends ShopRelatedGUI {
-    public HistoryGUI(Shop shop) {
+    public HistoryGUI(ShopImpl shop) {
         super(shop);
     }
 

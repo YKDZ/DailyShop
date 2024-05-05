@@ -4,7 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
 import javax.management.openmbean.InvalidKeyException;
@@ -13,13 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ShopFactory {
-    private static final HashMap<String, Shop> shops = new HashMap<>();
+public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory {
+    private static final HashMap<String, ShopImpl> shops = new HashMap<>();
 
-    public ShopFactory() {
+    public ShopFactoryImpl() {
         load();
     }
 
+    @Override
     public void load() {
         // Build shop
         for (String id : ShopConfig.getAllId()) {
@@ -27,13 +28,14 @@ public class ShopFactory {
         }
 
         // Build shop gui
-        for (Shop shop : getAllShops().values()) {
+        for (ShopImpl shop : getAllShops().values()) {
             shop.getShopGUI().buildGUIBuilder();
             shop.getHistoryGUI().buildGUIBuilder();
         }
     }
 
-    public Shop buildShop(String id) {
+    @Override
+    public ShopImpl buildShop(String id) {
         if (shops.containsKey(id)) {
             throw new InvalidKeyException("Shop ID is duplicated: " + id);
         }
@@ -61,7 +63,7 @@ public class ShopFactory {
                 })
                 .toList();
 
-        Shop shop = new Shop(
+        ShopImpl shop = new ShopImpl(
                 id,
                 ShopConfig.getName(id),
                 ShopConfig.getRestockTimerSection(id),
@@ -90,22 +92,26 @@ public class ShopFactory {
         return shop;
     }
 
-    public Shop getShop(String id) {
+    @Override
+    public ShopImpl getShop(String id) {
         return shops.get(id);
     }
 
-    public HashMap<String, Shop> getAllShops() {
+    @Override
+    public HashMap<String, ShopImpl> getAllShops() {
         return shops;
     }
 
+    @Override
     public void unload() {
         save();
         shops.clear();
     }
 
+    @Override
     public void save() {
-        HashMap<String, Shop> dataMap = new HashMap<>();
-        for (Shop shop : getAllShops().values()) {
+        HashMap<String, ShopImpl> dataMap = new HashMap<>();
+        for (ShopImpl shop : getAllShops().values()) {
             dataMap.put(shop.getId(), shop);
         }
         DailyShop.DATABASE.saveShopData(dataMap);

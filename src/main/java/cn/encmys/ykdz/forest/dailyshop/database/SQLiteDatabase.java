@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.database;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
 import com.google.gson.Gson;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SQLiteDatabase implements Database {
-    private static Gson gson = new Gson();
-    private static String path = DailyShop.INSTANCE.getDataFolder() + "/data/database.db";
+    private static final Gson gson = new Gson();
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/data/database.db";
     private final SQLiteDataSource dataSource;
 
     public SQLiteDatabase() {
@@ -59,15 +59,15 @@ public class SQLiteDatabase implements Database {
                         FOREIGN KEY (shop_id) REFERENCES shop_data (id)
                     );""");
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
-    public void saveShopData(@NotNull Map<String, Shop> data) {
+    public void saveShopData(@NotNull Map<String, ShopImpl> data) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("REPLACE INTO shop_data (id, listed_products, cached_prices, last_restocking) VALUES (?, ?, ?, ?)")) {
-            for (Map.Entry<String, Shop> entry : data.entrySet()) {
-                Shop shop = entry.getValue();
+            for (Map.Entry<String, ShopImpl> entry : data.entrySet()) {
+                ShopImpl shop = entry.getValue();
                 stmt.setString(1, entry.getKey());
                 stmt.setString(2, gson.toJson(shop.getListedProducts()));
                 stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
@@ -76,7 +76,7 @@ public class SQLiteDatabase implements Database {
             }
             stmt.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
@@ -93,7 +93,7 @@ public class SQLiteDatabase implements Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         return new ArrayList<>();
     }
@@ -110,7 +110,7 @@ public class SQLiteDatabase implements Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         return new HashMap<>();
     }
@@ -127,7 +127,7 @@ public class SQLiteDatabase implements Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         return System.currentTimeMillis();
     }
@@ -148,12 +148,12 @@ public class SQLiteDatabase implements Database {
             stmt.setInt(9, log.getTotalStack());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
     @Override
-    public int queryHistoryAmountFromLogs(String shopId, String productId, double timeLimitInDay, int numEntries, SettlementLogType... types) {
+    public int queryHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
         int totalSales = 0;
         String typeList = Stream.of(types)
                 .map(Enum::name)
@@ -183,14 +183,14 @@ public class SQLiteDatabase implements Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
 
         return totalSales;
     }
 
     @Override
-    public List<SettlementLog> queryLogInOrder(@NotNull String shopId, UUID customer, double timeLimitInDay, int numEntries, SettlementLogType... types) {
+    public List<SettlementLog> queryLogInOrder(@NotNull String shopId, @NotNull UUID customer, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
         List<SettlementLog> logs = new ArrayList<>();
         String typeList = Stream.of(types)
                 .map(Enum::name)
@@ -226,7 +226,7 @@ public class SQLiteDatabase implements Database {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
         return logs;
     }

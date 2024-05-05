@@ -2,7 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.hook;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -45,7 +45,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         if(params.contains("restock_timer_")){
             String shopId = params.replace("restock_timer_", "");
-            Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+            ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
             if (shop == null) {
                 return "Shop " + shopId + " not exist.";
             }

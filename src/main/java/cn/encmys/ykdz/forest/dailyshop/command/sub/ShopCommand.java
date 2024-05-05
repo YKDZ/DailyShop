@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.command.sub;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
@@ -36,7 +36,7 @@ public class ShopCommand {
                 )
                 .executes((sender, args) -> {
                     String shopId = (String) args.get("shop");
-                    Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                    ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                     if (!sender.hasPermission("dailyshop.shop.open." + shopId)) {
                         DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_noPermission);
                         return;
@@ -61,7 +61,7 @@ public class ShopCommand {
                 )
                 .executes((sender, args) -> {
                     String shopId = (String) args.get("shop");
-                    Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                    ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                     if (!sender.hasPermission("dailyshop.shop.history." + shopId)) {
                         DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_noPermission);
                         return;
@@ -84,7 +84,7 @@ public class ShopCommand {
                                 .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId()))
                 )
                 .executes((sender, args) -> {
-                    Shop shop = DailyShop.SHOP_FACTORY.getShop((String) args.get("shop"));
+                    ShopImpl shop = DailyShop.SHOP_FACTORY.getShop((String) args.get("shop"));
                     if (shop == null) {
                         DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));

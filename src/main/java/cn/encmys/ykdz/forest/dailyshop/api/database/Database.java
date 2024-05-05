@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.database;
 
 import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface Database {
-    void saveShopData(@NotNull Map<String, Shop> dataMap);
+    void saveShopData(@NotNull Map<String, ShopImpl> dataMap);
 
     @Nullable
     List<String> queryShopListedProducts(@NotNull String id);
@@ -23,7 +23,7 @@ public interface Database {
 
     void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log);
 
-    int queryHistoryAmountFromLogs(String shopId, String productId, double timeLimitInDay, int numEntries, SettlementLogType... types);
+    int queryHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
 
-    List<SettlementLog> queryLogInOrder(@NotNull String shopId, UUID customer, double timeLimitInDay, int numEntries, SettlementLogType... types);
+    List<SettlementLog> queryLogInOrder(@NotNull String shopId, @NotNull UUID customer, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
 }

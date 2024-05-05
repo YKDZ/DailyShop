@@ -3,6 +3,9 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.gui.icon.NormalIcon;
@@ -14,12 +17,9 @@ import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.icon.Icon;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
-import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashier;
-import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.SettlementResult;
-import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.DyeColor;
@@ -367,11 +367,11 @@ public class BaseItemDecorator {
     }
 
     public Item buildProductIcon(String shopId, Product product) {
-        ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
+        ProductFactoryImpl productFactory = DailyShop.PRODUCT_FACTORY;
         return new AbstractItem() {
             @Override
             public ItemProvider getItemProvider() {
-                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 setNameFormat(ShopConfig.getProductNameFormat(shopId));
                 setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
                 setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
@@ -419,7 +419,7 @@ public class BaseItemDecorator {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 ShopPricer shopPricer = shop.getShopPricer();
                 ShopCashier shopCashier = shop.getShopCashier();
                 Map<String, String> vars = new HashMap<>() {{
@@ -443,7 +443,7 @@ public class BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
-                    SettlementResult result = shopCashier.settle(ShopOrder.buyFromOrder(player)
+                    SettlementResult result = shopCashier.settle(cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder.buyFromOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
@@ -455,7 +455,7 @@ public class BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
-                    ShopOrder order = ShopOrder.buyAllFromOrder(player)
+                    cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order = cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder.buyAllFromOrder(player)
                             .addProduct(product, 1);
                     SettlementResult result = shopCashier.settle(order);
                     if (result != SettlementResult.SUCCESS) {

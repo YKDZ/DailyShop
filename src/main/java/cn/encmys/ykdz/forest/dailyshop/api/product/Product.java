@@ -3,8 +3,8 @@ package cn.encmys.ykdz.forest.dailyshop.api.product;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.product.enums.ProductType;
-import cn.encmys.ykdz.forest.dailyshop.rarity.Rarity;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +12,7 @@ public abstract class Product {
     private final String id;
     private final Price buyPrice;
     private final Price sellPrice;
-    private final Rarity rarity;
+    private final RarityImpl rarity;
     private final BaseItemDecorator iconBuilder;
     private final BaseItemDecorator productItemBuilder;
     private final boolean isCacheable;
@@ -21,7 +21,7 @@ public abstract class Product {
             String id,
             Price buyPrice,
             Price sellPrice,
-            Rarity rarity,
+            RarityImpl rarity,
             BaseItemDecorator iconBuilder,
             BaseItemDecorator productItemBuilder,
             boolean isCacheable) {
@@ -38,7 +38,7 @@ public abstract class Product {
         return id;
     }
 
-    public Rarity getRarity() {
+    public RarityImpl getRarity() {
         return rarity;
     }
 
@@ -60,13 +60,13 @@ public abstract class Product {
         return productItemBuilder;
     }
 
-    public abstract void give(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract void give(@NotNull ShopImpl shop, @NotNull Player player, int stack);
 
-    public abstract void take(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract void take(@NotNull ShopImpl shop, @NotNull Player player, int stack);
 
-    public abstract int has(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract int has(@NotNull ShopImpl shop, @NotNull Player player, int stack);
 
-    public abstract boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract boolean canHold(@NotNull ShopImpl shop, @NotNull Player player, int stack);
 
     public boolean isCacheable() {
         return isCacheable;

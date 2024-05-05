@@ -2,11 +2,11 @@ package cn.encmys.ykdz.forest.dailyshop.shop.cashier;
 
 import cn.encmys.ykdz.forest.dailyshop.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.price.enums.PriceMode;
-import cn.encmys.ykdz.forest.dailyshop.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.enums.SettlementLogType;
-import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
@@ -16,14 +16,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class ShopCashier {
-    private final Shop shop;
+public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier {
+    private final ShopImpl shop;
 
-    public ShopCashier(@NotNull Shop shop) {
+    public ShopCashierImpl(@NotNull ShopImpl shop) {
         this.shop = shop;
     }
 
-    public void billOrder(@NotNull ShopOrder order) {
+    @Override
+    public void billOrder(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         if (order.isBilled()) {
             return;
         }
@@ -46,7 +47,8 @@ public class ShopCashier {
         order.setBill(bill);
     }
 
-    public SettlementResult settle(@NotNull ShopOrder order) {
+    @Override
+    public SettlementResult settle(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         if (order.isSettled()) {
             LogUtils.warn("Try to settle an order twice.");
             return SettlementResult.DUPLICATED;
@@ -60,7 +62,8 @@ public class ShopCashier {
         };
     }
 
-    public SettlementResult sellTo(@NotNull ShopOrder order) {
+    @Override
+    public SettlementResult sellTo(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         SettlementResult result = canSellTo(order);
         if (result == SettlementResult.SUCCESS) {
             for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -75,6 +78,7 @@ public class ShopCashier {
         return result;
     }
 
+    @Override
     public SettlementResult buyFrom(@NotNull ShopOrder order) {
         SettlementResult result = canBuyFrom(order);
         if (result == SettlementResult.SUCCESS) {
@@ -92,12 +96,14 @@ public class ShopCashier {
         return result;
     }
 
-    public SettlementResult buyAllFrom(@NotNull ShopOrder order) {
+    @Override
+    public SettlementResult buyAllFrom(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         order.setTotalStack(hasStackInTotal(order));
         return buyFrom(order);
     }
 
-    public SettlementResult canSellTo(@NotNull ShopOrder order) {
+    @Override
+    public SettlementResult canSellTo(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
 
@@ -112,7 +118,8 @@ public class ShopCashier {
         return SettlementResult.SUCCESS;
     }
 
-    public SettlementResult canBuyFrom(@NotNull ShopOrder order) {
+    @Override
+    public SettlementResult canBuyFrom(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
             int stack = entry.getValue();
@@ -126,7 +133,8 @@ public class ShopCashier {
         return SettlementResult.SUCCESS;
     }
 
-    public boolean canHold(@NotNull ShopOrder order) {
+    @Override
+    public boolean canHold(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
             int stack = entry.getValue();
@@ -138,7 +146,8 @@ public class ShopCashier {
         return true;
     }
 
-    public int hasStackInTotal(@NotNull ShopOrder order) {
+    @Override
+    public int hasStackInTotal(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         int stackInTotal = Integer.MAX_VALUE;
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
@@ -153,7 +162,8 @@ public class ShopCashier {
         return stackInTotal;
     }
 
-    public void logSettlement(@NotNull ShopOrder order) {
+    @Override
+    public void logSettlement(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
         List<String> orderedProductIds = new ArrayList<>();
         List<String> orderedProductNames = new ArrayList<>();
         List<Integer> orderedProductStacks = new ArrayList<>();

@@ -2,14 +2,15 @@ package cn.encmys.ykdz.forest.dailyshop;
 
 import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
 import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
 import cn.encmys.ykdz.forest.dailyshop.config.*;
 import cn.encmys.ykdz.forest.dailyshop.database.SQLiteDatabase;
 import cn.encmys.ykdz.forest.dailyshop.hook.*;
-import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactory;
-import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactory;
+import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
+import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
-import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactory;
+import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
@@ -26,8 +27,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DailyShop extends JavaPlugin implements Listener {
     public static DailyShop INSTANCE;
-    public static RarityFactory RARITY_FACTORY;
-    public static ProductFactory PRODUCT_FACTORY;
+    public static RarityFactoryImpl RARITY_FACTORY;
+    public static ProductFactoryImpl PRODUCT_FACTORY;
     public static ShopFactory SHOP_FACTORY;
     public static Scheduler SCHEDULER;
     public static Database DATABASE;
@@ -96,9 +97,9 @@ public final class DailyShop extends JavaPlugin implements Listener {
     }
 
     private void init() {
-        RARITY_FACTORY = new RarityFactory();
-        PRODUCT_FACTORY = new ProductFactory();
-        SHOP_FACTORY = new ShopFactory();
+        RARITY_FACTORY = new RarityFactoryImpl();
+        PRODUCT_FACTORY = new ProductFactoryImpl();
+        SHOP_FACTORY = new ShopFactoryImpl();
 
         SCHEDULER = new Scheduler();
     }
@@ -147,8 +148,8 @@ public final class DailyShop extends JavaPlugin implements Listener {
 
         ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
 
-        RARITY_FACTORY = new RarityFactory();
-        PRODUCT_FACTORY = new ProductFactory();
-        SHOP_FACTORY = new ShopFactory();
+        RARITY_FACTORY = new RarityFactoryImpl();
+        PRODUCT_FACTORY = new ProductFactoryImpl();
+        SHOP_FACTORY = new ShopFactoryImpl();
     }
 }
