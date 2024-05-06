@@ -12,14 +12,15 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 
 ## Todo
 
-- [ ] Dynamic pricing based on market feedback
+- [x] Dynamic pricing based on market feedback
 - [ ] BE GUI
 - [ ] Total market volume
 - [x] Transaction log
-- [ ] SQL Support
+- [x] SQL Support
 - [ ] Random amount and amount based price
 - [ ] List product by condition
 - [ ] Discount
+- [ ] Manually specifying restock results
 
 ## Thanks to
 
