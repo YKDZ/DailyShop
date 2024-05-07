@@ -22,6 +22,44 @@
 - [ ] 打折
 - [ ] 手动指定商店刷新结果
 
+## API
+
+### Maven
+
+```
+<repositories>
+    <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io/</url>
+    </repository>
+</repositories>
+```
+
+```
+<dependencies>
+    <dependency>
+        <groupId>cn.encmys</groupId>
+        <artifactId>DailyShop</artifactId>
+        <version>{VERSION}</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+### Gradle (Kotlin)
+
+```kotlin
+repositories {
+    maven("https://jitpack.io/")
+}
+```
+
+```kotlin
+dependencies {
+    compileOnly("cn.encmys:DailyShop:{VERSION}")
+}
+```
+
 ## 感谢
 
 - [InvUI](https://github.com/NichtStudioCode/InvUI)

@@ -22,9 +22,43 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [ ] Discount
 - [ ] Manually specifying restock results
 
-## Develop
+## API
 
+### Maven
 
+```
+<repositories>
+    <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io/</url>
+    </repository>
+</repositories>
+```
+
+```
+<dependencies>
+    <dependency>
+        <groupId>cn.encmys</groupId>
+        <artifactId>DailyShop</artifactId>
+        <version>{VERSION}</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+### Gradle (Kotlin)
+
+```kotlin
+repositories {
+    maven("https://jitpack.io/")
+}
+```
+
+```kotlin
+dependencies {
+    compileOnly("cn.encmys:DailyShop:{VERSION}")
+}
+```
 
 ## Thanks to
 
