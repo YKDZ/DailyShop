@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -11,6 +12,7 @@ allprojects {
     apply<JavaPlugin>()
     apply(plugin = "java")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "org.gradle.maven-publish")
 
     repositories {
         mavenLocal()
@@ -63,5 +65,18 @@ subprojects {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set("")
         archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+    }
+
+    if ("api" == project.name) {
+        publishing {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    groupId = "cn.encmys"
+                    artifactId = "DailyShop"
+                    version = rootProject.version.toString()
+                    artifact(tasks.shadowJar)
+                }
+            }
+        }
     }
 }

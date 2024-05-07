@@ -8,5 +8,5 @@ public enum BaseItemType {
     MYTHICMOBS,
     NEIGEITEMS,
     CUSTOMCROPS,
-    CUSTOMFISHING;
+    CUSTOMFISHING
 }

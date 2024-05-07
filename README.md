@@ -22,6 +22,10 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [ ] Discount
 - [ ] Manually specifying restock results
 
+## Develop
+
+
+
 ## Thanks to
 
 - [InvUI](https://github.com/NichtStudioCode/InvUI)

@@ -5,11 +5,11 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import org.jetbrains.annotations.NotNull;
 
 public interface ShopCashier {
-    void billOrder(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order);
+    void billOrder(@NotNull ShopOrder order);
 
-    SettlementResult settle(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order);
+    SettlementResult settle(@NotNull ShopOrder order);
 
-    SettlementResult sellTo(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order);
+    SettlementResult sellTo(@NotNull ShopOrder order);
 
     SettlementResult buyFrom(@NotNull ShopOrder order);
 
