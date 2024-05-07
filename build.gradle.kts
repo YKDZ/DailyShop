@@ -17,7 +17,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven(url = "https://mvn.lumine.io/repository/maven-public/")
+        maven("https://mvn.lumine.io/repository/maven-public/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://maven.aliyun.com/repository/public/")
