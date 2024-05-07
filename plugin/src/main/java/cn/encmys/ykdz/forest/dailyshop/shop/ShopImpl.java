@@ -1,15 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.shop;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
-import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashierImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricerImpl;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public class ShopImpl implements Shop {
 
     @Override
     public void restock() {
-        ProductFactoryImpl productFactory = DailyShop.PRODUCT_FACTORY;
+        ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
 
         listedProducts.clear();
         // Make map of product id and product

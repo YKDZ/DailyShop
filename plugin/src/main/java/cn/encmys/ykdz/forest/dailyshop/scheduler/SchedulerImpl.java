@@ -1,9 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.scheduler;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
-import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.scheduler.Scheduler;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.Bukkit;
@@ -12,17 +13,18 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashMap;
 
-public class Scheduler {
-    public Scheduler() {
+public class SchedulerImpl implements Scheduler {
+    public SchedulerImpl() {
         runRestockTimer();
         runDataSaver();
     }
 
-    private void runRestockTimer() {
+    @Override
+    public void runRestockTimer() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimer(DailyShop.INSTANCE, task -> {
             long now = System.currentTimeMillis();
-            for (ShopImpl shop : DailyShop.SHOP_FACTORY.getAllShops().values()) {
+            for (Shop shop : DailyShop.SHOP_FACTORY.getAllShops().values()) {
                 if (shop.getLastRestocking() + (long) shop.getRestockTime() * 60 * 1000 <= now) {
                     shop.restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -36,7 +38,8 @@ public class Scheduler {
         }, 0, 10);
     }
 
-    private void runDataSaver() {
+    @Override
+    public void runDataSaver() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimerAsynchronously(DailyShop.INSTANCE, task -> {
             DailyShop.SHOP_FACTORY.save();

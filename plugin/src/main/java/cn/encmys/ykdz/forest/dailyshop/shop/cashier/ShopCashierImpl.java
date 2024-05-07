@@ -1,14 +1,16 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.price.enums.PriceMode;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
-import cn.encmys.ykdz.forest.dailyshop.price.enums.PriceMode;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
+import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.jetbrains.annotations.NotNull;
@@ -16,15 +18,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier {
-    private final ShopImpl shop;
+public class ShopCashierImpl implements ShopCashier {
+    private final Shop shop;
 
-    public ShopCashierImpl(@NotNull ShopImpl shop) {
+    public ShopCashierImpl(@NotNull Shop shop) {
         this.shop = shop;
     }
 
     @Override
-    public void billOrder(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public void billOrder(@NotNull ShopOrder order) {
         if (order.isBilled()) {
             return;
         }
@@ -48,7 +50,7 @@ public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
     }
 
     @Override
-    public SettlementResult settle(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public SettlementResult settle(@NotNull ShopOrder order) {
         if (order.isSettled()) {
             LogUtils.warn("Try to settle an order twice.");
             return SettlementResult.DUPLICATED;
@@ -63,7 +65,7 @@ public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
     }
 
     @Override
-    public SettlementResult sellTo(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public SettlementResult sellTo(@NotNull ShopOrder order) {
         SettlementResult result = canSellTo(order);
         if (result == SettlementResult.SUCCESS) {
             for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -97,13 +99,13 @@ public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
     }
 
     @Override
-    public SettlementResult buyAllFrom(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public SettlementResult buyAllFrom(@NotNull ShopOrder order) {
         order.setTotalStack(hasStackInTotal(order));
         return buyFrom(order);
     }
 
     @Override
-    public SettlementResult canSellTo(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public SettlementResult canSellTo(@NotNull ShopOrder order) {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
 
@@ -119,7 +121,7 @@ public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
     }
 
     @Override
-    public SettlementResult canBuyFrom(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public SettlementResult canBuyFrom(@NotNull ShopOrder order) {
         for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = entry.getKey();
             int stack = entry.getValue();
@@ -179,9 +181,9 @@ public class ShopCashierImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
         UUID customerUUID = order.getCustomer().getUniqueId();
 
         switch (order.getOrderType()) {
-            case BUY_ALL_FROM -> log = SettlementLog.buyAllFromLog(customerUUID);
-            case SELL_TO -> log = SettlementLog.sellToLog(customerUUID);
-            default -> log = SettlementLog.buyFromLog(customerUUID);
+            case BUY_ALL_FROM -> log = SettlementLogImpl.buyAllFromLog(customerUUID);
+            case SELL_TO -> log = SettlementLogImpl.sellToLog(customerUUID);
+            default -> log = SettlementLogImpl.buyFromLog(customerUUID);
         }
 
         DailyShop.DATABASE.insertSettlementLog(shop.getId(), log

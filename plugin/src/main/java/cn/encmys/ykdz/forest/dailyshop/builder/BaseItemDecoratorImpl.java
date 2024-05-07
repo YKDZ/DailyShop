@@ -1,25 +1,27 @@
 package cn.encmys.ykdz.forest.dailyshop.builder;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
-import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.gui.icon.NormalIcon;
 import cn.encmys.ykdz.forest.dailyshop.gui.icon.ScrollIcon;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
-import cn.encmys.ykdz.forest.dailyshop.icon.Icon;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
-import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.DyeColor;
@@ -39,27 +41,9 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 import java.util.*;
 
-public class BaseItemDecorator {
-    private BaseItem item;
-    // Global
-    private String name;
-    private long period;
-    private List<String> lore;
-    private int amount;
-    private List<String> itemFlags;
-    private Integer customModelData;
-    private List<String> patternsData = new ArrayList<>();
-    private List<String> fireworkEffectData = new ArrayList<>();
-    // Icon Only
-    private String nameFormat;
-    private List<String> loreFormat;
-    private String bundleContentsLineFormat;
-    // Normal Icon Only
-    private Map<ClickType, List<String>> commands = new HashMap<>();
-    private int scroll;
-    private int scrollShift;
+public class BaseItemDecoratorImpl extends BaseItemDecorator {
 
-    private BaseItemDecorator() {
+    private BaseItemDecoratorImpl() {
     }
 
     public static BaseItemDecorator get(String base, boolean setDefaultName) {
@@ -67,22 +51,22 @@ public class BaseItemDecorator {
             String[] typeId = base.substring(MMOItemsHook.getIdentifier().length()).split(":");
             String type = typeId[0];
             String id = typeId[1];
-            return BaseItemDecorator.mmoitems(type, id, setDefaultName);
+            return BaseItemDecoratorImpl.mmoitems(type, id, setDefaultName);
         } else if (base.startsWith(ItemsAdderHook.getIdentifier()) && ItemsAdderHook.isHooked()) {
             String namespacedId = base.substring(ItemsAdderHook.getIdentifier().length());
-            return BaseItemDecorator.itemsadder(namespacedId, setDefaultName);
+            return BaseItemDecoratorImpl.itemsadder(namespacedId, setDefaultName);
         } else if (base.startsWith(OraxenHook.getIdentifier()) && OraxenHook.isHooked()) {
             String id = base.substring(OraxenHook.getIdentifier().length());
-            return BaseItemDecorator.oraxen(id, setDefaultName);
+            return BaseItemDecoratorImpl.oraxen(id, setDefaultName);
         } else if (base.startsWith(MythicMobsHook.getIdentifier()) && MythicMobsHook.isHooked()) {
             String id = base.substring(MythicMobsHook.getIdentifier().length());
-            return BaseItemDecorator.mythicmobs(id, setDefaultName);
+            return BaseItemDecoratorImpl.mythicmobs(id, setDefaultName);
         } else if (base.startsWith("SKULL:")) {
             String url = base.substring(6);
-            return BaseItemDecorator.skull(url, setDefaultName);
+            return BaseItemDecoratorImpl.skull(url, setDefaultName);
         } else if (base.startsWith("FIREWORK:")) {
             String power = base.substring(9);
-            return BaseItemDecorator.firework(Integer.parseInt(power), setDefaultName);
+            return BaseItemDecoratorImpl.firework(Integer.parseInt(power), setDefaultName);
         } else if (base.startsWith("POTION:")) {
             String[] data = base.substring(7).split(":");
             Material potionType = Material.POTION;
@@ -92,11 +76,11 @@ public class BaseItemDecorator {
                 potionType = Material.SPLASH_POTION;
             }
             if (data[1].equals("NONE")) {
-                return BaseItemDecorator.potion(potionType, data[1], false, false, setDefaultName);
+                return BaseItemDecoratorImpl.potion(potionType, data[1], false, false, setDefaultName);
             }
             boolean upgradeable = Boolean.parseBoolean(data[2]);
             boolean extendable = Boolean.parseBoolean(data[3]);
-            return BaseItemDecorator.potion(potionType, data[1], upgradeable, extendable, setDefaultName);
+            return BaseItemDecoratorImpl.potion(potionType, data[1], upgradeable, extendable, setDefaultName);
         } else if (base.startsWith("FISH_BUCKET:")) {
             String[] data = base.substring(12).split(":");
 
@@ -104,13 +88,13 @@ public class BaseItemDecorator {
             DyeColor bodyColor = DyeColor.valueOf(data[1]);
             DyeColor patternColor = DyeColor.valueOf(data[2]);
 
-            return BaseItemDecorator.tropicalFishBucket(pattern, patternColor, bodyColor, setDefaultName);
+            return BaseItemDecoratorImpl.tropicalFishBucket(pattern, patternColor, bodyColor, setDefaultName);
         } else {
             Material material = Material.matchMaterial(base.toUpperCase());
             if (material == null) {
                 return null;
             }
-            return BaseItemDecorator.vanilla(material, setDefaultName);
+            return BaseItemDecoratorImpl.vanilla(material, setDefaultName);
         }
     }
 
@@ -119,7 +103,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -128,7 +112,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -137,7 +121,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -146,7 +130,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -155,7 +139,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -164,7 +148,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -173,7 +157,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -182,7 +166,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -191,7 +175,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -200,7 +184,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -209,7 +193,7 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
@@ -218,10 +202,11 @@ public class BaseItemDecorator {
         if (!item.isExist()) {
             return null;
         }
-        return new BaseItemDecorator()
+        return new BaseItemDecoratorImpl()
                 .setItem(item, setDefaultName);
     }
 
+    @Override
     public BaseItemDecorator setItem(BaseItem item, boolean setDefaultName) {
         this.item = item;
         if (setDefaultName) {
@@ -230,10 +215,12 @@ public class BaseItemDecorator {
         return this;
     }
 
+    @Override
     public BaseItem getItem() {
         return item;
     }
 
+    @Override
     public BaseItemDecorator setName(String name) {
         if (name == null) {
             return this;
@@ -242,100 +229,122 @@ public class BaseItemDecorator {
         return this;
     }
 
+    @Override
     public BaseItemDecorator setLore(List<String> lore) {
         this.lore = lore;
         return this;
     }
 
+    @Override
     public BaseItemDecorator setLoreFormat(List<String> loreFormat) {
         this.loreFormat = loreFormat;
         return this;
     }
 
+    @Override
     public BaseItemDecorator setNameFormat(String nameFormat) {
         this.nameFormat = nameFormat;
         return this;
     }
 
+    @Override
     public BaseItemDecorator setBundleContentsLineFormat(String bundleContentsLineFormat) {
         this.bundleContentsLineFormat = bundleContentsLineFormat;
         return this;
     }
 
+    @Override
     public int getAmount() {
         return amount;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public List<String> getItemFlags() {
         return itemFlags;
     }
 
+    @Override
     public BaseItemDecorator setItemFlags(List<String> itemFlags) {
         this.itemFlags = itemFlags;
         return this;
     }
 
+    @Override
     public BaseItemDecorator setAmount(int amount) {
         this.amount = amount;
         return this;
     }
 
-    private String getNameFormat() {
+    @Override
+    protected String getNameFormat() {
         return nameFormat;
     }
 
+    @Override
     public List<String> getLoreFormat() {
         return loreFormat;
     }
 
+    @Override
     public String getBundleContentsLineFormat() {
         return bundleContentsLineFormat;
     }
 
+    @Override
     public List<String> getLore() {
         return lore;
     }
 
+    @Override
     public Integer getCustomModelData() {
         return customModelData;
     }
 
+    @Override
     public BaseItemDecorator setCustomModelData(Integer customModelData) {
         this.customModelData = customModelData;
         return this;
     }
 
+    @Override
     public List<String> getPatternsData() {
         return patternsData;
     }
 
+    @Override
     public BaseItemDecorator setPatternsData(List<String> patternsData) {
         this.patternsData = patternsData;
         return this;
     }
 
+    @Override
     public Map<ClickType, List<String>> getCommands() {
         return commands;
     }
 
+    @Override
     public BaseItemDecorator setCommands(Map<ClickType, List<String>> commands) {
         this.commands = commands;
         return this;
     }
 
+    @Override
     public BaseItemDecorator setScroll(int scroll) {
         this.scroll = scroll;
         return this;
     }
 
+    @Override
     public int getScroll() {
         return scroll;
     }
 
+    @Override
     public int getScrollShift() {
         return scrollShift;
     }
@@ -343,35 +352,41 @@ public class BaseItemDecorator {
     // Multi product column in VERTICAL mode or
     // multi product row in HORIZONTAL mode
     // will cause the overflow of max-scroll.
+    @Override
     public BaseItemDecorator setScrollShift(int scrollShift) {
         this.scrollShift = scrollShift;
         return this;
     }
 
+    @Override
     public long getPeriod() {
         return period;
     }
 
+    @Override
     public BaseItemDecorator setPeriod(long period) {
         this.period = period;
         return this;
     }
 
+    @Override
     public List<String> getFireworkEffectData() {
         return fireworkEffectData;
     }
 
+    @Override
     public BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData) {
         this.fireworkEffectData = fireworkEffectData;
         return this;
     }
 
+    @Override
     public Item buildProductIcon(String shopId, Product product) {
-        ProductFactoryImpl productFactory = DailyShop.PRODUCT_FACTORY;
+        ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
         return new AbstractItem() {
             @Override
             public ItemProvider getItemProvider() {
-                ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 setNameFormat(ShopConfig.getProductNameFormat(shopId));
                 setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
                 setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
@@ -419,7 +434,7 @@ public class BaseItemDecorator {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-                ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                 ShopPricer shopPricer = shop.getShopPricer();
                 ShopCashier shopCashier = shop.getShopCashier();
                 Map<String, String> vars = new HashMap<>() {{
@@ -431,7 +446,7 @@ public class BaseItemDecorator {
                 }};
 
                 if (clickType == ClickType.LEFT) {
-                    SettlementResult result = shopCashier.settle(ShopOrder.sellToOrder(player)
+                    SettlementResult result = shopCashier.settle(ShopOrderImpl.sellToOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
@@ -443,7 +458,7 @@ public class BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
-                    SettlementResult result = shopCashier.settle(cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder.buyFromOrder(player)
+                    SettlementResult result = shopCashier.settle(ShopOrderImpl.buyFromOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
@@ -455,7 +470,7 @@ public class BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
-                    cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order = cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder.buyAllFromOrder(player)
+                    ShopOrder order = ShopOrderImpl.buyAllFromOrder(player)
                             .addProduct(product, 1);
                     SettlementResult result = shopCashier.settle(order);
                     if (result != SettlementResult.SUCCESS) {
@@ -478,6 +493,7 @@ public class BaseItemDecorator {
         };
     }
 
+    @Override
     public Item buildNormalIcon() {
         Item icon;
 
@@ -546,6 +562,7 @@ public class BaseItemDecorator {
         return icon;
     }
 
+    @Override
     public ItemStack buildProductItem(@Nullable Player player) {
         return new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(player))
                 .setDisplayName(TextUtils.decorateText(getName(), player))

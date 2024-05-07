@@ -1,14 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.rarity.factory;
 
+import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.factory.RarityFactory;
-import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.HashMap;
 
 public class RarityFactoryImpl implements RarityFactory {
-    private static final HashMap<String, RarityImpl> rarities = new HashMap<>();
+    private static final HashMap<String, Rarity> rarities = new HashMap<>();
 
     public RarityFactoryImpl() {
         YamlConfiguration config = RarityConfig.getConfig();
@@ -27,7 +28,7 @@ public class RarityFactoryImpl implements RarityFactory {
     }
 
     @Override
-    public RarityImpl getRarity(String id) {
+    public Rarity getRarity(String id) {
         return rarities.get(id);
     }
 }

@@ -1,11 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.database;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
+import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
+import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
@@ -63,11 +64,11 @@ public class SQLiteDatabase implements Database {
         }
     }
 
-    public void saveShopData(@NotNull Map<String, ShopImpl> data) {
+    public void saveShopData(@NotNull Map<String, Shop> data) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("REPLACE INTO shop_data (id, listed_products, cached_prices, last_restocking) VALUES (?, ?, ?, ?)")) {
-            for (Map.Entry<String, ShopImpl> entry : data.entrySet()) {
-                ShopImpl shop = entry.getValue();
+            for (Map.Entry<String, Shop> entry : data.entrySet()) {
+                Shop shop = entry.getValue();
                 stmt.setString(1, entry.getKey());
                 stmt.setString(2, gson.toJson(shop.getListedProducts()));
                 stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
@@ -216,7 +217,7 @@ public class SQLiteDatabase implements Database {
                     List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
                     int totalStack = rs.getInt("total_stack");
 
-                    logs.add(SettlementLog.of(type, customer)
+                    logs.add(SettlementLogImpl.of(type, customer)
                             .setTransitionTime(transitionTime)
                             .setPrice(price)
                             .setOrderedProductIds(ids)

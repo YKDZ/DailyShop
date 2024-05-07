@@ -2,30 +2,11 @@ package cn.encmys.ykdz.forest.dailyshop.api.shop.order;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
-import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 
 public interface ShopOrder {
-    static ShopOrder buyFromOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_FROM)
-                .setCustomer(customer);
-    }
-
-    static ShopOrder buyAllFromOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_ALL_FROM)
-                .setCustomer(customer);
-    }
-
-    static ShopOrder sellToOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.SELL_TO)
-                .setCustomer(customer);
-    }
-
     ShopOrder setOrderType(OrderType orderType);
 
     ShopOrder setCustomer(Player customer);

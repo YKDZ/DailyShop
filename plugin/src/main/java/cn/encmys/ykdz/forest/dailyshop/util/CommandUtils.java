@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.DailyShopImpl;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -57,7 +57,7 @@ public class CommandUtils {
         CommandSender finalCommandSender = commandSender;
         if (delay > 0) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(
-                    DailyShop.INSTANCE,
+                    DailyShopImpl.INSTANCE,
                     () -> IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand)),
                    delay
            );

@@ -1,15 +1,14 @@
 package cn.encmys.ykdz.forest.dailyshop;
 
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
+import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManagerImpl;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.*;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
-import cn.encmys.ykdz.forest.dailyshop.config.*;
 import cn.encmys.ykdz.forest.dailyshop.database.SQLiteDatabase;
 import cn.encmys.ykdz.forest.dailyshop.hook.*;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
-import cn.encmys.ykdz.forest.dailyshop.scheduler.Scheduler;
+import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
@@ -21,21 +20,35 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class DailyShop extends JavaPlugin implements Listener {
-    public static DailyShop INSTANCE;
-    public static RarityFactoryImpl RARITY_FACTORY;
-    public static ProductFactoryImpl PRODUCT_FACTORY;
-    public static ShopFactory SHOP_FACTORY;
-    public static Scheduler SCHEDULER;
-    public static Database DATABASE;
-    public static Economy ECONOMY;
-    public static AdventureManager ADVENTURE_MANAGER;
-    public static ItemsLangAPI ITEMSLANG_API;
-    public static Metrics METRICS;
+public final class DailyShopImpl extends DailyShop {
+    @Override
+    public void reload() {
+        DailyShop.SHOP_FACTORY.unload();
+        DailyShop.PRODUCT_FACTORY.unload();
+
+        Config.load();
+        MessageConfig.load();
+        RarityConfig.load();
+        ProductConfig.load();
+        ShopConfig.load();
+
+        DailyShop.ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
+
+        DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
+        DailyShop.PRODUCT_FACTORY = new ProductFactoryImpl();
+        DailyShop.SHOP_FACTORY = new ShopFactoryImpl();
+    }
+
+    @Override
+    public void init() {
+        DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
+        DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
+        DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
+
+        DailyShopImpl.SCHEDULER = new SchedulerImpl();
+    }
 
     @Override
     public void onLoad() {
@@ -50,7 +63,7 @@ public final class DailyShop extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().registerEvents(this, INSTANCE);
         }
 
-        ADVENTURE_MANAGER = new AdventureManager(INSTANCE);
+        ADVENTURE_MANAGER = new AdventureManagerImpl(INSTANCE);
 
         if (!setupEconomy()) {
             LogUtils.error("Disabled due to no Vault dependency found!");
@@ -91,17 +104,10 @@ public final class DailyShop extends JavaPlugin implements Listener {
         }
     }
 
+    @Override
     @EventHandler
     public void waitForItemsAdder(ItemsAdderLoadDataEvent e) {
         init();
-    }
-
-    private void init() {
-        RARITY_FACTORY = new RarityFactoryImpl();
-        PRODUCT_FACTORY = new ProductFactoryImpl();
-        SHOP_FACTORY = new ShopFactoryImpl();
-
-        SCHEDULER = new Scheduler();
     }
 
     @Override
@@ -112,7 +118,8 @@ public final class DailyShop extends JavaPlugin implements Listener {
         CommandAPI.onDisable();
     }
 
-    private boolean setupEconomy() {
+    @Override
+    public boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
@@ -120,36 +127,21 @@ public final class DailyShop extends JavaPlugin implements Listener {
         if (rsp == null) {
             return false;
         }
-        ECONOMY = rsp.getProvider();
-        return ECONOMY != null;
+        DailyShopImpl.ECONOMY = rsp.getProvider();
+        return DailyShop.ECONOMY != null;
     }
 
-    private boolean setupItemsLangAPI() {
-        ITEMSLANG_API = ItemsLangAPI.getApi();
-        ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
+    @Override
+    public boolean setupItemsLangAPI() {
+        DailyShopImpl.ITEMSLANG_API = ItemsLangAPI.getApi();
+        DailyShopImpl.ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
         return true;
     }
 
-    private boolean setupBStats() {
+    @Override
+    public boolean setupBStats() {
         int pluginId = 21305;
-        METRICS = new Metrics(this, pluginId);
+        DailyShopImpl.METRICS = new Metrics(this, pluginId);
         return true;
-    }
-
-    public static void reload() {
-        SHOP_FACTORY.unload();
-        PRODUCT_FACTORY.unload();
-
-        Config.load();
-        MessageConfig.load();
-        RarityConfig.load();
-        ProductConfig.load();
-        ShopConfig.load();
-
-        ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
-
-        RARITY_FACTORY = new RarityFactoryImpl();
-        PRODUCT_FACTORY = new ProductFactoryImpl();
-        SHOP_FACTORY = new ShopFactoryImpl();
     }
 }

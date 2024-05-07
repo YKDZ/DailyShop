@@ -1,9 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
+import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
-import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLog;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class SettlementLogUtils {
     @NotNull
-    public static Item toHistoryGuiItem(@NotNull ShopImpl shop, @NotNull SettlementLog log, @Nullable Player player) {
+    public static Item toHistoryGuiItem(@NotNull Shop shop, @NotNull SettlementLog log, @Nullable Player player) {
         ConfigurationSection section = ShopConfig.getHistoryGuiSection(shop.getId()).getConfigurationSection("history-icon");
 
         Map<String, String> vars = new HashMap<>() {{

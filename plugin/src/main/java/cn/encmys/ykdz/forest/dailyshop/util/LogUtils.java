@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 
 public class LogUtils {
     public static void info(String log) {

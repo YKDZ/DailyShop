@@ -1,10 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop;
 
+import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
-import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
-import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ public interface Shop {
 
     void addListedProducts(List<String> listedProducts);
 
-    ShopGUI getShopGUI();
+    ShopRelatedGUI getShopGUI();
 
     Map<String, ItemStack> getCachedProductItems();
 
@@ -54,5 +53,5 @@ public interface Shop {
 
     ShopCashier getShopCashier();
 
-    HistoryGUI getHistoryGUI();
+    ShopRelatedGUI getHistoryGUI();
 }

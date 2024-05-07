@@ -1,10 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.adventure;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -18,18 +18,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdventureManager {
-    private final BukkitAudiences adventure;
+public class AdventureManagerImpl extends AdventureManager {
 
-    public AdventureManager(DailyShop plugin) {
-        this.adventure = BukkitAudiences.create(plugin);
+    public AdventureManagerImpl(DailyShop plugin) {
+        super(plugin);
     }
 
+    @Override
     public void close() {
         if (adventure != null)
             adventure.close();
     }
 
+    @Override
     public List<Component> getComponentFromMiniMessage(List<String> texts) {
         List<Component> result = new ArrayList<>();
         for (String text : texts) {
@@ -38,6 +39,7 @@ public class AdventureManager {
         return result;
     }
 
+    @Override
     public Component getComponentFromMiniMessage(String text) {
         if (text == null) {
             return Component.empty();
@@ -45,39 +47,46 @@ public class AdventureManager {
         return MiniMessage.miniMessage().deserialize(text);
     }
 
+    @Override
     public void sendMessage(CommandSender sender, String s) {
         if (s == null) return;
         if (sender instanceof Player player) sendPlayerMessage(player, s);
         else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(s);
     }
 
+    @Override
     public void sendMessageWithPrefix(CommandSender sender, String s) {
         sendMessage(sender, MessageConfig.messages_prefix + s);
     }
 
+    @Override
     public void sendPlayerMessage(Player player, String s) {
         if (s == null) return;
         Audience au = adventure.player(player);
         au.sendMessage(getComponentFromMiniMessage(s));
     }
 
+    @Override
     public void sendConsoleMessage(String s) {
         if (s == null) return;
         Audience au = adventure.sender(Bukkit.getConsoleSender());
         au.sendMessage(getComponentFromMiniMessage(s));
     }
 
+    @Override
     public void sendSound(Player player, Sound.Source source, Key key, float volume, float pitch) {
         Sound sound = Sound.sound(key, source, volume, pitch);
         Audience au = adventure.player(player);
         au.playSound(sound);
     }
 
+    @Override
     public void sendSound(Player player, Sound sound) {
         Audience au = adventure.player(player);
         au.playSound(sound);
     }
 
+    @Override
     public List<String> componentToLegacy(List<Component> components) {
         List<String> result = new ArrayList<>();
         for (Component component : components) {
@@ -86,14 +95,17 @@ public class AdventureManager {
         return result;
     }
 
+    @Override
     public String componentToLegacy(Component component) {
         return LegacyComponentSerializer.legacySection().serialize(component);
     }
 
+    @Override
     public boolean isColorCode(char c) {
         return c == '§' || c == '&';
     }
 
+    @Override
     public String legacyToMiniMessage(@NotNull String legacy) {
         StringBuilder stringBuilder = new StringBuilder();
         char[] chars = legacy.toCharArray();

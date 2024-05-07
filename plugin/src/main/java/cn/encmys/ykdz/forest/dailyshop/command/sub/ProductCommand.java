@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.util.ColorUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;

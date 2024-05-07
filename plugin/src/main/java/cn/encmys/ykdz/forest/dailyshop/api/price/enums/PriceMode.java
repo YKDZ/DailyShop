@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.price.enums;
+package cn.encmys.ykdz.forest.dailyshop.api.price.enums;
 
 public enum PriceMode {
     FIXED,

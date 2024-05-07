@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.gui.icon;
 
-import cn.encmys.ykdz.forest.dailyshop.icon.Icon;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

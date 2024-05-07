@@ -1,12 +1,14 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.pricer;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
+import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
+import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
-import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
@@ -16,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShopPricerImpl implements ShopPricer {
-    private final ShopImpl shop;
+    private final Shop shop;
     private Map<String, PricePair> cachedPrices = new HashMap<>();
 
     public ShopPricerImpl(@NotNull ShopImpl shop) {
@@ -96,7 +98,7 @@ public class ShopPricerImpl implements ShopPricer {
             sell = -1d;
         }
 
-        cachedPrices.put(productId, getModifiedPricePair(productId, new PricePair(buy, sell)));
+        cachedPrices.put(productId, getModifiedPricePair(productId, new PricePairImpl(buy, sell)));
     }
 
     // Todo Discount or something

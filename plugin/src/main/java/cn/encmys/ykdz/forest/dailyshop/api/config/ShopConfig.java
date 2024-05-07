@@ -1,6 +1,6 @@
-package cn.encmys.ykdz.forest.dailyshop.config;
+package cn.encmys.ykdz.forest.dailyshop.api.config;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;

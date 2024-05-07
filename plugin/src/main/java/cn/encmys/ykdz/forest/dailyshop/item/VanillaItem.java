@@ -1,9 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
-import cn.encmys.ykdz.forest.dailyshop.config.Config;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -1,16 +1,18 @@
 package cn.encmys.ykdz.forest.dailyshop.product.factory;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
-import cn.encmys.ykdz.forest.dailyshop.config.RarityConfig;
-import cn.encmys.ykdz.forest.dailyshop.price.Price;
+import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
+import cn.encmys.ykdz.forest.dailyshop.price.PriceImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
-import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -51,15 +53,15 @@ public class ProductFactoryImpl implements ProductFactory {
         ConfigurationSection iconSection = productSection.getConfigurationSection("icon");
 
         // Price (can default)
-        Price buyPrice = new Price(
+        Price buyPrice = new PriceImpl(
                 ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("buy-price"), defaultSettings.getConfigurationSection("buy-price"))
         );
-        Price sellPrice = new Price(
+        Price sellPrice = new PriceImpl(
                 ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("sell-price"), defaultSettings.getConfigurationSection("sell-price"))
         );
 
         // Rarity (can default)
-        RarityImpl rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
+        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
         // Cacheable (can default)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
@@ -67,7 +69,7 @@ public class ProductFactoryImpl implements ProductFactory {
         // Item (Only ItemProduct need it)
         BaseItemDecorator itemBuilder = null;
         if (productSection.contains("item")) {
-            itemBuilder = BaseItemDecorator.get(itemSection.getString("base", "DIRT"), false);
+            itemBuilder = BaseItemDecoratorImpl.get(itemSection.getString("base", "DIRT"), false);
 
             if (itemBuilder == null) {
                 LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");
@@ -139,7 +141,7 @@ public class ProductFactoryImpl implements ProductFactory {
             }
         }
 
-        BaseItemDecorator iconBuilder = BaseItemDecorator.get(iconSection.getString("base", "DIRT"), true);
+        BaseItemDecorator iconBuilder = BaseItemDecoratorImpl.get(iconSection.getString("base", "DIRT"), true);
 
         if (iconBuilder == null) {
             LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");

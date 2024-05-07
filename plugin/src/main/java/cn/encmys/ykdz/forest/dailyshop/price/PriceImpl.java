@@ -1,53 +1,38 @@
 package cn.encmys.ykdz.forest.dailyshop.price;
 
-import cn.encmys.ykdz.forest.dailyshop.price.enums.PriceMode;
+import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
+import cn.encmys.ykdz.forest.dailyshop.api.price.enums.PriceMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class Price {
-    private static final Random random = new Random();
-    private PriceMode priceMode;
-    // Fixed Mode
-    private double fixed;
-    // Gaussian Mode
-    private double mean = 0d;
-    private double dev = 0d;
-    // Min max Mode
-    private double min = 0d;
-    private double max = 0d;
-    // Formula
-    private String formula;
-    private final Map<String, String> formulaVars = new HashMap<>();
-    // Whether round the price
-    private boolean round = false;
+public class PriceImpl extends Price {
 
-    public Price(ConfigurationSection priceSection) {
+    public PriceImpl(ConfigurationSection priceSection) {
         buildPrice(priceSection);
     }
 
-    public Price(double fixed) {
+    public PriceImpl(double fixed) {
         this.fixed = fixed;
         this.priceMode = PriceMode.FIXED;
     }
 
-    public Price(double mean, double dev, boolean round) {
+    public PriceImpl(double mean, double dev, boolean round) {
         this.mean = mean;
         this.dev = dev;
         this.round = round;
         priceMode = PriceMode.GAUSSIAN;
     }
 
-    public Price(double min, double max) {
+    public PriceImpl(double min, double max) {
         this.min = min;
         this.max = max;
         priceMode = PriceMode.MINMAX;
     }
 
-    private void buildPrice(@NotNull ConfigurationSection priceSection) {
+    @Override
+    protected void buildPrice(@NotNull ConfigurationSection priceSection) {
         if (priceSection.contains("fixed")) {
             this.fixed = priceSection.getDouble("fixed");
             priceMode = PriceMode.FIXED;
@@ -82,6 +67,7 @@ public class Price {
         }
     }
 
+    @Override
     public double getNewPrice() {
         double price = 0;
         switch (priceMode) {
@@ -96,18 +82,22 @@ public class Price {
         }
     }
 
+    @Override
     public PriceMode getPriceMode() {
         return priceMode;
     }
 
+    @Override
     public String getFormula() {
         return formula;
     }
 
+    @Override
     public Map<String, String> getFormulaVars() {
         return formulaVars;
     }
 
+    @Override
     public boolean isRound() {
         return round;
     }

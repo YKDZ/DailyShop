@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.pricer;
 
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

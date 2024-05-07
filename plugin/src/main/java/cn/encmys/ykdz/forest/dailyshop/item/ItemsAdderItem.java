@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
 import dev.lone.itemsadder.api.CustomStack;

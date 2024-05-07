@@ -1,12 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class BundleProduct extends Product {
             String id,
             Price buyPrice,
             Price sellPrice,
-            RarityImpl rarity,
+            Rarity rarity,
             BaseItemDecorator iconBuilder,
             Map<String, Integer> bundleContents) {
         super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
@@ -36,7 +36,7 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public void give(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
@@ -45,7 +45,7 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public void take(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
@@ -55,7 +55,7 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public int has(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
         int count = Integer.MAX_VALUE;
 
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
@@ -75,7 +75,7 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean canHold(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();

@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

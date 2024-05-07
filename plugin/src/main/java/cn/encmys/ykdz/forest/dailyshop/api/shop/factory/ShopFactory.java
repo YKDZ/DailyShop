@@ -1,17 +1,17 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.factory;
 
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 
 import java.util.HashMap;
 
 public interface ShopFactory {
     void load();
 
-    ShopImpl buildShop(String id);
+    Shop buildShop(String id);
 
-    ShopImpl getShop(String id);
+    Shop getShop(String id);
 
-    HashMap<String, ShopImpl> getAllShops();
+    HashMap<String, Shop> getAllShops();
 
     void unload();
 

@@ -1,9 +1,11 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.factory;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.config.ProductConfig;
-import cn.encmys.ykdz.forest.dailyshop.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 
@@ -13,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory {
-    private static final HashMap<String, ShopImpl> shops = new HashMap<>();
+public class ShopFactoryImpl implements ShopFactory {
+    private static final HashMap<String, Shop> shops = new HashMap<>();
 
     public ShopFactoryImpl() {
         load();
@@ -28,14 +30,14 @@ public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
         }
 
         // Build shop gui
-        for (ShopImpl shop : getAllShops().values()) {
+        for (Shop shop : getAllShops().values()) {
             shop.getShopGUI().buildGUIBuilder();
             shop.getHistoryGUI().buildGUIBuilder();
         }
     }
 
     @Override
-    public ShopImpl buildShop(String id) {
+    public Shop buildShop(String id) {
         if (shops.containsKey(id)) {
             throw new InvalidKeyException("Shop ID is duplicated: " + id);
         }
@@ -63,7 +65,7 @@ public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
                 })
                 .toList();
 
-        ShopImpl shop = new ShopImpl(
+        Shop shop = new ShopImpl(
                 id,
                 ShopConfig.getName(id),
                 ShopConfig.getRestockTimerSection(id),
@@ -93,12 +95,12 @@ public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
     }
 
     @Override
-    public ShopImpl getShop(String id) {
+    public Shop getShop(String id) {
         return shops.get(id);
     }
 
     @Override
-    public HashMap<String, ShopImpl> getAllShops() {
+    public HashMap<String, Shop> getAllShops() {
         return shops;
     }
 
@@ -110,8 +112,8 @@ public class ShopFactoryImpl implements cn.encmys.ykdz.forest.dailyshop.api.shop
 
     @Override
     public void save() {
-        HashMap<String, ShopImpl> dataMap = new HashMap<>();
-        for (ShopImpl shop : getAllShops().values()) {
+        HashMap<String, Shop> dataMap = new HashMap<>();
+        for (Shop shop : getAllShops().values()) {
             dataMap.put(shop.getId(), shop);
         }
         DailyShop.DATABASE.saveShopData(dataMap);

@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
 

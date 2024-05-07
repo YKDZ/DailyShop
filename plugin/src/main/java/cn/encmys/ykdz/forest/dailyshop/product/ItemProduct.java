@@ -1,14 +1,14 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
+import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.price.Price;
-import cn.encmys.ykdz.forest.dailyshop.rarity.RarityImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +22,7 @@ public class ItemProduct extends Product {
             String id,
             Price buyPrice,
             Price sellPrice,
-            RarityImpl rarity,
+            Rarity rarity,
             BaseItemDecorator iconBuilder,
             BaseItemDecorator productItemBuilder,
             boolean isCacheable) {
@@ -35,14 +35,14 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public void give(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
         ItemStack item = shop.getCachedProductItem(this);
         // Check whether player has enough inventory space at first
         IntStream.range(0, stack).forEach(i -> player.getInventory().addItem(item));
     }
 
     @Override
-    public void take(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
         int needed = getProductItemBuilder().getAmount() * stack;
         if (has(shop, player, 1) < stack) {
             return;
@@ -63,7 +63,7 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public int has(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
         int total = 0;
         int stackedAmount = getProductItemBuilder().getAmount() * stack;
         for (ItemStack check : player.getInventory().getContents()) {
@@ -75,12 +75,12 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean canHold(@NotNull ShopImpl shop, @NotNull Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
         return PlayerUtils.hasInventorySpace(player, shop.getCachedProductItemOrCreateOne(this, player), stack);
     }
 
     public boolean isMatch(String shopId, ItemStack item, @Nullable Player player) {
-        ShopImpl shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+        Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
         BaseItem baseItem = getProductItemBuilder().getItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);

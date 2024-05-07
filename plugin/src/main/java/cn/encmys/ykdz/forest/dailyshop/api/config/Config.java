@@ -1,6 +1,6 @@
-package cn.encmys.ykdz.forest.dailyshop.config;
+package cn.encmys.ykdz.forest.dailyshop.api.config;
 
-import cn.encmys.ykdz.forest.dailyshop.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -8,14 +8,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
-    private static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
     public static String language;
     public static int logDataLimit_entryAmount;
     public static double logDataLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static int dataSaveTimer;
     public static int version;
-    private static YamlConfiguration config = new YamlConfiguration();
+    protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
+    protected static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
         File file = new File(path);

@@ -19,26 +19,44 @@ public class ShopOrderImpl implements ShopOrder {
 
     public ShopOrderImpl() {}
 
+    public static ShopOrder buyFromOrder(Player customer) {
+        return new ShopOrderImpl()
+                .setOrderType(OrderType.BUY_FROM)
+                .setCustomer(customer);
+    }
+
+    public static ShopOrder buyAllFromOrder(Player customer) {
+        return new ShopOrderImpl()
+                .setOrderType(OrderType.BUY_ALL_FROM)
+                .setCustomer(customer);
+    }
+
+    public static ShopOrder sellToOrder(Player customer) {
+        return new ShopOrderImpl()
+                .setOrderType(OrderType.SELL_TO)
+                .setCustomer(customer);
+    }
+
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder setOrderType(OrderType orderType) {
+    public ShopOrder setOrderType(OrderType orderType) {
         this.orderType = orderType;
         return this;
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder setCustomer(Player customer) {
+    public ShopOrder setCustomer(Player customer) {
         this.customer = customer;
         return this;
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder addProduct(Product product, int amount) {
+    public ShopOrder addProduct(Product product, int amount) {
         orderedProducts.put(product, orderedProducts.getOrDefault(product, 0) + amount);
         return this;
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder removeProduct(Product product) {
+    public ShopOrder removeProduct(Product product) {
         orderedProducts.remove(product);
         return this;
     }
@@ -74,7 +92,7 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder setBill(Map<Product, Double> bill) {
+    public ShopOrder setBill(Map<Product, Double> bill) {
         this.bill = bill;
         return this;
     }
@@ -90,13 +108,13 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder setBilled(boolean billed) {
+    public ShopOrder setBilled(boolean billed) {
         isBilled = billed;
         return this;
     }
 
     @Override
-    public cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder setTotalStack(int totalStack) {
+    public ShopOrder setTotalStack(int totalStack) {
         this.totalStack = totalStack;
         return this;
     }
