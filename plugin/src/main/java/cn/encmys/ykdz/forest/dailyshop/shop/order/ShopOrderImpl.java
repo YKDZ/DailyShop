@@ -19,24 +19,6 @@ public class ShopOrderImpl implements ShopOrder {
 
     public ShopOrderImpl() {}
 
-    public static ShopOrder buyFromOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_FROM)
-                .setCustomer(customer);
-    }
-
-    public static ShopOrder buyAllFromOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_ALL_FROM)
-                .setCustomer(customer);
-    }
-
-    public static ShopOrder sellToOrder(Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.SELL_TO)
-                .setCustomer(customer);
-    }
-
     @Override
     public ShopOrder setOrderType(OrderType orderType) {
         this.orderType = orderType;

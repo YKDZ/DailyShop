@@ -11,6 +11,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,19 +37,29 @@ public class ItemProduct extends Product {
 
     @Override
     public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+        give(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         ItemStack item = shop.getCachedProductItem(this);
         // Check whether player has enough inventory space at first
-        IntStream.range(0, stack).forEach(i -> player.getInventory().addItem(item));
+        IntStream.range(0, stack).forEach(i -> inv.addItem(item));
     }
 
     @Override
     public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+        take(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         int needed = getProductItemBuilder().getAmount() * stack;
-        if (has(shop, player, 1) < stack) {
+        if (has(shop, inv, player, 1) < stack) {
             return;
         }
 
-        for (ItemStack check : player.getInventory().getContents()) {
+        for (ItemStack check : inv) {
             if (check != null && needed > 0 && isMatch(shop.getId(), check, player)) {
                 int has = check.getAmount();
                 if (needed <= has) {
@@ -64,9 +75,14 @@ public class ItemProduct extends Product {
 
     @Override
     public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+        return has(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         int total = 0;
         int stackedAmount = getProductItemBuilder().getAmount() * stack;
-        for (ItemStack check : player.getInventory().getContents()) {
+        for (ItemStack check : inv) {
             if (check != null && isMatch(shop.getId(), check, player)) {
                 total += check.getAmount();
             }
@@ -76,10 +92,16 @@ public class ItemProduct extends Product {
 
     @Override
     public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
-        return PlayerUtils.hasInventorySpace(player, shop.getCachedProductItemOrCreateOne(this, player), stack);
+        return canHold(shop, player.getInventory(), player, stack);
     }
 
-    public boolean isMatch(String shopId, ItemStack item, @Nullable Player player) {
+    @Override
+    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
+        return PlayerUtils.hasInventorySpace(inv, shop.getCachedProductItemOrCreateOne(this, player), stack);
+    }
+
+    @Override
+    public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
         BaseItem baseItem = getProductItemBuilder().getItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {

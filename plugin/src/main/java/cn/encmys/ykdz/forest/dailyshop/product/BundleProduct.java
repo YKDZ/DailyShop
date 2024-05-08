@@ -8,7 +8,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -37,6 +40,11 @@ public class BundleProduct extends Product {
 
     @Override
     public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+        give(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
@@ -46,6 +54,11 @@ public class BundleProduct extends Product {
 
     @Override
     public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+        take(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
@@ -56,6 +69,11 @@ public class BundleProduct extends Product {
 
     @Override
     public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+        return has(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         int count = Integer.MAX_VALUE;
 
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
@@ -76,6 +94,11 @@ public class BundleProduct extends Product {
 
     @Override
     public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+        return canHold(shop, player.getInventory(), player, stack);
+    }
+
+    @Override
+    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
@@ -85,5 +108,10 @@ public class BundleProduct extends Product {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
+        return false;
     }
 }

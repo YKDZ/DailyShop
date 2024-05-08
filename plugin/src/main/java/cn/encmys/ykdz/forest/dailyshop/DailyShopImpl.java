@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.builder.ShopOrderBuilderImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
@@ -39,6 +40,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShop.PRODUCT_FACTORY = new ProductFactoryImpl();
         DailyShop.SHOP_FACTORY = new ShopFactoryImpl();
+        DailyShop.SHOP_ORDER_BUILDER = new ShopOrderBuilderImpl();
     }
 
     @Override

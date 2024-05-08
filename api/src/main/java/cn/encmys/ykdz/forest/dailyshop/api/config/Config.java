@@ -8,14 +8,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
+    protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
+    protected static YamlConfiguration config = new YamlConfiguration();
     public static String language;
     public static int logDataLimit_entryAmount;
     public static double logDataLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static int dataSaveTimer;
     public static int version;
-    protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
-    protected static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
         File file = new File(path);

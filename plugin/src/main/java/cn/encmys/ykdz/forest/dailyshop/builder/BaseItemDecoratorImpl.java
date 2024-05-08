@@ -21,7 +21,6 @@ import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
-import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.bukkit.DyeColor;
@@ -446,7 +445,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 }};
 
                 if (clickType == ClickType.LEFT) {
-                    SettlementResult result = shopCashier.settle(ShopOrderImpl.sellToOrder(player)
+                    SettlementResult result = shopCashier.settle(DailyShop.SHOP_ORDER_BUILDER.sellToOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
@@ -458,7 +457,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.RIGHT) {
-                    SettlementResult result = shopCashier.settle(ShopOrderImpl.buyFromOrder(player)
+                    SettlementResult result = shopCashier.settle(DailyShop.SHOP_ORDER_BUILDER.buyFromOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
                         switch (result) {
@@ -470,7 +469,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 } else if (clickType == ClickType.SHIFT_RIGHT) {
-                    ShopOrder order = ShopOrderImpl.buyAllFromOrder(player)
+                    ShopOrder order = DailyShop.SHOP_ORDER_BUILDER.buyAllFromOrder(player)
                             .addProduct(product, 1);
                     SettlementResult result = shopCashier.settle(order);
                     if (result != SettlementResult.SUCCESS) {

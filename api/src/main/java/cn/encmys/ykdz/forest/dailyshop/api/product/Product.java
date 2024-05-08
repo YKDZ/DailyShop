@@ -6,7 +6,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class Product {
     private final String id;
@@ -62,13 +65,23 @@ public abstract class Product {
 
     public abstract void give(@NotNull Shop shop, @NotNull Player player, int stack);
 
+    public abstract void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack);
+
     public abstract void take(@NotNull Shop shop, @NotNull Player player, int stack);
+
+    public abstract void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack);
 
     public abstract int has(@NotNull Shop shop, @NotNull Player player, int stack);
 
+    public abstract int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack);
+
     public abstract boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack);
+
+    public abstract boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack);
 
     public boolean isCacheable() {
         return isCacheable;
     }
+
+    public abstract boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player);
 }
