@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -107,7 +108,7 @@ public class SQLiteDatabase implements Database {
             stmt.setString(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return gson.fromJson(rs.getString("cached_prices"), new TypeToken<Map<String, PricePair>>() {}.getType());
+                    return gson.fromJson(rs.getString("cached_prices"), new TypeToken<Map<String, PricePairImpl>>() {}.getType());
                 }
             }
         } catch (SQLException e) {

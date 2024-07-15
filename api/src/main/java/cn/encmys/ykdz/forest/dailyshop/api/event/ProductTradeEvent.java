@@ -8,14 +8,24 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerSellProductEvent extends PlayerEvent implements Cancellable {
+public class ProductTradeEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlerList = new HandlerList();
     private boolean isCancelled = false;
-    private Shop shop;
-    private ShopOrder order;
+    private final Shop shop;
+    private final ShopOrder order;
 
-    public PlayerBuyProductEvent(@NotNull Player who, Shop shop, ShopOrder order) {
+    public ProductTradeEvent(@NotNull Player who, Shop shop, ShopOrder order) {
         super(who);
+        this.shop = shop;
+        this.order = order;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public ShopOrder getOrder() {
+        return order;
     }
 
     @Override
@@ -31,6 +41,10 @@ public class PlayerSellProductEvent extends PlayerEvent implements Cancellable {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return null;
+        return handlerList;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
     }
 }

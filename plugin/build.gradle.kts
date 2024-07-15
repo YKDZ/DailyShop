@@ -10,26 +10,24 @@ dependencies {
 
     compileOnly("io.lumine:Mythic-Dist:5.6.1")
 
-    compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
-
     compileOnly("com.github.Xiao-MoMi:Custom-Fishing:2.1.2")
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.3")
+    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.8")
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 
-    compileOnly("dev.jorel:commandapi-annotations:9.3.0")
-    implementation("dev.jorel:commandapi-bukkit-shade:9.3.0")
-    annotationProcessor("dev.jorel:commandapi-annotations:9.3.0")
+    compileOnly("dev.jorel:commandapi-annotations:9.5.1")
+    implementation("dev.jorel:commandapi-bukkit-shade:9.5.1")
+    annotationProcessor("dev.jorel:commandapi-annotations:9.5.1")
 
-    implementation("xyz.xenondevs.invui:invui:1.26")
+    implementation("xyz.xenondevs.invui:invui:1.33")
 
-    implementation("net.kyori:adventure-api:4.16.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
-    implementation("net.kyori:adventure-text-minimessage:4.16.0")
+    implementation("net.kyori:adventure-api:4.17.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 

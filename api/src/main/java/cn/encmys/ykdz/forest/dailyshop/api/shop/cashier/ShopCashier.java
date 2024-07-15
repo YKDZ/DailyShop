@@ -9,12 +9,6 @@ public interface ShopCashier {
 
     SettlementResult settle(@NotNull ShopOrder order);
 
-    SettlementResult sellTo(@NotNull ShopOrder order);
-
-    SettlementResult buyFrom(@NotNull ShopOrder order);
-
-    SettlementResult buyAllFrom(@NotNull ShopOrder order);
-
     SettlementResult canSellTo(@NotNull ShopOrder order);
 
     SettlementResult canBuyFrom(@NotNull ShopOrder order);

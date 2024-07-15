@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.event.ShopRestockEvent;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -55,6 +56,7 @@ public class ShopImpl implements Shop {
 
     @Override
     public void restock() {
+        List<Product> productsPreparedToBeListed = new ArrayList<>();
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
 
         listedProducts.clear();
@@ -66,10 +68,7 @@ public class ShopImpl implements Shop {
                 ));
 
         if (size >= allProductsId.size()) {
-            for (String productId : allProductsId) {
-                Product product = allProducts.get(productId);
-                listProduct(product);
-            }
+            productsPreparedToBeListed.addAll(allProducts.values());
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
             int totalWeight = allProducts.values().stream()
@@ -82,13 +81,24 @@ public class ShopImpl implements Shop {
                     Product product = allProducts.get(productId);
                     runningWeight += product.getRarity().getWeight();
                     if (needed <= runningWeight) {
-                        listProduct(product);
+                        productsPreparedToBeListed.add(product);
                         totalWeight -= product.getRarity().getWeight();
                         temp.remove(productId);
                         break;
                     }
                 }
             }
+        }
+
+        // Event
+        ShopRestockEvent event = new ShopRestockEvent(this, productsPreparedToBeListed);
+        if (event.isCancelled()) {
+            return;
+        }
+        // Event
+
+        for (Product product : productsPreparedToBeListed) {
+            listProduct(product);
         }
 
         getShopGUI().closeAll();

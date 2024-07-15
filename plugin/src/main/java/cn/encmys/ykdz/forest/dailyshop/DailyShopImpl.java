@@ -48,6 +48,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
         DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
+        DailyShop.SHOP_ORDER_BUILDER = new ShopOrderBuilderImpl();
 
         DailyShopImpl.SCHEDULER = new SchedulerImpl();
     }
@@ -78,7 +79,6 @@ public final class DailyShopImpl extends DailyShop {
         new ItemsAdderHook();
         new OraxenHook();
         new MythicMobsHook();
-        new NeigeItemsHook();
         new CustomCropsHook();
         new CustomFishingHook();
 

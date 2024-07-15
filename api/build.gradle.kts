@@ -1,15 +1,15 @@
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT")
 
-    compileOnly("dev.jorel:commandapi-annotations:9.3.0")
-    compileOnly("dev.jorel:commandapi-bukkit-shade:9.3.0")
-    annotationProcessor("dev.jorel:commandapi-annotations:9.3.0")
+    compileOnly("dev.jorel:commandapi-annotations:9.5.1")
+    compileOnly("dev.jorel:commandapi-bukkit-shade:9.5.1")
+    annotationProcessor("dev.jorel:commandapi-annotations:9.5.1")
 
-    compileOnly("xyz.xenondevs.invui:invui:1.26")
+    compileOnly("xyz.xenondevs.invui:invui:1.33")
 
-    compileOnly("net.kyori:adventure-api:4.16.0")
-    compileOnly("net.kyori:adventure-platform-bukkit:4.3.1")
-    compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
+    compileOnly("net.kyori:adventure-api:4.17.0")
+    compileOnly("net.kyori:adventure-platform-bukkit:4.3.3")
+    compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
 
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
 
@@ -17,7 +17,7 @@ dependencies {
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
-    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
 
     // compileOnly("com.cronutils:cron-utils:9.2.1")
 }

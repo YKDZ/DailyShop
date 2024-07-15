@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.event.ProductTradeEvent;
 import cn.encmys.ykdz.forest.dailyshop.api.price.enums.PriceMode;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -13,6 +14,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.BalanceUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -51,6 +53,14 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public SettlementResult settle(@NotNull ShopOrder order) {
+        // Event
+        ProductTradeEvent event = new ProductTradeEvent(order.getCustomer(), shop, order);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return SettlementResult.CANCELLED;
+        }
+        // Event
+
         if (order.isSettled()) {
             LogUtils.warn("Try to settle an order twice.");
             return SettlementResult.DUPLICATED;
@@ -64,8 +74,7 @@ public class ShopCashierImpl implements ShopCashier {
         };
     }
 
-    @Override
-    public SettlementResult sellTo(@NotNull ShopOrder order) {
+    private SettlementResult sellTo(@NotNull ShopOrder order) {
         SettlementResult result = canSellTo(order);
         if (result == SettlementResult.SUCCESS) {
             for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -80,8 +89,7 @@ public class ShopCashierImpl implements ShopCashier {
         return result;
     }
 
-    @Override
-    public SettlementResult buyFrom(@NotNull ShopOrder order) {
+    private SettlementResult buyFrom(@NotNull ShopOrder order) {
         SettlementResult result = canBuyFrom(order);
         if (result == SettlementResult.SUCCESS) {
             IntStream.range(0, order.getTotalStack()).forEach((i) -> {
@@ -98,8 +106,7 @@ public class ShopCashierImpl implements ShopCashier {
         return result;
     }
 
-    @Override
-    public SettlementResult buyAllFrom(@NotNull ShopOrder order) {
+    private SettlementResult buyAllFrom(@NotNull ShopOrder order) {
         order.setTotalStack(hasStackInTotal(order));
         return buyFrom(order);
     }

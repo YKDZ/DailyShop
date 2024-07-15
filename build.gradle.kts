@@ -1,17 +1,17 @@
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.8"
 }
 
 allprojects {
 
     project.group = "cn.encmys.ykdz.forest"
-    project.version = "0.1.3-Beta"
+    project.version = "0.1.4-Beta"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "io.github.goooler.shadow")
     apply(plugin = "org.gradle.maven-publish")
 
     repositories {

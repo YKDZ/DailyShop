@@ -133,15 +133,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 .setItem(item, setDefaultName);
     }
 
-    public static BaseItemDecorator neigeitems(String id, boolean setDefaultName) {
-        BaseItem item = new NeigeItemsItem(id);
-        if (!item.isExist()) {
-            return null;
-        }
-        return new BaseItemDecoratorImpl()
-                .setItem(item, setDefaultName);
-    }
-
     public static BaseItemDecorator customcrops(String id, boolean setDefaultName) {
         BaseItem item = new CustomCropsItem(id);
         if (!item.isExist()) {

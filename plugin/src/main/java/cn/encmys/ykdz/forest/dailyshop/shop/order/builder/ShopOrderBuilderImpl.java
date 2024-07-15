@@ -10,22 +10,19 @@ import org.jetbrains.annotations.NotNull;
 public class ShopOrderBuilderImpl implements ShopOrderBuilder {
     @Override
     public ShopOrder buyFromOrder(@NotNull Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_FROM)
-                .setCustomer(customer);
+        return new ShopOrderImpl(customer)
+                .setOrderType(OrderType.BUY_FROM);
     }
 
     @Override
     public ShopOrder buyAllFromOrder(@NotNull Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.BUY_ALL_FROM)
-                .setCustomer(customer);
+        return new ShopOrderImpl(customer)
+                .setOrderType(OrderType.BUY_ALL_FROM);
     }
 
     @Override
     public ShopOrder sellToOrder(@NotNull Player customer) {
-        return new ShopOrderImpl()
-                .setOrderType(OrderType.SELL_TO)
-                .setCustomer(customer);
+        return new ShopOrderImpl(customer)
+                .setOrderType(OrderType.SELL_TO);
     }
 }

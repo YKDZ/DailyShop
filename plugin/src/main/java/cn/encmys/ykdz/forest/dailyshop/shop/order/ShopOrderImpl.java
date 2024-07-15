@@ -10,24 +10,20 @@ import java.util.Map;
 
 public class ShopOrderImpl implements ShopOrder {
     private OrderType orderType;
-    private Player customer;
+    private final Player customer;
     private final Map<Product, Integer> orderedProducts = new HashMap<>();
     private Map<Product, Double> bill = new HashMap<>();
     private int totalStack = 1;
     private boolean isSettled = false;
     private boolean isBilled = false;
 
-    public ShopOrderImpl() {}
+    public ShopOrderImpl(Player customer) {
+        this.customer = customer;
+    }
 
     @Override
     public ShopOrder setOrderType(OrderType orderType) {
         this.orderType = orderType;
-        return this;
-    }
-
-    @Override
-    public ShopOrder setCustomer(Player customer) {
-        this.customer = customer;
         return this;
     }
 

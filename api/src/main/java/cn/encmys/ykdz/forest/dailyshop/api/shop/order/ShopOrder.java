@@ -9,8 +9,6 @@ import java.util.Map;
 public interface ShopOrder {
     ShopOrder setOrderType(OrderType orderType);
 
-    ShopOrder setCustomer(Player customer);
-
     ShopOrder addProduct(Product product, int amount);
 
     ShopOrder removeProduct(Product product);

@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums;
 
 public enum SettlementResult {
     DUPLICATED,
+    CANCELLED,
     UNKNOWN,
     TRANSITION_DISABLED,
     NOT_ENOUGH_MONEY,
