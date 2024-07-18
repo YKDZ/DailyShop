@@ -12,8 +12,8 @@ public class Config {
     protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
     protected static YamlConfiguration config = new YamlConfiguration();
     public static String language;
-    public static int logDataLimit_entryAmount;
-    public static double logDataLimit_timeRange;
+    public static int logUsageLimit_entryAmount;
+    public static double logUsageLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static long period_saveData;
     public static long period_updateProductIcon;
@@ -49,8 +49,8 @@ public class Config {
         period_updateProductIcon = TextUtils.parseTimeToTicks(config.getString("period.update-product-icon", "3s"));
         period_checkRestocking = TextUtils.parseTimeToTicks(config.getString("period.check-restocking", "3s"));
         priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
-        logDataLimit_entryAmount = config.getInt("log-data-limit.entry-amount", 500);
-        logDataLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-data-limit.time-range", "7d"));
+        logUsageLimit_entryAmount = config.getInt("log-usage-limit.entry-amount", 500);
+        logUsageLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-usage-limit.time-range", "7d"));
         version = config.getInt("version");
     }
 
