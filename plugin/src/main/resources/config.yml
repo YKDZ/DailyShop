@@ -1,10 +1,19 @@
+# Language file to use.
+# Available: zh_CN, en_US
 language: en_US
 period:
+  # Period for saving plugin data
   save-data: "5m"
+  # Period for product icon auto update (for stock feature)
+  # Always updated once when the player clicks on the icon
   update-product-icon: "3s"
+  # Period for checking whether the shop need to be restocked
   check-restocking: "3s"
 log-data-limit:
+  # How many settlement logs will be kept per player
   entry-amount: 500
+  #
   time-range: "7d"
 price-correct-by-disable-sell-or-buy: true
+# Do not change this
 version: 1

@@ -1,12 +1,11 @@
-# If there are 10 products in a shop,
+# If there are 10 products ready to be listed in a shop now,
 # 6 of them has common rarity whose weight is 100;
 # 3 of them has uncommon rarity whose weight is 80;
-# The remaining one has ancient rarity with weight 20.
+# 1 of them has ancient rarity with weight 20.
 # Then, you can get a total weight: 6 * 100 + 3 * 80 + 1 * 20 = 860.
-# So, the chance of the shop to list a common product is:
+# So, the chance for this shop to list a common product is:
 # 6 * 100 / total weight * 100% = 69.7%.
-# Simply put, the higher the weight of a certain product and
-# the more products under its rarity, the easier it is to be listed.
+# Simply put, the more weight an item has, the more likely it is to be listed.
 rarities:
   common:
     name: "<gray>Common"
