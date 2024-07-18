@@ -24,5 +24,5 @@ public interface Database {
 
     void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log);
 
-    List<SettlementLog> queryLogs(@NotNull String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
+    CompletableFuture<List<SettlementLog>> queryLogs(@NotNull String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
 }
