@@ -28,7 +28,7 @@ public class VanillaItem implements BaseItem {
         if (name == null) {
             name = "<red>Name not find";
         }
-            return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(name);
+        return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(name);
     }
 
     @Override
