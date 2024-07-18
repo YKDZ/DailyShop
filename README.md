@@ -14,7 +14,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 
 - [x] Dynamic pricing based on market feedback
 - [ ] BE GUI
-- [ ] Total market volume
+- [x] Total market volume
 - [x] Transaction log
 - [x] SQL Support
 - [ ] Random amount and amount based price
