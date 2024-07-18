@@ -40,7 +40,7 @@ public class PotionItem extends VanillaItem implements BaseItem {
 
     @Override
     public boolean isExist() {
-        return false;
+        return true;
     }
 
     public Material getPotionType() {

@@ -36,12 +36,13 @@ public class MythicMobsItem implements BaseItem {
 
     @Override
     public boolean isExist() {
-        return false;
+        ItemManager itemManager = MythicBukkit.inst().getItemManager();
+        return itemManager.getItem(id).isPresent();
     }
 
     @Override
     public BaseItemType getItemType() {
-        return BaseItemType.MYTHICMOBS;
+        return BaseItemType.MYTHIC_MOBS;
     }
 
     @Override

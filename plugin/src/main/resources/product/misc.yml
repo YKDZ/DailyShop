@@ -179,12 +179,22 @@ products:
 
   TROPICAL_FISH_BUCKET:
     item:
-      base: FISH_BUCKET:CLAYFISH:RED:YELLOW
+      base: TROPICAL_FISH_BUCKET:CLAYFISH:RED:YELLOW
       amount: 1
     icon:
       name: "<white>Tropical Fish Bucket"
       lore:
         - "<gray>This is a Tropical Fish Bucket."
+        - "<gray>These lore will not be applied to the product item."
+
+  AXOLOTL_BUCKET:
+    item:
+      base: AXOLOTL_BUCKET:BLUE
+      amount: 1
+    icon:
+      name: "<white>Axolotl Bucket"
+      lore:
+        - "<gray>This is a Axolotl Bucket."
         - "<gray>These lore will not be applied to the product item."
 
   CUSTOM_FIREWORK:

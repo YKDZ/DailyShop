@@ -25,6 +25,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.inventory.ClickType;
@@ -61,7 +62,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
             return BaseItemDecoratorImpl.skull(url, setDefaultName);
         } else if (base.startsWith("FIREWORK:")) {
             String power = base.substring(9);
-            return BaseItemDecoratorImpl.firework(Integer.parseInt(power), setDefaultName);
+            return BaseItemDecoratorImpl.fireworkRocket(Integer.parseInt(power), setDefaultName);
         } else if (base.startsWith("POTION:")) {
             String[] data = base.substring(7).split(":");
             Material potionType = Material.POTION;
@@ -76,14 +77,20 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
             boolean upgradeable = Boolean.parseBoolean(data[2]);
             boolean extendable = Boolean.parseBoolean(data[3]);
             return BaseItemDecoratorImpl.potion(potionType, data[1], upgradeable, extendable, setDefaultName);
-        } else if (base.startsWith("FISH_BUCKET:")) {
-            String[] data = base.substring(12).split(":");
+        } else if (base.startsWith("TROPICAL_FISH_BUCKET:")) {
+            String[] data = base.substring(21).split(":");
 
             TropicalFish.Pattern pattern = TropicalFish.Pattern.valueOf(data[0]);
             DyeColor bodyColor = DyeColor.valueOf(data[1]);
             DyeColor patternColor = DyeColor.valueOf(data[2]);
 
             return BaseItemDecoratorImpl.tropicalFishBucket(pattern, patternColor, bodyColor, setDefaultName);
+        } else if (base.startsWith("AXOLOTL_BUCKET:")) {
+            String[] data = base.substring(15).split(":");
+
+            Axolotl.Variant variant = Axolotl.Variant.valueOf(data[0]);
+
+            return BaseItemDecoratorImpl.axolotlBucket(variant, setDefaultName);
         } else {
             Material material = Material.matchMaterial(base.toUpperCase());
             if (material == null) {
@@ -138,8 +145,8 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 .setItem(item, setDefaultName);
     }
 
-    public static BaseItemDecorator firework(int power, boolean setDefaultName) {
-        BaseItem item = new FireworkItem(power);
+    public static BaseItemDecorator fireworkRocket(int power, boolean setDefaultName) {
+        BaseItem item = new FireworkRocketItem(power);
         if (!item.isExist()) {
             return null;
         }
@@ -158,6 +165,15 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
 
     public static BaseItemDecorator tropicalFishBucket(TropicalFish.Pattern pattern, DyeColor patternColor, DyeColor bodyColor, boolean setDefaultName) {
         BaseItem item = new TropicalFishBucketItem(pattern, patternColor, bodyColor);
+        if (!item.isExist()) {
+            return null;
+        }
+        return new BaseItemDecoratorImpl()
+                .setItem(item, setDefaultName);
+    }
+
+    public static BaseItemDecorator axolotlBucket(Axolotl.Variant variant, boolean setDefaultName) {
+        BaseItem item = new AxolotlBucketItem(variant);
         if (!item.isExist()) {
             return null;
         }

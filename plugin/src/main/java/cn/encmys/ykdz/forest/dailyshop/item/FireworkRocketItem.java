@@ -7,10 +7,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.Nullable;
 
-public class FireworkItem extends VanillaItem implements BaseItem {
+public class FireworkRocketItem extends VanillaItem implements BaseItem {
     private final int power;
 
-    public FireworkItem(int power) {
+    public FireworkRocketItem(int power) {
         super(Material.FIREWORK_ROCKET);
         this.power = power;
     }

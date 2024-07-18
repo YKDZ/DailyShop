@@ -8,7 +8,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import dev.jorel.commandapi.CommandAPICommand;
-import io.lumine.mythic.api.items.ItemManager;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
@@ -17,9 +16,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionData;
 
 import java.util.ArrayList;
@@ -122,6 +119,22 @@ public class ProductCommand {
                                 builder.append(" -flicker:true");
                             }
                             keyValue.add(builder.append("\"").toString());
+                        }
+                    }
+                    // Axolotl Bucket
+                    else if (item.getType() == Material.AXOLOTL_BUCKET) {
+                        AxolotlBucketMeta meta = (AxolotlBucketMeta) item.getItemMeta();
+                        if (meta != null) {
+                            vars.put("keys", "base");
+                            keyValue.add("<#C28456>base: <#346659>AXOLOTL_BUCKET:" + meta.getVariant().name());
+                        }
+                    }
+                    // Tropical Fish Bucket
+                    else if (item.getType() == Material.TROPICAL_FISH_BUCKET) {
+                        TropicalFishBucketMeta meta = (TropicalFishBucketMeta) item.getItemMeta();
+                        if (meta != null && meta.hasVariant()) {
+                            vars.put("keys", "base");
+                            keyValue.add("<#C28456>base: <#346659>TROPICAL_FISH_BUCKET:" + meta.getPattern().name() + ":" + meta.getBodyColor().name() + ":" + meta.getPatternColor().name());
                         }
                     }
                     // MMOItems

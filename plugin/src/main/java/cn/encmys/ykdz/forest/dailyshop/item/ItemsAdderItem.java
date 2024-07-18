@@ -38,7 +38,7 @@ public class ItemsAdderItem implements BaseItem {
 
     @Override
     public BaseItemType getItemType() {
-        return BaseItemType.ITEMSADDER;
+        return BaseItemType.ITEMS_ADDER;
     }
 
     @Override
