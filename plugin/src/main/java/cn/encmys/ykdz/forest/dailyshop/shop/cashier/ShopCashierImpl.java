@@ -156,7 +156,7 @@ public class ShopCashierImpl implements ShopCashier {
             }
             // 客户背包空间不足
             else if (!canHold(order)) {
-                return SettlementResult.NOT_ENOUGH_MONEY;
+                return SettlementResult.NOT_ENOUGH_INVENTORY_SPACE;
             }
         }
         return SettlementResult.SUCCESS;

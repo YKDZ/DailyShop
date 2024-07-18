@@ -418,11 +418,13 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                             case NOT_ENOUGH_MONEY -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
                             case NOT_ENOUGH_GLOBAL_STOCK -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_global, player, vars));
                             case NOT_ENOUGH_PLAYER_STOCK -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_player, player, vars));
+                            case NOT_ENOUGH_INVENTORY_SPACE -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_inventory_space, player, vars));
                         }
                         return;
+                    } else {
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
+                        player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                     }
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
-                    player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
                 }
                 // 玩家向商店出售商品
                 else if (clickType == ClickType.RIGHT) {

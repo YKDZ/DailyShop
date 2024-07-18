@@ -28,6 +28,7 @@ public class MessageConfig {
     public static String messages_action_buy_failure_money;
     public static String messages_action_buy_failure_stock_global;
     public static String messages_action_buy_failure_stock_player;
+    public static String messages_action_buy_failure_inventory_space;
     public static String messages_action_sell_success;
     public static String messages_action_sell_failure_disable;
     public static String messages_action_sell_failure_notEnough;
@@ -74,6 +75,7 @@ public class MessageConfig {
         messages_action_buy_failure_money = getMessage("messages.action.buy.failure.money");
         messages_action_buy_failure_stock_global = getMessage("messages.action.buy.failure.stock-global");
         messages_action_buy_failure_stock_player = getMessage("messages.action.buy.failure.stock-player");
+        messages_action_buy_failure_inventory_space = getMessage("messages.action.buy.failure.inventory-space");
         messages_action_sell_success = getMessage("messages.action.sell.success");
         messages_action_sell_failure_disable = getMessage("messages.action.sell.failure.disable");
         messages_action_sell_failure_notEnough = getMessage("messages.action.sell.failure.not-enough");
