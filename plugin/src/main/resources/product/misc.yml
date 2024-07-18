@@ -57,8 +57,8 @@ products:
       - "tell %player_name% Now you can fly in 30 minutes!"
 #    sell-commands:
 #      - "tell You can also \"sell\" a command."
-#      - "tell I don't know what this feature is for."
-#      - "tell I just implemented it"
+#      - "tell I don't really know what this feature is for."
+#      - "tell I just implemented it :)"
     sell-price:
       disable: true
     rarity: ancient
@@ -74,7 +74,7 @@ products:
         - "<gray>These lore will not be applied to the product item."
     # For the mmoitem that has random modifier, level or stat value things,
     # you need to disable cache to enable it, or every product item
-    # that player buy will be the same without any random.
+    # that player buy will be the same without any randomization.
     cacheable: false
 
   # This product will not load if MMOItems plugin is not installed.

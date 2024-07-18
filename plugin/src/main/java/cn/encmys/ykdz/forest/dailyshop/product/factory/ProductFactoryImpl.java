@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -20,13 +21,20 @@ import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ProductFactoryImpl implements ProductFactory {
     private static final HashMap<String, Product> allProducts = new HashMap<>();
 
     public ProductFactoryImpl() {
+        load();
+    }
+
+    public void load() {
         for (String configId : ProductConfig.getAllPacksId()) {
             YamlConfiguration config = ProductConfig.getConfig(configId);
             ConfigurationSection products = config.getConfigurationSection("products");
@@ -69,7 +77,7 @@ public class ProductFactoryImpl implements ProductFactory {
 
         // Item (只有 ItemProduct 需要此配置)
         BaseItemDecorator itemBuilder = null;
-        if (productSection.contains("item")) {
+        if (itemSection != null && productSection.contains("item")) {
             itemBuilder = BaseItemDecoratorImpl.get(itemSection.getString("base", "DIRT"), false);
 
             if (itemBuilder == null) {
@@ -143,18 +151,34 @@ public class ProductFactoryImpl implements ProductFactory {
         }
 
         // 库存（可指定默认值）
-        ConfigurationSection stockSection = productSection.getConfigurationSection("stock");
-        ConfigurationSection defaultStockSection = defaultSettings.getConfigurationSection("stock");
+        ProductStock stock;
 
-        ProductStock stock = new ProductStockImpl(
-                id,
-                ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
-                ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
-                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.supply", false),
-                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.supply", false),
-                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
-                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false)
-        );
+        try {
+            ProductData data = DailyShop.DATABASE.queryProductData(id).get();
+
+            ConfigurationSection stockSection = productSection.getConfigurationSection("stock");
+            ConfigurationSection defaultStockSection = defaultSettings.getConfigurationSection("stock");
+
+            stock = new ProductStockImpl(
+                    id,
+                    ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
+                    ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.supply", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.supply", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.inherit", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.inherit", false)
+            );
+
+            // 仅持久化 currentAmount 数据（尊重最新的溢出、补充、尺寸等配置）
+            if (data != null) {
+                stock.setCurrentGlobalAmount(data.stock().getCurrentGlobalAmount());
+                stock.setCurrentPlayerAmount(data.stock().getCurrentPlayerAmount());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
         // IconBuilder
         BaseItemDecorator iconBuilder = BaseItemDecoratorImpl.get(iconSection.getString("base", "DIRT"), true);
@@ -175,7 +199,7 @@ public class ProductFactoryImpl implements ProductFactory {
 
         // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
-            getAllProducts().put(id,
+            allProducts.put(id,
                     new CommandProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock,
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
@@ -191,10 +215,10 @@ public class ProductFactoryImpl implements ProductFactory {
                     LogUtils.warn("Product " + id + " has invalid bundle-contents. The invalid line is: " + contentData + ".");
                 }
             }
-            getAllProducts().put(id,
+            allProducts.put(id,
                     new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock, bundleContents));
         } else {
-            getAllProducts().put(id,
+            allProducts.put(id,
                     new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, stock, isCacheable));
         }
     }
@@ -216,6 +240,19 @@ public class ProductFactoryImpl implements ProductFactory {
 
     @Override
     public void unload() {
+        save();
         allProducts.clear();
+    }
+
+    @Override
+    public void save() {
+        List<Product> data = new ArrayList<>();
+        for (Product product : getAllProducts().values()) {
+            // 仅需要储存有库存设置的商品
+            if (product.getProductStock().isGlobalStock() || product.getProductStock().isPlayerStock()) {
+                data.add(product);
+            }
+        }
+        DailyShop.DATABASE.saveProductData(data);
     }
 }

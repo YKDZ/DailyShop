@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -12,16 +13,20 @@ import java.util.UUID;
 
 public class ProductStockImpl implements ProductStock {
     private final String productId;
+    @Expose
     private int currentGlobalAmount;
     private final int initialGlobalAmount;
+    @Expose
     private final Map<UUID, Integer> currentPlayerAmount = new HashMap<>();
     private final int initialPlayerAmount;
     private final boolean globalSupply;
     private final boolean playerSupply;
     private final boolean globalOverflow;
     private final boolean playerOverflow;
+    private final boolean globalInherit;
+    private final boolean playerInherit;
 
-    public ProductStockImpl(@NotNull String productId, int initialGlobalAmount, int initialPlayerAmount, boolean globalSupply, boolean playerSupply, boolean globalOverflow, boolean playerOverflow) {
+    public ProductStockImpl(@NotNull String productId, int initialGlobalAmount, int initialPlayerAmount, boolean globalSupply, boolean playerSupply, boolean globalOverflow, boolean playerOverflow, boolean globalInherit, boolean playerInherit) {
         this.productId = productId;
         this.initialGlobalAmount = initialGlobalAmount;
         this.currentGlobalAmount = initialGlobalAmount;
@@ -30,6 +35,8 @@ public class ProductStockImpl implements ProductStock {
         this.playerSupply = playerSupply;
         this.globalOverflow = globalOverflow;
         this.playerOverflow = playerOverflow;
+        this.globalInherit = globalInherit;
+        this.playerInherit = playerInherit;
     }
 
     @Override
@@ -58,8 +65,19 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
+    public Map<UUID, Integer> getCurrentPlayerAmount() {
+        return currentPlayerAmount;
+    }
+
+    @Override
     public void setCurrentPlayerAmount(@NotNull UUID playerUUID, int amount) {
         this.currentPlayerAmount.put(playerUUID, amount);
+    }
+
+    @Override
+    public void setCurrentPlayerAmount(Map<UUID, Integer> amount) {
+        this.currentPlayerAmount.clear();
+        this.currentPlayerAmount.putAll(amount);
     }
 
     @Override
@@ -93,14 +111,28 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
+    public boolean isGlobalInherit() {
+        return globalInherit;
+    }
+
+    @Override
+    public boolean isPlayerInherit() {
+        return playerInherit;
+    }
+
+    @Override
     public boolean isGlobalStock() {
         return initialGlobalAmount != -1;
     }
 
     @Override
     public void restock() {
-        currentGlobalAmount = initialGlobalAmount;
-        currentPlayerAmount.clear();
+        if (!isPlayerInherit()) {
+            currentPlayerAmount.clear();
+        }
+        if (!isGlobalInherit()) {
+            currentGlobalAmount = initialGlobalAmount;
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.shop.factory;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ShopData;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
@@ -13,7 +13,7 @@ import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ShopFactoryImpl implements ShopFactory {
     private static final HashMap<String, Shop> shops = new HashMap<>();
@@ -68,18 +68,21 @@ public class ShopFactoryImpl implements ShopFactory {
         );
 
         // 从数据库加载一系列商店数据
-        shop.getShopStocker().setLastRestocking(DailyShop.DATABASE.queryShopLastRestocking(id));
-
-        List<String> dataListedProducts = DailyShop.DATABASE.queryShopListedProducts(id);
-        if (!dataListedProducts.isEmpty()) {
-            shop.getShopStocker().addListedProducts(dataListedProducts);
-        } else {
-            shop.getShopStocker().restock();
-        }
-
-        Map<String, PricePair> dataCachedPrices = DailyShop.DATABASE.queryShopCachedPrices(id);
-        if (!dataListedProducts.isEmpty()) {
-            shop.getShopPricer().setCachedPrices(dataCachedPrices);
+        try {
+            ShopData data = DailyShop.DATABASE.queryShopData(id).get();
+            if (data != null) {
+                if (!data.listedProducts().isEmpty()) {
+                    shop.getShopStocker().addListedProducts(data.listedProducts());
+                }
+                if (!data.cachedPrices().isEmpty()) {
+                    shop.getShopPricer().setCachedPrices(data.cachedPrices());
+                }
+                shop.getShopStocker().setLastRestocking(data.lastRestocking());
+            } else {
+                shop.getShopStocker().restock();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
         // 加载完成
 
@@ -106,10 +109,6 @@ public class ShopFactoryImpl implements ShopFactory {
 
     @Override
     public void save() {
-        HashMap<String, Shop> dataMap = new HashMap<>();
-        for (Shop shop : getAllShops().values()) {
-            dataMap.put(shop.getId(), shop);
-        }
-        DailyShop.DATABASE.saveShopData(dataMap);
+        DailyShop.DATABASE.saveShopData(getAllShops().values().stream().toList());
     }
 }

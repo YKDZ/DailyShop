@@ -23,9 +23,11 @@ import java.util.stream.IntStream;
 
 public class ShopCashierImpl implements ShopCashier {
     private final Shop shop;
+    // TODO 商人功能
     private double balance = -1d;
     private final boolean supply = false;
     private final boolean overflow = false;
+    private boolean inherit = false;
 
     public ShopCashierImpl(@NotNull Shop shop) {
         this.shop = shop;

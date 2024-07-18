@@ -42,8 +42,9 @@ public class SchedulerImpl implements Scheduler {
     public void runDataSaver() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimerAsynchronously(DailyShop.INSTANCE, task -> {
+            DailyShop.PRODUCT_FACTORY.save();
             DailyShop.SHOP_FACTORY.save();
-            LogUtils.info("Successfully save shop data.");
+            LogUtils.info("Successfully save shop and product data.");
         }, 0, Config.dataSaveTimer * 60L * 20L);
     }
 }

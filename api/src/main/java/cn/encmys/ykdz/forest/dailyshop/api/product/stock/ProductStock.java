@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.product.stock;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 public interface ProductStock {
@@ -16,7 +17,11 @@ public interface ProductStock {
 
     int getCurrentPlayerAmount(UUID uuid);
 
+    Map<UUID, Integer> getCurrentPlayerAmount();
+
     void setCurrentPlayerAmount(UUID uuid, int amount);
+
+    void setCurrentPlayerAmount(Map<UUID, Integer> amount);
 
     int getInitialGlobalAmount();
 
@@ -31,6 +36,10 @@ public interface ProductStock {
     void modifyGlobal(int amount);
 
     boolean isPlayerStock();
+
+    boolean isGlobalInherit();
+
+    boolean isPlayerInherit();
 
     boolean isGlobalStock();
 

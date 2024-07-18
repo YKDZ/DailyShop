@@ -15,4 +15,6 @@ public interface ProductFactory {
     boolean containsProduct(String id);
 
     void unload();
+
+    void save();
 }

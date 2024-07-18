@@ -3,6 +3,13 @@ settings:
   size: 14
   # Restock interval in minutes
   restock-timer: 10
+  # Allow the store itself to have a virtual balance
+  # and no longer purchase products from player when the balance is depleted.
+  merchant:
+    balance: 1000
+    supply: true
+    overflow: false
+    inherit: false
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
