@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerUtils {
-    public static ItemStack getItemInMainHand(Player player) {
+    public static ItemStack getItemInMainHand(@NotNull Player player) {
         return player.getInventory().getItemInMainHand();
     }
 
@@ -17,12 +17,11 @@ public class PlayerUtils {
         }
 
         int neededSpace = item.getAmount() * stack;
-        for (ItemStack check : inv) {
+        for (ItemStack check : inv.getStorageContents()) {
             if (check == null || check.getType().isAir()) {
                 neededSpace -= item.getMaxStackSize();
             } else if (check.isSimilar(item)) {
-                int remain = check.getMaxStackSize() - check.getAmount();
-                neededSpace -= remain;
+                neededSpace -= item.getMaxStackSize() - check.getAmount();
             }
             if (neededSpace <= 0) {
                 return true;

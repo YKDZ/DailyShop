@@ -31,6 +31,7 @@ messages:
         disable: "<gray>你不能从商店 <reset>{shop}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>."
         stock-global: "<gray>你不能从商店 <reset>{shop}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>. 商店的总库存不足."
         stock-player: "<gray>你不能从商店 <reset>{shop}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>. 商店分配给你的商品配额已经被消耗完了."
+        inventory-space: "<gray>你的背包空间无法容纳 <reset>{name} <gray>x <white>{amount}<gray>."
     sell:
       success: "<gray>成功向商店 <reset>{shop}<gray> 出售了 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
       failure:

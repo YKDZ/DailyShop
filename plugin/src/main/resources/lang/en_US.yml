@@ -40,6 +40,7 @@ messages:
         disable: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>."
         stock-global: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>. The shop has ran out of global stock."
         stock-player: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop}<gray>. The product quota allocated to you by the shop has been exhausted."
+        inventory-space: "<gray>You do not have enough inventory space to hold <reset>{name} <gray>x <white>{amount} <gray>."
     sell:
       success: "<gray>Successfully sell <reset>{name} <gray>x <white>{amount} <gray>to shop <reset>{shop}<gray>. You earned <white>{earn}."
       failure:
