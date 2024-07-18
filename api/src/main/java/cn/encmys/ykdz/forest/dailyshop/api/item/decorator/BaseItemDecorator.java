@@ -1,12 +1,7 @@
-package cn.encmys.ykdz.forest.dailyshop.api.builder;
+package cn.encmys.ykdz.forest.dailyshop.api.item.decorator;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
-import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import xyz.xenondevs.invui.item.Item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +28,6 @@ public abstract class BaseItemDecorator {
     protected int scroll;
     protected int scrollShift;
 
-    public abstract BaseItemDecorator setItem(BaseItem item, boolean setDefaultName);
-
     public abstract BaseItem getItem();
 
     public abstract BaseItemDecorator setName(String name);
@@ -57,7 +50,7 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setAmount(int amount);
 
-    protected abstract String getNameFormat();
+    public abstract String getNameFormat();
 
     public abstract List<String> getLoreFormat();
 
@@ -95,10 +88,4 @@ public abstract class BaseItemDecorator {
     public abstract List<String> getFireworkEffectData();
 
     public abstract BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData);
-
-    public abstract Item buildProductIcon(Player player, String shopId, Product product);
-
-    public abstract Item buildNormalIcon();
-
-    public abstract ItemStack buildProductItem(@Nullable Player player);
 }

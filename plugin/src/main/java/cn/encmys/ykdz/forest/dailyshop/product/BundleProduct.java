@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
@@ -50,7 +50,7 @@ public class BundleProduct extends Product {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
-            DailyShop.PRODUCT_FACTORY.getProduct(contentId).give(shop, player, contentStack);
+            DailyShop.PRODUCT_FACTORY.getProduct(contentId).give(shop, inv, player, contentStack);
         }
     }
 
@@ -65,7 +65,7 @@ public class BundleProduct extends Product {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
 
-            DailyShop.PRODUCT_FACTORY.getProduct(contentId).take(shop, player, contentStack);
+            DailyShop.PRODUCT_FACTORY.getProduct(contentId).take(shop, inv, player, contentStack);
         }
     }
 
@@ -83,12 +83,12 @@ public class BundleProduct extends Product {
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
             int contentStack = entry.getValue();
 
-            if (content.has(shop, player, 1) < contentStack) {
+            if (content.has(shop, inv, player, 1) < contentStack) {
                 count = 0;
                 break;
             }
 
-            count = Math.min(count, content.has(shop, player, 1) / contentStack);
+            count = Math.min(count, content.has(shop, inv, player, 1) / contentStack);
         }
 
         return count;
@@ -105,7 +105,7 @@ public class BundleProduct extends Product {
             String contentId = entry.getKey();
             int contentStack = entry.getValue();
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
-            if (!content.canHold(shop, player, contentStack)) {
+            if (!content.canHold(shop, inv, player, contentStack)) {
                 return false;
             }
         }

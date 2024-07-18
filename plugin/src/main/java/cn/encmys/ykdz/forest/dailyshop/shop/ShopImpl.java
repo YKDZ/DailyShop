@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
+import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashierImpl;
@@ -71,7 +72,7 @@ public class ShopImpl implements Shop {
     @Override
     public void cacheProductItem(Product product) {
         if (product.isCacheable()) {
-            getCachedProductItems().put(product.getId(), product.getProductItemBuilder().buildProductItem(null));
+            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getItemDecorator(), null));
         }
     }
 
@@ -89,7 +90,7 @@ public class ShopImpl implements Shop {
     @NotNull
     public ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, @Nullable Player player) {
         return Optional.ofNullable(getCachedProductItem(product))
-                .orElse(product.getProductItemBuilder().buildProductItem(player));
+                .orElse(ProductItemBuilder.build(product.getItemDecorator(), player));
     }
 
     @Override

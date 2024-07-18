@@ -218,7 +218,7 @@ public class ShopCashierImpl implements ShopCashier {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
             orderedProductIds.add(product.getId());
-            orderedProductNames.add(product.getIconBuilder().getName());
+            orderedProductNames.add(product.getIconDecorator().getName());
             orderedProductStacks.add(stack);
         }
 

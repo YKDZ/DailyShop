@@ -1,10 +1,11 @@
 package cn.encmys.ykdz.forest.dailyshop.product.factory;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
+import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -12,7 +13,8 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
@@ -76,23 +78,23 @@ public class ProductFactoryImpl implements ProductFactory {
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
 
         // Item (只有 ItemProduct 需要此配置)
-        BaseItemDecorator itemBuilder = null;
+        BaseItemDecorator itemDecorator = null;
         if (itemSection != null && productSection.contains("item")) {
-            itemBuilder = BaseItemDecoratorImpl.get(itemSection.getString("base", "DIRT"), false);
+            BaseItem item = BaseItemBuilder.get(itemSection.getString("base", "DIRT"));
 
-            if (itemBuilder == null) {
+            if (item == null) {
                 LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");
                 return;
-            } else {
-                itemBuilder
-                        .setName(itemSection.getString("name"))
-                        .setLore(itemSection.getStringList("lore"))
-                        .setAmount(itemSection.getInt("amount", defaultSettings.getInt("item.amount", 1)))
-                        .setItemFlags(itemSection.getStringList("item-flags"))
-                        .setCustomModelData((Integer) itemSection.get("custom-model-data"))
-                        .setPatternsData(itemSection.getStringList("banner-patterns"))
-                        .setFireworkEffectData(itemSection.getStringList("firework-effects"));
             }
+
+            itemDecorator = new BaseItemDecoratorImpl(item, false)
+                    .setName(itemSection.getString("name"))
+                    .setLore(itemSection.getStringList("lore"))
+                    .setAmount(itemSection.getInt("amount", defaultSettings.getInt("item.amount", 1)))
+                    .setItemFlags(itemSection.getStringList("item-flags"))
+                    .setCustomModelData((Integer) itemSection.get("custom-model-data"))
+                    .setPatternsData(itemSection.getStringList("banner-patterns"))
+                    .setFireworkEffectData(itemSection.getStringList("firework-effects"));
         }
 
         // Icon (若不指定则与 Item 相同)
@@ -180,27 +182,27 @@ public class ProductFactoryImpl implements ProductFactory {
             throw new RuntimeException(e);
         }
 
-        // IconBuilder
-        BaseItemDecorator iconBuilder = BaseItemDecoratorImpl.get(iconSection.getString("base", "DIRT"), true);
+        // IconDecorator
+        BaseItem item = BaseItemBuilder.get(iconSection.getString("base", "DIRT"));
 
-        if (iconBuilder == null) {
+        if (item == null) {
             LogUtils.warn("Product " + id + " has invalid base setting. Please check it.");
             return;
-        } else {
-            iconBuilder
-                    .setAmount(iconSection.getInt("amount", 1))
-                    .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
-                    .setName(iconSection.getString("name"))
-                    .setItemFlags(iconSection.getStringList("item-flags"))
-                    .setCustomModelData((Integer) iconSection.get("custom-model-data"))
-                    .setPatternsData(iconSection.getStringList("banner-patterns"))
-                    .setFireworkEffectData(iconSection.getStringList("firework-effects"));
         }
+
+        BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(item, true)
+                .setAmount(iconSection.getInt("amount", 1))
+                .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
+                .setName(iconSection.getString("name"))
+                .setItemFlags(iconSection.getStringList("item-flags"))
+                .setCustomModelData((Integer) iconSection.get("custom-model-data"))
+                .setPatternsData(iconSection.getStringList("banner-patterns"))
+                .setFireworkEffectData(iconSection.getStringList("firework-effects"));
 
         // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
             allProducts.put(id,
-                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock,
+                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock,
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
         } else if (productSection.contains("bundle-contents")) {
@@ -216,10 +218,10 @@ public class ProductFactoryImpl implements ProductFactory {
                 }
             }
             allProducts.put(id,
-                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock, bundleContents));
+                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, bundleContents));
         } else {
             allProducts.put(id,
-                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, stock, isCacheable));
+                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconDecorator, itemDecorator, stock, isCacheable));
         }
     }
 

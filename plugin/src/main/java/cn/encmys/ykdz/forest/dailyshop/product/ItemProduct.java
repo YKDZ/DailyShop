@@ -1,8 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.product;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
@@ -56,7 +56,7 @@ public class ItemProduct extends Product {
 
     @Override
     public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
-        int needed = getProductItemBuilder().getAmount() * stack;
+        int needed = getItemDecorator().getAmount() * stack;
         if (has(shop, inv, player, 1) < stack) {
             return;
         }
@@ -83,7 +83,7 @@ public class ItemProduct extends Product {
     @Override
     public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         int total = 0;
-        int stackedAmount = getProductItemBuilder().getAmount() * stack;
+        int stackedAmount = getItemDecorator().getAmount() * stack;
         for (ItemStack check : inv) {
             if (check != null && isMatch(shop.getId(), check, player)) {
                 total += check.getAmount();
@@ -105,7 +105,7 @@ public class ItemProduct extends Product {
     @Override
     public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-        BaseItem baseItem = getProductItemBuilder().getItem();
+        BaseItem baseItem = getItemDecorator().getItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);
         } else {

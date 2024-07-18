@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.product;
 
-import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
@@ -17,8 +17,8 @@ public abstract class Product {
     private final Price buyPrice;
     private final Price sellPrice;
     private final Rarity rarity;
-    private final BaseItemDecorator iconBuilder;
-    private final BaseItemDecorator productItemBuilder;
+    private final BaseItemDecorator iconDecorator;
+    private final BaseItemDecorator itemDecorator;
     private final ProductStock productStock;
     private final boolean isCacheable;
 
@@ -27,16 +27,16 @@ public abstract class Product {
             Price buyPrice,
             Price sellPrice,
             Rarity rarity,
-            BaseItemDecorator iconBuilder,
-            BaseItemDecorator productItemBuilder,
+            BaseItemDecorator iconDecorator,
+            BaseItemDecorator itemDecorator,
             ProductStock productStock,
             boolean isCacheable) {
         this.id = id;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
         this.rarity = rarity;
-        this.iconBuilder = iconBuilder;
-        this.productItemBuilder = productItemBuilder;
+        this.iconDecorator = iconDecorator;
+        this.itemDecorator = itemDecorator;
         this.productStock = productStock;
         this.isCacheable = isCacheable;
     }
@@ -59,12 +59,12 @@ public abstract class Product {
 
     public abstract ProductType getType();
 
-    public BaseItemDecorator getIconBuilder() {
-        return iconBuilder;
+    public BaseItemDecorator getIconDecorator() {
+        return iconDecorator;
     }
 
-    public BaseItemDecorator getProductItemBuilder() {
-        return productItemBuilder;
+    public BaseItemDecorator getItemDecorator() {
+        return itemDecorator;
     }
 
     public ProductStock getProductStock() {
