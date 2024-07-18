@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -57,8 +58,8 @@ public class ShopConfig {
         return getConfig(shopId).getString("settings.name");
     }
 
-    public static int getRestockTimerSection(String shopId) {
-        return getConfig(shopId).getInt("settings.restock-timer");
+    public static long getRestockPeriod(String shopId) {
+        return TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock-period"));
     }
 
     public static String getShopGUITitle(String shopId) {

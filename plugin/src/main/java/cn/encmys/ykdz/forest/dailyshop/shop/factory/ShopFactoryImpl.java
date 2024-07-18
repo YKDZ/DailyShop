@@ -7,7 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ShopData;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 
 import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ public class ShopFactoryImpl implements ShopFactory {
 
     @Override
     public void load() {
-        // Build shop
         for (String id : ShopConfig.getAllId()) {
             buildShop(id);
         }
@@ -62,7 +61,7 @@ public class ShopFactoryImpl implements ShopFactory {
         Shop shop = new ShopImpl(
                 id,
                 ShopConfig.getName(id),
-                ShopConfig.getRestockTimerSection(id),
+                ShopConfig.getRestockPeriod(id),
                 products,
                 ShopConfig.getSize(id)
         );

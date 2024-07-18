@@ -6,9 +6,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
 import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -118,7 +119,7 @@ public class ShopGUI extends ShopRelatedGUI {
                     .setAmount(icon.getInt("amount", 1))
                     .setName(icon.getString("name", null))
                     .setLore(icon.getStringList("lore"))
-                    .setPeriod(icon.getLong("update-timer", 0L))
+                    .setPeriod(TextUtils.parseTimeToTicks(icon.getString("update-period", "0s")))
                     .setScroll(icon.getInt("scroll", 0))
                     .setCommands(new HashMap<>() {{
                         put(ClickType.LEFT, icon.getStringList("commands.left"));

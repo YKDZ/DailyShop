@@ -14,7 +14,7 @@ import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.builder.ShopOrderBuilderImpl;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;

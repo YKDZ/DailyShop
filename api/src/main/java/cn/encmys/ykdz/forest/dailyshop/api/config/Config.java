@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,7 +15,9 @@ public class Config {
     public static int logDataLimit_entryAmount;
     public static double logDataLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
-    public static int dataSaveTimer;
+    public static long period_saveData;
+    public static long period_updateProductIcon;
+    public static long period_checkRestocking;
     public static int version;
 
     public static void load() {
@@ -42,10 +45,12 @@ public class Config {
 
     private static void setUp() {
         language = config.getString("language", "en_US");
-        dataSaveTimer = config.getInt("data-save-timer", 5);
+        period_saveData = TextUtils.parseTimeToTicks(config.getString("period.save-data", "5m"));
+        period_updateProductIcon = TextUtils.parseTimeToTicks(config.getString("period.update-product-icon", "3s"));
+        period_checkRestocking = TextUtils.parseTimeToTicks(config.getString("period.check-restocking", "3s"));
         priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
         logDataLimit_entryAmount = config.getInt("log-data-limit.entry-amount", 500);
-        logDataLimit_timeRange = config.getDouble("log-data-limit.time-range", 7);
+        logDataLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-data-limit.time-range", "7d"));
         version = config.getInt("version");
     }
 

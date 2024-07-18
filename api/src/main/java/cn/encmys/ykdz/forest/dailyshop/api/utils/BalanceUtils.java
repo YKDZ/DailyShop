@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.util;
+package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import net.milkbowl.vault.economy.EconomyResponse;

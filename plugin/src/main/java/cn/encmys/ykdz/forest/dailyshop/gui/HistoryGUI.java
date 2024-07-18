@@ -7,9 +7,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.SettlementLogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import xyz.xenondevs.invui.window.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HistoryGUI extends ShopRelatedGUI {
     public HistoryGUI(Shop shop) {
@@ -31,7 +33,13 @@ public class HistoryGUI extends ShopRelatedGUI {
 
     @Override
     public void open(@NotNull Player player) {
-        List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(shop.getId(), player.getUniqueId(), null, 365, 100, SettlementLogType.BUY_ALL_FROM, SettlementLogType.BUY_FROM, SettlementLogType.SELL_TO);
+        List<SettlementLog> logs = null;
+        try {
+            logs = DailyShop.DATABASE.queryLogs(shop.getId(), player.getUniqueId(), null, 365, 100, SettlementLogType.BUY_ALL_FROM, SettlementLogType.BUY_FROM, SettlementLogType.SELL_TO).get();
+        } catch (InterruptedException | ExecutionException e) {
+            LogUtils.warn("Error querying logs for " + shop.getId() + ": " + e.getMessage());
+            throw new RuntimeException(e);
+        }
         ScrollGui.Builder<Item> builder = buildGUIBuilder(player);
 
         for (SettlementLog log : logs) {
@@ -114,7 +122,7 @@ public class HistoryGUI extends ShopRelatedGUI {
                     .setAmount(icon.getInt("amount", 1))
                     .setName(icon.getString("name", null))
                     .setLore(icon.getStringList("lore"))
-                    .setPeriod(icon.getLong("update-timer", 0L))
+                    .setPeriod(TextUtils.parseTimeToTicks(icon.getString("update-period", "0s")))
                     .setScroll(icon.getInt("scroll", 0))
                     .setCommands(new HashMap<>() {{
                         put(ClickType.LEFT, icon.getStringList("commands.left"));

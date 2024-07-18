@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
@@ -20,8 +21,8 @@ import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
-import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.CommandUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -384,11 +385,11 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 }};
 
                 return new ItemBuilder(
-                        new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(null))
+                        new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(getItem().build(null))
                                 .setCustomModelData(getCustomModelData())
                                 .setItemFlags(getItemFlags())
-                                .setLore(TextUtils.decorateTextWithListVar(getLoreFormat(), null, listVars, vars))
-                                .setDisplayName(TextUtils.decorateTextWithVar(getNameFormat(), null, vars))
+                                .setLore(TextUtils.parseVar(getLoreFormat(), null, listVars, vars))
+                                .setDisplayName(TextUtils.parseVar(getNameFormat(), null, vars))
                                 .setBannerPatterns(getPatternsData())
                                 .setFireworkEffects(getFireworkEffectData())
                                 .build(getAmount()));
@@ -461,7 +462,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         };
         // 根据需求设置是否自动刷新
         if (product.getProductStock().isPlayerStock() || product.getProductStock().isGlobalStock()) {
-            ((Icon) icon).startUpdater(20);
+            ((Icon) icon).startUpdater(Config.period_updateProductIcon);
         }
         return icon;
     }
@@ -475,7 +476,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 @Override
                 public ItemProvider getItemProvider() {
                     return new ItemBuilder(
-                            new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(null))
+                            new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(getItem().build(null))
                                     .setCustomModelData(getCustomModelData())
                                     .setItemFlags(getItemFlags())
                                     .setLore(TextUtils.decorateText(getLore(), null))
@@ -516,11 +517,11 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                         put("max-scroll", String.valueOf(gui.getMaxLine() + 1 - getScrollShift() + 1));
                     }};
                     return new ItemBuilder(
-                            new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(null))
+                            new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(getItem().build(null))
                                     .setCustomModelData(getCustomModelData())
                                     .setItemFlags(getItemFlags())
-                                    .setLore(TextUtils.decorateTextWithVar(getLore(), null, vars))
-                                    .setDisplayName(TextUtils.decorateTextWithVar(getName(), null, vars))
+                                    .setLore(TextUtils.parseVar(getLore(), null, vars))
+                                    .setDisplayName(TextUtils.parseVar(getName(), null, vars))
                                     .setFireworkEffects(getFireworkEffectData())
                                     .build(getAmount()));
                 }
@@ -537,7 +538,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
 
     @Override
     public ItemStack buildProductItem(@Nullable Player player) {
-        return new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(getItem().build(player))
+        return new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(getItem().build(player))
                 .setDisplayName(TextUtils.decorateText(getName(), player))
                 .setLore(TextUtils.decorateText(getLore(), player))
                 .setItemFlags(getItemFlags())

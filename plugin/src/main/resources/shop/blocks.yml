@@ -1,8 +1,7 @@
 settings:
   name: "<#A0522D>Blocks Shop"
   size: 18
-  # Restock interval in minutes
-  restock-timer: 10
+  restock-period: "10m"
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
@@ -31,7 +30,7 @@ shop-gui:
     "@":
       item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
-      update-timer: 10
+      update-period: "1s"
     "u":
       item: GREEN_STAINED_GLASS_PANE
       name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
@@ -47,6 +46,9 @@ shop-gui:
         - " "
         - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
         - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+        - "~"
+        - "?<dark_gray>Global Stock: <white>{current-global-stock}/{initial-global-stock}"
+        - "?<dark_gray>Player Stock: <white>{current-player-stock}/{initial-player-stock}"
         - "|"
         - "|<gray>Bundle Contents:"
         - "{bundle-contents}"

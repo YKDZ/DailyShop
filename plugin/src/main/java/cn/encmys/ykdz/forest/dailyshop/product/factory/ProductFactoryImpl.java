@@ -16,8 +16,8 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.stock.ProductStockImpl;
-import cn.encmys.ykdz.forest.dailyshop.util.ConfigUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -163,8 +163,8 @@ public class ProductFactoryImpl implements ProductFactory {
                     id,
                     ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
                     ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.supply", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.supply", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.replenish", false),
+                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.replenish", false),
                     ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
                     ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false),
                     ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.inherit", false),

@@ -22,12 +22,12 @@ public class ShopStockerImpl implements ShopStocker {
     private final Shop shop;
     private final List<String> allProductsId;
     private final List<String> listedProducts = new ArrayList<>();
-    private final int restockTime;
+    private final long restockPeriod;
     private long lastRestocking;
 
-    public ShopStockerImpl(@NotNull Shop shop, int restockTime, List<String> allProductsId) {
+    public ShopStockerImpl(@NotNull Shop shop, long restockPeriod, List<String> allProductsId) {
         this.shop = shop;
-        this.restockTime = restockTime;
+        this.restockPeriod = restockPeriod;
         this.allProductsId = allProductsId;
     }
 
@@ -125,8 +125,8 @@ public class ShopStockerImpl implements ShopStocker {
     }
 
     @Override
-    public int getRestockTime() {
-        return restockTime;
+    public long getRestockPeriod() {
+        return restockPeriod;
     }
 
     @Override

@@ -12,13 +12,14 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ShopPricerImpl implements ShopPricer {
     private final Shop shop;
@@ -129,7 +130,12 @@ public class ShopPricerImpl implements ShopPricer {
     private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
         int totalSales = 0;
 
-        List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(shopId, null, null, timeLimitInDay, numEntries, types);
+        List<SettlementLog> logs = null;
+        try {
+            logs = DailyShop.DATABASE.queryLogs(shopId, null, null, timeLimitInDay, numEntries, types).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
 
         // 计算总销售量
         for (SettlementLog log : logs) {

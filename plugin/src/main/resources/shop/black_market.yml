@@ -1,8 +1,7 @@
 settings:
   name: "<gray>Black Market"
   size: 14
-  # Restock interval in minutes
-  restock-timer: 10
+  restock-period: "10m"
   # Allow the store itself to have a virtual balance
   # and no longer purchase products from player when the balance is depleted.
   merchant:
@@ -42,7 +41,7 @@ shop-gui:
     "@":
       item: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
-      update-timer: 10
+      update-period: "1s"
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -50,7 +49,7 @@ shop-gui:
         - " "
         - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
         - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
-        - ""
+        - "~"
         - "?<dark_gray>Global Stock: <white>{current-global-stock}/{initial-global-stock}"
         - "?<dark_gray>Player Stock: <white>{current-player-stock}/{initial-player-stock}"
         - "|"

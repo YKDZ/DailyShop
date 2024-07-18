@@ -33,11 +33,11 @@ public class ShopImpl implements Shop {
 
     /**
      * @param id            Shop id
-     * @param restockTime   Shop restock time in minutes
+     * @param restockPeriod Shop restock period in ticks
      * @param allProductsId ID of all possible products
      * @param size          Maximum number of items in the shop at the same time
      */
-    public ShopImpl(String id, String name, int restockTime, List<String> allProductsId, int size) {
+    public ShopImpl(String id, String name, long restockPeriod, List<String> allProductsId, int size) {
         this.id = id;
         this.name = name;
         this.size = size;
@@ -45,7 +45,7 @@ public class ShopImpl implements Shop {
         historyGUI = new HistoryGUI(this);
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this);
-        shopStocker = new ShopStockerImpl(this, restockTime, allProductsId);
+        shopStocker = new ShopStockerImpl(this, restockPeriod, allProductsId);
     }
 
     @Override

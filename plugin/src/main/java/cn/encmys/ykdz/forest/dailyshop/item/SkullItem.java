@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
-import cn.encmys.ykdz.forest.dailyshop.util.SkullUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.SkullUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

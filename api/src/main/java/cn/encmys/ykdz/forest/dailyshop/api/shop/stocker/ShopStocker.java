@@ -11,7 +11,7 @@ public interface ShopStocker {
 
     long getLastRestocking();
 
-    int getRestockTime();
+    long getRestockPeriod();
 
     List<String> getListedProducts();
 

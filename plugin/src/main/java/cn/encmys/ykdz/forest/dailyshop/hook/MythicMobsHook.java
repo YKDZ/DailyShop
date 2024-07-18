@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.hook;
 
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import org.bukkit.Bukkit;
 
 public class MythicMobsHook {

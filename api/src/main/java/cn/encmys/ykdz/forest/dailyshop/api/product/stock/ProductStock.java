@@ -25,9 +25,9 @@ public interface ProductStock {
 
     int getInitialGlobalAmount();
 
-    boolean isPlayerSupply();
+    boolean isPlayerReplenish();
 
-    boolean isGlobalSupply();
+    boolean isGlobalReplenish();
 
     void restock();
 

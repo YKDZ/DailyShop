@@ -1,7 +1,10 @@
 language: en_US
-data-save-timer: 5
+period:
+  save-data: "5m"
+  update-product-icon: "3s"
+  check-restocking: "3s"
 log-data-limit:
   entry-amount: 500
-  time-range: 7.0
+  time-range: "7d"
 price-correct-by-disable-sell-or-buy: true
 version: 1

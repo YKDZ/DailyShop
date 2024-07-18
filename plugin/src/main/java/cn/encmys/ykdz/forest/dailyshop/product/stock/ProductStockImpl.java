@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.product.stock;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
-import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,20 +19,20 @@ public class ProductStockImpl implements ProductStock {
     @Expose
     private final Map<UUID, Integer> currentPlayerAmount = new HashMap<>();
     private final int initialPlayerAmount;
-    private final boolean globalSupply;
-    private final boolean playerSupply;
+    private final boolean globalReplenish;
+    private final boolean playerReplenish;
     private final boolean globalOverflow;
     private final boolean playerOverflow;
     private final boolean globalInherit;
     private final boolean playerInherit;
 
-    public ProductStockImpl(@NotNull String productId, int initialGlobalAmount, int initialPlayerAmount, boolean globalSupply, boolean playerSupply, boolean globalOverflow, boolean playerOverflow, boolean globalInherit, boolean playerInherit) {
+    public ProductStockImpl(@NotNull String productId, int initialGlobalAmount, int initialPlayerAmount, boolean globalReplenish, boolean playerReplenish, boolean globalOverflow, boolean playerOverflow, boolean globalInherit, boolean playerInherit) {
         this.productId = productId;
         this.initialGlobalAmount = initialGlobalAmount;
         this.currentGlobalAmount = initialGlobalAmount;
         this.initialPlayerAmount = initialPlayerAmount;
-        this.globalSupply = globalSupply;
-        this.playerSupply = playerSupply;
+        this.globalReplenish = globalReplenish;
+        this.playerReplenish = playerReplenish;
         this.globalOverflow = globalOverflow;
         this.playerOverflow = playerOverflow;
         this.globalInherit = globalInherit;
@@ -86,13 +86,13 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
-    public boolean isPlayerSupply() {
-        return playerSupply;
+    public boolean isPlayerReplenish() {
+        return playerReplenish;
     }
 
     @Override
-    public boolean isGlobalSupply() {
-        return globalSupply;
+    public boolean isGlobalReplenish() {
+        return globalReplenish;
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ProductStockImpl implements ProductStock {
 
     @Override
     public void modifyPlayer(@NotNull UUID playerUUID, int amount) {
-        if ((!playerSupply && amount > 0) || !isPlayerStock()) {
+        if ((!playerReplenish && amount > 0) || !isPlayerStock()) {
             return;
         }
         boolean isOverflow = getCurrentPlayerAmount(playerUUID) + amount >= initialPlayerAmount;
@@ -146,7 +146,7 @@ public class ProductStockImpl implements ProductStock {
 
     @Override
     public void modifyGlobal(int amount) {
-        if ((!globalSupply && amount > 0) || !isGlobalStock()) {
+        if ((!globalReplenish && amount > 0) || !isGlobalStock()) {
             return;
         }
         boolean isOverflow = getCurrentGlobalAmount() + amount >= getInitialGlobalAmount();

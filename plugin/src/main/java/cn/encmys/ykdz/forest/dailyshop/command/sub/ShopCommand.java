@@ -4,7 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
@@ -42,7 +42,7 @@ public class ShopCommand {
                         return;
                     }
                     if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_open_failure_invalidShop, new HashMap<>() {{
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.insertVar(MessageConfig.messages_command_shop_open_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));
                         }}));
                         return;
@@ -67,7 +67,7 @@ public class ShopCommand {
                         return;
                     }
                     if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_history_failure_invalidShop, new HashMap<>() {{
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.insertVar(MessageConfig.messages_command_shop_history_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));
                         }}));
                         return;
@@ -86,13 +86,13 @@ public class ShopCommand {
                 .executes((sender, args) -> {
                     Shop shop = DailyShop.SHOP_FACTORY.getShop((String) args.get("shop"));
                     if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_failure_invalidShop, new HashMap<>() {{
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.insertVar(MessageConfig.messages_command_shop_restock_failure_invalidShop, new HashMap<>() {{
                             put("shop", (String) args.get("shop"));
                         }}));
                         return;
                     }
                     shop.getShopStocker().restock();
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_success, new HashMap<>() {{
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.insertVar(MessageConfig.messages_command_shop_restock_success, new HashMap<>() {{
                         put("shop", shop.getName());
                     }}));
                 });

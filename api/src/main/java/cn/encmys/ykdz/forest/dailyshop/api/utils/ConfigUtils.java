@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.util;
+package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;

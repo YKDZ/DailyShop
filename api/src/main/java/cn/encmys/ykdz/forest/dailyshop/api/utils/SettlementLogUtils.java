@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.util;
+package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -37,7 +37,7 @@ public class SettlementLogUtils {
             String name = names.get(i);
             int stack = stacks.get(i);
 
-            orderContentsLines.add(TextUtils.parseInternalVariables(orderContentsLineFormat, new HashMap<>() {{
+            orderContentsLines.add(TextUtils.insertVar(orderContentsLineFormat, new HashMap<>() {{
                 put("name", name);
                 put("amount", Integer.toString(stack * log.getTotalStack()));
             }}));
@@ -45,12 +45,12 @@ public class SettlementLogUtils {
         listVars.put("order-contents", orderContentsLines);
 
         List<String> loreFormats = section.getStringList("format.lore");
-        List<String> lore = TextUtils.decorateTextWithListVar(loreFormats, null, listVars, vars);
+        List<String> lore = TextUtils.parseVar(loreFormats, null, listVars, vars);
 
-        String name = TextUtils.decorateTextWithVar(section.getString("format.name"), null, vars);
+        String name = TextUtils.parseVar(section.getString("format.name"), null, vars);
 
         return new SimpleItem(
-                new ItemBuilder(new cn.encmys.ykdz.forest.dailyshop.util.ItemBuilder(Material.PAPER)
+                new ItemBuilder(new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(Material.PAPER)
                         .setDisplayName(name)
                         .setLore(lore)
                         .build(log.getTotalStack())));

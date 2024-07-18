@@ -10,6 +10,23 @@ default-settings:
     formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * Math.pow(1 + ({history-buy} - {history-sell}) / ({history-sell} + {history-buy} + 1), 2)))"
   sell-price:
     formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * Math.pow(1 + ({history-sell} - {history-buy}) / ({history-sell} + {history-buy} + 1), 2)))"
+  stock:
+    # It means that the following stock settings
+    # will be shared by all players, in other words, each player shares the same size etc.
+    global:
+      # Indicates the initial size of the product's stock.
+      # Each time a player buy this product, the stock is decreased.
+      # If the remaining stock drops to 0, this player will no longer be able to buy this product.
+      size: 1024
+      # Indicates whether the product's stock
+      # can be replenished when player sell this product to shop.
+      replenish: true
+      # Indicates whether the product's stock can exceed
+      # "size" value above when it is replenished.
+      overflow: true
+      # Indicates whether the item will reset the stock to
+      # the "size" value above when restocked.
+      inherit: true
   rarity: uncommon
   # Whether to cache the product item.
   # This will reduce the lag of plugin,

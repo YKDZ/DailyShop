@@ -2,9 +2,9 @@ package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.util.ColorUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
-import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ColorUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -123,7 +123,7 @@ public class ProductCommand {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
                     }
                     if (!keyValue.isEmpty()) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.parseInternalVariables(MessageConfig.messages_command_product_check_success, vars));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.insertVar(MessageConfig.messages_command_product_check_success, vars));
                         return;
                     }
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);

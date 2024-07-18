@@ -39,10 +39,22 @@ products:
     sell-price:
       disable: true
     stock:
+      # Represents that the following stock settings will act independently on each player,
+      # rather than being shared by all players.
       player:
+        # Indicates the initial size of the product's stock.
+        # Each time a player buy this product, the stock is decreased.
+        # If the remaining stock drops to 0, this player will no longer be able to buy this product.
         size: 1
-        supply: false
+        # Indicates whether the product's stock
+        # can be replenished when player sell this product to shop.
+        replenish: false
+        # Indicates whether the product's stock can exceed
+        # "size" value above when it is replenished.
         overflow: false
+        # Indicates whether the item will reset the stock to
+        # the "size" value above when restocked.
+        inherit: true
     rarity: ancient
 
   # You can use command product to do various of things

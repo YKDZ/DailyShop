@@ -10,7 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
