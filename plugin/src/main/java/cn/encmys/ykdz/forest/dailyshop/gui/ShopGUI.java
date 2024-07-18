@@ -7,12 +7,14 @@ import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
+import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -28,9 +30,9 @@ public class ShopGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public ScrollGui.Builder<Item> buildGUIBuilder() {
+    public ScrollGui.Builder<Item> buildGUIBuilder(@Nullable Player player) {
         String shopId = shop.getId();
-        List<String> listedProduct = shop.getListedProducts();
+        List<String> listedProduct = shop.getShopStocker().getListedProducts();
         ConfigurationSection section = ShopConfig.getShopGUISection(shopId);
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
@@ -42,7 +44,7 @@ public class ShopGUI extends ShopRelatedGUI {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
         }
 
-        // Normal Icon
+        // 普通图标
         ConfigurationSection iconsSection = section.getConfigurationSection("icons");
         if (iconsSection != null) {
             for (String key : iconsSection.getKeys(false)) {
@@ -52,10 +54,10 @@ public class ShopGUI extends ShopRelatedGUI {
             }
         }
 
-        // Product Icon
+        // 商品图标
         for (String productId : listedProduct) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
-            guiBuilder.addContent(product.getIconBuilder().buildProductIcon(shopId, product));
+            guiBuilder.addContent(product.getIconBuilder().buildProductIcon(player, shopId, product));
         }
 
         return guiBuilder;
@@ -63,9 +65,14 @@ public class ShopGUI extends ShopRelatedGUI {
 
     @Override
     public void open(@NotNull Player player) {
+        if (getGui() == null) {
+            setGui(buildGUIBuilder(player).build());
+        }
+
+        String title = PlaceholderAPIHook.isHooked() ? PlaceholderAPI.setPlaceholders(player, ShopConfig.getShopGUITitle(shop.getId())) : ShopConfig.getShopGUITitle(shop.getId());
         Window window = Window.single()
-                .setGui(buildGUIBuilder().build())
-                .setTitle(PlaceholderAPI.setPlaceholders(player, ShopConfig.getShopGUITitle(shop.getId())))
+                .setGui(getGui())
+                .setTitle(title)
                 .setCloseHandlers(new ArrayList<>() {{
                     add(() -> getWindows().remove(player.getUniqueId()));
                 }})

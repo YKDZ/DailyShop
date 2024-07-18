@@ -6,12 +6,7 @@ dependencies {
 
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 
-    compileOnly("io.th0rgal:oraxen:1.171.0")
-
     compileOnly("io.lumine:Mythic-Dist:5.6.1")
-
-    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:2.1.2")
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:3.4.8")
 
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
 

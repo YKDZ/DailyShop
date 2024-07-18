@@ -7,12 +7,14 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemDecoratorImpl;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.ItemProduct;
+import cn.encmys.ykdz.forest.dailyshop.product.stock.ProductStockImpl;
 import cn.encmys.ykdz.forest.dailyshop.util.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,7 +32,6 @@ public class ProductFactoryImpl implements ProductFactory {
             ConfigurationSection products = config.getConfigurationSection("products");
             ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
-            // Empty product pack is allowed
             if (products == null) {
                 continue;
             }
@@ -52,7 +53,7 @@ public class ProductFactoryImpl implements ProductFactory {
         ConfigurationSection itemSection = productSection.getConfigurationSection("item");
         ConfigurationSection iconSection = productSection.getConfigurationSection("icon");
 
-        // Price (can default)
+        // Price (可以指定默认值)
         Price buyPrice = new PriceImpl(
                 ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("buy-price"), defaultSettings.getConfigurationSection("buy-price"))
         );
@@ -60,13 +61,13 @@ public class ProductFactoryImpl implements ProductFactory {
                 ConfigUtils.inheritPriceSection(productSection.getConfigurationSection("sell-price"), defaultSettings.getConfigurationSection("sell-price"))
         );
 
-        // Rarity (can default)
+        // Rarity (可以指定默认值)
         Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
-        // Cacheable (can default)
+        // Cacheable (可以指定默认值)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
 
-        // Item (Only ItemProduct need it)
+        // Item (只有 ItemProduct 需要此配置)
         BaseItemDecorator itemBuilder = null;
         if (productSection.contains("item")) {
             itemBuilder = BaseItemDecoratorImpl.get(itemSection.getString("base", "DIRT"), false);
@@ -86,7 +87,7 @@ public class ProductFactoryImpl implements ProductFactory {
             }
         }
 
-        // Icon (use item section as fall back)
+        // Icon (若不指定则与 Item 相同)
         if (iconSection == null) {
             if (itemSection != null) {
                 iconSection = itemSection;
@@ -96,7 +97,7 @@ public class ProductFactoryImpl implements ProductFactory {
             }
         }
 
-        // inherit
+        // Icon 继承 Item
         if (itemSection != null) {
             // base
             if (!iconSection.contains("base")) {
@@ -141,6 +142,21 @@ public class ProductFactoryImpl implements ProductFactory {
             }
         }
 
+        // 库存（可指定默认值）
+        ConfigurationSection stockSection = productSection.getConfigurationSection("stock");
+        ConfigurationSection defaultStockSection = defaultSettings.getConfigurationSection("stock");
+
+        ProductStock stock = new ProductStockImpl(
+                id,
+                ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
+                ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.supply", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.supply", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false)
+        );
+
+        // IconBuilder
         BaseItemDecorator iconBuilder = BaseItemDecoratorImpl.get(iconSection.getString("base", "DIRT"), true);
 
         if (iconBuilder == null) {
@@ -157,9 +173,10 @@ public class ProductFactoryImpl implements ProductFactory {
                     .setFireworkEffectData(iconSection.getStringList("firework-effects"));
         }
 
+        // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
             getAllProducts().put(id,
-                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconBuilder,
+                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock,
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
         } else if (productSection.contains("bundle-contents")) {
@@ -175,10 +192,10 @@ public class ProductFactoryImpl implements ProductFactory {
                 }
             }
             getAllProducts().put(id,
-                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder, bundleContents));
+                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconBuilder, stock, bundleContents));
         } else {
             getAllProducts().put(id,
-                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, isCacheable));
+                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconBuilder, itemBuilder, stock, isCacheable));
         }
     }
 

@@ -21,11 +21,11 @@ public interface ShopOrder {
 
     Player getCustomer();
 
-    Map<Product, Integer> getOrderedProducts();
+    Map<String, Integer> getOrderedProducts();
 
     double getBilledPrice(Product product);
 
-    ShopOrder setBill(Map<Product, Double> bill);
+    ShopOrder setBill(Map<String, Double> bill);
 
     double getTotalPrice();
 

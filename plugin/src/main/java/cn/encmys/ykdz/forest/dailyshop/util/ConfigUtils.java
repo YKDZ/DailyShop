@@ -3,6 +3,8 @@ package cn.encmys.ykdz.forest.dailyshop.util;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class ConfigUtils {
     public static ConfigurationSection inheritPriceSection(@Nullable ConfigurationSection section, @Nullable ConfigurationSection defaultSection) {
         if (section == null) {
@@ -26,5 +28,49 @@ public class ConfigUtils {
         }
 
         return section;
+    }
+
+    public static int getInt(ConfigurationSection mainSection, ConfigurationSection defaultSection, String key, int defaultValue) {
+        int value = defaultValue;
+        if (mainSection != null) {
+            value = mainSection.getInt(key, defaultValue);
+        }
+        if (value == defaultValue && defaultSection != null) {
+            value = defaultSection.getInt(key, defaultValue);
+        }
+        return value;
+    }
+
+    public static double getDouble(ConfigurationSection mainSection, ConfigurationSection defaultSection, String key, double defaultValue) {
+        double value = defaultValue;
+        if (mainSection != null) {
+            value = mainSection.getDouble(key, defaultValue);
+        }
+        if (value == defaultValue && defaultSection != null) {
+            value = defaultSection.getDouble(key, defaultValue);
+        }
+        return value;
+    }
+
+    public static String getString(ConfigurationSection mainSection, ConfigurationSection defaultSection, String key, String defaultValue) {
+        String value = defaultValue;
+        if (mainSection != null) {
+            value = mainSection.getString(key, defaultValue);
+        }
+        if (Objects.equals(value, defaultValue) && defaultSection != null) {
+            value = defaultSection.getString(key, defaultValue);
+        }
+        return value;
+    }
+
+    public static boolean getBoolean(ConfigurationSection mainSection, ConfigurationSection defaultSection, String key, boolean defaultValue) {
+        boolean value = defaultValue;
+        if (mainSection != null) {
+            value = mainSection.getBoolean(key, defaultValue);
+        }
+        if (Objects.equals(value, defaultValue) && defaultSection != null) {
+            value = defaultSection.getBoolean(key, defaultValue);
+        }
+        return value;
     }
 }

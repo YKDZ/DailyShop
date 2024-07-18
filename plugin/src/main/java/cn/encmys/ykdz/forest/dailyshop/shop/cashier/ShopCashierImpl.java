@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.event.ProductTradeEvent;
 import cn.encmys.ykdz.forest.dailyshop.api.price.enums.PriceMode;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
@@ -22,6 +23,9 @@ import java.util.stream.IntStream;
 
 public class ShopCashierImpl implements ShopCashier {
     private final Shop shop;
+    private double balance = -1d;
+    private final boolean supply = false;
+    private final boolean overflow = false;
 
     public ShopCashierImpl(@NotNull Shop shop) {
         this.shop = shop;
@@ -34,19 +38,19 @@ public class ShopCashierImpl implements ShopCashier {
         }
         order.setBilled(true);
 
-        Map<Product, Double> bill = new HashMap<>();
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+        Map<String, Double> bill = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            String productId = entry.getKey();
             int stack = entry.getValue();
             double price;
 
             if (order.getOrderType() == OrderType.SELL_TO) {
-                price = shop.getShopPricer().getBuyPrice(product.getId()) * stack;
+                price = shop.getShopPricer().getBuyPrice(productId) * stack;
             } else {
-                price = shop.getShopPricer().getSellPrice(product.getId()) * stack;
+                price = shop.getShopPricer().getSellPrice(productId) * stack;
             }
 
-            bill.put(product, price);
+            bill.put(productId, price);
         }
         order.setBill(bill);
     }
@@ -77,11 +81,19 @@ public class ShopCashierImpl implements ShopCashier {
     private SettlementResult sellTo(@NotNull ShopOrder order) {
         SettlementResult result = canSellTo(order);
         if (result == SettlementResult.SUCCESS) {
-            for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-                Product product = entry.getKey();
+            for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+                Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
                 int stack = entry.getValue();
 
+                // 处理库存
+                ProductStock stock = product.getProductStock();
+                if (stock.isGlobalStock()) stock.modifyGlobal(order);
+                if (stock.isPlayerStock()) stock.modifyPlayer(order);
+
+                // 处理余额
                 BalanceUtils.removeBalance(order.getCustomer(), order.getBilledPrice(product));
+
+                // 给予商品
                 product.give(shop, order.getCustomer(), stack);
             }
             logSettlement(order);
@@ -93,11 +105,19 @@ public class ShopCashierImpl implements ShopCashier {
         SettlementResult result = canBuyFrom(order);
         if (result == SettlementResult.SUCCESS) {
             IntStream.range(0, order.getTotalStack()).forEach((i) -> {
-                for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-                    Product product = entry.getKey();
+                for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+                    Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
                     int stack = entry.getValue();
 
+                    // 处理库存
+                    ProductStock stock = product.getProductStock();
+                    if (stock.isGlobalStock()) stock.modifyGlobal(order);
+                    if (stock.isPlayerStock()) stock.modifyPlayer(order);
+
+                    // 处理余额
                     BalanceUtils.addBalance(order.getCustomer(), order.getBilledPrice(product));
+
+                    // 收取商品
                     product.take(shop, order.getCustomer(), stack);
                 }
             });
@@ -113,14 +133,27 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public SettlementResult canSellTo(@NotNull ShopOrder order) {
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
 
+            // 商品未开放购买
             if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
-            } else if (BalanceUtils.checkBalance(order.getCustomer()) < order.getBilledPrice(product)) {
+            }
+            // 客户余额不足
+            else if (BalanceUtils.checkBalance(order.getCustomer()) < order.getBilledPrice(product)) {
                 return SettlementResult.NOT_ENOUGH_MONEY;
-            } else if (!canHold(order)) {
+            }
+            // 商品个人库存不足
+            else if (product.getProductStock().isPlayerStock() && product.getProductStock().ifReachPlayerLimit(order.getCustomer().getUniqueId())) {
+                return SettlementResult.NOT_ENOUGH_PLAYER_STOCK;
+            }
+            // 商品总库存不足
+            else if (product.getProductStock().isGlobalStock() && product.getProductStock().ifReachGlobalLimit()) {
+                return SettlementResult.NOT_ENOUGH_GLOBAL_STOCK;
+            }
+            // 客户背包空间不足
+            else if (!canHold(order)) {
                 return SettlementResult.NOT_ENOUGH_MONEY;
             }
         }
@@ -129,13 +162,16 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public SettlementResult canBuyFrom(@NotNull ShopOrder order) {
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
+            // 商品未开放收购
             if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
-            } else if (product.has(shop, order.getCustomer(), stack) == 0) {
+            }
+            // 客户没有足够的商品
+            else if (product.has(shop, order.getCustomer(), stack) == 0) {
                 return SettlementResult.NOT_ENOUGH_PRODUCT;
             }
         }
@@ -143,9 +179,9 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     @Override
-    public boolean canHold(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+    public boolean canHold(@NotNull ShopOrder order) {
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
             if (!product.canHold(shop, order.getCustomer(), stack)) {
@@ -156,10 +192,10 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     @Override
-    public int hasStackInTotal(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public int hasStackInTotal(@NotNull ShopOrder order) {
         int stackInTotal = Integer.MAX_VALUE;
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
             int hasStack = product.has(shop, order.getCustomer(), 1) / stack;
@@ -172,12 +208,12 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     @Override
-    public void logSettlement(@NotNull cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder order) {
+    public void logSettlement(@NotNull ShopOrder order) {
         List<String> orderedProductIds = new ArrayList<>();
         List<String> orderedProductNames = new ArrayList<>();
         List<Integer> orderedProductStacks = new ArrayList<>();
-        for (Map.Entry<Product, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = entry.getKey();
+        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
             orderedProductIds.add(product.getId());
             orderedProductNames.add(product.getIconBuilder().getName());

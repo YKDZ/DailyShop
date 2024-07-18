@@ -11,8 +11,8 @@ import java.util.Map;
 public class ShopOrderImpl implements ShopOrder {
     private OrderType orderType;
     private final Player customer;
-    private final Map<Product, Integer> orderedProducts = new HashMap<>();
-    private Map<Product, Double> bill = new HashMap<>();
+    private final Map<String, Integer> orderedProducts = new HashMap<>();
+    private Map<String, Double> bill = new HashMap<>();
     private int totalStack = 1;
     private boolean isSettled = false;
     private boolean isBilled = false;
@@ -29,13 +29,13 @@ public class ShopOrderImpl implements ShopOrder {
 
     @Override
     public ShopOrder addProduct(Product product, int amount) {
-        orderedProducts.put(product, orderedProducts.getOrDefault(product, 0) + amount);
+        orderedProducts.put(product.getId(), orderedProducts.getOrDefault(product.getId(), 0) + amount);
         return this;
     }
 
     @Override
     public ShopOrder removeProduct(Product product) {
-        orderedProducts.remove(product);
+        orderedProducts.remove(product.getId());
         return this;
     }
 
@@ -60,17 +60,17 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public Map<Product, Integer> getOrderedProducts() {
+    public Map<String, Integer> getOrderedProducts() {
         return orderedProducts;
     }
 
     @Override
     public double getBilledPrice(Product product) {
-        return bill.getOrDefault(product, -1d);
+        return bill.getOrDefault(product.getId(), -1d);
     }
 
     @Override
-    public ShopOrder setBill(Map<Product, Double> bill) {
+    public ShopOrder setBill(Map<String, Double> bill) {
         this.bill = bill;
         return this;
     }
@@ -104,6 +104,6 @@ public class ShopOrderImpl implements ShopOrder {
 
     @Override
     public double getBill(Product product) {
-        return bill.getOrDefault(product, -1d);
+        return bill.getOrDefault(product.getId(), -1d);
     }
 }

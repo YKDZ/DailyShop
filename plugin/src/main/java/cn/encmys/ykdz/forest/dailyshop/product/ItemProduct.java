@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.PlayerUtils;
@@ -26,8 +27,9 @@ public class ItemProduct extends Product {
             Rarity rarity,
             BaseItemDecorator iconBuilder,
             BaseItemDecorator productItemBuilder,
+            ProductStock productStock,
             boolean isCacheable) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, productItemBuilder, isCacheable);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, productItemBuilder, productStock, isCacheable);
     }
 
     @Override

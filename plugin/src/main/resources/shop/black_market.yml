@@ -43,6 +43,9 @@ shop-gui:
         - " "
         - "?<dark_gray>- <gray>Buy Price: <white>{buy-price}"
         - "?<dark_gray>- <gray>Sell Price: <white>{sell-price}"
+        - ""
+        - "?<dark_gray>Global Stock: <white>{current-global-stock}/{initial-global-stock}"
+        - "?<dark_gray>Player Stock: <white>{current-player-stock}/{initial-player-stock}"
         - "|"
         - "|<gray>Bundle Contents:"
         - "{bundle-contents}"
@@ -82,6 +85,18 @@ history-gui:
       item: RED_STAINED_GLASS_PANE
       name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
       scroll: 1
+  history-icon:
+    format:
+      name: "{date}"
+      lore:
+        - ""
+        - "<gray>Products:"
+        - "{order-contents}"
+        - ""
+        - "<gray>Action: {action}"
+        - ""
+        - "<gray>Price: {price}"
+      order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 products:
   - WARM_WELCOME

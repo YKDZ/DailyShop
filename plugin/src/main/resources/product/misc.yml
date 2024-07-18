@@ -13,14 +13,20 @@ default-settings:
 
 products:
   A_JOKE:
+    # Icon will display in gui
+    icon:
+      base: DIAMOND
+      name: "<white>Cheap Diamond"
+      amount: 1
+    # Item is what buyer really get
     item:
       base: DIRT
       name: "<white>Just Dirt :)"
       amount: 1
-    icon:
-      base: DIAMOND
-      name: "<white>Diamond"
-      amount: 1
+    buy-price:
+      fixed: 1
+    sell-price:
+      disable: true
 
   WARM_WELCOME:
     icon:
@@ -32,6 +38,11 @@ products:
       - "-p:true -repeat:3 tell %player_name% Have fun!"
     sell-price:
       disable: true
+    stock:
+      player:
+        size: 1
+        supply: false
+        overflow: false
     rarity: ancient
 
   # You can use command product to do various of things
@@ -123,7 +134,7 @@ products:
       amount: 1
     icon:
       lore:
-        - "<gray>This is a Custom Banner with 3 patterns."
+        - "<gray>This is a Custom Banner with 6 patterns."
         - "<gray>These lore will not be applied to the product item."
       # Prevent too long product icon lore.
       # (Hide the banner pattern lore)

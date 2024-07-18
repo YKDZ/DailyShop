@@ -3,7 +3,6 @@ package cn.encmys.ykdz.forest.dailyshop.util;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -55,20 +54,5 @@ public class SettlementLogUtils {
                         .setDisplayName(name)
                         .setLore(lore)
                         .build(log.getTotalStack())));
-    }
-
-    public static int getHistoryAmount(List<SettlementLog> logs, String productId, SettlementLogType... types) {
-//        logs = LogStream.of(logs)
-//                .withProduct(productId)
-//                .withType(types)
-//                .toList();
-
-        int amount = 0;
-        for (SettlementLog log : logs) {
-            List<String> ids = log.getOrderedProductIds();
-            amount += log.getOrderedProductStacks().get(ids.indexOf(productId)) * log.getTotalStack();
-        }
-
-        return amount;
     }
 }

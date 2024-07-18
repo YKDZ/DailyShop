@@ -40,6 +40,10 @@ public class SQLiteDatabase implements Database {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS product_data (
+                        id TEXT NOT NULL PRIMARY KEY
+                    )""");
+            stmt.execute("""
                     CREATE TABLE IF NOT EXISTS shop_data (
                         id TEXT NOT NULL PRIMARY KEY,
                         listed_products TEXT NOT NULL,
@@ -71,9 +75,9 @@ public class SQLiteDatabase implements Database {
             for (Map.Entry<String, Shop> entry : data.entrySet()) {
                 Shop shop = entry.getValue();
                 stmt.setString(1, entry.getKey());
-                stmt.setString(2, gson.toJson(shop.getListedProducts()));
+                stmt.setString(2, gson.toJson(shop.getShopStocker().getListedProducts()));
                 stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
-                stmt.setLong(4, shop.getLastRestocking());
+                stmt.setLong(4, shop.getShopStocker().getLastRestocking());
                 stmt.addBatch();
             }
             stmt.executeBatch();
@@ -82,8 +86,8 @@ public class SQLiteDatabase implements Database {
         }
     }
 
+    @NotNull
     @Override
-    @Nullable
     public List<String> queryShopListedProducts(@NotNull String id) {
         String sql = "SELECT id, listed_products, cached_prices, last_restocking FROM shop_data WHERE id = ?";
         try (Connection conn = dataSource.getConnection();
@@ -155,76 +159,50 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public int queryHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
-        int totalSales = 0;
-        String typeList = Stream.of(types)
-                .map(Enum::name)
-                .collect(Collectors.joining("','", "'", "'"));
-        long sevenDaysAgo = System.currentTimeMillis() - (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
-        Timestamp sevenDaysAgoTimestamp = new Timestamp(sevenDaysAgo);
-        String sql = "SELECT ordered_product_ids, ordered_product_stacks, total_stack FROM settlement_logs WHERE shop_id = ? AND type IN (" + typeList + ") AND transition_time > ? LIMIT ?";
-
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            stmt.setString(1, shopId);
-            stmt.setTimestamp(2, sevenDaysAgoTimestamp);
-            stmt.setInt(3, numEntries);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {}.getType());
-                    List<Integer> productStacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
-                    int totalStack = rs.getInt("total_stack");
-
-                    for (int i = 0; i < productIds.size(); i++) {
-                        if (productIds.get(i).equals(productId)) {
-                            totalSales += productStacks.get(i) * totalStack;
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.fillInStackTrace();
-        }
-
-        return totalSales;
-    }
-
-    @Override
-    public List<SettlementLog> queryLogInOrder(@NotNull String shopId, @NotNull UUID customer, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
+    public List<SettlementLog> queryLogs(@NotNull String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
         List<SettlementLog> logs = new ArrayList<>();
         String typeList = Stream.of(types)
                 .map(Enum::name)
                 .collect(Collectors.joining("','", "'", "'"));
         long sevenDaysAgo = System.currentTimeMillis() - (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
         Timestamp sevenDaysAgoTimestamp = new Timestamp(sevenDaysAgo);
-        String sql = "SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks, total_stack FROM settlement_logs WHERE shop_id = ? AND customer = ? AND type IN (" + typeList + ") AND transition_time > ? LIMIT ?";
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
-            stmt.setString(1, shopId);
-            stmt.setString(2, customer.toString());
-            stmt.setTimestamp(3, sevenDaysAgoTimestamp);
-            stmt.setInt(4, numEntries);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    SettlementLogType type = SettlementLogType.valueOf(rs.getString("type"));
-                    Date transitionTime = rs.getTimestamp("transition_time");
-                    double price = rs.getDouble("price");
-                    List<String> ids = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {}.getType());
-                    List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {}.getType());
-                    List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
-                    int totalStack = rs.getInt("total_stack");
+        String sql = "SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks, total_stack FROM settlement_logs WHERE shop_id = ? AND type IN (" + typeList + ") AND transition_time > ? ";
+        if (customer != null) {
+            sql += "AND customer = ? ";
+        }
+        sql += "LIMIT ?";
 
-                    logs.add(SettlementLogImpl.of(type, customer)
-                            .setTransitionTime(transitionTime)
-                            .setPrice(price)
-                            .setOrderedProductIds(ids)
-                            .setOrderedProductNames(names)
-                            .setOrderedProductStacks(stacks)
-                            .setTotalStack(totalStack));
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, shopId);
+                stmt.setTimestamp(2, sevenDaysAgoTimestamp);
+                int paramIndex = 3;
+                if (customer != null) {
+                    stmt.setString(paramIndex++, customer.toString());
+                }
+                stmt.setInt(paramIndex, numEntries);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {}.getType());
+                        if (productId != null && !productIds.contains(productId)) {
+                            continue; // 跳过不包含指定商品ID的日志
+                        }
+                        SettlementLogType type = SettlementLogType.valueOf(rs.getString("type"));
+                        Date transitionTime = rs.getTimestamp("transition_time");
+                        double price = rs.getDouble("price");
+                        List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {}.getType());
+                        List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
+                        int totalStack = rs.getInt("total_stack");
+
+                        logs.add(SettlementLogImpl.of(type, customer)
+                                .setTransitionTime(transitionTime)
+                                .setPrice(price)
+                                .setOrderedProductIds(productIds)
+                                .setOrderedProductNames(names)
+                                .setOrderedProductStacks(stacks)
+                                .setTotalStack(totalStack));
+                    }
                 }
             }
         } catch (SQLException e) {

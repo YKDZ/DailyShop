@@ -5,7 +5,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.*;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
 import cn.encmys.ykdz.forest.dailyshop.database.SQLiteDatabase;
-import cn.encmys.ykdz.forest.dailyshop.hook.*;
+import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
@@ -77,10 +80,7 @@ public final class DailyShopImpl extends DailyShop {
         new PlaceholderAPIHook();
         new MMOItemsHook();
         new ItemsAdderHook();
-        new OraxenHook();
         new MythicMobsHook();
-        new CustomCropsHook();
-        new CustomFishingHook();
 
         Config.load();
         MessageConfig.load();

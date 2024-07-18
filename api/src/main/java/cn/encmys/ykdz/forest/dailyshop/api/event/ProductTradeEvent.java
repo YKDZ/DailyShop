@@ -14,16 +14,18 @@ public class ProductTradeEvent extends PlayerEvent implements Cancellable {
     private final Shop shop;
     private final ShopOrder order;
 
-    public ProductTradeEvent(@NotNull Player who, Shop shop, ShopOrder order) {
+    public ProductTradeEvent(@NotNull Player who, @NotNull Shop shop, @NotNull ShopOrder order) {
         super(who);
         this.shop = shop;
         this.order = order;
     }
 
+    @NotNull
     public Shop getShop() {
         return shop;
     }
 
+    @NotNull
     public ShopOrder getOrder() {
         return order;
     }

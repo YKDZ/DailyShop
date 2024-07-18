@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.product;
 import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ public abstract class Product {
     private final Rarity rarity;
     private final BaseItemDecorator iconBuilder;
     private final BaseItemDecorator productItemBuilder;
+    private final ProductStock productStock;
     private final boolean isCacheable;
 
     public Product(
@@ -27,6 +29,7 @@ public abstract class Product {
             Rarity rarity,
             BaseItemDecorator iconBuilder,
             BaseItemDecorator productItemBuilder,
+            ProductStock productStock,
             boolean isCacheable) {
         this.id = id;
         this.buyPrice = buyPrice;
@@ -34,6 +37,7 @@ public abstract class Product {
         this.rarity = rarity;
         this.iconBuilder = iconBuilder;
         this.productItemBuilder = productItemBuilder;
+        this.productStock = productStock;
         this.isCacheable = isCacheable;
     }
 
@@ -61,6 +65,10 @@ public abstract class Product {
 
     public BaseItemDecorator getProductItemBuilder() {
         return productItemBuilder;
+    }
+
+    public ProductStock getProductStock() {
+        return productStock;
     }
 
     public abstract void give(@NotNull Shop shop, @NotNull Player player, int stack);

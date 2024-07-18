@@ -6,15 +6,18 @@ import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
+import cn.encmys.ykdz.forest.dailyshop.util.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShopPricerImpl implements ShopPricer {
@@ -43,10 +46,9 @@ public class ShopPricerImpl implements ShopPricer {
         double buy = 0d;
         double sell = 0d;
 
-        int historyBuy = DailyShop.DATABASE.queryHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.SELL_TO);
-        int historySell = DailyShop.DATABASE.queryHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
+        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.SELL_TO);
+        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
 
-        // Handle special price mode
         switch (buyPrice.getPriceMode()) {
             case FORMULA -> {
                 Map<String, String> vars = buyPrice.getFormulaVars();
@@ -93,15 +95,22 @@ public class ShopPricerImpl implements ShopPricer {
             } default -> sell = sellPrice.getNewPrice();
         }
 
-        // Avoid buy-price <= sell-price
+        // 避免 buy-price <= sell-price 的刷钱漏洞
+        // 因为难以保证动态价格落入指定范围
         if (buy <= sell) {
-            sell = -1d;
+            // 根据配置禁用出售或收购
+            if (Config.priceCorrectByDisableSellOrBuy) {
+                LogUtils.warn("The current buy-price of product " + productId + " is " + buy + ", which is less than the sell-price of " + sell + ". Sell has been disabled.");
+                sell = -1d;
+            } else {
+                LogUtils.warn("The current buy-price of product " + productId + " is " + buy + ", which is less than the sell-price of " + sell + ". Buy has been disabled.");
+                buy = -1d;
+            }
         }
 
         cachedPrices.put(productId, getModifiedPricePair(productId, new PricePairImpl(buy, sell)));
     }
 
-    // Todo Discount or something
     @Override
     public PricePair getModifiedPricePair(@NotNull String productId, @NotNull PricePair pricePair) {
         return pricePair;
@@ -115,5 +124,26 @@ public class ShopPricerImpl implements ShopPricer {
     @Override
     public Map<String, PricePair> getCachedPrices() {
         return cachedPrices;
+    }
+
+    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
+        int totalSales = 0;
+
+        List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(shopId, null, null, timeLimitInDay, numEntries, types);
+
+        // 计算总销售量
+        for (SettlementLog log : logs) {
+            List<String> productIds = log.getOrderedProductIds();
+            List<Integer> productStacks = log.getOrderedProductStacks();
+            int totalStack = log.getTotalStack();
+
+            for (int i = 0; i < productIds.size(); i++) {
+                if (productIds.get(i).equals(productId)) {
+                    totalSales += productStacks.get(i) * totalStack;
+                }
+            }
+        }
+
+        return totalSales;
     }
 }

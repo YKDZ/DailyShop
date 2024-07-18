@@ -91,7 +91,7 @@ public class ShopCommand {
                         }}));
                         return;
                     }
-                    shop.restock();
+                    shop.getShopStocker().restock();
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.parseInternalVariables(MessageConfig.messages_command_shop_restock_success, new HashMap<>() {{
                         put("shop", shop.getName());
                     }}));

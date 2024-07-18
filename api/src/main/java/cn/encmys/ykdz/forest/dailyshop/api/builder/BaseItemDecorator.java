@@ -96,7 +96,7 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData);
 
-    public abstract Item buildProductIcon(String shopId, Product product);
+    public abstract Item buildProductIcon(Player player, String shopId, Product product);
 
     public abstract Item buildNormalIcon();
 

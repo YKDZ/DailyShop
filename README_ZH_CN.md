@@ -4,7 +4,7 @@
 
 # 介绍
 
-一个受 [DailyShop](https://github.com/divios/DailyShop) 启发的 SpigotMC 插件。
+一个受 [DailyShop](https://github.com/divios/DailyShop) 启发的 SpigotMC 插件。追求超级可自定性和效率。
 
 ## 文档
 
@@ -21,6 +21,9 @@
 - [ ] 根据条件判断是否要上架某个商品
 - [ ] 打折
 - [ ] 手动指定商店刷新结果
+- [ ] 限购
+- [ ] 购物车
+- [ ] 商人（商店拥有余额）
 
 ## API
 

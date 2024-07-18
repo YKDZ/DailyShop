@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.util;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -35,24 +36,22 @@ public class TextUtils {
         if (text == null) {
             return null;
         }
-        return DailyShop.ADVENTURE_MANAGER.componentToLegacy(DailyShop.ADVENTURE_MANAGER.getComponentFromMiniMessage(PlaceholderAPI.setPlaceholders(player, text)));
+        if (PlaceholderAPIHook.isHooked()) {
+            text = PlaceholderAPI.setPlaceholders(player, text);
+        }
+        return DailyShop.ADVENTURE_MANAGER.componentToLegacy(DailyShop.ADVENTURE_MANAGER.getComponentFromMiniMessage(text));
     }
 
     public static String decorateTextWithVar(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
         text = parseInternalVariables(text, vars);
-
-        if (text == null) {
-            return null;
-        }
-
-        return DailyShop.ADVENTURE_MANAGER.componentToLegacy(DailyShop.ADVENTURE_MANAGER.getComponentFromMiniMessage(PlaceholderAPI.setPlaceholders(player, text)));
+        return decorateText(text, player);
     }
 
     public static String decorateTextInMiniMessage(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
         if (text == null) {
             return null;
         }
-        return PlaceholderAPI.setPlaceholders(player, parseInternalVariables(text, vars));
+        return PlaceholderAPIHook.isHooked() ? PlaceholderAPI.setPlaceholders(player, parseInternalVariables(text, vars)) : parseInternalVariables(text, vars);
     }
 
     public static List<String> decorateTextWithVar(List<String> text, @Nullable Player player, @NotNull Map<String, String> vars) {
@@ -82,7 +81,7 @@ public class TextUtils {
     public static String parseInternalVariables(String line, Map<String, String> vars) {
         if (line != null && line.startsWith("?")) {
             for (String key : vars.keySet()) {
-                if (line.contains("{" + key + "}") && (vars.get(key) == null || vars.get(key).isEmpty())) {
+                if (line.contains("{" + key + "}") && (vars.get(key).equals("-1") || vars.get(key) == null || vars.get(key).isEmpty())) {
                     return null;
                 }
             }
@@ -156,6 +155,7 @@ public class TextUtils {
             } else if (result instanceof Long) {
                 return (Long) result;
             } else {
+                // 禁用此价格
                 return -1d;
             }
         } catch (ScriptException e) {

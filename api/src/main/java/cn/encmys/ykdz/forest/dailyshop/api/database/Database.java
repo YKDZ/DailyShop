@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface Database {
     void saveShopData(@NotNull Map<String, Shop> dataMap);
 
-    @Nullable
+    @NotNull
     List<String> queryShopListedProducts(@NotNull String id);
 
     Map<String, PricePair> queryShopCachedPrices(@NotNull String id);
@@ -23,7 +23,5 @@ public interface Database {
 
     void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log);
 
-    int queryHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
-
-    List<SettlementLog> queryLogInOrder(@NotNull String shopId, @NotNull UUID customer, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
+    List<SettlementLog> queryLogs(@NotNull String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types);
 }

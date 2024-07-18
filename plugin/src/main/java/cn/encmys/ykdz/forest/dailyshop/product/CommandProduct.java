@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
@@ -26,9 +27,10 @@ public class CommandProduct extends Product {
             Price sellPrice,
             Rarity rarity,
             BaseItemDecorator iconBuilder,
+            ProductStock productStock,
             List<String> buyCommands,
             List<String> sellCommands) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, false);
         this.buyCommands = buyCommands;
         this.sellCommands = sellCommands;
     }

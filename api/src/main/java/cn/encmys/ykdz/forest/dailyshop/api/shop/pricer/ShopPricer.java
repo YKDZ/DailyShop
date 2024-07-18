@@ -12,7 +12,7 @@ public interface ShopPricer {
 
     void cachePrice(@NotNull String productId);
 
-    // Todo Discount or something
+    // Todo 打折功能入口
     PricePair getModifiedPricePair(@NotNull String productId, @NotNull PricePair pricePair);
 
     void setCachedPrices(@NotNull Map<String, PricePair> cachedPrices);

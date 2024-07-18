@@ -18,7 +18,6 @@ import cn.encmys.ykdz.forest.dailyshop.gui.icon.ScrollIcon;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
-import cn.encmys.ykdz.forest.dailyshop.hook.OraxenHook;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.util.CommandUtils;
@@ -36,7 +35,6 @@ import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
-import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 import java.util.*;
 
@@ -54,9 +52,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         } else if (base.startsWith(ItemsAdderHook.getIdentifier()) && ItemsAdderHook.isHooked()) {
             String namespacedId = base.substring(ItemsAdderHook.getIdentifier().length());
             return BaseItemDecoratorImpl.itemsadder(namespacedId, setDefaultName);
-        } else if (base.startsWith(OraxenHook.getIdentifier()) && OraxenHook.isHooked()) {
-            String id = base.substring(OraxenHook.getIdentifier().length());
-            return BaseItemDecoratorImpl.oraxen(id, setDefaultName);
         } else if (base.startsWith(MythicMobsHook.getIdentifier()) && MythicMobsHook.isHooked()) {
             String id = base.substring(MythicMobsHook.getIdentifier().length());
             return BaseItemDecoratorImpl.mythicmobs(id, setDefaultName);
@@ -115,35 +110,8 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 .setItem(item, setDefaultName);
     }
 
-    public static BaseItemDecorator oraxen(String id, boolean setDefaultName) {
-        BaseItem item = new OraxenItem(id);
-        if (!item.isExist()) {
-            return null;
-        }
-        return new BaseItemDecoratorImpl()
-                .setItem(item, setDefaultName);
-    }
-
     public static BaseItemDecorator mythicmobs(String id, boolean setDefaultName) {
         BaseItem item = new MythicMobsItem(id);
-        if (!item.isExist()) {
-            return null;
-        }
-        return new BaseItemDecoratorImpl()
-                .setItem(item, setDefaultName);
-    }
-
-    public static BaseItemDecorator customcrops(String id, boolean setDefaultName) {
-        BaseItem item = new CustomCropsItem(id);
-        if (!item.isExist()) {
-            return null;
-        }
-        return new BaseItemDecoratorImpl()
-                .setItem(item, setDefaultName);
-    }
-
-    public static BaseItemDecorator customfishing(String namespace, String id, boolean setDefaultName) {
-        BaseItem item = new CustomFishingItem(namespace, id);
         if (!item.isExist()) {
             return null;
         }
@@ -371,9 +339,9 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public Item buildProductIcon(String shopId, Product product) {
+    public Item buildProductIcon(@Nullable Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
-        return new AbstractItem() {
+        Item icon = new NormalIcon() {
             @Override
             public ItemProvider getItemProvider() {
                 Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
@@ -381,7 +349,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
                 setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
 
-                // Handle lore for bundle contents
+                // 处理捆绑包商品的列表 lore
                 List<String> bundleContentsLore = new ArrayList<>();
                 if (product instanceof BundleProduct) {
                     Set<String> bundleContents = ((BundleProduct) product).getBundleContents().keySet();
@@ -397,15 +365,19 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 }
 
                 ShopPricer shopPricer = shop.getShopPricer();
-                // Vars for the product itself
+                // 关于产品自身的的变量
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", getName());
                     put("amount", String.valueOf(getAmount()));
                     put("buy-price", shopPricer.getBuyPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
                     put("sell-price", shopPricer.getSellPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
+                    put("current-global-stock", String.valueOf(product.getProductStock().getCurrentGlobalAmount()));
+                    put("initial-global-stock", String.valueOf(product.getProductStock().getInitialGlobalAmount()));
+                    put("current-player-stock", String.valueOf(player == null ? -1 : product.getProductStock().getCurrentPlayerAmount(player.getUniqueId())));
+                    put("initial-player-stock", String.valueOf(product.getProductStock().getInitialPlayerAmount()));
                     put("rarity", product.getRarity().getName());
                 }};
-
+                // 列表行的变量
                 Map<String, List<String>> listVars = new HashMap<>() {{
                     put("desc-lore", getLore());
                     put("bundle-contents", bundleContentsLore);
@@ -435,6 +407,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())));
                 }};
 
+                // 玩家从商店购买商品
                 if (clickType == ClickType.LEFT) {
                     SettlementResult result = shopCashier.settle(DailyShop.SHOP_ORDER_BUILDER.sellToOrder(player)
                             .addProduct(product, 1));
@@ -442,12 +415,16 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                         switch (result) {
                             case TRANSITION_DISABLED -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
                             case NOT_ENOUGH_MONEY -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
+                            case NOT_ENOUGH_GLOBAL_STOCK -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_global, player, vars));
+                            case NOT_ENOUGH_PLAYER_STOCK -> DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_player, player, vars));
                         }
                         return;
                     }
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getBuySound(shopId), 1f, 1f);
-                } else if (clickType == ClickType.RIGHT) {
+                }
+                // 玩家向商店出售商品
+                else if (clickType == ClickType.RIGHT) {
                     SettlementResult result = shopCashier.settle(DailyShop.SHOP_ORDER_BUILDER.buyFromOrder(player)
                             .addProduct(product, 1));
                     if (result != SettlementResult.SUCCESS) {
@@ -459,7 +436,9 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     }
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
-                } else if (clickType == ClickType.SHIFT_RIGHT) {
+                }
+                // 玩家向商店出售背包内全部商品
+                else if (clickType == ClickType.SHIFT_RIGHT) {
                     ShopOrder order = DailyShop.SHOP_ORDER_BUILDER.buyAllFromOrder(player)
                             .addProduct(product, 1);
                     SettlementResult result = shopCashier.settle(order);
@@ -477,10 +456,14 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     player.playSound(player.getLocation(), ShopConfig.getSellSound(shopId), 1f, 1f);
                 }
 
-                // Not needed before total market volume feature
-                // notifyWindows();
+                notifyWindows();
             }
         };
+        // 根据需求设置是否自动刷新
+        if (product.getProductStock().isPlayerStock() || product.getProductStock().isGlobalStock()) {
+            ((Icon) icon).startUpdater(20);
+        }
+        return icon;
     }
 
     @Override

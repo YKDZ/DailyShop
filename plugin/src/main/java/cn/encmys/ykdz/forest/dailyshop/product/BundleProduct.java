@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.builder.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
@@ -24,8 +25,9 @@ public class BundleProduct extends Product {
             Price sellPrice,
             Rarity rarity,
             BaseItemDecorator iconBuilder,
+            ProductStock productStock,
             Map<String, Integer> bundleContents) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, false);
         this.bundleContents = bundleContents;
     }
 

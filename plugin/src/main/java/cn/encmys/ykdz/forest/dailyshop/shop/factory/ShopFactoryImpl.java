@@ -28,12 +28,6 @@ public class ShopFactoryImpl implements ShopFactory {
         for (String id : ShopConfig.getAllId()) {
             buildShop(id);
         }
-
-        // Build shop gui
-        for (Shop shop : getAllShops().values()) {
-            shop.getShopGUI().buildGUIBuilder();
-            shop.getHistoryGUI().buildGUIBuilder();
-        }
     }
 
     @Override
@@ -45,7 +39,7 @@ public class ShopFactoryImpl implements ShopFactory {
         List<String> products = new ArrayList<>();
 
         for (String productId : ShopConfig.getAllProductsId(id)) {
-            // Handle PACK:XXX format
+            // 处理 PACK:XXX 的包导入格式
             if (productId.startsWith("PACK:")) {
                 products.addAll(ProductConfig.getAllProductId(productId.substring(5)));
                 continue;
@@ -54,7 +48,7 @@ public class ShopFactoryImpl implements ShopFactory {
             products.add(productId);
         }
 
-        // Check whether the product actually exist.
+        // 检查商店导入的商品是否存在
         products = products.stream()
                 .filter(productId -> {
                     if (!DailyShop.PRODUCT_FACTORY.containsProduct(productId)) {
@@ -73,21 +67,21 @@ public class ShopFactoryImpl implements ShopFactory {
                 ShopConfig.getSize(id)
         );
 
-        // Load data from database
-        shop.setLastRestocking(DailyShop.DATABASE.queryShopLastRestocking(id));
+        // 从数据库加载一系列商店数据
+        shop.getShopStocker().setLastRestocking(DailyShop.DATABASE.queryShopLastRestocking(id));
 
         List<String> dataListedProducts = DailyShop.DATABASE.queryShopListedProducts(id);
         if (!dataListedProducts.isEmpty()) {
-            shop.addListedProducts(dataListedProducts);
+            shop.getShopStocker().addListedProducts(dataListedProducts);
         } else {
-            shop.restock();
+            shop.getShopStocker().restock();
         }
 
         Map<String, PricePair> dataCachedPrices = DailyShop.DATABASE.queryShopCachedPrices(id);
         if (!dataListedProducts.isEmpty()) {
             shop.getShopPricer().setCachedPrices(dataCachedPrices);
         }
-        // Finish
+        // 加载完成
 
         shops.put(id, shop);
         LogUtils.info("Successfully load shop " + id + " with " + products.size() + " products.");

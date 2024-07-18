@@ -11,13 +11,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class GUI {
+    protected ScrollGui<Item> gui;
     protected final Map<UUID, Window> windows = new HashMap<>();
 
     public abstract Item buildNormalIcon(char key);
 
     public abstract void open(@NotNull Player player);
 
-    public abstract ScrollGui.Builder<Item> buildGUIBuilder();
+    public abstract ScrollGui.Builder<Item> buildGUIBuilder(Player player);
 
     public void closeAll() {
         for (Window window : getWindows().values()) {
@@ -34,5 +35,13 @@ public abstract class GUI {
 
     public Map<UUID, Window> getWindows() {
         return windows;
+    }
+
+    public ScrollGui<Item> getGui() {
+        return gui;
+    }
+
+    public void setGui(ScrollGui<Item> gui) {
+        this.gui = gui;
     }
 }
