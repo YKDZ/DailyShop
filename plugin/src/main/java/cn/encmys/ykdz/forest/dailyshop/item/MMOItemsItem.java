@@ -47,7 +47,11 @@ public class MMOItemsItem implements BaseItem {
     public boolean isSimilar(ItemStack item) {
         Type itemType = Type.get(MMOItems.getTypeName(item));
         String itemId = MMOItems.getID(item);
-        return itemType.equals(getType()) && itemId.equals(getId());
+        if (itemType != null && itemId != null) {
+            return itemType.equals(getType()) && itemId.equals(getId());
+        } else {
+            return false;
+        }
     }
 
     @Override

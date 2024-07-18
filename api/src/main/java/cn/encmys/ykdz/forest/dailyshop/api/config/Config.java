@@ -23,7 +23,7 @@ public class Config {
     public static void load() {
         File file = new File(path);
 
-        // Initialize Data folder when config.yml not exists
+        // 当 config.yml 不存在时初始化所有配置文件
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("config.yml", false);
