@@ -33,7 +33,7 @@ public class HistoryGUI extends ShopRelatedGUI {
 
     @Override
     public void open(@NotNull Player player) {
-        List<SettlementLog> logs = null;
+        List<SettlementLog> logs;
         try {
             logs = DailyShop.DATABASE.queryLogs(shop.getId(), player.getUniqueId(), null, 365, 100, SettlementLogType.BUY_ALL_FROM, SettlementLogType.BUY_FROM, SettlementLogType.SELL_TO).get();
         } catch (InterruptedException | ExecutionException e) {

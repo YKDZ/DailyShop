@@ -100,10 +100,6 @@ public final class DailyShopImpl extends DailyShop {
 
         CommandAPI.onEnable();
         new CommandHandler(INSTANCE).load();
-
-        if (!setupBStats()) {
-            return;
-        }
     }
 
     @Override
@@ -130,7 +126,7 @@ public final class DailyShopImpl extends DailyShop {
             return false;
         }
         DailyShopImpl.ECONOMY = rsp.getProvider();
-        return DailyShop.ECONOMY != null;
+        return true;
     }
 
     @Override

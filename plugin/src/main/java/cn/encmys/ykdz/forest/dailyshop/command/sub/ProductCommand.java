@@ -118,7 +118,6 @@ public class ProductCommand {
                             keyValue.add(builder.append("\"").toString());
                         }
                     }
-                    // Send Config key value list
                     for (String out : keyValue) {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
                     }

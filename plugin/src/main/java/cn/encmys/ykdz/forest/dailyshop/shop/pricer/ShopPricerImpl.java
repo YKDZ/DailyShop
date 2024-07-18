@@ -47,8 +47,8 @@ public class ShopPricerImpl implements ShopPricer {
         double buy = 0d;
         double sell = 0d;
 
-        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.SELL_TO);
-        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logDataLimit_timeRange, Config.logDataLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
+        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, SettlementLogType.SELL_TO);
+        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
 
         switch (buyPrice.getPriceMode()) {
             case FORMULA -> {
@@ -130,7 +130,7 @@ public class ShopPricerImpl implements ShopPricer {
     private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
         int totalSales = 0;
 
-        List<SettlementLog> logs = null;
+        List<SettlementLog> logs;
         try {
             logs = DailyShop.DATABASE.queryLogs(shopId, null, null, timeLimitInDay, numEntries, types).get();
         } catch (InterruptedException | ExecutionException e) {
