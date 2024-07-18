@@ -5,7 +5,13 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ColorUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
+import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import dev.jorel.commandapi.CommandAPICommand;
+import io.lumine.mythic.api.items.ItemManager;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
@@ -117,6 +123,26 @@ public class ProductCommand {
                             }
                             keyValue.add(builder.append("\"").toString());
                         }
+                    }
+                    // MMOItems
+                    else if (MMOItemsHook.isHooked() && MMOItems.getID(item) != null) {
+                        Type itemType = Type.get(MMOItems.getTypeName(item));
+                        String itemId = MMOItems.getID(item);
+                        if (itemType != null && itemId != null) {
+                            vars.put("keys", "base");
+                            keyValue.add("<#C28456>base: <#346659>MI:" + itemType.getId() + ":" + itemId);
+                        }
+                    }
+                    // MythicMobs
+                    else if (MythicMobsHook.isHooked() && MythicBukkit.inst().getItemManager().isMythicItem(item)) {
+                        String id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+                        vars.put("keys", "base");
+                        keyValue.add("<#C28456>base: <#346659>MM:" + id);
+                    }
+                    // Vanilla
+                    else {
+                        vars.put("keys", "base");
+                        keyValue.add("<#C28456>base: <#346659>" + item.getType());
                     }
                     for (String out : keyValue) {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
