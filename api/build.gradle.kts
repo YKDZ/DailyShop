@@ -13,8 +13,6 @@ dependencies {
 
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
 
-    compileOnly("com.github.Rubix327:ItemsLangAPI:1.0.2")
-
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
@@ -22,6 +20,8 @@ dependencies {
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
 
     annotationProcessor("org.jetbrains:annotations:24.1.0")
+
+    implementation("com.google.code.gson:gson:2.11.0")
 
     // compileOnly("com.cronutils:cron-utils:9.2.1")
 }
@@ -32,7 +32,6 @@ tasks {
         relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
         relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
         relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("me.rubix327.itemslangapi", "cn.encmys.ykdz.forest.dailyshop.libraries.itemslangapi")
         relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.intellij")
         relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
         relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")

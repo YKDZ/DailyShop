@@ -8,7 +8,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.scheduler.Scheduler;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.builder.ShopOrderBuilder;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import me.rubix327.itemslangapi.ItemsLangAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.EventHandler;
@@ -25,7 +24,6 @@ public abstract class DailyShop extends JavaPlugin implements Listener {
     public static Database DATABASE;
     public static Economy ECONOMY;
     public static AdventureManager ADVENTURE_MANAGER;
-    public static ItemsLangAPI ITEMSLANG_API;
     public static Metrics METRICS;
 
     public abstract void init();
@@ -36,8 +34,6 @@ public abstract class DailyShop extends JavaPlugin implements Listener {
     protected abstract void waitForItemsAdder(ItemsAdderLoadDataEvent e);
 
     public abstract boolean setupEconomy();
-
-    public abstract boolean setupItemsLangAPI();
 
     public abstract boolean setupBStats();
 }

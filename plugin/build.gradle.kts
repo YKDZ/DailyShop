@@ -1,3 +1,12 @@
+sourceSets {
+    create("premium") {
+        java.srcDir("src/premium/java")
+        resources.srcDir("src/premium/resources")
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
+    }
+}
+
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT")
 
@@ -27,10 +36,6 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
-
-    implementation("com.github.Rubix327:ItemsLangAPI:1.0.2")
-
-    // implementation("com.cronutils:cron-utils:9.2.1")
 
     compileOnly("org.xerial:sqlite-jdbc:3.45.3.0")
 

@@ -18,8 +18,6 @@ import cn.encmys.ykdz.forest.dailyshop.shop.order.builder.ShopOrderBuilderImpl;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import me.rubix327.itemslangapi.ItemsLangAPI;
-import me.rubix327.itemslangapi.Lang;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -33,12 +31,11 @@ public final class DailyShopImpl extends DailyShop {
         DailyShop.PRODUCT_FACTORY.unload();
 
         Config.load();
+        LocateConfig.load();
         MessageConfig.load();
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
-
-        DailyShop.ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
 
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShop.PRODUCT_FACTORY = new ProductFactoryImpl();
@@ -88,10 +85,6 @@ public final class DailyShopImpl extends DailyShop {
         ProductConfig.load();
         ShopConfig.load();
 
-        if (!setupItemsLangAPI()) {
-            return;
-        }
-
         DATABASE = new SQLiteDatabase();
 
         if (!ItemsAdderHook.isHooked()) {
@@ -100,6 +93,8 @@ public final class DailyShopImpl extends DailyShop {
 
         CommandAPI.onEnable();
         new CommandHandler(INSTANCE).load();
+
+        setupBStats();
     }
 
     @Override
@@ -126,13 +121,6 @@ public final class DailyShopImpl extends DailyShop {
             return false;
         }
         DailyShopImpl.ECONOMY = rsp.getProvider();
-        return true;
-    }
-
-    @Override
-    public boolean setupItemsLangAPI() {
-        DailyShopImpl.ITEMSLANG_API = ItemsLangAPI.getApi();
-        DailyShopImpl.ITEMSLANG_API.load(Lang.valueOf(Config.language.toUpperCase()));
         return true;
     }
 
