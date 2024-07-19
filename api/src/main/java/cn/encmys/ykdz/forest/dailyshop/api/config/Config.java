@@ -11,7 +11,8 @@ import java.io.IOException;
 public class Config {
     protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
     protected static YamlConfiguration config = new YamlConfiguration();
-    public static String language;
+    public static String language_message;
+    public static String language_minecraftLang;
     public static int logUsageLimit_entryAmount;
     public static double logUsageLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
@@ -44,7 +45,8 @@ public class Config {
     }
 
     private static void setUp() {
-        language = config.getString("language", "en_US");
+        language_message = config.getString("language.message", "en_US");
+        language_minecraftLang = config.getString("language.minecraft-lang", "en_us").toLowerCase();
         period_saveData = TextUtils.parseTimeToTicks(config.getString("period.save-data", "5m"));
         period_updateProductIcon = TextUtils.parseTimeToTicks(config.getString("period.update-product-icon", "3s"));
         period_checkRestocking = TextUtils.parseTimeToTicks(config.getString("period.check-restocking", "3s"));

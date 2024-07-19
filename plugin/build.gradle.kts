@@ -15,7 +15,7 @@ dependencies {
 
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 
-    annotationProcessor("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.jetbrains:annotations:24.1.0")
 
     compileOnly("io.lumine:Mythic-Dist:5.6.1")
 

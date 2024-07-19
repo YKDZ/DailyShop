@@ -1,5 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MinecraftLangConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
 import org.bukkit.Material;
@@ -22,13 +24,8 @@ public class VanillaItem implements BaseItem {
 
     @Override
     public String getDisplayName() {
-        // TODO 使用新接口实现
-//        String name = DailyShop.ITEMSLANG_API.translate(getMaterial(), Config.language);
-//        if (name == null) {
-//            name = "<red>Name not find";
-//        }
-//        return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(name);
-        return material.toString();
+        String name = MinecraftLangConfig.translate(getMaterial());
+        return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(name);
     }
 
     @Override

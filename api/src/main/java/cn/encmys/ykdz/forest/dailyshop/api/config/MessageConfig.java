@@ -39,11 +39,11 @@ public class MessageConfig {
     private static final YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(DailyShop.INSTANCE.getDataFolder(), "lang/" + Config.language + ".yml");
+        File file = new File(DailyShop.INSTANCE.getDataFolder(), "lang/" + Config.language_message + ".yml");
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
-            DailyShop.INSTANCE.saveResource("lang/" + Config.language + ".yml", false);
+            DailyShop.INSTANCE.saveResource("lang/" + Config.language_message + ".yml", false);
         }
 
         try {

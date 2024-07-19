@@ -31,7 +31,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShop.PRODUCT_FACTORY.unload();
 
         Config.load();
-        LocateConfig.load();
+        MinecraftLangConfig.load();
         MessageConfig.load();
         RarityConfig.load();
         ProductConfig.load();
@@ -80,6 +80,7 @@ public final class DailyShopImpl extends DailyShop {
         new MythicMobsHook();
 
         Config.load();
+        MinecraftLangConfig.load();
         MessageConfig.load();
         RarityConfig.load();
         ProductConfig.load();

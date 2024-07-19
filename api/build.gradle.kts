@@ -19,9 +19,11 @@ dependencies {
 
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
 
-    annotationProcessor("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.jetbrains:annotations:24.1.0")
 
     implementation("com.google.code.gson:gson:2.11.0")
+
+    compileOnly("com.mojang:authlib:1.5.21")
 
     // compileOnly("com.cronutils:cron-utils:9.2.1")
 }

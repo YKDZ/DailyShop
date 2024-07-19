@@ -1,22 +1,26 @@
-# Language file to use.
-# Available: zh_CN, en_US
-language: en_US
+language:
+  # Language file to use.
+  # Available: zh_CN, en_US
+  message: en_US
+  # One of the in-game locale code in
+  # https://minecraft.wiki/w/Language
+  minecraft-lang: en_us
 period:
   # Period for saving plugin data
   # Available format: 5h, 1m 30s, etc
-  save-data: "5m"
+  save-data: 5m
   # Period for product icon auto update (for stock feature)
   # Always updated once when the player clicks on the icon
-  update-product-icon: "3s"
+  update-product-icon: 3s
   # Period for checking whether the shop need to be restocked
-  check-restocking: "3s"
+  check-restocking: 3s
 log-usage-limit:
   # When calculating variables such as history-buy (for formula price feature),
   # up to how many of the latest log records are considered.
   entry-amount: 500
   # When calculating variables such as history-buy (for formula price feature),
   # log entries within how long are considered at most.
-  time-range: "7d"
+  time-range: 7d
 price-correct-by-disable-sell-or-buy: true
 # Do not change this
 version: 1
