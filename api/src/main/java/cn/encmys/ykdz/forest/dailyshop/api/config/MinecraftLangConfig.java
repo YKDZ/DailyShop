@@ -25,13 +25,14 @@ public class MinecraftLangConfig {
      * Format like 1.21 or 1.16.5
      */
     private final static String serverVersion = Bukkit.getVersion().split("-")[0];
-    private final static String fileDestination = DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/" + Config.language_minecraftLang.toLowerCase() + ".json";
     private final static Map<String, String> config = new HashMap<>();
 
     public static void load() {
+        String fileDestination = DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/" + Config.language_minecraftLang + ".json";
         try {
-            File locateFile = loadLangFile();
+            File locateFile = loadLangFile(fileDestination);
             loadMapFromLangFile(locateFile);
+            LogUtils.info("Successfully loaded language file " + locateFile.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,17 +42,11 @@ public class MinecraftLangConfig {
         return Collections.unmodifiableMap(config);
     }
 
-    public static String get(String key) {
-        return config.get(key);
-    }
-
-    private static File loadLangFile() throws IOException {
+    private static File loadLangFile(String fileDestination) throws IOException {
         File locateFile = new File(fileDestination);
         if (!locateFile.exists()) {
-            if (locateFile.mkdirs()) {
-                return useFallbackLang();
-            }
-            if (downloadLangFileFromMcAssets() || downloadLangFileFromOfficial()) {
+            locateFile.getParentFile().mkdirs();
+            if (downloadLangFileFromMcAssets(fileDestination) || downloadLangFileFromOfficial(fileDestination)) {
                 return locateFile;
             } else {
                 return useFallbackLang();
@@ -60,17 +55,17 @@ public class MinecraftLangConfig {
         return locateFile;
     }
 
-    private static boolean downloadLangFileFromMcAssets() {
+    private static boolean downloadLangFileFromMcAssets(String fileDestination) {
         LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json from mcasset.cloud.");
         try {
-            downloadFile(new URL("https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/" + serverVersion + "/assets/minecraft/lang/" + Config.language_minecraftLang + ".json"));
+            downloadFile(new URL("https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/" + serverVersion + "/assets/minecraft/lang/" + Config.language_minecraftLang + ".json"), fileDestination);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    private static boolean downloadLangFileFromOfficial() {
+    private static boolean downloadLangFileFromOfficial(String fileDestination) {
         LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json from official api.");
         try {
             JsonObject versions = fetchJson(new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json"));
@@ -89,13 +84,13 @@ public class MinecraftLangConfig {
             JsonObject assets = fetchJson(new URL(assetIndex.get("url").getAsString()));
             if (assets == null) return false;
 
-            String target = "minecraft/lang/" + Config.language_minecraftLang.toLowerCase() + ".json";
+            String target = "minecraft/lang/" + Config.language_minecraftLang + ".json";
 
             JsonObject targetAsset = getTargetAsset(assets, target);
             if (targetAsset == null) return false;
 
             String hash = targetAsset.get("hash").getAsString();
-            downloadFile(new URL("https://resources.download.minecraft.net/" + hash.substring(0, 2) + "/" + hash));
+            downloadFile(new URL("https://resources.download.minecraft.net/" + hash.substring(0, 2) + "/" + hash), fileDestination);
             return true;
         } catch (IOException e) {
             return false;
@@ -108,7 +103,7 @@ public class MinecraftLangConfig {
     }
 
     private static File useFallbackLang() {
-        DailyShop.INSTANCE.saveResource("lang/minecraft/en_us.json", false);
+        DailyShop.INSTANCE.saveResource("lang/minecraft/en_us.json", true);
         return new File(DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/en_us.json");
     }
 
@@ -176,7 +171,7 @@ public class MinecraftLangConfig {
         }
     }
 
-    private static void downloadFile(URL url) throws IOException {
+    private static void downloadFile(URL url, String fileDestination) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(5000); // 5 秒超时

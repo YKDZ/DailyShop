@@ -8,24 +8,22 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class SkullItem extends VanillaItem implements BaseItem {
-    private final String url;
+    /**
+     * 接受 url、uuid 或玩家名
+     */
+    private final String data;
 
-    public SkullItem(String url) {
+    public SkullItem(String data) {
         super(Material.PLAYER_HEAD);
-        this.url = url;
+        this.data = data;
     }
 
     @Override
     public ItemStack build(@Nullable Player player) {
-        return SkullUtils.generateSkullFromURLTexture(getUrl());
+        return SkullUtils.getSkullFromURL(getData());
     }
 
-    @Override
-    public boolean isExist() {
-        return true;
-    }
-
-    public String getUrl() {
-        return url;
+    public String getData() {
+        return data;
     }
 }

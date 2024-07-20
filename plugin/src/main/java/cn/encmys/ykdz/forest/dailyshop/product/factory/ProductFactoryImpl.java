@@ -6,7 +6,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -191,7 +190,7 @@ public class ProductFactoryImpl implements ProductFactory {
             return;
         }
 
-        BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(icon, icon.getItemType() == BaseItemType.VANILLA)
+        BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(icon, true)
                 .setAmount(iconSection.getInt("amount", 1))
                 .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
                 .setName(iconSection.getString("name"))
