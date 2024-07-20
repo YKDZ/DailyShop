@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.shop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
@@ -38,14 +39,14 @@ public class ShopImpl implements Shop {
      * @param allProductsId ID of all possible products
      * @param size          Maximum number of items in the shop at the same time
      */
-    public ShopImpl(String id, String name, long restockPeriod, List<String> allProductsId, int size) {
+    public ShopImpl(String id, String name, long restockPeriod, List<String> allProductsId, int size, MerchantRecord merchant) {
         this.id = id;
         this.name = name;
         this.size = size;
         shopGUI = new ShopGUI(this);
         historyGUI = new HistoryGUI(this);
         shopPricer = new ShopPricerImpl(this);
-        shopCashier = new ShopCashierImpl(this);
+        shopCashier = new ShopCashierImpl(this, merchant);
         shopStocker = new ShopStockerImpl(this, restockPeriod, allProductsId);
     }
 

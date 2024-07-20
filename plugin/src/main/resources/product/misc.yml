@@ -112,16 +112,6 @@ products:
         - "<gray>This is a Steel Ingot from <white>ItemsAdder<gray>."
         - "<gray>These lore will not be applied to the product item."
 
-  # This product will not load if Oraxen plugin is not installed.
-  OBSIDIAN_PICKAXE:
-    item:
-      base: OXN:obsidian_pickaxe
-      amount: 1
-    icon:
-      lore:
-        - "<gray>This is a Obsidian Pickaxe from <white>Oraxen<gray>."
-        - "<gray>These lore will not be applied to the product item."
-
   # This product will not load if MythicMobs plugin is not installed.
   SkeletonKingSword:
     item:

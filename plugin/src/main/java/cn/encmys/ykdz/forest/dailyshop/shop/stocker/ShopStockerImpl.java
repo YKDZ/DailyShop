@@ -115,6 +115,8 @@ public class ShopStockerImpl implements ShopStocker {
 
         // 若商品上架则补充其库存
         product.getProductStock().restock();
+        // 尝试重置商人模式余额
+        shop.getShopCashier().restockMerchant();
 
         listedProducts.add(productId);
     }

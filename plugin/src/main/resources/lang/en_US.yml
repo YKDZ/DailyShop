@@ -46,10 +46,12 @@ messages:
       failure:
         disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>."
         not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+        merchant-balance: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>. The shop do not have enough balance to buy things from you."
     sell-all:
       success: "<gray>Successfully sell <white>{stack} <gray>stack of <reset>{name} <gray>x <white>{amount} <gray>in your inventory to shop <reset>{shop}<gray>. You earned <white>{earn}."
       failure:
         disable: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>!"
         not-enough: "<gray>You do not have <reset>{name} <gray>x <white>{amount} <gray>in your inventory for sell."
+        merchant-balance: "<gray>You can not sell <reset>{name} <gray>x <white>{amount}<gray> to shop <reset>{shop}<gray>. The shop do not have enough balance to buy things from you."
 
 version: 1

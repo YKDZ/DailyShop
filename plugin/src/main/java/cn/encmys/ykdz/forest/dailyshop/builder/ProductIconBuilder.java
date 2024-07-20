@@ -129,6 +129,8 @@ public class ProductIconBuilder {
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
                             case NOT_ENOUGH_PRODUCT ->
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
+                            case NOT_ENOUGH_MERCHANT_BALANCE ->
+                                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_merchantBalance, player, vars));
                         }
                         return;
                     }
@@ -146,6 +148,8 @@ public class ProductIconBuilder {
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
                             case TRANSITION_DISABLED ->
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_disable, player, vars));
+                            case NOT_ENOUGH_MERCHANT_BALANCE ->
+                                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_merchantBalance, player, vars));
                         }
                         return;
                     }

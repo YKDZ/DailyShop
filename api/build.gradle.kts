@@ -18,7 +18,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     annotationProcessor("org.jetbrains:annotations:24.1.0")
 
-    implementation("com.google.code.gson:gson:2.11.0")
+    compileOnly("com.google.code.gson:gson:2.11.0")
 }
 
 tasks {

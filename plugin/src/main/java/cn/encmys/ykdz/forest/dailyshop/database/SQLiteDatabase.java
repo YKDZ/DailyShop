@@ -57,7 +57,8 @@ public class SQLiteDatabase implements Database {
                         id TEXT NOT NULL PRIMARY KEY,
                         listed_products TEXT NOT NULL,
                         cached_prices TEXT NOT NULL,
-                        last_restocking INTEGER NOT NULL
+                        last_restocking INTEGER NOT NULL,
+                        balance REAL NOT NULL
                     )""");
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS dailyshop_settlement_logs (
@@ -124,7 +125,7 @@ public class SQLiteDatabase implements Database {
     public void saveShopData(@NotNull List<Shop> data) {
         CompletableFuture.runAsync(() -> {
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_shop (id, listed_products, cached_prices, last_restocking) VALUES (?, ?, ?, ?)")
+                 PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_shop (id, listed_products, cached_prices, last_restocking, balance) VALUES (?, ?, ?, ?, ?)")
             ) {
                 conn.setAutoCommit(false);
                 for (Shop shop : data) {
@@ -132,6 +133,7 @@ public class SQLiteDatabase implements Database {
                     stmt.setString(2, gson.toJson(shop.getShopStocker().getListedProducts()));
                     stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
                     stmt.setLong(4, shop.getShopStocker().getLastRestocking());
+                    stmt.setDouble(5, shop.getShopCashier().getBalance());
                     stmt.addBatch();
                 }
                 stmt.executeBatch();
@@ -147,15 +149,16 @@ public class SQLiteDatabase implements Database {
     public CompletableFuture<ShopData> queryShopData(@NotNull String id) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("SELECT id, listed_products, cached_prices, last_restocking FROM dailyshop_shop WHERE id = ?")) {
+                 PreparedStatement stmt = conn.prepareStatement("SELECT id, listed_products, cached_prices, last_restocking, balance FROM dailyshop_shop WHERE id = ?")) {
                 stmt.setString(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
                         List<String> listedProducts = gson.fromJson(rs.getString("listed_products"), new TypeToken<List<String>>() {}.getType());
                         Map<String, PricePair> cachedPrices = gson.fromJson(rs.getString("cached_prices"), new TypeToken<Map<String, PricePairImpl>>() {}.getType());
                         long lastRestocking = rs.getLong("last_restocking");
+                        double balance = rs.getDouble("balance");
 
-                        return new ShopData(id, listedProducts, cachedPrices, lastRestocking);
+                        return new ShopData(id, listedProducts, cachedPrices, lastRestocking, balance);
                     }
                 }
             } catch (SQLException e) {

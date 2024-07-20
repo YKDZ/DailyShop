@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ShopCashier {
     /**
-     * Calculate the prices of all products in given ShopOrder and store them.
+     * Calculate the prices of all products in given ShopOrder and store them (ignore given totalStack value).
      * Each ShopOrder can only be billed once.
      * @param order ShopOrder that will be calculated
      */
@@ -32,4 +32,26 @@ public interface ShopCashier {
     int hasStackInTotal(@NotNull ShopOrder order);
 
     void logSettlement(@NotNull ShopOrder order);
+
+    void modifyBalance(double value);
+
+    double getInitBalance();
+
+    boolean isSupply();
+
+    boolean isOverflow();
+
+    boolean isInherit();
+
+    double getBalance();
+
+    /**
+     * This method is only used to initialize the balance value and does not respect the supply and overflow settings.
+     * Please use modifyBalance to change the balance value.
+     */
+    void setBalance(double balance);
+
+    boolean isMerchant();
+
+    void restockMerchant();
 }

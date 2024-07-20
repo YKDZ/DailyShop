@@ -63,7 +63,8 @@ public class ShopFactoryImpl implements ShopFactory {
                 ShopConfig.getName(id),
                 ShopConfig.getRestockPeriod(id),
                 products,
-                ShopConfig.getSize(id)
+                ShopConfig.getSize(id),
+                ShopConfig.getMerchant(id)
         );
 
         // 从数据库加载一系列商店数据
@@ -77,6 +78,9 @@ public class ShopFactoryImpl implements ShopFactory {
                     shop.getShopPricer().setCachedPrices(data.cachedPrices());
                 }
                 shop.getShopStocker().setLastRestocking(data.lastRestocking());
+                if (shop.getShopCashier().isInherit()) {
+                    shop.getShopCashier().setBalance(data.balance());
+                }
             } else {
                 shop.getShopStocker().restock();
             }

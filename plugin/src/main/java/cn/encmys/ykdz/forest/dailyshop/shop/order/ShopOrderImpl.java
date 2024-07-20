@@ -77,7 +77,7 @@ public class ShopOrderImpl implements ShopOrder {
 
     @Override
     public double getTotalPrice() {
-        return bill.values().stream().mapToDouble(Double::doubleValue).sum();
+        return bill.values().stream().mapToDouble(Double::doubleValue).sum() * totalStack;
     }
 
     @Override

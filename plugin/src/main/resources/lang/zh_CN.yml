@@ -1,4 +1,5 @@
-# 传统的颜色格式 (使用 & 符号) 不受支持,# 请使用 MiniMessage 格式, 参考以下页面:
+# 传统的颜色格式 (使用 & 符号) 不受支持,
+# 请使用 MiniMessage 格式, 参考以下页面:
 # https://docs.adventure.kyori.net/minimessage/format.html
 
 format:
@@ -23,6 +24,11 @@ messages:
         invalid-shop: "<red>商店 {shop} <red>不存在!"
       save:
         success: "<green>成功手动保存了所有商店数据!"
+    product:
+      check:
+        success: "<green>成功在你手中的物品中获取了 <gold>{keys} <green>配置键! 检查控制台以获取更多信息."
+        failure:
+          null-meta: "<red>无法在你手中的物品中获取任何配置键."
   action:
     buy:
       success: "<gray>成功在商店 <reset>{shop}<gray> 购买了<reset>{name} <gray>x <white>{amount}<gray>. 共花费 <white>{cost}."
@@ -37,10 +43,12 @@ messages:
       failure:
         disable: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
         not-enough: "<gray>你的背包中没有足够的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
+        merchant-balance: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>. 商店已经没有足够的余额从你手中购买商品了."
     sell-all:
       success: "<gray>成功向商店 <reset>{shop}<gray> 出售了背包中全部 <white>{stack} <gray>份的 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
       failure:
         disable: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
         not-enough: "<gray>你的背包中没有任何一份的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
+        merchant-balance: "<gray>你不能向商店 <reset>{shop}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>. 商店已经没有足够的余额从你手中购买商品了."
 
 version: 1

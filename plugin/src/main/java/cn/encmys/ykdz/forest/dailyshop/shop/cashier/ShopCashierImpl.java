@@ -9,6 +9,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
@@ -23,14 +24,19 @@ import java.util.stream.IntStream;
 
 public class ShopCashierImpl implements ShopCashier {
     private final Shop shop;
-    // TODO 商人功能
-    private double balance = -1d;
-    private final boolean supply = false;
-    private final boolean overflow = false;
-    private boolean inherit = false;
+    private final double initBalance;
+    private final boolean supply;
+    private final boolean overflow;
+    private final boolean inherit;
+    private double balance;
 
-    public ShopCashierImpl(@NotNull Shop shop) {
+    public ShopCashierImpl(@NotNull Shop shop, @NotNull MerchantRecord merchant) {
         this.shop = shop;
+        this.initBalance = merchant.initBalance();
+        this.balance = initBalance;
+        this.supply = merchant.supply();
+        this.overflow = merchant.overflow();
+        this.inherit = merchant.inherit();
     }
 
     @Override
@@ -87,6 +93,11 @@ public class ShopCashierImpl implements ShopCashier {
                 Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
                 int stack = entry.getValue();
 
+                // 处理商人模式
+                if (isMerchant()) {
+                    modifyBalance(order.getTotalPrice());
+                }
+
                 // 处理库存
                 ProductStock stock = product.getProductStock();
                 if (stock.isGlobalStock()) stock.modifyGlobal(order);
@@ -110,6 +121,11 @@ public class ShopCashierImpl implements ShopCashier {
                 for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
                     Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
                     int stack = entry.getValue();
+
+                    // 处理商人模式
+                    if (isMerchant()) {
+                        modifyBalance(-1 * order.getTotalPrice());
+                    }
 
                     // 处理库存
                     ProductStock stock = product.getProductStock();
@@ -168,8 +184,12 @@ public class ShopCashierImpl implements ShopCashier {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
+            // 商人模式余额不足
+            if (isMerchant() && balance < order.getTotalPrice()) {
+                return SettlementResult.NOT_ENOUGH_MERCHANT_BALANCE;
+            }
             // 商品未开放收购
-            if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
+            else if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户没有足够的商品
@@ -239,5 +259,63 @@ public class ShopCashierImpl implements ShopCashier {
                 .setOrderedProductStacks(orderedProductStacks)
                 .setOrderedProductIds(orderedProductIds)
                 .setTotalStack(order.getTotalStack()));
+    }
+
+    @Override
+    public void modifyBalance(double value) {
+        if (!isMerchant()) {
+            return;
+        }
+        if (!supply && value > 0) {
+            return;
+        }
+        double newValue = balance + value;
+        boolean isOverflow = newValue > initBalance;
+        if (isOverflow && !overflow) {
+            return;
+        }
+        balance = newValue;
+    }
+
+    @Override
+    public double getInitBalance() {
+        return initBalance;
+    }
+
+    @Override
+    public boolean isSupply() {
+        return supply;
+    }
+
+    @Override
+    public boolean isOverflow() {
+        return overflow;
+    }
+
+    @Override
+    public boolean isInherit() {
+        return inherit;
+    }
+
+    @Override
+    public double getBalance() {
+        return balance;
+    }
+
+    @Override
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    @Override
+    public boolean isMerchant() {
+        return initBalance != -1d;
+    }
+
+    @Override
+    public void restockMerchant() {
+        if (isMerchant() && !inherit) {
+            balance = initBalance;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -112,5 +113,14 @@ public class ShopConfig {
 
     public static ConfigurationSection getHistoryGuiSection(String shopId) {
         return getConfig(shopId).getConfigurationSection("history-gui");
+    }
+
+    public static @NotNull MerchantRecord getMerchant(@NotNull String shopId) {
+        return new MerchantRecord(
+                getConfig(shopId).getDouble("settings.merchant.balance", -1d),
+                getConfig(shopId).getBoolean("settings.merchant.supply", false),
+                getConfig(shopId).getBoolean("settings.merchant.overflow", false),
+                getConfig(shopId).getBoolean("settings.merchant.inherit", false)
+        );
     }
 }

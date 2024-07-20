@@ -32,9 +32,11 @@ public class MessageConfig {
     public static String messages_action_sell_success;
     public static String messages_action_sell_failure_disable;
     public static String messages_action_sell_failure_notEnough;
+    public static String messages_action_sell_failure_merchantBalance;
     public static String messages_action_sellAll_success;
     public static String messages_action_sellAll_failure_disable;
     public static String messages_action_sellAll_failure_notEnough;
+    public static String messages_action_sellAll_failure_merchantBalance;
     public static int version;
     private static final YamlConfiguration config = new YamlConfiguration();
 
@@ -79,9 +81,11 @@ public class MessageConfig {
         messages_action_sell_success = getMessage("messages.action.sell.success");
         messages_action_sell_failure_disable = getMessage("messages.action.sell.failure.disable");
         messages_action_sell_failure_notEnough = getMessage("messages.action.sell.failure.not-enough");
+        messages_action_sell_failure_merchantBalance = getMessage("messages.action.sell.failure.merchant-balance");
         messages_action_sellAll_success = getMessage("messages.action.sell-all.success");
         messages_action_sellAll_failure_disable = getMessage("messages.action.sell-all.failure.disable");
         messages_action_sellAll_failure_notEnough = getMessage("messages.action.sell-all.failure.not-enough");
+        messages_action_sellAll_failure_merchantBalance = getMessage("messages.action.sell-all.failure.merchant-balance");
         version = config.getInt("version");
     }
 

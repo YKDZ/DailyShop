@@ -29,6 +29,8 @@ dependencies {
 
     compileOnly("org.xerial:sqlite-jdbc:3.45.3.0")
 
+    implementation("com.google.code.gson:gson:2.11.0")
+
     implementation(project(":api"))
 }
 

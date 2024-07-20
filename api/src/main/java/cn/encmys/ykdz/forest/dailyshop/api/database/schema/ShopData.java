@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Map;
 
 public record ShopData(String id, List<String> listedProducts, Map<String, PricePair> cachedPrices,
-                       long lastRestocking) {
+                       long lastRestocking, double balance) {
 }
