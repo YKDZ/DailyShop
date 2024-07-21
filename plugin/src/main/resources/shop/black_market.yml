@@ -40,7 +40,12 @@ shop-gui:
           - "tell %player_name% Knock knock."
     "@":
       item: CLOCK
-      name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_black_market%"
+      name: ""
+      lore:
+        - " "
+        - "<gray>Restock Timer: <white>%dailyshop_restock_timer_black_market%"
+        - "<gray>Balance: <white>%dailyshop_merchant_balance_black_market%"
+        - " "
       update-period: "1s"
   product-icon:
     format:

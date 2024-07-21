@@ -27,6 +27,16 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         return true;
     }
 
+    @Override
+    public String onRequest(OfflinePlayer player, String params) {
+        if (params.contains("restock_timer_")) {
+            return restockTimer(player, params);
+        } else if (params.contains("merchant_balance_")) {
+            return merchantBalance(player, params);
+        }
+        return null;
+    }
+
     private static String restockTimer(OfflinePlayer player, String params) {
         String shopId = params.replace("restock_timer_", "");
         Shop shop = DailyShopImpl.SHOP_FACTORY.getShop(shopId);
@@ -50,15 +60,5 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             return "Shop " + shopId + " do not exist.";
         }
         return MessageConfig.format_decimal.format(shop.getShopCashier().getBalance());
-    }
-
-    @Override
-    public String onRequest(OfflinePlayer player, String params) {
-        if (params.contains("restock_timer_")) {
-            return restockTimer(player, params);
-        } else if (params.contains("merchant_balance_")) {
-            return merchantBalance(player, params);
-        }
-        return null;
     }
 }
