@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.api.event;
+package cn.encmys.ykdz.forest.dailyshop.api.event.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -7,25 +7,28 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class ProductListEvent extends Event implements Cancellable {
+import java.util.List;
+
+/**
+ * This event is triggered when the store restock is started (not yet finished).
+ */
+public class ShopPreRestockEvent extends Event implements Cancellable {
     private static final HandlerList handlerList = new HandlerList();
     private boolean isCancelled = false;
     private final Shop shop;
-    private final Product product;
+    private final List<Product> productsPreparedToBeListed;
 
-    public ProductListEvent(@NotNull Shop shop, @NotNull Product product) {
+    public ShopPreRestockEvent(Shop shop, List<Product> productsPreparedToBeListed) {
         this.shop = shop;
-        this.product = product;
+        this.productsPreparedToBeListed = productsPreparedToBeListed;
     }
 
-    @NotNull
     public Shop getShop() {
         return shop;
     }
 
-    @NotNull
-    public Product getProduct() {
-        return product;
+    public List<Product> getProductsPreparedToBeListed() {
+        return productsPreparedToBeListed;
     }
 
     @Override
@@ -48,4 +51,3 @@ public class ProductListEvent extends Event implements Cancellable {
         return handlerList;
     }
 }
-

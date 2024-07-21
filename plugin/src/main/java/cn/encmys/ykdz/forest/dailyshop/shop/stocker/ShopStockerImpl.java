@@ -1,14 +1,17 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.stocker;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.event.ProductListEvent;
-import cn.encmys.ykdz.forest.dailyshop.api.event.ShopRestockEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.product.ProductListEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.product.ProductPreListEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.shop.ShopPreRestockEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.shop.ShopRestockEvent;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -68,8 +71,9 @@ public class ShopStockerImpl implements ShopStocker {
         }
 
         // Event
-        ShopRestockEvent event = new ShopRestockEvent(getShop(), productsPreparedToBeListed);
-        if (event.isCancelled()) {
+        ShopPreRestockEvent shopPreRestockEvent = new ShopPreRestockEvent(getShop(), productsPreparedToBeListed);
+        Bukkit.getPluginManager().callEvent(shopPreRestockEvent);
+        if (shopPreRestockEvent.isCancelled()) {
             return;
         }
         // Event
@@ -88,13 +92,19 @@ public class ShopStockerImpl implements ShopStocker {
         if (cacheGUIMarker) getShop().getShopGUI().setGui(getShop().getShopGUI().buildGUIBuilder(null).build());
 
         lastRestocking = System.currentTimeMillis();
+
+        // Event
+        ShopRestockEvent shopRestockEvent = new ShopRestockEvent(getShop(), productsPreparedToBeListed);
+        Bukkit.getPluginManager().callEvent(shopRestockEvent);
+        // Event
     }
 
     @Override
     public void listProduct(Product product) {
         // Event
-        ProductListEvent event = new ProductListEvent(getShop(), product);
-        if (event.isCancelled()) {
+        ProductPreListEvent productPreListEvent = new ProductPreListEvent(getShop(), product);
+        Bukkit.getPluginManager().callEvent(productPreListEvent);
+        if (productPreListEvent.isCancelled()) {
             return;
         }
         // Event
@@ -119,6 +129,11 @@ public class ShopStockerImpl implements ShopStocker {
         shop.getShopCashier().restockMerchant();
 
         listedProducts.add(productId);
+
+        // Event
+        ProductListEvent productListEvent = new ProductListEvent(getShop(), product);
+        Bukkit.getPluginManager().callEvent(productListEvent);
+        // Event
     }
 
     @Override

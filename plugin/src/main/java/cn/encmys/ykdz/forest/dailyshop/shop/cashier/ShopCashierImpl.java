@@ -1,7 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.event.ProductTradeEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.shop.ShopPreSettleEvent;
+import cn.encmys.ykdz.forest.dailyshop.api.event.shop.ShopSettleEvent;
 import cn.encmys.ykdz.forest.dailyshop.api.price.enums.PriceMode;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
@@ -66,9 +67,9 @@ public class ShopCashierImpl implements ShopCashier {
     @Override
     public SettlementResult settle(@NotNull ShopOrder order) {
         // Event
-        ProductTradeEvent event = new ProductTradeEvent(order.getCustomer(), shop, order);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        ShopPreSettleEvent shopPreSettleEvent = new ShopPreSettleEvent(shop, order);
+        Bukkit.getPluginManager().callEvent(shopPreSettleEvent);
+        if (shopPreSettleEvent.isCancelled()) {
             return SettlementResult.CANCELLED;
         }
         // Event
@@ -79,6 +80,12 @@ public class ShopCashierImpl implements ShopCashier {
         }
         order.setSettled(true);
         billOrder(order);
+
+        // Event
+        ShopSettleEvent shopSettleEvent = new ShopSettleEvent(shop, order);
+        Bukkit.getPluginManager().callEvent(shopSettleEvent);
+        // Event
+
         return switch (order.getOrderType()) {
             case BUY_FROM -> buyFrom(order);
             case BUY_ALL_FROM -> buyAllFrom(order);

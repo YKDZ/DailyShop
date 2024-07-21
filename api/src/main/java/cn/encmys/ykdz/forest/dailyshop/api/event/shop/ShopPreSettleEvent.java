@@ -1,21 +1,19 @@
-package cn.encmys.ykdz.forest.dailyshop.api.event;
+package cn.encmys.ykdz.forest.dailyshop.api.event.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class ProductTradeEvent extends PlayerEvent implements Cancellable {
+public class ShopPreSettleEvent extends Event implements Cancellable {
     private static final HandlerList handlerList = new HandlerList();
     private boolean isCancelled = false;
     private final Shop shop;
     private final ShopOrder order;
 
-    public ProductTradeEvent(@NotNull Player who, @NotNull Shop shop, @NotNull ShopOrder order) {
-        super(who);
+    public ShopPreSettleEvent(@NotNull Shop shop, @NotNull ShopOrder order) {
         this.shop = shop;
         this.order = order;
     }
