@@ -51,13 +51,13 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 
 ### Gradle (Kotlin)
 
-```kotlin
+```
 repositories {
     maven("https://jitpack.io/")
 }
 ```
 
-```kotlin
+```
 dependencies {
     compileOnly("cn.encmys:DailyShop:{VERSION}")
 }
@@ -66,7 +66,7 @@ dependencies {
 ### Example Usage
 
 ```java
-public class MyPlugin extends JavaPlugin {
+public class MyPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         // Get a shop instance by shop id
@@ -78,6 +78,16 @@ public class MyPlugin extends JavaPlugin {
             // Increase balance by 100 
             shop.getShopCashier().modifyBalance(100);
         }
+
+        // Get a product by product id
+        Product product = DailyShop.PRODUCT_FACTORY.getProduct("DIAMOND_ORE");
+        // Restock a product
+        product.getProductStock().restock();
+    }
+
+    @EventHandler
+    public void onShopRestock(ShopRestockEvent e) {
+        
     }
 }
 ```

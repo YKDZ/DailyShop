@@ -51,13 +51,13 @@
 
 ### Gradle (Kotlin)
 
-```kotlin
+```
 repositories {
     maven("https://jitpack.io/")
 }
 ```
 
-```kotlin
+```
 dependencies {
     compileOnly("cn.encmys:DailyShop:{VERSION}")
 }
