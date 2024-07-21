@@ -29,6 +29,8 @@ public interface ProductStock {
 
     boolean isGlobalReplenish();
 
+    boolean isStock();
+
     void restock();
 
     void modifyPlayer(UUID uuid, int amount);

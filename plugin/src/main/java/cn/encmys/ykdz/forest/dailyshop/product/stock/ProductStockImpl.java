@@ -126,11 +126,19 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
+    public boolean isStock() {
+        return isGlobalStock() || isPlayerStock();
+    }
+
+    @Override
     public void restock() {
-        if (!isPlayerInherit()) {
+        if (!isStock()) {
+            return;
+        }
+        if (isPlayerStock() && !isPlayerInherit()) {
             currentPlayerAmount.clear();
         }
-        if (!isGlobalInherit()) {
+        if (isGlobalStock() && !isGlobalInherit()) {
             currentGlobalAmount = initialGlobalAmount;
         }
     }

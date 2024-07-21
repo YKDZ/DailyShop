@@ -63,6 +63,32 @@ dependencies {
 }
 ```
 
+### 用法示例
+
+```java
+public class MyPlugin extends JavaPlugin implements Listener {
+    @Override
+    public void onEnable() {
+        // 通过 shop id 获取商店实例
+        Shop shop = DailyShop.SHOP_FACTORY.getShop("black_market");
+        // 为商店补货
+        shop.getShopStocker().restock();
+        // 为商人模式的商店补充余额
+        if (shop.getShopCashier().isMerchant()) {
+            // Increase balance by 100 
+            shop.getShopCashier().modifyBalance(100);
+        }
+
+        // 通过 product id 获取商品实例
+        Product product = DailyShop.PRODUCT_FACTORY.getProduct("DIAMOND_ORE");
+        // 为商品补货
+        if (product.getProductStock().isStock()) {
+            product.getProductStock().restock();
+        }
+    }
+}
+```
+
 ## 感谢
 
 - [InvUI](https://github.com/NichtStudioCode/InvUI)

@@ -74,7 +74,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         // Restock a shop
         shop.getShopStocker().restock();
         // Modify balance of shop in merchant mode
-        if (shop.getShopCashier().merchant()) {
+        if (shop.getShopCashier().isMerchant()) {
             // Increase balance by 100 
             shop.getShopCashier().modifyBalance(100);
         }
@@ -83,11 +83,6 @@ public class MyPlugin extends JavaPlugin implements Listener {
         Product product = DailyShop.PRODUCT_FACTORY.getProduct("DIAMOND_ORE");
         // Restock a product
         product.getProductStock().restock();
-    }
-
-    @EventHandler
-    public void onShopRestock(ShopRestockEvent e) {
-        
     }
 }
 ```
