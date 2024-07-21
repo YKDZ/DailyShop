@@ -60,7 +60,11 @@ public class ShopConfig {
     }
 
     public static long getRestockPeriod(String shopId) {
-        return TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock-period"));
+        return TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock.period", "10m"));
+    }
+
+    public static boolean getRestockEnabled(String shopId) {
+        return getConfig(shopId).getBoolean("settings.restock.enabled", false);
     }
 
     public static String getShopGUITitle(String shopId) {

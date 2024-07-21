@@ -31,7 +31,7 @@ messages:
           null-meta: "<red>无法在你手中的物品中获取任何配置键."
   action:
     buy:
-      success: "<gray>成功在商店 <reset>{shop}<gray> 购买了<reset>{name} <gray>x <white>{amount}<gray>. 共花费 <white>{cost}."
+      success: "<gray>成功在商店 <reset>{shop}<gray> 购买了 <reset>{name} <gray>x <white>{amount}<gray>. 共花费 <white>{cost}."
       failure:
         money: "<gray>你没有足够的 <red>余额 <gray>来购买 <reset>{name} <gray>x <white>{amount}<gray>."
         disable: "<gray>你不能从商店 <reset>{shop}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>."

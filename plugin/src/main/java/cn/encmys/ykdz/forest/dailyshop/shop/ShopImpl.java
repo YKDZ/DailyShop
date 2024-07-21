@@ -39,7 +39,7 @@ public class ShopImpl implements Shop {
      * @param allProductsId ID of all possible products
      * @param size          Maximum number of items in the shop at the same time
      */
-    public ShopImpl(String id, String name, long restockPeriod, List<String> allProductsId, int size, MerchantRecord merchant) {
+    public ShopImpl(String id, String name, boolean restockEnabled, long restockPeriod, List<String> allProductsId, int size, MerchantRecord merchant) {
         this.id = id;
         this.name = name;
         this.size = size;
@@ -47,7 +47,7 @@ public class ShopImpl implements Shop {
         historyGUI = new HistoryGUI(this);
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this, merchant);
-        shopStocker = new ShopStockerImpl(this, restockPeriod, allProductsId);
+        shopStocker = new ShopStockerImpl(this, restockEnabled, restockPeriod, allProductsId);
     }
 
     @Override

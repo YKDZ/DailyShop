@@ -50,7 +50,7 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             long seconds = (timeRemaining % (60 * 1000)) / 1000;
             return String.format(MessageConfig.format_time, hours, minutes, seconds);
         }
-        return "";
+        return String.format(MessageConfig.format_time, 0, 0, 0);
     }
 
     private static String merchantBalance(OfflinePlayer player, String params) {

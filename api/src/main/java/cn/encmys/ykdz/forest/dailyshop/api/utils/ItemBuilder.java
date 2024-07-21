@@ -65,6 +65,7 @@ public class ItemBuilder {
         return this;
     }
 
+    // YELLOW:BRICKS
     public ItemBuilder setBannerPatterns(List<String> patternsData) {
         if (!(meta instanceof BannerMeta)) {
             return this;

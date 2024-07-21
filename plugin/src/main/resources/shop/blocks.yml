@@ -1,7 +1,9 @@
 settings:
   name: "<#A0522D>Blocks Shop"
   size: 18
-  restock-period: "10m"
+  restock:
+    enabled: true
+    period: "10m"
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"

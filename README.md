@@ -24,6 +24,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [x] Transition limit
 - [ ] Cart
 - [x] Merchant
+- [x] Rewriting item serialization and deserialization
 
 ## API
 

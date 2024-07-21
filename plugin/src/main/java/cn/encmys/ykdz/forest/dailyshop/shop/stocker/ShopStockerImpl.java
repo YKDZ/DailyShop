@@ -25,17 +25,28 @@ public class ShopStockerImpl implements ShopStocker {
     private final Shop shop;
     private final List<String> allProductsId;
     private final List<String> listedProducts = new ArrayList<>();
+    private final boolean restockEnabled;
     private final long restockPeriod;
     private long lastRestocking;
 
-    public ShopStockerImpl(@NotNull Shop shop, long restockPeriod, List<String> allProductsId) {
+    public ShopStockerImpl(@NotNull Shop shop, boolean restockEnabled, long restockPeriod, List<String> allProductsId) {
         this.shop = shop;
+        this.restockEnabled = restockEnabled;
         this.restockPeriod = restockPeriod;
         this.allProductsId = allProductsId;
     }
 
     @Override
+    public boolean needRestock() {
+        return restockEnabled;
+    }
+
+    @Override
     public void restock() {
+        if (!needRestock()) {
+            return;
+        }
+
         List<Product> productsPreparedToBeListed = new ArrayList<>();
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
 

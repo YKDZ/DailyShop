@@ -61,6 +61,7 @@ public class ShopFactoryImpl implements ShopFactory {
         Shop shop = new ShopImpl(
                 id,
                 ShopConfig.getName(id),
+                ShopConfig.getRestockEnabled(id),
                 ShopConfig.getRestockPeriod(id),
                 products,
                 ShopConfig.getSize(id),

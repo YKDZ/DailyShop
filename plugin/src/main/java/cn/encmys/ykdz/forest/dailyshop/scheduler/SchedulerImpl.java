@@ -25,7 +25,7 @@ public class SchedulerImpl implements Scheduler {
         scheduler.runTaskTimer(DailyShop.INSTANCE, task -> {
             long now = System.currentTimeMillis();
             for (Shop shop : DailyShop.SHOP_FACTORY.getAllShops().values()) {
-                if (shop.getShopStocker().getLastRestocking() + (long) shop.getShopStocker().getRestockPeriod() * 60 * 1000 <= now) {
+                if (shop.getShopStocker().needRestock() && shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50 <= now) {
                     shop.getShopStocker().restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.insertVar(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{
