@@ -23,7 +23,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [ ] Manually specifying restock results
 - [x] Transition limit
 - [ ] Cart
-- [ ] Merchant
+- [x] Merchant
 
 ## API
 
@@ -60,6 +60,25 @@ repositories {
 ```kotlin
 dependencies {
     compileOnly("cn.encmys:DailyShop:{VERSION}")
+}
+```
+
+### Example Usage
+
+```java
+public class MyPlugin extends JavaPlugin {
+    @Override
+    public void onEnable() {
+        // Get a shop instance by shop id
+        Shop shop = DailyShop.SHOP_FACTORY.getShop("black_market");
+        // Restock a shop
+        shop.getShopStocker().restock();
+        // Modify balance of shop in merchant mode
+        if (shop.getShopCashier().merchant()) {
+            // Increase balance by 100 
+            shop.getShopCashier().modifyBalance(100);
+        }
+    }
 }
 ```
 
