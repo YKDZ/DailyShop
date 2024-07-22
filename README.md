@@ -22,9 +22,9 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [ ] Discount
 - [ ] Manually specifying restock results
 - [x] Transition limit
-- [ ] Cart
+- [x] Cart
 - [x] Merchant
-- [x] Rewriting item serialization and deserialization
+- [x] Buy more
 
 ## API
 
