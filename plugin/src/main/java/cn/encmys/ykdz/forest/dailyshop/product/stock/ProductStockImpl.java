@@ -168,7 +168,7 @@ public class ProductStockImpl implements ProductStock {
             return;
         }
         UUID uuid = order.getCustomer().getUniqueId();
-        int amount = order.getTotalStack() * order.getOrderedProducts().get(productId) * (order.getOrderType() == OrderType.SELL_TO ? -1 : 1);
+        int amount = order.getOrderedProducts().get(productId) * (order.getOrderType() == OrderType.SELL_TO ? -1 : 1);
         modifyPlayer(uuid, amount);
     }
 
@@ -178,7 +178,7 @@ public class ProductStockImpl implements ProductStock {
             LogUtils.warn("Try to handle stock for an unsettled order.");
             return;
         }
-        int amount = order.getTotalStack() * order.getOrderedProducts().get(productId) * (order.getOrderType() == OrderType.SELL_TO ? -1 : 1);
+        int amount = order.getOrderedProducts().get(productId) * (order.getOrderType() == OrderType.SELL_TO ? -1 : 1);
         modifyGlobal(amount);
     }
 

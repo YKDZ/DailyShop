@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -14,7 +15,7 @@ public abstract class GUI {
     protected ScrollGui<Item> gui;
     protected final Map<UUID, Window> windows = new HashMap<>();
 
-    public abstract Item buildNormalIcon(char key);
+    public abstract Item buildNormalIcon(char key, ConfigurationSection iconSection);
 
     public abstract void open(@NotNull Player player);
 

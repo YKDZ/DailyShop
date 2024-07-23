@@ -64,7 +64,7 @@ public abstract class BaseItemDecorator {
 
     public abstract List<String> getPatternsData();
 
-    public abstract BaseItemDecorator setPatternsData(List<String> patternsData);
+    public abstract BaseItemDecorator setBannerPatterns(List<String> patternsData);
 
     public abstract Map<ClickType, List<String>> getCommands();
 
@@ -83,7 +83,7 @@ public abstract class BaseItemDecorator {
 
     public abstract long getPeriod();
 
-    public abstract BaseItemDecorator setPeriod(long period);
+    public abstract BaseItemDecorator setUpdatePeriod(long period);
 
     public abstract List<String> getFireworkEffectData();
 

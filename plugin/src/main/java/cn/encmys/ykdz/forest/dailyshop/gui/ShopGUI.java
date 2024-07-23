@@ -3,13 +3,10 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
-import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
@@ -17,7 +14,6 @@ import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -26,7 +22,6 @@ import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ShopGUI extends ShopRelatedGUI {
@@ -54,8 +49,8 @@ public class ShopGUI extends ShopRelatedGUI {
         if (iconsSection != null) {
             for (String key : iconsSection.getKeys(false)) {
                 char iconKey = key.charAt(0);
-
-                guiBuilder.addIngredient(iconKey, buildNormalIcon(iconKey));
+                ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
+                guiBuilder.addIngredient(iconKey, buildNormalIcon(iconKey, iconSection));
             }
         }
 
@@ -89,55 +84,12 @@ public class ShopGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public Item buildNormalIcon(char key) {
-        String shopId = shop.getId();
-        ConfigurationSection section = ShopConfig.getShopGUISection(shopId);
-        ConfigurationSection iconsSection = section.getConfigurationSection("icons");
-
-        if (iconsSection == null) {
+    public Item buildNormalIcon(char key, ConfigurationSection iconSection) {
+        BaseItemDecorator decorator = BaseItemDecoratorImpl.get(ShopConfig.getIconRecord(key, iconSection), false);
+        if (decorator == null) {
+            LogUtils.warn("Icon shop-gui.icons." + key + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
             return null;
         }
-
-        ConfigurationSection icon = iconsSection.getConfigurationSection(String.valueOf(key));
-
-        if (icon == null) {
-            return null;
-        }
-
-        int scrollShift;
-        if (section.getString("scroll-mode", "HORIZONTAL").equalsIgnoreCase("HORIZONTAL")) {
-            scrollShift = getRowsWithMarker();
-        } else {
-            scrollShift = getColsWithMarker();
-        }
-
-        BaseItem item = BaseItemBuilder.get(icon.getString("item", "DIRT"));
-
-        if (item == null) {
-            LogUtils.warn("Normal icon " + key + " in shop " + shopId + " has invalid base setting. Please check it.");
-            return null;
-        }
-
-        BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(item, true)
-                .setScrollShift(scrollShift)
-                .setAmount(icon.getInt("amount", 1))
-                .setName(icon.getString("name", null))
-                .setLore(icon.getStringList("lore"))
-                .setPeriod(TextUtils.parseTimeToTicks(icon.getString("update-period", "0s")))
-                .setScroll(icon.getInt("scroll", 0))
-                .setCommands(new HashMap<>() {{
-                    put(ClickType.LEFT, icon.getStringList("commands.left"));
-                    put(ClickType.RIGHT, icon.getStringList("commands.right"));
-                    put(ClickType.SHIFT_LEFT, icon.getStringList("commands.shift-left"));
-                    put(ClickType.SHIFT_RIGHT, icon.getStringList("commands.shift-right"));
-                    put(ClickType.DROP, icon.getStringList("commands.drop"));
-                    put(ClickType.DOUBLE_CLICK, icon.getStringList("commands.double-click"));
-                    put(ClickType.MIDDLE, icon.getStringList("commands.middle"));
-                }})
-                .setCustomModelData(icon.getInt("custom-model-data"))
-                .setItemFlags(icon.getStringList("item-flags"))
-                .setPatternsData(icon.getStringList("banner-patterns"));
-
-        return NormalIconBuilder.build(iconDecorator);
+        return NormalIconBuilder.build(decorator);
     }
 }

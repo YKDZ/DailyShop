@@ -7,9 +7,13 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 public interface ShopOrder {
+    ShopOrder combineOrder(ShopOrder order);
+
     ShopOrder setOrderType(OrderType orderType);
 
     ShopOrder addProduct(Product product, int amount);
+
+    ShopOrder setProduct(Product product, int amount);
 
     ShopOrder removeProduct(Product product);
 
@@ -32,10 +36,6 @@ public interface ShopOrder {
     boolean isBilled();
 
     ShopOrder setBilled(boolean billed);
-
-    ShopOrder setTotalStack(int totalStack);
-
-    int getTotalStack();
 
     double getBill(Product product);
 }

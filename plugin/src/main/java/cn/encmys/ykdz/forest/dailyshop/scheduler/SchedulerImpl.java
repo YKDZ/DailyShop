@@ -24,7 +24,7 @@ public class SchedulerImpl implements Scheduler {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimer(DailyShop.INSTANCE, task -> {
             long now = System.currentTimeMillis();
-            for (Shop shop : DailyShop.SHOP_FACTORY.getAllShops().values()) {
+            for (Shop shop : DailyShop.SHOP_FACTORY.getShops().values()) {
                 if (shop.getShopStocker().needRestock() && shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50 <= now) {
                     shop.getShopStocker().restock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -42,6 +42,7 @@ public class SchedulerImpl implements Scheduler {
     public void runDataSaver() {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         scheduler.runTaskTimerAsynchronously(DailyShop.INSTANCE, task -> {
+            DailyShop.PROFILE_FACTORY.save();
             DailyShop.PRODUCT_FACTORY.save();
             DailyShop.SHOP_FACTORY.save();
             LogUtils.info("Successfully save shop and product data.");

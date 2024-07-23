@@ -48,6 +48,10 @@ public class SQLiteDatabase implements Database {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS dailyshop_profile (
+                        id TEXT NOT NULL PRIMARY KEY
+                    );""");
+            stmt.execute("""
                     CREATE TABLE IF NOT EXISTS dailyshop_product (
                         id TEXT NOT NULL PRIMARY KEY,
                         stock_data TEXT
@@ -61,7 +65,7 @@ public class SQLiteDatabase implements Database {
                         balance REAL NOT NULL
                     )""");
             stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS dailyshop_settlement_logs (
+                    CREATE TABLE IF NOT EXISTS dailyshop_settlement_log (
                         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         customer TEXT NOT NULL,
                         shop_id TEXT NOT NULL,
@@ -71,7 +75,6 @@ public class SQLiteDatabase implements Database {
                         ordered_product_ids TEXT NOT NULL,
                         ordered_product_names TEXT NOT NULL,
                         ordered_product_stacks TEXT NOT NULL,
-                        total_stack INTEGER NOT NULL,
                         FOREIGN KEY (shop_id) REFERENCES dailyshop_shop (id)
                     );""");
         } catch (SQLException e) {
@@ -171,7 +174,7 @@ public class SQLiteDatabase implements Database {
     @Override
     public void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log) {
         CompletableFuture.runAsync(() -> {
-            String sql = "INSERT INTO dailyshop_settlement_logs (shop_id, customer, type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks, total_stack) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO dailyshop_settlement_log (shop_id, customer, type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, shopId);
@@ -200,7 +203,7 @@ public class SQLiteDatabase implements Database {
             long sevenDaysAgo = System.currentTimeMillis() - (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
             Timestamp sevenDaysAgoTimestamp = new Timestamp(sevenDaysAgo);
 
-            String sql = "SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks, total_stack FROM dailyshop_settlement_logs WHERE shop_id = ? AND type IN (" + typeList + ") AND transition_time > ? ";
+            String sql = "SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks FROM dailyshop_settlement_log WHERE shop_id = ? AND type IN (" + typeList + ") AND transition_time > ? ";
             if (customer != null) {
                 sql += "AND customer = ? ";
             }
@@ -226,15 +229,13 @@ public class SQLiteDatabase implements Database {
                             double price = rs.getDouble("price");
                             List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {}.getType());
                             List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
-                            int totalStack = rs.getInt("total_stack");
 
                             logs.add(SettlementLogImpl.of(type, customer)
                                     .setTransitionTime(transitionTime)
                                     .setPrice(price)
                                     .setOrderedProductIds(productIds)
                                     .setOrderedProductNames(names)
-                                    .setOrderedProductStacks(stacks)
-                                    .setTotalStack(totalStack));
+                                    .setOrderedProductStacks(stacks));
                         }
                     }
                 }

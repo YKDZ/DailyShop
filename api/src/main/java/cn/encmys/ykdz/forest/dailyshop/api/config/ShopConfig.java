@@ -1,6 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.Sound;
@@ -8,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.xenondevs.invui.gui.structure.Markers;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,12 +124,85 @@ public class ShopConfig {
         return getConfig(shopId).getConfigurationSection("history-gui");
     }
 
-    public static @NotNull MerchantRecord getMerchant(@NotNull String shopId) {
+    @NotNull
+    public static MerchantRecord getMerchant(@NotNull String shopId) {
         return new MerchantRecord(
                 getConfig(shopId).getDouble("settings.merchant.balance", -1d),
                 getConfig(shopId).getBoolean("settings.merchant.supply", false),
                 getConfig(shopId).getBoolean("settings.merchant.overflow", false),
                 getConfig(shopId).getBoolean("settings.merchant.inherit", false)
+        );
+    }
+
+    @Nullable
+    public static CartGUIRecord getCartGUI(@NotNull String shopId) {
+        ConfigurationSection section = getConfig(shopId).getConfigurationSection("cart-gui");
+        if (section == null) {
+            return null;
+        }
+        return new CartGUIRecord(
+                section.getString("title", "{shop}"),
+                section.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                section.getStringList("layout"),
+                getIconRecords(section.getConfigurationSection("icons")),
+                getCartProductIcon(section.getConfigurationSection("product-icon"))
+        );
+    }
+
+    @Nullable
+    public static IconRecord getIconRecord(@NotNull ConfigurationSection iconsSection, char iconKey) {
+        ConfigurationSection iconSection = iconsSection.getConfigurationSection("icons." + iconKey);
+        if (iconSection == null) {
+            return null;
+        }
+        return getIconRecord(iconKey, iconSection);
+    }
+
+    @NotNull
+    public static List<IconRecord> getIconRecords(@Nullable ConfigurationSection iconsSection) {
+        if (iconsSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the icons configuration section is empty.");
+        }
+        List<IconRecord> icons = new ArrayList<>();
+        for (String key : iconsSection.getKeys(false)) {
+            char iconKey = key.charAt(0);
+            ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
+
+            if (iconSection == null) {
+                continue;
+            }
+
+            icons.add(getIconRecord(iconKey, iconSection));
+        }
+        return icons;
+    }
+
+    @NotNull
+    public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
+        return new IconRecord(
+                iconKey,
+                iconSection.getString("item", "DIRT"),
+                iconSection.getString("name", null),
+                iconSection.getStringList("lore"),
+                iconSection.getInt("amount", 1),
+                TextUtils.parseTimeToTicks(iconSection.getString("update-period", "0s")),
+                iconSection.getInt("custom-model-data"),
+                iconSection.getInt("scroll", 0),
+                iconSection.getConfigurationSection("commands"),
+                iconSection.getStringList("item-flags"),
+                iconSection.getStringList("banner-patterns"),
+                iconSection.getStringList("firework-effects"),
+                iconSection.getStringList("potion-effects"));
+    }
+
+    @NotNull
+    public static CartProductIconRecord getCartProductIcon(@Nullable ConfigurationSection section) {
+        if (section == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        return new CartProductIconRecord(
+                section.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
+                section.getStringList("format.lore")
         );
     }
 }

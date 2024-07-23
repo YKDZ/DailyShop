@@ -93,7 +93,7 @@ public class ProductFactoryImpl implements ProductFactory {
                     .setAmount(itemSection.getInt("amount", defaultSettings.getInt("item.amount", 1)))
                     .setItemFlags(itemSection.getStringList("item-flags"))
                     .setCustomModelData((Integer) itemSection.get("custom-model-data"))
-                    .setPatternsData(itemSection.getStringList("banner-patterns"))
+                    .setBannerPatterns(itemSection.getStringList("banner-patterns"))
                     .setFireworkEffectData(itemSection.getStringList("firework-effects"));
         }
 
@@ -196,7 +196,7 @@ public class ProductFactoryImpl implements ProductFactory {
                 .setName(iconSection.getString("name"))
                 .setItemFlags(iconSection.getStringList("item-flags"))
                 .setCustomModelData((Integer) iconSection.get("custom-model-data"))
-                .setPatternsData(iconSection.getStringList("banner-patterns"))
+                .setBannerPatterns(iconSection.getStringList("banner-patterns"))
                 .setFireworkEffectData(iconSection.getStringList("firework-effects"));
 
         // 构建商品 & 储存
@@ -226,7 +226,7 @@ public class ProductFactoryImpl implements ProductFactory {
     }
 
     @Override
-    public HashMap<String, Product> getAllProducts() {
+    public HashMap<String, Product> getProducts() {
         return allProducts;
     }
 
@@ -249,7 +249,7 @@ public class ProductFactoryImpl implements ProductFactory {
     @Override
     public void save() {
         List<Product> data = new ArrayList<>();
-        for (Product product : getAllProducts().values()) {
+        for (Product product : getProducts().values()) {
             // 仅需要储存有库存设置的商品
             if (product.getProductStock().isGlobalStock() || product.getProductStock().isPlayerStock()) {
                 data.add(product);

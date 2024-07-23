@@ -16,7 +16,7 @@ public interface ShopCashier {
     void billOrder(@NotNull ShopOrder order);
 
     /**
-     * Checkout the given ShopOrder for the customer.
+     * Checkout and finish the given ShopOrder for the customer.
      * Each ShopOrder can only be settled once.
      * @param order ShopOrder that will be settled
      * @return SettlementResult of this settle action
@@ -28,8 +28,6 @@ public interface ShopCashier {
     SettlementResult canBuyFrom(@NotNull ShopOrder order);
 
     boolean canHold(@NotNull ShopOrder order);
-
-    int hasStackInTotal(@NotNull ShopOrder order);
 
     void logSettlement(@NotNull ShopOrder order);
 

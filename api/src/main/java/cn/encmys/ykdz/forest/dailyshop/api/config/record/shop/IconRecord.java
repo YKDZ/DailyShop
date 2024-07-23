@@ -1,0 +1,16 @@
+package cn.encmys.ykdz.forest.dailyshop.api.config.record.shop;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+public record IconRecord(char key, @NotNull String item,
+                         @Nullable String name, @Nullable List<String> lore,
+                         int amount, long updatePeriod,
+                         int customModalData, int scroll,
+                         @Nullable ConfigurationSection commands,
+                         @Nullable List<String> itemFlags, @Nullable List<String> bannerPatterns,
+                         @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects) {
+}

@@ -15,9 +15,6 @@ public abstract class ShopRelatedGUI extends GUI {
         this.shop = shop;
     }
 
-    @Override
-    public abstract Item buildNormalIcon(char key);
-
     public int getRowsWithMarker() {
         ConfigurationSection section = ShopConfig.getShopGUISection(shop.getId());
         return (int) section.getStringList("layout").stream().filter(row -> row.contains(Character.toString(markerIdentifier))).count();
@@ -50,4 +47,6 @@ public abstract class ShopRelatedGUI extends GUI {
     public Shop getShop() {
         return shop;
     }
+
+    public abstract Item buildNormalIcon(char key, ConfigurationSection iconSection);
 }

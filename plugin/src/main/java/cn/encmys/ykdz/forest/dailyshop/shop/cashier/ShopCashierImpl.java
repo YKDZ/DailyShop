@@ -21,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class ShopCashierImpl implements ShopCashier {
     private final Shop shop;
@@ -100,6 +99,8 @@ public class ShopCashierImpl implements ShopCashier {
                 Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
                 int stack = entry.getValue();
 
+                if (product == null) continue;
+
                 // 处理商人模式
                 if (isMerchant()) {
                     modifyBalance(order.getTotalPrice());
@@ -124,35 +125,39 @@ public class ShopCashierImpl implements ShopCashier {
     private SettlementResult buyFrom(@NotNull ShopOrder order) {
         SettlementResult result = canBuyFrom(order);
         if (result == SettlementResult.SUCCESS) {
-            IntStream.range(0, order.getTotalStack()).forEach((i) -> {
-                for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
-                    Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
-                    int stack = entry.getValue();
+            for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
+                Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
+                int stack = entry.getValue();
 
-                    // 处理商人模式
-                    if (isMerchant()) {
-                        modifyBalance(-1 * order.getTotalPrice());
-                    }
+                if (product == null) continue;
 
-                    // 处理库存
-                    ProductStock stock = product.getProductStock();
-                    if (stock.isGlobalStock()) stock.modifyGlobal(order);
-                    if (stock.isPlayerStock()) stock.modifyPlayer(order);
-
-                    // 处理余额
-                    BalanceUtils.addBalance(order.getCustomer(), order.getBilledPrice(product));
-
-                    // 收取商品
-                    product.take(shop, order.getCustomer(), stack);
+                // 处理商人模式
+                if (isMerchant()) {
+                    modifyBalance(-1 * order.getTotalPrice());
                 }
-            });
-            logSettlement(order);
+
+                // 处理库存
+                ProductStock stock = product.getProductStock();
+                if (stock.isGlobalStock()) stock.modifyGlobal(order);
+                if (stock.isPlayerStock()) stock.modifyPlayer(order);
+
+                // 处理余额
+                BalanceUtils.addBalance(order.getCustomer(), order.getBilledPrice(product));
+
+                // 收取商品
+                product.take(shop, order.getCustomer(), stack);
+            }
         }
+        logSettlement(order);
         return result;
     }
 
     private SettlementResult buyAllFrom(@NotNull ShopOrder order) {
-        order.setTotalStack(hasStackInTotal(order));
+        for (String productId : order.getOrderedProducts().keySet()) {
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
+            if (product == null) continue;
+            order.setProduct(product, product.has(shop, order.getCustomer(), 1));
+        }
         return buyFrom(order);
     }
 
@@ -160,6 +165,8 @@ public class ShopCashierImpl implements ShopCashier {
     public SettlementResult canSellTo(@NotNull ShopOrder order) {
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
+
+            if (product == null) continue;
 
             // 商品未开放购买
             if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
@@ -191,6 +198,8 @@ public class ShopCashierImpl implements ShopCashier {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
+            if (product == null) continue;
+
             // 商人模式余额不足
             if (isMerchant() && balance < order.getTotalPrice()) {
                 return SettlementResult.NOT_ENOUGH_MERCHANT_BALANCE;
@@ -213,27 +222,13 @@ public class ShopCashierImpl implements ShopCashier {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
+            if (product == null) continue;
+
             if (!product.canHold(shop, order.getCustomer(), stack)) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public int hasStackInTotal(@NotNull ShopOrder order) {
-        int stackInTotal = Integer.MAX_VALUE;
-        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
-            int stack = entry.getValue();
-
-            int hasStack = product.has(shop, order.getCustomer(), 1) / stack;
-
-            if (stackInTotal > hasStack) {
-                stackInTotal = hasStack;
-            }
-        }
-        return stackInTotal;
     }
 
     @Override
@@ -244,6 +239,7 @@ public class ShopCashierImpl implements ShopCashier {
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
+            if (product == null) continue;
             orderedProductIds.add(product.getId());
             orderedProductNames.add(product.getIconDecorator().getName());
             orderedProductStacks.add(stack);
@@ -264,8 +260,7 @@ public class ShopCashierImpl implements ShopCashier {
                 .setOrderedProductIds(orderedProductIds)
                 .setOrderedProductNames(orderedProductNames)
                 .setOrderedProductStacks(orderedProductStacks)
-                .setOrderedProductIds(orderedProductIds)
-                .setTotalStack(order.getTotalStack()));
+                .setOrderedProductIds(orderedProductIds));
     }
 
     @Override

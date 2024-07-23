@@ -11,10 +11,10 @@ import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
+import cn.encmys.ykdz.forest.dailyshop.profile.factory.ProfileFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
-import cn.encmys.ykdz.forest.dailyshop.shop.order.builder.ShopOrderBuilderImpl;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
@@ -27,6 +27,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public final class DailyShopImpl extends DailyShop {
     @Override
     public void reload() {
+        DailyShop.PROFILE_FACTORY.unload();
         DailyShop.SHOP_FACTORY.unload();
         DailyShop.PRODUCT_FACTORY.unload();
 
@@ -37,18 +38,18 @@ public final class DailyShopImpl extends DailyShop {
         ProductConfig.load();
         ShopConfig.load();
 
+        DailyShop.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShop.PRODUCT_FACTORY = new ProductFactoryImpl();
         DailyShop.SHOP_FACTORY = new ShopFactoryImpl();
-        DailyShop.SHOP_ORDER_BUILDER = new ShopOrderBuilderImpl();
     }
 
     @Override
     public void init() {
+        DailyShopImpl.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
         DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
-        DailyShop.SHOP_ORDER_BUILDER = new ShopOrderBuilderImpl();
 
         DailyShopImpl.SCHEDULER = new SchedulerImpl();
     }
@@ -106,6 +107,7 @@ public final class DailyShopImpl extends DailyShop {
 
     @Override
     public void onDisable() {
+        PROFILE_FACTORY.unload();
         SHOP_FACTORY.unload();
         PRODUCT_FACTORY.unload();
 

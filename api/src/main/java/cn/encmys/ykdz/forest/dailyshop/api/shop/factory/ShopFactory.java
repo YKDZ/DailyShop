@@ -11,7 +11,7 @@ public interface ShopFactory {
 
     Shop getShop(String id);
 
-    HashMap<String, Shop> getAllShops();
+    HashMap<String, Shop> getShops();
 
     void unload();
 

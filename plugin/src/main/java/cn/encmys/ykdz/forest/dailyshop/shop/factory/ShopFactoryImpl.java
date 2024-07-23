@@ -101,7 +101,7 @@ public class ShopFactoryImpl implements ShopFactory {
     }
 
     @Override
-    public HashMap<String, Shop> getAllShops() {
+    public HashMap<String, Shop> getShops() {
         return shops;
     }
 
@@ -113,6 +113,6 @@ public class ShopFactoryImpl implements ShopFactory {
 
     @Override
     public void save() {
-        DailyShop.DATABASE.saveShopData(getAllShops().values().stream().toList());
+        DailyShop.DATABASE.saveShopData(getShops().values().stream().toList());
     }
 }

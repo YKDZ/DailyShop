@@ -1,20 +1,52 @@
 package cn.encmys.ykdz.forest.dailyshop.item.decorator;
 
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemBuilder;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BaseItemDecoratorImpl extends BaseItemDecorator {
-
     public BaseItemDecoratorImpl(@NotNull BaseItem item, boolean setDefaultName) {
         this.item = item;
         if (setDefaultName) {
             setName(item.getDisplayName());
         }
+    }
+
+    public static BaseItemDecorator get(IconRecord record, boolean setDefaultName) {
+        BaseItem item = BaseItemBuilder.get(record.item());
+        if (item == null) {
+            return null;
+        }
+        BaseItemDecorator decorator = new BaseItemDecoratorImpl(item, setDefaultName)
+                .setLore(record.lore())
+                .setAmount(record.amount())
+                .setUpdatePeriod(record.updatePeriod())
+                .setItemFlags(record.itemFlags())
+                .setCustomModelData(record.customModalData())
+                .setScroll(record.scroll())
+                .setBannerPatterns(record.bannerPatterns());
+        if (setDefaultName) {
+            decorator.setName(record.name());
+        }
+        if (record.commands() != null) {
+            decorator.setCommands(new HashMap<>() {{
+                put(ClickType.LEFT, record.commands().getStringList("commands.left"));
+                put(ClickType.RIGHT, record.commands().getStringList("commands.right"));
+                put(ClickType.SHIFT_LEFT, record.commands().getStringList("commands.shift-left"));
+                put(ClickType.SHIFT_RIGHT, record.commands().getStringList("commands.shift-right"));
+                put(ClickType.DROP, record.commands().getStringList("commands.drop"));
+                put(ClickType.DOUBLE_CLICK, record.commands().getStringList("commands.double-click"));
+                put(ClickType.MIDDLE, record.commands().getStringList("commands.middle"));
+            }});
+        }
+        return decorator;
     }
 
     @Override
@@ -119,7 +151,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public BaseItemDecorator setPatternsData(List<String> patternsData) {
+    public BaseItemDecorator setBannerPatterns(List<String> patternsData) {
         this.patternsData = patternsData;
         return this;
     }
@@ -166,7 +198,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public BaseItemDecorator setPeriod(long period) {
+    public BaseItemDecorator setUpdatePeriod(long period) {
         this.period = period;
         return this;
     }
