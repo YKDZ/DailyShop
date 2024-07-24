@@ -23,20 +23,6 @@ public class MessageConfig {
     public static String messages_command_shop_save_success;
     public static String messages_command_product_check_success;
     public static String messages_command_product_check_failure_nullMeta;
-    public static String messages_action_buy_success;
-    public static String messages_action_buy_failure_disable;
-    public static String messages_action_buy_failure_money;
-    public static String messages_action_buy_failure_stock_global;
-    public static String messages_action_buy_failure_stock_player;
-    public static String messages_action_buy_failure_inventory_space;
-    public static String messages_action_sell_success;
-    public static String messages_action_sell_failure_disable;
-    public static String messages_action_sell_failure_notEnough;
-    public static String messages_action_sell_failure_merchantBalance;
-    public static String messages_action_sellAll_success;
-    public static String messages_action_sellAll_failure_disable;
-    public static String messages_action_sellAll_failure_notEnough;
-    public static String messages_action_sellAll_failure_merchantBalance;
     public static int version;
     private static final YamlConfiguration config = new YamlConfiguration();
 
@@ -72,20 +58,6 @@ public class MessageConfig {
         messages_command_shop_save_success = getMessage("messages.command.shop.save");
         messages_command_product_check_success = getMessage("messages.command.product.check.success");
         messages_command_product_check_failure_nullMeta = getMessage("messages.command.product.check.failure.null-meta");
-        messages_action_buy_success = getMessage("messages.action.buy.success");
-        messages_action_buy_failure_disable = getMessage("messages.action.buy.failure.disable");
-        messages_action_buy_failure_money = getMessage("messages.action.buy.failure.money");
-        messages_action_buy_failure_stock_global = getMessage("messages.action.buy.failure.stock-global");
-        messages_action_buy_failure_stock_player = getMessage("messages.action.buy.failure.stock-player");
-        messages_action_buy_failure_inventory_space = getMessage("messages.action.buy.failure.inventory-space");
-        messages_action_sell_success = getMessage("messages.action.sell.success");
-        messages_action_sell_failure_disable = getMessage("messages.action.sell.failure.disable");
-        messages_action_sell_failure_notEnough = getMessage("messages.action.sell.failure.not-enough");
-        messages_action_sell_failure_merchantBalance = getMessage("messages.action.sell.failure.merchant-balance");
-        messages_action_sellAll_success = getMessage("messages.action.sell-all.success");
-        messages_action_sellAll_failure_disable = getMessage("messages.action.sell-all.failure.disable");
-        messages_action_sellAll_failure_notEnough = getMessage("messages.action.sell-all.failure.not-enough");
-        messages_action_sellAll_failure_merchantBalance = getMessage("messages.action.sell-all.failure.merchant-balance");
         version = config.getInt("version");
     }
 
@@ -95,5 +67,14 @@ public class MessageConfig {
 
     private static String getMessage(String path) {
         return config.getString(path, "<red>There may be an error in your language file. The related key is: " + path);
+    }
+
+    public static String getActionMessage(String shopId, String path) {
+        String shopMessage = ShopConfig.getConfig(shopId).getString("messages.action." + path);
+        if (shopId == null || shopId.isEmpty() || shopMessage == null) {
+            return getMessage("messages.action." + path);
+        } else {
+            return shopMessage;
+        }
     }
 }

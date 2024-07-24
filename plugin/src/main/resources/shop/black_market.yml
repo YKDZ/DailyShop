@@ -13,6 +13,10 @@ settings:
 
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
+  # This optional section override the same section (messages.action) in your lang file (en_US.yml etc.)
+  action:
+    buy:
+      success: "<gray>You successfully buy <reset>{name} <gray>x <white>{amount} <gray>in the most mysterious market"
 
 sounds:
   buy: ENTITY_VILLAGER_YES
@@ -43,7 +47,6 @@ shop-gui:
       item: CLOCK
       name: " "
       lore:
-        - "<gray>Restock Timer: <white>%dailyshop_restock_timer_black_market%"
         - "<gray>Balance: <white>%dailyshop_merchant_balance_black_market%"
         - " "
       update-period: "1s"
