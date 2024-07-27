@@ -17,7 +17,9 @@ public abstract class Product {
     private final Price buyPrice;
     private final Price sellPrice;
     private final Rarity rarity;
+    @NotNull
     private final BaseItemDecorator iconDecorator;
+    @Nullable
     private final BaseItemDecorator itemDecorator;
     private final ProductStock productStock;
     private final boolean isCacheable;
@@ -27,7 +29,7 @@ public abstract class Product {
             Price buyPrice,
             Price sellPrice,
             Rarity rarity,
-            BaseItemDecorator iconDecorator,
+            @NotNull BaseItemDecorator iconDecorator,
             BaseItemDecorator itemDecorator,
             ProductStock productStock,
             boolean isCacheable) {
@@ -59,10 +61,12 @@ public abstract class Product {
 
     public abstract ProductType getType();
 
+    @NotNull
     public BaseItemDecorator getIconDecorator() {
         return iconDecorator;
     }
 
+    @Nullable
     public BaseItemDecorator getItemDecorator() {
         return itemDecorator;
     }

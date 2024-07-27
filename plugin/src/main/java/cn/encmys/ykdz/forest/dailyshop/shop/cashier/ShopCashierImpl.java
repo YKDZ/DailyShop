@@ -44,7 +44,6 @@ public class ShopCashierImpl implements ShopCashier {
         if (order.isBilled()) {
             return;
         }
-        order.setBilled(true);
 
         Map<String, Double> bill = new HashMap<>();
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -61,6 +60,7 @@ public class ShopCashierImpl implements ShopCashier {
             bill.put(productId, price);
         }
         order.setBill(bill);
+        order.setBilled(true);
     }
 
     @Override
@@ -77,8 +77,9 @@ public class ShopCashierImpl implements ShopCashier {
             LogUtils.warn("Try to settle an order twice.");
             return SettlementResult.DUPLICATED;
         }
-        order.setSettled(true);
-        billOrder(order);
+        if (order.getOrderType() != OrderType.BUY_ALL_FROM) {
+            billOrder(order);
+        }
 
         // Event
         ShopSettleEvent shopSettleEvent = new ShopSettleEvent(shop, order);
@@ -100,6 +101,8 @@ public class ShopCashierImpl implements ShopCashier {
                 int stack = entry.getValue();
 
                 if (product == null) continue;
+
+                order.setSettled(true);
 
                 // 处理商人模式
                 if (isMerchant()) {
@@ -131,6 +134,8 @@ public class ShopCashierImpl implements ShopCashier {
 
                 if (product == null) continue;
 
+                order.setSettled(true);
+
                 // 处理商人模式
                 if (isMerchant()) {
                     modifyBalance(-1 * order.getTotalPrice());
@@ -153,11 +158,14 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     private SettlementResult buyAllFrom(@NotNull ShopOrder order) {
+        // 计算订单中每种商品的玩家拥有量
+        // 并储存到订单中
         for (String productId : order.getOrderedProducts().keySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
             if (product == null) continue;
             order.setProduct(product, product.has(shop, order.getCustomer(), 1));
         }
+        billOrder(order);
         return buyFrom(order);
     }
 

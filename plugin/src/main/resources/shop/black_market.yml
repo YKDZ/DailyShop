@@ -152,8 +152,6 @@ cart-gui:
       lore:
         - ""
         - "<gray>Stack: {stack}"
-        - ""
-        - "<gray>Price: {price}"
 
 products:
   - WARM_WELCOME

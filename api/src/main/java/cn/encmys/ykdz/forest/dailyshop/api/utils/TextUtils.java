@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,51 +17,55 @@ public class TextUtils {
     private static final String optionalMarker = "?";
     private static final String singleMarker = "~";
 
-    public static List<String> decorateText(List<String> text, @Nullable Player player) {
-        if (text == null) {
-            return null;
-        }
+    public static List<String> decorateText(@NotNull List<String> text, @Nullable Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+        AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
+        return adventureManager.componentToLegacy(
+                adventureManager.getComponentFromMiniMessage(
+                        decorateTextKeepMiniMessage(text, player, normalVars, listVars)
+                )
+        );
+    }
 
+    public static String decorateText(@NotNull String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+        String internalResult = parseInternalVar(text, normalVars);
+        if (internalResult == null) {
+            return "";
+        }
+        AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
+        return adventureManager.componentToLegacy(
+                adventureManager.getComponentFromMiniMessage(
+                        decorateTextKeepMiniMessage(text, player, normalVars)
+                )
+        );
+    }
+
+    public static List<String> decorateTextKeepMiniMessage(@NotNull List<String> text, @Nullable Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+        return parsePlaceholder(parseInternalVar(parseInternalListVar(text, listVars), normalVars), player);
+    }
+
+    public static String decorateTextKeepMiniMessage(@NotNull String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+        String internalResult = parseInternalVar(text, normalVars);
+        if (internalResult == null) {
+            return "";
+        }
+        return parsePlaceholder(internalResult, player);
+    }
+
+    public static List<String> parsePlaceholder(@NotNull List<String> text, @Nullable Player player) {
+        return text.stream()
+                .map((line) -> parsePlaceholder(line, player))
+                .toList();
+    }
+
+    public static String parsePlaceholder(@NotNull String text, @Nullable Player player) {
+        return PlaceholderAPI.setPlaceholders(player, text);
+    }
+
+    public static List<String> parseInternalVar(@NotNull List<String> text, @Nullable Map<String, String> vars) {
         List<String> result = new ArrayList<>();
         for (String line : text) {
             if (line != null) {
-                result.add(decorateText(line, player));
-            }
-        }
-        return result;
-    }
-
-    public static String decorateText(String text, @Nullable Player player) {
-        if (text == null) {
-            return null;
-        }
-        if (PlaceholderAPIHook.isHooked()) {
-            text = PlaceholderAPI.setPlaceholders(player, text);
-        }
-        return DailyShop.ADVENTURE_MANAGER.componentToLegacy(DailyShop.ADVENTURE_MANAGER.getComponentFromMiniMessage(text));
-    }
-
-    public static String parseVar(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
-        text = insertVar(text, vars);
-        return decorateText(text, player);
-    }
-
-    public static String decorateTextInMiniMessage(String text, @Nullable Player player, @NotNull Map<String, String> vars) {
-        if (text == null) {
-            return null;
-        }
-        return PlaceholderAPIHook.isHooked() ? PlaceholderAPI.setPlaceholders(player, insertVar(text, vars)) : insertVar(text, vars);
-    }
-
-    public static List<String> parseVar(@Nullable List<String> text, @Nullable Player player, @NotNull Map<String, String> vars) {
-        if (text == null) {
-            return null;
-        }
-
-        List<String> result = new ArrayList<>();
-        for (String line : text) {
-            if (line != null) {
-                String parsed = parseVar(line, player, vars);
+                String parsed = parseInternalVar(line, vars);
                 if (parsed != null) {
                     result.add(parsed);
                 }
@@ -84,86 +88,78 @@ public class TextUtils {
         return result;
     }
 
-    public static List<String> parseVar(@Nullable List<String> text, @Nullable Player player, @NotNull Map<String, List<String>> listVars, @NotNull Map<String, String> normalVars ) {
-        List<String> result = null;
-        if (text != null) {
-            result = insertListVar(text, listVars);
-            result = parseVar(result, player, normalVars);
+    @Nullable
+    public static String parseInternalVar(@NotNull String line, @Nullable Map<String, String> vars) {
+        if (vars == null) {
+            return line;
         }
-        return result;
-    }
-
-    public static List<String> insertListVar(List<String> lines, Map<String, List<String>> vars) {
-        List<String> res = null;
-        if (lines != null) {
-            List<String> result = new ArrayList<>();
-            Set<Map.Entry<String, List<String>>> entries = vars.entrySet();
-            for (String line : lines) {
-                if (line == null) {
-                    continue;
-                }
-
-                boolean keyLine = false;
-
-                for (Map.Entry<String, List<String>> entry : entries) {
-                    String key = entry.getKey();
-                    List<String> value = entry.getValue();
-                    String placeholder = "{" + key + "}";
-
-                    if (line.contains(placeholder)) {
-                        keyLine = true;
-                        int j = result.size();
-
-                        if (value == null || value.isEmpty()) {
-                            while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
-                                result.remove(j - 1);
-                                j--;
-                            }
-                        } else {
-                            while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
-                                String raw = result.get(j - 1).substring(1);
-                                result.set(j - 1, raw.isEmpty() ? " " : raw);
-                                j--;
-                            }
-                            result.addAll(value);
-                        }
-                        break;
-                    }
-                }
-
-                if (!keyLine) {
-                    result.add(line);
+        // 以 optionalMarker 的行是一个可选行
+        // 如果该行包含某变量，但此变量的值是："-1"、null、空，则抹除整行
+        if (line.startsWith(optionalMarker)) {
+            for (String key : vars.keySet()) {
+                if (line.contains("{" + key + "}") && (vars.get(key).equals("-1") || vars.get(key) == null || vars.get(key).isBlank())) {
+                    return null;
                 }
             }
-            res = result;
+            line = line.substring(optionalMarker.length());
         }
-        return res;
-    }
-
-    public static String insertVar(String line, Map<String, String> vars) {
-        if (line != null) {
-            // 以 optionalMarker 的行是一个可选行
-            // 如果该行包含某变量，但此变量的值是："-1"、null、空，则抹除整行
-            if (line.startsWith(optionalMarker)) {
-                for (String key : vars.keySet()) {
-                    if (line.contains("{" + key + "}") && (vars.get(key).equals("-1") || vars.get(key) == null || vars.get(key).isBlank())) {
-                        return null;
-                    }
-                }
-                line = line.substring(optionalMarker.length());
-            }
-            for (Map.Entry<String, String> entry : vars.entrySet()) {
-                line = line.replace("{" + entry.getKey() + "}", entry.getValue() != null ? entry.getValue() : "");
-            }
+        for (Map.Entry<String, String> entry : vars.entrySet()) {
+            line = line.replace("{" + entry.getKey() + "}", entry.getValue() != null ? entry.getValue() : "");
         }
         return line;
+    }
+
+    public static List<String> parseInternalListVar(@NotNull List<String> lines, @Nullable Map<String, List<String>> vars) {
+        if (vars == null) {
+            return lines;
+        }
+        List<String> result = new ArrayList<>();
+        Set<Map.Entry<String, List<String>>> entries = vars.entrySet();
+        for (String line : lines) {
+            if (line == null) {
+                continue;
+            }
+
+            boolean keyLine = false;
+
+            for (Map.Entry<String, List<String>> entry : entries) {
+                String key = entry.getKey();
+                List<String> value = entry.getValue();
+                String placeholder = "{" + key + "}";
+
+                if (line.contains(placeholder)) {
+                    keyLine = true;
+                    int j = result.size();
+
+                    if (value == null || value.isEmpty()) {
+                        while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
+                            result.remove(j - 1);
+                            j--;
+                        }
+                    } else {
+                        while (j >= 2 && result.get(j - 1).startsWith(listMarker)) {
+                            String raw = result.get(j - 1).substring(1);
+                            result.set(j - 1, raw.isEmpty() ? " " : raw);
+                            j--;
+                        }
+                        result.addAll(value);
+                    }
+                    break;
+                }
+            }
+
+            if (!keyLine) {
+                result.add(line);
+            }
+        }
+        return result;
     }
 
     public static double evaluateFormula(String formula, Map<String, String> vars) {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = manager.getEngineByName("JavaScript");
         try {
-            Object result = engine.eval(insertVar(formula, vars));
+            Object result = engine.eval(parseInternalVar(formula, vars));
             if (result instanceof Double) {
                 return (Double) result;
             } else if (result instanceof Integer) {
@@ -177,6 +173,16 @@ public class TextUtils {
         } catch (ScriptException e) {
             throw new IllegalArgumentException("Failed to evaluate formula " + formula + ": " + e.getMessage());
         }
+    }
+
+    public List<String> legacyToMiniMessage(@NotNull List<String> text) {
+        return text.stream()
+                .map(this::legacyToMiniMessage)
+                .toList();
+    }
+
+    public String legacyToMiniMessage(@NotNull String text) {
+        return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(text);
     }
 
     public static long parseTimeToTicks(@Nullable String time) {

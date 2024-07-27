@@ -45,7 +45,7 @@ public interface ShopCashier {
 
     /**
      * This method is only used to initialize the balance value and does not respect the supply and overflow settings.
-     * Please use modifyBalance to change the balance value.
+     * You should use modifyBalance to change the balance value.
      */
     void setBalance(double balance);
 

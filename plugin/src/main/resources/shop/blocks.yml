@@ -21,7 +21,7 @@ shop-gui:
   layout:
     - "# # # # # # # # u"
     - "# x x x x x x x @"
-    - "# # # # # # # # n"
+    - "# # # # c # # # n"
   icons:
     "#":
       item: BROWN_STAINED_GLASS_PANE
@@ -35,12 +35,24 @@ shop-gui:
       update-period: "1s"
     "u":
       item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
       scroll: -1
     "n":
       item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
       scroll: 1
+    "c":
+      item: MINECART
+      name: " "
+      lore:
+        - "<white>Left click to open the cart"
+        - "<white>Right click to switch between direct and cart shopping mode"
+        - " "
+      commands:
+        left:
+          - "dailyshop shop cart {shop} %player_name%"
+        right:
+          - "dailyshop shop misc switch-shopping-mode {shop} %player_name%"
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -102,6 +114,63 @@ history-gui:
         - ""
         - "<gray>Price: {price}"
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+
+cart-gui:
+  title: "Here is your cart for shop {shop}"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
+  # The x character is the placeholder
+  # for the history slot.
+  layout:
+    - "- # # # # # # # u"
+    - "# x x x x x x x #"
+    - "# x x x x x x x #"
+    - "- # # # @ # # # n"
+  icons:
+    "#":
+      item: BROWN_STAINED_GLASS_PANE
+      name: " "
+      lore:
+        - "<dark_gray>Wall of Cart"
+        - " "
+    "u":
+      item: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      features:
+        scroll: -1
+    "n":
+      item: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      features:
+        scroll: 1
+    "@":
+      item: PAPER
+      name: "<gray>Total Price: {total-price}"
+      lore:
+        - " "
+        - "<dark_gray>✖ Settle the cart"
+      feature:
+        settle-cart: true
+    "-":
+      item: ARROW
+      name: "<white>Back to shop"
+      commands:
+        left:
+          - "dailyshop shop open {shop} %player_name%"
+  cart-product-icon:
+    format:
+      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
+      lore:
+        - " "
+        - "<gray>Stack: <white>{stack}"
+        - " "
+        - "<dark_gray>✖ <white>Left Click"
+        - "   <gray>Add 1 stack"
+        - "<dark_gray>✖ <white>Right Click"
+        - "   <gray>Remove 1 stack"
+        - "<dark_gray>✖ <white>Shift + Left Click"
+        - "   <gray>Enter the amount of the stack"
+        - "   <gray>inside an anvil gui"
 
 products:
   # Use PACK: as prefix to import the entire

@@ -2,6 +2,8 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -12,7 +14,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import cn.encmys.ykdz.forest.dailyshop.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -59,26 +60,23 @@ public class HistoryGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public ScrollGui.Builder<Item> buildGUIBuilder(Player player) {
+    public ScrollGui.@NotNull Builder<Item> buildGUIBuilder(Player player) {
         String shopId = shop.getId();
-        ConfigurationSection section = ShopConfig.getHistoryGuiSection(shopId);
+        HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shopId);
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
-                .setStructure(section.getStringList("layout").toArray(new String[0]));
+                .setStructure(record.layout().toArray(new String[0]));
 
-        if (section.getString("scroll-mode", "HORIZONTAL").equalsIgnoreCase("HORIZONTAL")) {
+        if (record.scrollMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
         }
 
-        // Normal Icon
-        ConfigurationSection iconsSection = section.getConfigurationSection("icons");
-        if (iconsSection != null) {
-            for (String key : iconsSection.getKeys(false)) {
-                char iconKey = key.charAt(0);
-                ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
-                guiBuilder.addIngredient(iconKey, buildNormalIcon(iconKey, iconSection));
+        // 普通图标
+        if (record.icons() != null) {
+            for (IconRecord iconRecord : record.icons()) {
+                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord));
             }
         }
 
@@ -86,12 +84,12 @@ public class HistoryGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public Item buildNormalIcon(char key, ConfigurationSection iconSection) {
-        BaseItemDecorator decorator = BaseItemDecoratorImpl.get(ShopConfig.getIconRecord(key, iconSection), false);
+    public Item buildNormalIcon(IconRecord record) {
+        BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
-            LogUtils.warn("Icon history-gui.icons." + key + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
+            LogUtils.warn("Icon history-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator);
+        return NormalIconBuilder.build(decorator, this);
     }
 }

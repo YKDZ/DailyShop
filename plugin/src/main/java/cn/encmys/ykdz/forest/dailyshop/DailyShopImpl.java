@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.listener.PlayerListener;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.profile.factory.ProfileFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
@@ -17,12 +18,12 @@ import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.util.concurrent.CompletableFuture;
 
 public final class DailyShopImpl extends DailyShop {
     @Override
@@ -32,7 +33,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShop.PRODUCT_FACTORY.unload();
 
         Config.load();
-        MinecraftLangConfig.load();
+        CompletableFuture.runAsync(MinecraftLangConfig::load);
         MessageConfig.load();
         RarityConfig.load();
         ProductConfig.load();
@@ -45,16 +46,6 @@ public final class DailyShopImpl extends DailyShop {
     }
 
     @Override
-    public void init() {
-        DailyShopImpl.PROFILE_FACTORY = new ProfileFactoryImpl();
-        DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
-        DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
-        DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
-
-        DailyShopImpl.SCHEDULER = new SchedulerImpl();
-    }
-
-    @Override
     public void onLoad() {
         INSTANCE = this;
 
@@ -63,9 +54,7 @@ public final class DailyShopImpl extends DailyShop {
 
     @Override
     public void onEnable() {
-        if (ItemsAdderHook.isHooked()) {
-            Bukkit.getPluginManager().registerEvents(this, INSTANCE);
-        }
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), INSTANCE);
 
         ADVENTURE_MANAGER = new AdventureManagerImpl(INSTANCE);
 
@@ -89,20 +78,17 @@ public final class DailyShopImpl extends DailyShop {
 
         DATABASE = new SQLiteDatabase();
 
-        if (!ItemsAdderHook.isHooked()) {
-            init();
-        }
+        DailyShopImpl.PROFILE_FACTORY = new ProfileFactoryImpl();
+        DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
+        DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
+        DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
+
+        DailyShopImpl.SCHEDULER = new SchedulerImpl();
 
         CommandAPI.onEnable();
         new CommandHandler(INSTANCE).load();
 
         setupBStats();
-    }
-
-    @Override
-    @EventHandler
-    public void waitForItemsAdder(ItemsAdderLoadDataEvent e) {
-        init();
     }
 
     @Override
@@ -128,9 +114,8 @@ public final class DailyShopImpl extends DailyShop {
     }
 
     @Override
-    public boolean setupBStats() {
+    public void setupBStats() {
         int pluginId = 21305;
         DailyShopImpl.METRICS = new Metrics(this, pluginId);
-        return true;
     }
 }

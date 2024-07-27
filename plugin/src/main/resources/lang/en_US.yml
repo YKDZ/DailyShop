@@ -12,21 +12,28 @@ messages:
   command:
     reload:
       success: "<green>Successfully reload the plugin!"
+    save:
+      success: "<green>Successfully save all plugin data manually!"
     shop:
       open:
         success: "" # <gray>Successfully open shop <reset>{shop}<gray>!
         failure:
           invalid-shop: "<red>Shop {shop} <red>do not exist!"
+          invalid-player: "<red>Provided player do not exist!"
       history:
         success: ""
         failure:
           invalid-shop: "<red>Shop {shop} <red>do not exist!"
+          invalid-player: "<red>Provided player do not exist!"
       restock:
         success: "<green>Successfully restock shop {shop} <green>manually!"
         failure:
-          invalid-shop: "<red>The {shop} <red>do not exist!"
-      save:
-        success: "<green>Successfully save all shop data manually!"
+          invalid-shop: "<red>Shop {shop} <red>do not exist!"
+      cache:
+        clear:
+          success: "<green>Successfully clear all the internal cache (product item, gui builder, etc.) of shop {shop}!"
+          failure:
+            invalid-shop: "<red>Shop {shop} <red>do not exist!"
     product:
       check:
         success: "<green>Successfully get <gold>{keys} <green>from item in your hand! Check the console for more info."

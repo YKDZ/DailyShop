@@ -49,7 +49,10 @@ public class ProductIconBuilder {
                     if (!bundleContents.isEmpty()) {
                         for (String contentId : bundleContents) {
                             Product content = productFactory.getProduct(contentId);
-                            bundleContentsLore.add(TextUtils.decorateTextInMiniMessage(decorator.getBundleContentsLineFormat(), null, new HashMap<>() {{
+                            if (content == null) {
+                                continue;
+                            }
+                            bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(decorator.getBundleContentsLineFormat(), null, new HashMap<>() {{
                                 put("name", content.getIconDecorator().getName());
                                 put("amount", String.valueOf(content.getItemDecorator().getAmount()));
                             }}));
@@ -80,8 +83,8 @@ public class ProductIconBuilder {
                         new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getItem().build(null))
                                 .setCustomModelData(decorator.getCustomModelData())
                                 .setItemFlags(decorator.getItemFlags())
-                                .setLore(TextUtils.parseVar(decorator.getLoreFormat(), null, listVars, vars))
-                                .setDisplayName(TextUtils.parseVar(decorator.getNameFormat(), null, vars))
+                                .setLore(TextUtils.decorateText(decorator.getLoreFormat(), null, vars, listVars))
+                                .setDisplayName(TextUtils.decorateText(decorator.getNameFormat(), null, vars))
                                 .setBannerPatterns(decorator.getPatternsData())
                                 .setFireworkEffects(decorator.getFireworkEffectData())
                                 .build(decorator.getAmount()));
@@ -142,18 +145,18 @@ public class ProductIconBuilder {
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
                 case TRANSITION_DISABLED ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.disable"), player, vars);
                 case NOT_ENOUGH_MONEY ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_money, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.money"), player, vars);
                 case NOT_ENOUGH_GLOBAL_STOCK ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_global, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.stock.global"), player, vars);
                 case NOT_ENOUGH_PLAYER_STOCK ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_stock_player, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.stock.player"), player, vars);
                 case NOT_ENOUGH_INVENTORY_SPACE ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_inventory_space, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.inventory-space"), player, vars);
             }
         } else {
-            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_success, player, vars));
+            sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.success"), player, vars);
             player.playSound(player.getLocation(), ShopConfig.getBuySound(shop.getId()), 1f, 1f);
         }
     }
@@ -168,15 +171,15 @@ public class ProductIconBuilder {
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
                 case TRANSITION_DISABLED ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.disable"), player, vars);
                 case NOT_ENOUGH_PRODUCT ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_notEnough, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.not-enough"), player, vars);
                 case NOT_ENOUGH_MERCHANT_BALANCE ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_merchantBalance, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.merchant-balance"), player, vars);
             }
             return;
         }
-        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_success, player, vars));
+        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.success"), player, vars);
         player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
@@ -191,32 +194,30 @@ public class ProductIconBuilder {
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
                 case NOT_ENOUGH_PRODUCT ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_notEnough, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.not-enough"), player, vars);
                 case TRANSITION_DISABLED ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_disable, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.disable"), player, vars);
                 case NOT_ENOUGH_MERCHANT_BALANCE ->
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_merchantBalance, player, vars));
+                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.merchant-balance"), player, vars);
             }
             return;
         }
         // TODO 为收购全部操作增加单独的提示逻辑
 //        vars.put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId()) * stack));
 //        vars.put("stack", String.valueOf(stack));
-        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_success, player, vars));
+        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.success"), player, vars);
         player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
     private static void addToCart(Player player, Shop shop, Product product, Map<String, String> vars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         ShopOrder cart = profile.getCart(shop.getId());
-        if (cart == null) {
-            throw new RuntimeException("Shop do not have cart yet.");
-        }
         // 构建一个新订单并等待被检查与合并
         // 避免反复检测购物车中的商品
         ShopOrder newOrder = new ShopOrderImpl(player)
                 .setOrderType(cart.getOrderType())
                 .addProduct(product, 1);
+        shop.getShopCashier().billOrder(newOrder);
         // 在一个限制或情况“无法被玩家解决”的情况下
         // 阻止玩家将商品加入购物车
         switch (newOrder.getOrderType() == OrderType.SELL_TO ? shop.getShopCashier().canSellTo(newOrder) : shop.getShopCashier().canBuyFrom(newOrder)) {
@@ -224,16 +225,25 @@ public class ProductIconBuilder {
                 switch (newOrder.getOrderType()) {
                     // TODO 为无法加入购物车单独指定提示信息
                     case BUY_ALL_FROM ->
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sellAll_failure_disable, player, vars));
+                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.disable"), player, vars);
                     case BUY_FROM ->
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_sell_failure_disable, player, vars));
+                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.disable"), player, vars);
                     case SELL_TO ->
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextInMiniMessage(MessageConfig.messages_action_buy_failure_disable, player, vars));
+                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.disable"), player, vars);
                 }
             }
         }
         cart.combineOrder(newOrder);
+        profile.setCartOrder(shop.getId(), cart);
         // TODO 加入购物车音效
         player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
+    }
+
+    private static void removeFromCart(Player player, Shop shop, Product product, Map<String, String> vars) {
+
+    }
+
+    private static void sendMessage(String message, Player player, Map<String, String> vars) {
+        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextKeepMiniMessage(message, player, vars));
     }
 }

@@ -83,7 +83,7 @@ public class ShopFactoryImpl implements ShopFactory {
                     shop.getShopCashier().setBalance(data.balance());
                 }
             } else {
-                shop.getShopStocker().restock();
+                shop.getShopStocker().stock();
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);

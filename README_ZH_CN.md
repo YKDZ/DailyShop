@@ -73,7 +73,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         // 通过 shop id 获取商店实例
         Shop shop = DailyShop.SHOP_FACTORY.getShop("black_market");
         // 为商店补货
-        shop.getShopStocker().restock();
+        shop.getShopStocker().stock();
         // 为商人模式的商店补充余额
         if (shop.getShopCashier().isMerchant()) {
             // Increase balance by 100 

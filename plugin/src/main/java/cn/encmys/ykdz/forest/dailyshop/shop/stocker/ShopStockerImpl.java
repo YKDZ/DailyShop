@@ -14,11 +14,7 @@ import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ShopStockerImpl implements ShopStocker {
     private static final Random random = new Random();
@@ -42,21 +38,19 @@ public class ShopStockerImpl implements ShopStocker {
     }
 
     @Override
-    public void restock() {
-        if (!needRestock()) {
-            return;
-        }
-
+    public void stock() {
         List<Product> productsPreparedToBeListed = new ArrayList<>();
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
 
         listedProducts.clear();
         // 映射为 productId : product
-        Map<String, Product> allProducts = allProductsId.stream()
-                .collect(Collectors.toMap(
-                        productId -> productId,
-                        productFactory::getProduct
-                ));
+        Map<String, Product> allProducts = new HashMap<>();
+        for (String productId : allProductsId) {
+            Product product = productFactory.getProduct(productId);
+            if (product != null) {
+                allProducts.put(productId, product);
+            }
+        }
 
         if (getShop().getSize() >= allProductsId.size()) {
             productsPreparedToBeListed.addAll(allProducts.values());
@@ -98,9 +92,6 @@ public class ShopStockerImpl implements ShopStocker {
         }
 
         getShop().getShopGUI().closeAll();
-        // 如果 GUI 内不包含需要根据查看 GUI 的玩家而实时更新描述的商品（如具有 stock-player 限制），
-        // 则缓存 GUI 对象。
-        if (cacheGUIMarker) getShop().getShopGUI().setGui(getShop().getShopGUI().buildGUIBuilder(null).build());
 
         lastRestocking = System.currentTimeMillis();
 

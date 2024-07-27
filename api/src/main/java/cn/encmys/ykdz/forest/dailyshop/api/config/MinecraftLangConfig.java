@@ -46,17 +46,24 @@ public class MinecraftLangConfig {
         File locateFile = new File(fileDestination);
         if (!locateFile.exists()) {
             locateFile.getParentFile().mkdirs();
+            LogUtils.info("Start to load lang file " + Config.language_minecraftLang + ".json. The size of this file is around 600K.");
             if (downloadLangFileFromMcAssets(fileDestination) || downloadLangFileFromOfficial(fileDestination)) {
                 return locateFile;
             } else {
+                LogUtils.info("Failed to download lang file " + Config.language_minecraftLang + ".json. Use en_us.json (Version " + serverVersion + ") as fallback. Please check your network connection.");
                 return useFallbackLang();
             }
         }
         return locateFile;
     }
 
+    private static File useFallbackLang() {
+        DailyShop.INSTANCE.saveResource("lang/minecraft/en_us.json", true);
+        return new File(DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/en_us.json");
+    }
+
     private static boolean downloadLangFileFromMcAssets(String fileDestination) {
-        LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json from mcasset.cloud.");
+        LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json through mcasset.cloud.");
         try {
             downloadFile(new URL("https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/" + serverVersion + "/assets/minecraft/lang/" + Config.language_minecraftLang + ".json"), fileDestination);
             return true;
@@ -66,7 +73,7 @@ public class MinecraftLangConfig {
     }
 
     private static boolean downloadLangFileFromOfficial(String fileDestination) {
-        LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json from official api.");
+        LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json through official api.");
         try {
             JsonObject versions = fetchJson(new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json"));
             if (versions == null) return false;
@@ -100,11 +107,6 @@ public class MinecraftLangConfig {
     @NotNull
     public static String translate(@NotNull Material material) {
         return config.getOrDefault("item.minecraft." + material.name().toLowerCase(), config.getOrDefault("block.minecraft." + material.name().toLowerCase(), "<red>Name not found!>"));
-    }
-
-    private static File useFallbackLang() {
-        DailyShop.INSTANCE.saveResource("lang/minecraft/en_us.json", true);
-        return new File(DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/en_us.json");
     }
 
     private static String getLatestVersion(JsonObject versions) {

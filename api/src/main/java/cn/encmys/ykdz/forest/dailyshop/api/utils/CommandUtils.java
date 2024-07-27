@@ -15,6 +15,10 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class CommandUtils {
+    public static void dispatchCommands(Player player, @Nullable List<String> commands, @Nullable Map<String, String> vars) {
+        dispatchCommands(player, TextUtils.parseInternalVar(TextUtils.parsePlaceholder(commands, player), vars));
+    }
+
     public static void dispatchCommands(Player player, @Nullable List<String> commands) {
         if (commands == null) {
             return;

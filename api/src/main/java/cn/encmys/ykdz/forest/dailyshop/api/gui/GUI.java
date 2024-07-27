@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
-import org.bukkit.configuration.ConfigurationSection;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class GUI {
-    protected ScrollGui<Item> gui;
     protected final Map<UUID, Window> windows = new HashMap<>();
 
-    public abstract Item buildNormalIcon(char key, ConfigurationSection iconSection);
+    public abstract Item buildNormalIcon(IconRecord record);
 
     public abstract void open(@NotNull Player player);
 
+    @NotNull
     public abstract ScrollGui.Builder<Item> buildGUIBuilder(Player player);
 
     public void closeAll() {
@@ -36,13 +36,5 @@ public abstract class GUI {
 
     public Map<UUID, Window> getWindows() {
         return windows;
-    }
-
-    public ScrollGui<Item> getGui() {
-        return gui;
-    }
-
-    public void setGui(ScrollGui<Item> gui) {
-        this.gui = gui;
     }
 }

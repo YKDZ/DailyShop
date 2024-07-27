@@ -152,7 +152,7 @@ public class ProductCommand {
                         vars.put("keys", "base");
                         keyValue.add("<#C28456>base: <#346659>MM:" + id);
                     }
-                    // Vanilla
+                    // 原版物品 base
                     else {
                         vars.put("keys", "base");
                         keyValue.add("<#C28456>base: <#346659>" + item.getType());
@@ -161,11 +161,10 @@ public class ProductCommand {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
                     }
                     if (!keyValue.isEmpty()) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.insertVar(MessageConfig.messages_command_product_check_success, vars));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.parseInternalVar(MessageConfig.messages_command_product_check_success, vars));
                         return;
                     }
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
                 });
     }
-
 }

@@ -26,12 +26,11 @@ public class AdventureManagerImpl extends AdventureManager {
 
     @Override
     public void close() {
-        if (adventure != null)
-            adventure.close();
+        adventure.close();
     }
 
     @Override
-    public List<Component> getComponentFromMiniMessage(List<String> texts) {
+    public List<Component> getComponentFromMiniMessage(@NotNull List<String> texts) {
         List<Component> result = new ArrayList<>();
         for (String text : texts) {
             result.add(getComponentFromMiniMessage(text));
@@ -40,10 +39,7 @@ public class AdventureManagerImpl extends AdventureManager {
     }
 
     @Override
-    public Component getComponentFromMiniMessage(String text) {
-        if (text == null) {
-            return Component.empty();
-        }
+    public Component getComponentFromMiniMessage(@NotNull String text) {
         return MiniMessage.miniMessage().deserialize(text);
     }
 

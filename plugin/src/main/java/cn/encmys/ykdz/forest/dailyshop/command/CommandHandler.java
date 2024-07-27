@@ -14,6 +14,7 @@ public class CommandHandler {
         new CommandAPICommand("dailyshop")
                 .withSubcommands(
                         getReloadCommand(),
+                        getSaveCommand(),
                         ShopCommand.INSTANCE.getShopCommand(),
                         ProductCommand.INSTANCE.getShopCommand()
                 )
@@ -24,12 +25,23 @@ public class CommandHandler {
 
     }
 
-    public CommandAPICommand getReloadCommand() {
+    private CommandAPICommand getReloadCommand() {
         return new CommandAPICommand("reload")
                 .withPermission("dailyshop.command.reload")
                 .executes((sender, args) -> {
                     DailyShop.INSTANCE.reload();
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_reload_success);
+                });
+    }
+
+    private CommandAPICommand getSaveCommand() {
+        return new CommandAPICommand("save")
+                .withPermission("dailyshop.command.save")
+                .executes((sender, args) -> {
+                    DailyShop.PROFILE_FACTORY.save();
+                    DailyShop.PRODUCT_FACTORY.save();
+                    DailyShop.SHOP_FACTORY.save();
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_save_success);
                 });
     }
 }

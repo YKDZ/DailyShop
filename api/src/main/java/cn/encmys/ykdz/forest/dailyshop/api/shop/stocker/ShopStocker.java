@@ -7,7 +7,7 @@ import java.util.List;
 public interface ShopStocker {
     boolean needRestock();
 
-    void restock();
+    void stock();
 
     void listProduct(Product product);
 

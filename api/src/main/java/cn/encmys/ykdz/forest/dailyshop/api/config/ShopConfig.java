@@ -1,9 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartProductIconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.*;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.Sound;
@@ -134,18 +132,72 @@ public class ShopConfig {
         );
     }
 
-    @Nullable
-    public static CartGUIRecord getCartGUI(@NotNull String shopId) {
-        ConfigurationSection section = getConfig(shopId).getConfigurationSection("cart-gui");
-        if (section == null) {
-            return null;
+    @NotNull
+    public static HistoryGUIRecord getHistoryGUIRecord(@NotNull String shopId) {
+        ConfigurationSection mainSection = getConfig(shopId).getConfigurationSection("history-gui");
+        if (mainSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        ConfigurationSection productIconSection = mainSection.getConfigurationSection("history-icon");
+        if (productIconSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        return new HistoryGUIRecord(
+                mainSection.getString("title", "{shop}"),
+                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                mainSection.getStringList("layout"),
+                getIconRecords(mainSection.getConfigurationSection("icons")),
+                new HistoryIconRecord(
+                        productIconSection.getString("format.name", "{date}"),
+                        productIconSection.getStringList("format.lore"),
+                        productIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}")
+                )
+        );
+    }
+
+    @NotNull
+    public static ShopGUIRecord getShopGUIRecord(@NotNull String shopId) {
+        ConfigurationSection mainSection = getConfig(shopId).getConfigurationSection("shop-gui");
+        if (mainSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        ConfigurationSection productIconSection = mainSection.getConfigurationSection("product-icon");
+        if (productIconSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        return new ShopGUIRecord(
+                mainSection.getString("title", "{shop}"),
+                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                mainSection.getStringList("layout"),
+                getIconRecords(mainSection.getConfigurationSection("icons")),
+                new ProductIconRecord(
+                        productIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
+                        productIconSection.getStringList("format.lore"),
+                        productIconSection.getString("format.bundle-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
+                        productIconSection.getString("misc.disabled-price", "<red>✘")
+                )
+        );
+    }
+
+    @NotNull
+    public static CartGUIRecord getCartGUIRecord(@NotNull String shopId) {
+        ConfigurationSection mainSection = getConfig(shopId).getConfigurationSection("cart-gui");
+        if (mainSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
+        }
+        ConfigurationSection cartIconSection = mainSection.getConfigurationSection("cart-product-icon");
+        if (cartIconSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         return new CartGUIRecord(
-                section.getString("title", "{shop}"),
-                section.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
-                section.getStringList("layout"),
-                getIconRecords(section.getConfigurationSection("icons")),
-                getCartProductIcon(section.getConfigurationSection("product-icon"))
+                mainSection.getString("title", "{shop}"),
+                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                mainSection.getStringList("layout"),
+                getIconRecords(mainSection.getConfigurationSection("icons")),
+                new CartProductIconRecord(
+                        cartIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
+                        cartIconSection.getStringList("format.lore")
+                )
         );
     }
 
@@ -193,16 +245,5 @@ public class ShopConfig {
                 iconSection.getStringList("banner-patterns"),
                 iconSection.getStringList("firework-effects"),
                 iconSection.getStringList("potion-effects"));
-    }
-
-    @NotNull
-    public static CartProductIconRecord getCartProductIcon(@Nullable ConfigurationSection section) {
-        if (section == null) {
-            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
-        }
-        return new CartProductIconRecord(
-                section.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
-                section.getStringList("format.lore")
-        );
     }
 }

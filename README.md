@@ -73,7 +73,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         // Get a shop instance by shop id
         Shop shop = DailyShop.SHOP_FACTORY.getShop("black_market");
         // Restock a shop
-        shop.getShopStocker().restock();
+        shop.getShopStocker().stock();
         // Modify balance of shop in merchant mode
         if (shop.getShopCashier().isMerchant()) {
             // Increase balance by 100 

@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 public class ProductItemBuilder {
     public static ItemStack build(@NotNull BaseItemDecorator decorator, @Nullable Player player) {
         return new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getItem().build(player))
-                .setDisplayName(TextUtils.decorateText(decorator.getName(), player))
-                .setLore(TextUtils.decorateText(decorator.getLore(), player))
+                .setDisplayName(TextUtils.decorateText(decorator.getName(), player, null))
+                .setLore(TextUtils.decorateText(decorator.getLore(), player, null, null))
                 .setItemFlags(decorator.getItemFlags())
                 .setCustomModelData(decorator.getCustomModelData())
                 .setBannerPatterns(decorator.getPatternsData())

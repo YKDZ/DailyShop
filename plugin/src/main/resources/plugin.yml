@@ -8,35 +8,31 @@ softdepend:
   - PlaceholderAPI
   - MMOItems
   - ItemsAdder
-  - Oraxen
   - MythicMobs
-  - NeigeItems
-  - CustomCrops
-  - CustomFishing
-permissions:
-  dailyshop.*:
-    children:
-      dailyshop.shop.open.*: true
-      dailyshop.command.*: true
-
-  dailyshop.command.*:
-    children:
-      dailyshop.command.shop.open: true
-      dailyshop.command.shop.restock: true
-      dailyshop.command.shop.save: true
-      dailyshop.command.reload: true
-
-  dailyshop.shop.open.*:
-    default: true
-
-  dailyshop.command.shop.open:
-    default: true
-
-  dailyshop.command.restock:
-    default: false
-
-  dailyshop.command.save:
-    default: false
-
-  dailyshop.command.reload:
-    default: false
+#permissions:
+#  dailyshop.*:
+#    children:
+#      dailyshop.shop.open.*: true
+#      dailyshop.command.*: true
+#
+#  dailyshop.command.*:
+#    children:
+#      dailyshop.command.shop.open: true
+#      dailyshop.command.shop.restock: true
+#      dailyshop.command.shop.save: true
+#      dailyshop.command.reload: true
+#
+#  dailyshop.shop.open.*:
+#    default: true
+#
+#  dailyshop.command.shop.open:
+#    default: true
+#
+#  dailyshop.command.restock:
+#    default: false
+#
+#  dailyshop.command.save:
+#    default: false
+#
+#  dailyshop.command.reload:
+#    default: false

@@ -2,8 +2,12 @@ language:
   # Language file to use.
   # Available: zh_CN, en_US
   message: en_US
-  # One of the in-game locale code in
+  # Specifies the language into which the automatic translation feature
+  # will translate the name displayed in the GUI for products without
+  # a specified name (most of the time, vanilla products).
+  # Accept one of the in-game locale code in
   # https://minecraft.wiki/w/Language
+  # You need to reload the server to apply the change in game.
   minecraft-lang: en_us
 period:
   # Period for saving plugin data

@@ -37,13 +37,13 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         }
         if (record.commands() != null) {
             decorator.setCommands(new HashMap<>() {{
-                put(ClickType.LEFT, record.commands().getStringList("commands.left"));
-                put(ClickType.RIGHT, record.commands().getStringList("commands.right"));
-                put(ClickType.SHIFT_LEFT, record.commands().getStringList("commands.shift-left"));
-                put(ClickType.SHIFT_RIGHT, record.commands().getStringList("commands.shift-right"));
-                put(ClickType.DROP, record.commands().getStringList("commands.drop"));
-                put(ClickType.DOUBLE_CLICK, record.commands().getStringList("commands.double-click"));
-                put(ClickType.MIDDLE, record.commands().getStringList("commands.middle"));
+                put(ClickType.LEFT, record.commands().getStringList("left"));
+                put(ClickType.RIGHT, record.commands().getStringList("right"));
+                put(ClickType.SHIFT_LEFT, record.commands().getStringList("shift-left"));
+                put(ClickType.SHIFT_RIGHT, record.commands().getStringList("shift-right"));
+                put(ClickType.DROP, record.commands().getStringList("drop"));
+                put(ClickType.DOUBLE_CLICK, record.commands().getStringList("double-click"));
+                put(ClickType.MIDDLE, record.commands().getStringList("middle"));
             }});
         }
         return decorator;

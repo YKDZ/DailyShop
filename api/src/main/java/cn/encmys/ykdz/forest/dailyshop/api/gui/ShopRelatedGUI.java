@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.configuration.ConfigurationSection;
 import xyz.xenondevs.invui.item.Item;
@@ -48,5 +49,5 @@ public abstract class ShopRelatedGUI extends GUI {
         return shop;
     }
 
-    public abstract Item buildNormalIcon(char key, ConfigurationSection iconSection);
+    public abstract Item buildNormalIcon(IconRecord record);
 }

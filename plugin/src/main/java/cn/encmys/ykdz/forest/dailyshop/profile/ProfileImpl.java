@@ -2,7 +2,11 @@ package cn.encmys.ykdz.forest.dailyshop.profile;
 
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +53,25 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
-    public ShopOrder getCart(String shopId) {
-        return carts.get(shopId);
+    public @NotNull ShopOrder getCart(String shopId) {
+        ShopOrder cart = carts.get(shopId);
+        if (cart == null) {
+            cart = new ShopOrderImpl(getOwner())
+                    .setOrderType(OrderType.SELL_TO);
+            setCartOrder(shopId, cart);
+        }
+        return cart;
+    }
+
+    @Override
+    public SettlementResult settleCart(@NotNull Shop shop) {
+        SettlementResult result = shop.getShopCashier().settle(getCart(shop.getId()));
+        if (result == SettlementResult.SUCCESS) {
+            setCartOrder(shop.getId(),
+                    new ShopOrderImpl(getOwner())
+                            .setOrderType(OrderType.SELL_TO)
+            );
+        }
+        return result;
     }
 }

@@ -64,7 +64,10 @@ products:
     item:
       base: WHITE_WOOL
 
-  ORANGE_WOOL:
+  MAGIC_ORANGE_WOOL:
+    icon:
+      lore:
+        - "<gray>This is a wool with magic."
     item:
       base: ORANGE_WOOL
       name: "<green>Magic Orange Wool"
