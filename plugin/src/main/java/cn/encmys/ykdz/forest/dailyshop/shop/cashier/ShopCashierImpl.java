@@ -163,7 +163,7 @@ public class ShopCashierImpl implements ShopCashier {
         for (String productId : order.getOrderedProducts().keySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
             if (product == null) continue;
-            order.setProduct(product, product.has(shop, order.getCustomer(), 1));
+            order.setStack(product, product.has(shop, order.getCustomer(), 1));
         }
         billOrder(order);
         return buyFrom(order);
@@ -176,8 +176,12 @@ public class ShopCashierImpl implements ShopCashier {
 
             if (product == null) continue;
 
+            // 当前未上架（购物车暂存）
+            if (shop.getShopStocker().isListedProduct(product.getId())) {
+                return SettlementResult.NOT_LISTED;
+            }
             // 商品未开放购买
-            if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
+            else if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户余额不足
@@ -208,8 +212,12 @@ public class ShopCashierImpl implements ShopCashier {
 
             if (product == null) continue;
 
+            // 当前未上架（购物车暂存）
+            if (shop.getShopStocker().isListedProduct(product.getId())) {
+                return SettlementResult.NOT_LISTED;
+            }
             // 商人模式余额不足
-            if (isMerchant() && balance < order.getTotalPrice()) {
+            else if (isMerchant() && balance < order.getTotalPrice()) {
                 return SettlementResult.NOT_ENOUGH_MERCHANT_BALANCE;
             }
             // 商品未开放收购

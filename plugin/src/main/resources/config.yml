@@ -13,9 +13,6 @@ period:
   # Period for saving plugin data
   # Available format: 5h, 1m 30s, etc
   save-data: 5m
-  # Period for product icon auto update (for stock feature)
-  # Always updated once when the player clicks on the icon
-  update-product-icon: 3s
   # Period for checking whether the shop need to be restocked
   check-restocking: 3s
 log-usage-limit:

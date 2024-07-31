@@ -11,5 +11,6 @@ public enum SettlementResult {
     NOT_ENOUGH_PLAYER_STOCK,
     NOT_ENOUGH_GLOBAL_STOCK,
     NOT_ENOUGH_MERCHANT_BALANCE,
+    NOT_LISTED,
     SUCCESS
 }

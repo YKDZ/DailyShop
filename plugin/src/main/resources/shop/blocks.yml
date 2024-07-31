@@ -78,6 +78,8 @@ shop-gui:
       bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
     misc:
       disabled-price: "<red>✘"
+    # For stock feature etc.
+    update-period: "3s"
 
 history-gui:
   title: "Trading history on {shop-name}"
@@ -165,6 +167,8 @@ cart-gui:
       update-period: "1s"
       features:
         settle-cart: LEFT
+        clean-cart: RIGHT
+        clear-cart: DROP
     "-":
       item: ARROW
       name: "<white>Back to shop"
@@ -188,6 +192,7 @@ cart-gui:
     features:
       add-1-stack: LEFT
       remove-1-stack: RIGHT
+      remove-all: DROP
       input-in-anvil: SHIFT_LEFT
 
 products:

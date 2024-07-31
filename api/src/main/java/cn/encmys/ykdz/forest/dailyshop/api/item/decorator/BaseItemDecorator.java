@@ -27,6 +27,9 @@ public abstract class BaseItemDecorator {
     protected ClickType featuresBackToShop;
     protected ClickType featuresOpenCart;
     protected ClickType featuresSwitchShoppingMode;
+    protected ClickType featuresChangeCartMode;
+    protected ClickType featuresCleanCart;
+    protected ClickType featuresClearCart;
 
     public abstract ClickType getFeaturesSettleCart();
 
@@ -89,4 +92,16 @@ public abstract class BaseItemDecorator {
     public abstract ClickType getFeaturesSwitchShoppingMode();
 
     public abstract BaseItemDecorator setFeaturesSwitchShoppingMode(ClickType featuresSwitchShoppingMode);
+
+    public abstract ClickType getFeaturesChangeCartMode();
+
+    public abstract BaseItemDecorator setFeaturesChangeCartMode(ClickType featuresChangeCartMode);
+
+    public abstract ClickType getFeaturesCleanCart();
+
+    public abstract BaseItemDecorator setFeaturesCleanCart(ClickType featuresCleanCart);
+
+    public abstract ClickType getFeaturesClearCart();
+
+    public abstract BaseItemDecorator setFeaturesClearCart(ClickType featuresClearCart);
 }

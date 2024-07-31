@@ -104,6 +104,7 @@ public class ProductIconBuilder {
                     put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())));
                 }};
 
+                // TODO 尊重配置文件
                 // 玩家从商店购买商品
                 if (clickType == ClickType.LEFT) {
                     switch (profile.getShoppingMode(shopId)) {
@@ -113,7 +114,10 @@ public class ProductIconBuilder {
                 }
                 // 玩家向商店出售商品（仅直接模式）
                 else if (clickType == ClickType.RIGHT) {
-                    buyFromDirectly(shop, player, product, vars);
+                    switch (profile.getShoppingMode(shopId)) {
+                        case DIRECT -> buyFromDirectly(shop, player, product, vars);
+                        case CART -> removeFromCart(player, shop, product);
+                    }
                 }
                 // 玩家向商店出售背包内全部商品（仅直接模式）
                 else if (clickType == ClickType.SHIFT_RIGHT) {
@@ -141,7 +145,7 @@ public class ProductIconBuilder {
         SettlementResult result = shopCashier.settle(
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.SELL_TO)
-                        .modifyProduct(product, 1)
+                        .modifyStack(product, 1)
         );
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -167,7 +171,7 @@ public class ProductIconBuilder {
         SettlementResult result = shopCashier.settle(
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_FROM)
-                        .modifyProduct(product, 1)
+                        .modifyStack(product, 1)
         );
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -190,7 +194,7 @@ public class ProductIconBuilder {
         ShopOrder order =
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_ALL_FROM)
-                        .modifyProduct(product, 1);
+                        .modifyStack(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -220,7 +224,7 @@ public class ProductIconBuilder {
         // 避免反复检测购物车中的商品
         ShopOrder newOrder = new ShopOrderImpl(player)
                 .setOrderType(cart.getOrderType())
-                .modifyProduct(product, 1);
+                .modifyStack(product, 1);
         shop.getShopCashier().billOrder(newOrder);
         // 在一个限制或情况“无法被玩家解决”的情况下
         // 阻止玩家将商品加入购物车
@@ -243,8 +247,17 @@ public class ProductIconBuilder {
         player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
-    private static void removeFromCart(Player player, Shop shop, Product product, Map<String, String> vars) {
-
+    private static void removeFromCart(Player player, Shop shop, Product product) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        if (profile == null) {
+            return;
+        }
+        ShopOrder cart = profile.getCart(shop.getId());
+        if (cart.getOrderedProducts().containsKey(product.getId())) {
+            cart.setStack(product, cart.getOrderedProducts().get(product.getId()) - 1);
+        }
+        // TODO 移出购物车音效
+        player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
     private static void sendMessage(String message, Player player, Map<String, String> vars) {

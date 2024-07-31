@@ -235,4 +235,37 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         this.featuresSwitchShoppingMode = featuresSwitchShoppingMode;
         return this;
     }
+
+    @Override
+    public ClickType getFeaturesChangeCartMode() {
+        return featuresChangeCartMode;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesChangeCartMode(ClickType featuresChangeCartMode) {
+        this.featuresChangeCartMode = featuresChangeCartMode;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesCleanCart() {
+        return featuresCleanCart;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesCleanCart(ClickType featuresCleanCart) {
+        this.featuresCleanCart = featuresCleanCart;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesClearCart() {
+        return featuresClearCart;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesClearCart(ClickType featuresClearCart) {
+        this.featuresClearCart = featuresClearCart;
+        return this;
+    }
 }

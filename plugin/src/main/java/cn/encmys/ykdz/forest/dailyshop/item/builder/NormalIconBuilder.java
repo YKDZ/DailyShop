@@ -4,6 +4,8 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractControlIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -114,6 +116,15 @@ public class NormalIconBuilder {
         }
         if (clickType == decorator.getFeaturesSwitchShoppingMode()) {
             switchShoppingMode(shop, player);
+        }
+        if (clickType == decorator.getFeaturesChangeCartMode()) {
+            changeCartMode(shop, player);
+        }
+        if (clickType == decorator.getFeaturesClearCart()) {
+            cleanCart(shop, player);
+        }
+        if (clickType == decorator.getFeaturesClearCart()) {
+            clearCart(shop, player);
         }
     }
 
@@ -229,5 +240,45 @@ public class NormalIconBuilder {
             case BUY_FROM -> cart.setOrderType(OrderType.BUY_ALL_FROM);
             case BUY_ALL_FROM -> cart.setOrderType(OrderType.SELL_TO);
         }
+    }
+
+    private static void cleanCart(@NotNull Shop shop, @NotNull Player player) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        if (profile == null) {
+            return;
+        }
+        ShopOrder cart = profile.getCart(shop.getId());
+        for (Map.Entry<String, Integer> entry : cart.getOrderedProducts().entrySet()) {
+            String productId = entry.getKey();
+            int stack = entry.getValue();
+            Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
+
+            // 商品已经不存在于插件中
+            if (product == null) {
+                cart.setStack(productId, 0);
+            }
+            // 商品当前未上架
+            else if (!shop.getShopStocker().isListedProduct(productId)) {
+                cart.setStack(productId, 0);
+            }
+            // 商品当前库存不足
+            else if (product.getProductStock().isStock()) {
+                ProductStock stock = product.getProductStock();
+                if (stock.isGlobalStock() && stock.getCurrentGlobalAmount() < stack) {
+                    cart.setStack(productId, 0);
+                } else if (stock.isPlayerStock() && stock.getCurrentPlayerAmount(player.getUniqueId()) < stack) {
+                    cart.setStack(productId, 0);
+                }
+            }
+        }
+    }
+
+    private static void clearCart(@NotNull Shop shop, @NotNull Player player) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        if (profile == null) {
+            return;
+        }
+        ShopOrder cart = profile.getCart(shop.getId());
+        cart.clear();
     }
 }

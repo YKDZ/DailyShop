@@ -1,6 +1,5 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.order;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
@@ -39,7 +38,7 @@ public class ShopOrderImpl implements ShopOrder {
             return this;
         }
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
-            modifyProduct(entry.getKey(), entry.getValue());
+            modifyStack(entry.getKey(), entry.getValue());
         }
         setBilled(false);
         return this;
@@ -56,31 +55,33 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder modifyProduct(@NotNull Product product, int amount) {
-        if (isSettled || orderType == OrderType.BUY_ALL_FROM) {
-            return this;
-        }
-        int newValue = orderedProducts.getOrDefault(product.getId(), 0) + amount;
-        return setProduct(product, newValue);
+    public ShopOrder modifyStack(@NotNull Product product, int amount) {
+        return modifyStack(product.getId(), amount);
     }
 
     @Override
-    public ShopOrder modifyProduct(String productId, int amount) {
-        Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
-        if (product == null || orderType == OrderType.BUY_ALL_FROM) {
+    public ShopOrder modifyStack(@NotNull String productId, int amount) {
+        if (isSettled) {
             return this;
         }
-        return modifyProduct(product, amount);
+        int newValue = orderedProducts.getOrDefault(productId, 0) + amount;
+        return setStack(productId, newValue);
     }
 
     @Override
-    public ShopOrder setProduct(Product product, int amount) {
-        if (isSettled || orderType == OrderType.BUY_ALL_FROM) {
+    public ShopOrder setStack(@NotNull Product product, int amount) {
+        return setStack(product.getId(), amount);
+    }
+
+    @Override
+    public ShopOrder setStack(@NotNull String productId, int amount) {
+        if (isSettled) {
             return this;
         }
-        orderedProducts.put(product.getId(), amount);
         if (amount <= 0) {
-            orderedProducts.remove(product.getId());
+            orderedProducts.remove(productId);
+        } else {
+            orderedProducts.put(productId, amount);
         }
         setBilled(false);
         return this;
@@ -148,5 +149,14 @@ public class ShopOrderImpl implements ShopOrder {
     @Override
     public double getBill(Product product) {
         return bill.getOrDefault(product.getId(), -1d);
+    }
+
+    @Override
+    public void clear() {
+        if (isSettled) {
+            return;
+        }
+        isBilled = false;
+        orderedProducts.clear();
     }
 }

@@ -57,13 +57,16 @@ public class OrderUtils {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+                // TODO 尊重配置文件
                 switch (clickType) {
                     case LEFT:
-                        cart.modifyProduct(product, 1);
+                        cart.modifyStack(product, 1);
                         notifyWindows();
                     case RIGHT:
-                        cart.modifyProduct(product, -1);
+                        cart.modifyStack(product, -1);
                         notifyWindows();
+                    case DROP:
+                        cart.setStack(product, 0);
                 }
             }
         };
