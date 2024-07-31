@@ -44,10 +44,9 @@ public class ItemsAdderItem implements BaseItem {
     @Override
     public ItemStack build(@Nullable Player player) {
         CustomStack stack = CustomStack.getInstance(getNamespacedId());
-        if(stack != null) {
+        if (stack != null) {
             return stack.getItemStack();
-        }
-        else {
+        } else {
             return new ItemStack(Material.AIR);
         }
     }

@@ -102,7 +102,7 @@ public class ShopStockerImpl implements ShopStocker {
     }
 
     @Override
-    public void listProduct(Product product) {
+    public void listProduct(@NotNull Product product) {
         // Event
         ProductPreListEvent productPreListEvent = new ProductPreListEvent(getShop(), product);
         Bukkit.getPluginManager().callEvent(productPreListEvent);
@@ -113,20 +113,27 @@ public class ShopStockerImpl implements ShopStocker {
 
         String productId = product.getId();
 
-        getShop().getShopPricer().cachePrice(productId);
-        getShop().cacheProductItem(product);
+        shop.getShopPricer().cachePrice(productId);
+        if (product.isProductItemCacheable() && !shop.isCached(productId)) {
+            shop.cacheProductItem(product);
+        }
 
         // 确保每个捆绑包内容都有价格缓存
+        // 同时尝试缓存商品物品
         if (product.getType() == ProductType.BUNDLE) {
             for (String contentId : ((BundleProduct) product).getBundleContents().keySet()) {
                 Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
-                getShop().cacheProductItem(content);
-                getShop().getShopPricer().cachePrice(contentId);
+                if (content != null) {
+                    shop.getShopPricer().cachePrice(contentId);
+                    if (product.isProductItemCacheable()) {
+                        shop.cacheProductItem(content);
+                    }
+                }
             }
         }
 
         // 若商品上架则补充其库存
-        product.getProductStock().restock();
+        product.getProductStock().stock();
         // 尝试重置商人模式余额
         shop.getShopCashier().restockMerchant();
 
@@ -141,6 +148,11 @@ public class ShopStockerImpl implements ShopStocker {
     @Override
     public long getLastRestocking() {
         return lastRestocking;
+    }
+
+    @Override
+    public void setLastRestocking(long lastRestocking) {
+        this.lastRestocking = lastRestocking;
     }
 
     @Override
@@ -161,11 +173,6 @@ public class ShopStockerImpl implements ShopStocker {
     @Override
     public boolean isListedProduct(String id) {
         return listedProducts.contains(id);
-    }
-
-    @Override
-    public void setLastRestocking(long lastRestocking) {
-        this.lastRestocking = lastRestocking;
     }
 
     @Override

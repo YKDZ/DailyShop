@@ -114,7 +114,7 @@ public class AdventureManagerImpl extends AdventureManager {
                 stringBuilder.append(chars[i]);
                 continue;
             }
-            switch (chars[i+1]) {
+            switch (chars[i + 1]) {
                 case '0' -> stringBuilder.append("<black>");
                 case '1' -> stringBuilder.append("<dark_blue>");
                 case '2' -> stringBuilder.append("<dark_green>");
@@ -139,23 +139,23 @@ public class AdventureManagerImpl extends AdventureManager {
                 case 'k' -> stringBuilder.append("<o>");
                 case 'x' -> {
                     if (i + 13 >= chars.length
-                            || !isColorCode(chars[i+2])
-                            || !isColorCode(chars[i+4])
-                            || !isColorCode(chars[i+6])
-                            || !isColorCode(chars[i+8])
-                            || !isColorCode(chars[i+10])
-                            || !isColorCode(chars[i+12])) {
+                            || !isColorCode(chars[i + 2])
+                            || !isColorCode(chars[i + 4])
+                            || !isColorCode(chars[i + 6])
+                            || !isColorCode(chars[i + 8])
+                            || !isColorCode(chars[i + 10])
+                            || !isColorCode(chars[i + 12])) {
                         stringBuilder.append(chars[i]);
                         continue;
                     }
                     stringBuilder
                             .append("<#")
-                            .append(chars[i+3])
-                            .append(chars[i+5])
-                            .append(chars[i+7])
-                            .append(chars[i+9])
-                            .append(chars[i+11])
-                            .append(chars[i+13])
+                            .append(chars[i + 3])
+                            .append(chars[i + 5])
+                            .append(chars[i + 7])
+                            .append(chars[i + 9])
+                            .append(chars[i + 11])
+                            .append(chars[i + 13])
                             .append(">");
                     i += 12;
                 }

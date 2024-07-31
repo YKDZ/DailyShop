@@ -1,11 +1,13 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +31,11 @@ public class RarityConfig {
     }
 
     public static List<String> getAllId() {
-        return Arrays.asList(config.getConfigurationSection("rarities").getKeys(false).toArray(new String[0]));
+        ConfigurationSection section = config.getConfigurationSection("rarities");
+        if (section == null) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(section.getKeys(false).toArray(new String[0]));
     }
 
     public static YamlConfiguration getConfig() {

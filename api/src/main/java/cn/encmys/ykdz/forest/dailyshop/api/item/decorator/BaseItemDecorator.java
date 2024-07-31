@@ -10,7 +10,7 @@ import java.util.Map;
 
 public abstract class BaseItemDecorator {
     protected BaseItem item;
-    // Global
+    // 通用属性
     protected String name;
     protected long period;
     protected List<String> lore;
@@ -19,26 +19,24 @@ public abstract class BaseItemDecorator {
     protected Integer customModelData;
     protected List<String> patternsData = new ArrayList<>();
     protected List<String> fireworkEffectData = new ArrayList<>();
-    // Icon Only
-    protected String nameFormat;
-    protected List<String> loreFormat;
-    protected String bundleContentsLineFormat;
-    // Normal Icon Only
+    // 普通图标属性
     protected Map<ClickType, List<String>> commands = new HashMap<>();
-    protected int scroll;
-    protected int scrollShift;
+    protected ClickType featuresScroll;
+    protected int featuresScrollAmount;
+    protected ClickType featuresSettleCart;
+    protected ClickType featuresBackToShop;
+    protected ClickType featuresOpenCart;
+    protected ClickType featuresSwitchShoppingMode;
 
-    public abstract BaseItem getItem();
+    public abstract ClickType getFeaturesSettleCart();
+
+    public abstract BaseItemDecorator setFeaturesSettleCart(ClickType featuresSettleCart);
+
+    public abstract BaseItem getBaseItem();
 
     public abstract BaseItemDecorator setName(String name);
 
     public abstract BaseItemDecorator setLore(List<String> lore);
-
-    public abstract BaseItemDecorator setLoreFormat(List<String> loreFormat);
-
-    public abstract BaseItemDecorator setNameFormat(String nameFormat);
-
-    public abstract BaseItemDecorator setBundleContentsLineFormat(String bundleContentsLineFormat);
 
     public abstract int getAmount();
 
@@ -49,12 +47,6 @@ public abstract class BaseItemDecorator {
     public abstract BaseItemDecorator setItemFlags(List<String> itemFlags);
 
     public abstract BaseItemDecorator setAmount(int amount);
-
-    public abstract String getNameFormat();
-
-    public abstract List<String> getLoreFormat();
-
-    public abstract String getBundleContentsLineFormat();
 
     public abstract List<String> getLore();
 
@@ -70,16 +62,9 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setCommands(Map<ClickType, List<String>> commands);
 
-    public abstract BaseItemDecorator setScroll(int scroll);
+    public abstract ClickType getFeaturesScroll();
 
-    public abstract int getScroll();
-
-    public abstract int getScrollShift();
-
-    // Multi product column in VERTICAL mode or
-    // multi product row in HORIZONTAL mode
-    // will cause the overflow of max-scroll.
-    public abstract BaseItemDecorator setScrollShift(int scrollShift);
+    public abstract BaseItemDecorator setFeaturesScroll(ClickType featuresScroll);
 
     public abstract long getPeriod();
 
@@ -88,4 +73,20 @@ public abstract class BaseItemDecorator {
     public abstract List<String> getFireworkEffectData();
 
     public abstract BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData);
+
+    public abstract ClickType getFeaturesBackToShop();
+
+    public abstract BaseItemDecorator setFeaturesBackToShop(ClickType featuresBackToShop);
+
+    public abstract ClickType getFeaturesOpenCart();
+
+    public abstract BaseItemDecorator setFeaturesOpenCart(ClickType featuresOpenCart);
+
+    public abstract int getFeaturesScrollAmount();
+
+    public abstract BaseItemDecorator setFeaturesScrollAmount(int featuresScrollAmount);
+
+    public abstract ClickType getFeaturesSwitchShoppingMode();
+
+    public abstract BaseItemDecorator setFeaturesSwitchShoppingMode(ClickType featuresSwitchShoppingMode);
 }

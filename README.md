@@ -83,7 +83,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         // Get a product by product id
         Product product = DailyShop.PRODUCT_FACTORY.getProduct("DIAMOND_ORE");
         // Restock a product
-        product.getProductStock().restock();
+        product.getProductStock().stock();
     }
 }
 ```

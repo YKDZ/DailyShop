@@ -9,8 +9,8 @@ import java.util.List;
 public record IconRecord(char key, @NotNull String item,
                          @Nullable String name, @Nullable List<String> lore,
                          int amount, long updatePeriod,
-                         int customModalData, int scroll,
-                         @Nullable ConfigurationSection commands,
+                         int customModalData, @Nullable ConfigurationSection commands,
                          @Nullable List<String> itemFlags, @Nullable List<String> bannerPatterns,
-                         @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects) {
+                         @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects,
+                         @Nullable ConfigurationSection features) {
 }

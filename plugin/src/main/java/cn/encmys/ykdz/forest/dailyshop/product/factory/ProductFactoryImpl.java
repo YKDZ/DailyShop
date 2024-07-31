@@ -13,7 +13,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.BaseItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
@@ -46,9 +46,20 @@ public class ProductFactoryImpl implements ProductFactory {
                 continue;
             }
 
+            List<String> bundleProducts = new ArrayList<>();
             for (String productId : products.getKeys(false)) {
                 ConfigurationSection productSection = products.getConfigurationSection(productId);
-                buildProduct(productId, productSection, defaultSettings);
+                if (productSection != null && productSection.contains("bundle-contents")) {
+                    bundleProducts.add(productId);
+                } else {
+                    buildProduct(productId, productSection, defaultSettings);
+                }
+            }
+
+            // 最后构建捆绑包商品以便进行内容可用性检查
+            for (String bundleProductId : bundleProducts) {
+                ConfigurationSection productSection = products.getConfigurationSection(bundleProductId);
+                buildProduct(bundleProductId, productSection, defaultSettings);
             }
         }
     }
@@ -72,7 +83,7 @@ public class ProductFactoryImpl implements ProductFactory {
         );
 
         // Rarity (可以指定默认值)
-        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString( "rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
+        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString("rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
 
         // Cacheable (可以指定默认值)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
@@ -215,6 +226,14 @@ public class ProductFactoryImpl implements ProductFactory {
                     bundleContents.put(parsedContentData[0], Integer.parseInt(parsedContentData[1]));
                 } else {
                     LogUtils.warn("Product " + id + " has invalid bundle-contents. The invalid line is: " + contentData + ".");
+                    continue;
+                }
+                // 检查捆绑包内容商品是否存在
+                // 需确保捆绑包商品在所有商品之后加载
+                Product content = allProducts.get(parsedContentData[0]);
+                if (content == null) {
+                    LogUtils.warn("Bundle product " + id + " has invalid content " + contentData + ". Please check and fix it in your product config.");
+                    bundleContents.remove(parsedContentData[0]);
                 }
             }
             allProducts.put(id,

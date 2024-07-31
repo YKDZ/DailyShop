@@ -71,9 +71,11 @@ public class PriceImpl extends Price {
     public double getNewPrice() {
         double price = 0;
         switch (priceMode) {
-            case GAUSSIAN -> price = round ? Math.round(mean + dev * random.nextGaussian()) : mean + dev * random.nextGaussian();
+            case GAUSSIAN ->
+                    price = round ? Math.round(mean + dev * random.nextGaussian()) : mean + dev * random.nextGaussian();
             case FIXED -> price = fixed;
-            case MINMAX -> price = round ? Math.round(min + (max - min) * random.nextDouble()) : min + (max - min) * random.nextDouble();
+            case MINMAX ->
+                    price = round ? Math.round(min + (max - min) * random.nextDouble()) : min + (max - min) * random.nextDouble();
         }
         if (price <= 0) {
             return -1;

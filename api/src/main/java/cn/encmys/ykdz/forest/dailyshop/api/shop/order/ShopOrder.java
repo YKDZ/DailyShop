@@ -6,16 +6,21 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
+/**
+ * ShopOrder stores the product and customer information involved in each transaction. The total price for each ShopOrder cannot be calculated individually (because the price information is stored independently in each Shop's ShopPricer instance) and needs to be calculated using the ShopCashier#billOrder method).
+ * <p>
+ * As a stipulation, ShopOrder of type OrderType.BUY_ALL_FROM needs to ensure that each key of map orderedProducts has a value of 1 in order to work properly.
+ */
 public interface ShopOrder {
     ShopOrder combineOrder(ShopOrder order);
 
     ShopOrder setOrderType(OrderType orderType);
 
-    ShopOrder addProduct(Product product, int amount);
+    ShopOrder modifyProduct(Product product, int amount);
+
+    ShopOrder modifyProduct(String productId, int amount);
 
     ShopOrder setProduct(Product product, int amount);
-
-    ShopOrder removeProduct(Product product);
 
     boolean isSettled();
 

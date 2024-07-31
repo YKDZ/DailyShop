@@ -6,10 +6,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.gui.CartGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashierImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.stocker.ShopStockerImpl;
@@ -84,9 +84,12 @@ public class ShopImpl implements Shop {
     }
 
     @Override
-    public void cacheProductItem(Product product) {
-        if (product.isCacheable()) {
-            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getItemDecorator(), null));
+    public void cacheProductItem(@NotNull Product product) {
+        if (product.getItemDecorator() == null) {
+            throw new RuntimeException("Check Product#isCacheable before Shop#cacheProductItem");
+        }
+        if (product.isProductItemCacheable()) {
+            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getItemDecorator(), this, null));
         }
     }
 
@@ -94,7 +97,7 @@ public class ShopImpl implements Shop {
     @Nullable
     public ItemStack getCachedProductItem(@NotNull Product product) {
         String id = product.getId();
-        if (product.isCacheable() && !isCached(id)) {
+        if (product.isProductItemCacheable() && !isCached(id)) {
             cacheProductItem(product);
         }
         return getCachedProductItems().get(id);
@@ -103,8 +106,11 @@ public class ShopImpl implements Shop {
     @Override
     @NotNull
     public ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, @Nullable Player player) {
+        if (product.getItemDecorator() == null) {
+            throw new RuntimeException("Check Product#isCacheable before Shop#getCachedProductItemOrCreateOne");
+        }
         return Optional.ofNullable(getCachedProductItem(product))
-                .orElse(ProductItemBuilder.build(product.getItemDecorator(), player));
+                .orElse(ProductItemBuilder.build(product.getItemDecorator(), this, player));
     }
 
     @Override

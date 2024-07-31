@@ -36,23 +36,27 @@ shop-gui:
     "u":
       item: GREEN_STAINED_GLASS_PANE
       name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
-      scroll: -1
+      features:
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       item: RED_STAINED_GLASS_PANE
       name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
-      scroll: 1
+      features:
+        scroll: LEFT
+        scroll-amount: 1
     "c":
       item: MINECART
       name: " "
       lore:
-        - "<white>Left click to open the cart"
-        - "<white>Right click to switch between direct and cart shopping mode"
+        - "<dark_gray>✖ <white>Left Click"
+        - "   <gray>Open cart"
+        - "<dark_gray>✖ <white>Right Click"
+        - "   <gray>Switch shopping mode"
         - " "
-      commands:
-        left:
-          - "dailyshop shop cart {shop} %player_name%"
-        right:
-          - "dailyshop shop misc switch-shopping-mode {shop} %player_name%"
+      features:
+        open-cart: LEFT
+        switch-shopping-mode: RIGHT
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -70,12 +74,13 @@ shop-gui:
         - "{desc-lore}"
         - " "
         - "<gray>Rarity: <reset>{rarity}"
+        - " "
       bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
     misc:
       disabled-price: "<red>✘"
 
 history-gui:
-  title: "Here is your trading history on {shop}"
+  title: "Trading history on {shop-name}"
   # Available option is HORIZONTAL and VERTICAL
   scroll-mode: HORIZONTAL
   # The x character is the placeholder
@@ -96,12 +101,16 @@ history-gui:
         - " "
     "u":
       item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
-      scroll: -1
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
-      scroll: 1
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: 1
   history-icon:
     format:
       name: "{date}"
@@ -113,10 +122,11 @@ history-gui:
         - "<gray>Action: {action}"
         - ""
         - "<gray>Price: {price}"
+        - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 cart-gui:
-  title: "Here is your cart for shop {shop}"
+  title: "Cart for shop {shop-name}"
   # Available option is HORIZONTAL and VERTICAL
   scroll-mode: HORIZONTAL
   # The x character is the placeholder
@@ -135,28 +145,31 @@ cart-gui:
         - " "
     "u":
       item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
       features:
-        scroll: -1
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
       features:
-        scroll: 1
+        scroll: LEFT
+        scroll-amount: 1
     "@":
       item: PAPER
-      name: "<gray>Total Price: {total-price}"
+      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
       lore:
         - " "
         - "<dark_gray>✖ Settle the cart"
-      feature:
-        settle-cart: true
+        - " "
+      update-period: "1s"
+      features:
+        settle-cart: LEFT
     "-":
       item: ARROW
       name: "<white>Back to shop"
-      commands:
-        left:
-          - "dailyshop shop open {shop} %player_name%"
+      features:
+        back-to-shop: LEFT
   cart-product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -171,6 +184,11 @@ cart-gui:
         - "<dark_gray>✖ <white>Shift + Left Click"
         - "   <gray>Enter the amount of the stack"
         - "   <gray>inside an anvil gui"
+        - " "
+    features:
+      add-1-stack: LEFT
+      remove-1-stack: RIGHT
+      input-in-anvil: SHIFT_LEFT
 
 products:
   # Use PACK: as prefix to import the entire

@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class SettlementLogImpl extends SettlementLog {
-    private SettlementLogImpl() {}
+    private SettlementLogImpl() {
+    }
 
     public static SettlementLog of(SettlementLogType type, UUID customer) {
         switch (type) {

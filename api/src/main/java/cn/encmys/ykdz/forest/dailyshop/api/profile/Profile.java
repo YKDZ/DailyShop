@@ -18,7 +18,7 @@ public interface Profile {
 
     ShoppingMode getShoppingMode(String shopId);
 
-    void setShopMode(String shopId, ShoppingMode shoppingMode);
+    void setShoppingMode(String shopId, ShoppingMode shoppingMode);
 
     void setCartOrder(String shopId, ShopOrder shopOrder);
 

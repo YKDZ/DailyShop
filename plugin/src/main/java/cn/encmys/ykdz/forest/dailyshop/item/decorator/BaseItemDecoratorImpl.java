@@ -3,7 +3,8 @@ package cn.encmys.ykdz.forest.dailyshop.item.decorator;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.builder.BaseItemBuilder;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.BaseItemBuilder;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 .setUpdatePeriod(record.updatePeriod())
                 .setItemFlags(record.itemFlags())
                 .setCustomModelData(record.customModalData())
-                .setScroll(record.scroll())
                 .setBannerPatterns(record.bannerPatterns());
         if (setDefaultName) {
             decorator.setName(record.name());
@@ -41,16 +41,30 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 put(ClickType.RIGHT, record.commands().getStringList("right"));
                 put(ClickType.SHIFT_LEFT, record.commands().getStringList("shift-left"));
                 put(ClickType.SHIFT_RIGHT, record.commands().getStringList("shift-right"));
-                put(ClickType.DROP, record.commands().getStringList("drop"));
                 put(ClickType.DOUBLE_CLICK, record.commands().getStringList("double-click"));
+                put(ClickType.DROP, record.commands().getStringList("drop"));
+                put(ClickType.CONTROL_DROP, record.commands().getStringList("control-drop"));
                 put(ClickType.MIDDLE, record.commands().getStringList("middle"));
+                put(ClickType.SWAP_OFFHAND, record.commands().getStringList("swap-offhand"));
+                put(ClickType.NUMBER_KEY, record.commands().getStringList("number-key"));
+                put(ClickType.WINDOW_BORDER_LEFT, record.commands().getStringList("window-border-left"));
+                put(ClickType.WINDOW_BORDER_RIGHT, record.commands().getStringList("window-border-right"));
             }});
+        }
+        if (record.features() != null) {
+            decorator.setFeaturesScroll(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("scroll")))
+                    .setFeaturesScrollAmount(record.features().getInt("scroll-amount", 0))
+                    .setFeaturesBackToShop(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("back-to-shop")))
+                    .setFeaturesSettleCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("settle-cart")))
+                    .setFeaturesOpenCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("open-cart")))
+                    .setFeaturesSwitchShoppingMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-shopping-mode")));
+
         }
         return decorator;
     }
 
     @Override
-    public BaseItem getItem() {
+    public BaseItem getBaseItem() {
         return item;
     }
 
@@ -66,24 +80,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     @Override
     public BaseItemDecorator setLore(List<String> lore) {
         this.lore = lore;
-        return this;
-    }
-
-    @Override
-    public BaseItemDecorator setLoreFormat(List<String> loreFormat) {
-        this.loreFormat = loreFormat;
-        return this;
-    }
-
-    @Override
-    public BaseItemDecorator setNameFormat(String nameFormat) {
-        this.nameFormat = nameFormat;
-        return this;
-    }
-
-    @Override
-    public BaseItemDecorator setBundleContentsLineFormat(String bundleContentsLineFormat) {
-        this.bundleContentsLineFormat = bundleContentsLineFormat;
         return this;
     }
 
@@ -112,21 +108,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     public BaseItemDecorator setAmount(int amount) {
         this.amount = amount;
         return this;
-    }
-
-    @Override
-    public String getNameFormat() {
-        return nameFormat;
-    }
-
-    @Override
-    public List<String> getLoreFormat() {
-        return loreFormat;
-    }
-
-    @Override
-    public String getBundleContentsLineFormat() {
-        return bundleContentsLineFormat;
     }
 
     @Override
@@ -168,31 +149,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public BaseItemDecorator setScroll(int scroll) {
-        this.scroll = scroll;
-        return this;
-    }
-
-    @Override
-    public int getScroll() {
-        return scroll;
-    }
-
-    @Override
-    public int getScrollShift() {
-        return scrollShift;
-    }
-
-    // Multi product column in VERTICAL mode or
-    // multi product row in HORIZONTAL mode
-    // will cause the overflow of max-scroll.
-    @Override
-    public BaseItemDecorator setScrollShift(int scrollShift) {
-        this.scrollShift = scrollShift;
-        return this;
-    }
-
-    @Override
     public long getPeriod() {
         return period;
     }
@@ -211,6 +167,72 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     @Override
     public BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData) {
         this.fireworkEffectData = fireworkEffectData;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesSettleCart() {
+        return featuresSettleCart;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesSettleCart(ClickType featuresSettleCart) {
+        this.featuresSettleCart = featuresSettleCart;
+        return this;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesScroll(ClickType featuresScroll) {
+        this.featuresScroll = featuresScroll;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesScroll() {
+        return featuresScroll;
+    }
+
+    @Override
+    public ClickType getFeaturesBackToShop() {
+        return featuresBackToShop;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesBackToShop(ClickType featuresBackToShop) {
+        this.featuresBackToShop = featuresBackToShop;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesOpenCart() {
+        return featuresOpenCart;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesOpenCart(ClickType featuresOpenCart) {
+        this.featuresOpenCart = featuresOpenCart;
+        return this;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesScrollAmount(int featuresScrollAmount) {
+        this.featuresScrollAmount = featuresScrollAmount;
+        return this;
+    }
+
+    @Override
+    public int getFeaturesScrollAmount() {
+        return featuresScrollAmount;
+    }
+
+    @Override
+    public ClickType getFeaturesSwitchShoppingMode() {
+        return featuresSwitchShoppingMode;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesSwitchShoppingMode(ClickType featuresSwitchShoppingMode) {
+        this.featuresSwitchShoppingMode = featuresSwitchShoppingMode;
         return this;
     }
 }

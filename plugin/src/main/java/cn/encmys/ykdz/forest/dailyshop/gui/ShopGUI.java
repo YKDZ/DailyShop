@@ -9,11 +9,10 @@ import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.builder.NormalIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,7 @@ import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShopGUI extends ShopRelatedGUI {
@@ -48,7 +48,7 @@ public class ShopGUI extends ShopRelatedGUI {
         // 普通图标
         if (record.icons() != null) {
             for (IconRecord iconRecord : record.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord));
+                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord, player));
             }
         }
 
@@ -66,10 +66,15 @@ public class ShopGUI extends ShopRelatedGUI {
 
     @Override
     public void open(@NotNull Player player) {
-        String title = PlaceholderAPIHook.isHooked() ? PlaceholderAPI.setPlaceholders(player, ShopConfig.getShopGUITitle(shop.getId())) : ShopConfig.getShopGUITitle(shop.getId());
+        ShopGUIRecord record = ShopConfig.getShopGUIRecord(shop.getId());
         Window window = Window.single()
                 .setGui(buildGUIBuilder(player))
-                .setTitle(title)
+                .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
+                    put("shop-name", shop.getName());
+                    put("shop-id", shop.getId());
+                    put("player-name", player.getName());
+                    put("player-uuid", player.getUniqueId().toString());
+                }}))
                 .setCloseHandlers(new ArrayList<>() {{
                     add(() -> getWindows().remove(player.getUniqueId()));
                 }})
@@ -81,12 +86,12 @@ public class ShopGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public Item buildNormalIcon(IconRecord record) {
+    public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
             LogUtils.warn("Icon shop-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, this);
+        return NormalIconBuilder.build(decorator, shop, player);
     }
 }

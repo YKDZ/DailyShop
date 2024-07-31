@@ -29,27 +29,33 @@ shop-gui:
   # The x character is the placeholder
   # for the product slot.
   layout:
-    - "# # # # # # # # #"
+    - "# # # # # # # # u"
     - "# x x x x x x x #"
     - "# x x x x x x x #"
-    - "# # # # @ # # # #"
+    - "# # # # c # # # n"
   icons:
     "#":
-      item: BLACK_STAINED_GLASS_PANE
+      item: BROWN_STAINED_GLASS_PANE
       name: " "
       lore:
-        - "<dark_gray>Wall of Black Market."
+        - "<dark_gray>Wall of Block Shop"
         - " "
-      commands:
-        left:
-          - "tell %player_name% Knock knock."
     "@":
       item: CLOCK
+      name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
+      update-period: "1s"
+    "c":
+      item: MINECART
       name: " "
       lore:
-        - "<gray>Balance: <white>%dailyshop_merchant_balance_black_market%"
+        - "<dark_gray>✖ <white>Left Click"
+        - "   <gray>Open cart"
+        - "<dark_gray>✖ <white>Right Click"
+        - "   <gray>Switch shopping mode"
         - " "
-      update-period: "1s"
+      features:
+        open-cart: LEFT
+        switch-shopping-mode: RIGHT
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -67,12 +73,13 @@ shop-gui:
         - "{desc-lore}"
         - " "
         - "<gray>Rarity: <reset>{rarity}"
+        - " "
       bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
     misc:
       disabled-price: "<red>✘"
 
 history-gui:
-  title: "Here is your trading history on {shop}"
+  title: "Trading history on {shop-name}"
   # Available option is HORIZONTAL and VERTICAL
   scroll-mode: HORIZONTAL
   # The x character is the placeholder
@@ -93,12 +100,16 @@ history-gui:
         - " "
     "u":
       item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
-      scroll: -1
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
-      scroll: 1
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: 1
   history-icon:
     format:
       name: "{date}"
@@ -110,16 +121,18 @@ history-gui:
         - "<gray>Action: {action}"
         - ""
         - "<gray>Price: {price}"
+        - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 cart-gui:
-  title: "Here is your cart for shop {shop}"
+  title: "Cart for {shop-name}"
   # Available option is HORIZONTAL and VERTICAL
   scroll-mode: HORIZONTAL
   # The x character is the placeholder
   # for the history slot.
   layout:
     - "- # # # # # # # u"
+    - "# x x x x x x x #"
     - "# x x x x x x x #"
     - "- # # # @ # # # n"
   icons:
@@ -131,35 +144,56 @@ cart-gui:
         - " "
     "u":
       item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll} / {max-scroll}"
-      scroll: -1
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll} / {max-scroll}"
-      scroll: 1
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: 1
     "@":
       item: PAPER
-      name: "<gray>Total Price: {total-price}"
+      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
+      lore:
+        - " "
+        - "<dark_gray>✖ Settle the cart"
+        - " "
+      update-period: "1s"
+      features:
+        settle-cart: LEFT
     "-":
       item: ARROW
       name: "<white>Back to shop"
-      commands:
-        left:
-          - "dailyshop shop open {shop}"
+      features:
+        back-to-shop: LEFT
   cart-product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
       lore:
-        - ""
-        - "<gray>Stack: {stack}"
+        - " "
+        - "<gray>Stack: <white>{stack}"
+        - " "
+        - "<dark_gray>✖ <white>Left Click"
+        - "   <gray>Add 1 stack"
+        - "<dark_gray>✖ <white>Right Click"
+        - "   <gray>Remove 1 stack"
+        - "<dark_gray>✖ <white>Shift + Left Click"
+        - "   <gray>Enter the amount of the stack"
+        - "   <gray>inside an anvil gui"
+        - " "
+    features:
+      add-1-stack: LEFT
+      remove-1-stack: RIGHT
+      input-in-anvil: SHIFT_LEFT
 
 products:
   - WARM_WELCOME
   - FLY_PERMISSION
   - LONG_SWORD
   - STEEL_INGOT
-  - PIZZA
-  - OBSIDIAN_PICKAXE
   - SkeletonKingSword
   - CUSTOM_BANNER
   - CUSTOM_SKULL
@@ -168,6 +202,5 @@ products:
   - TROPICAL_FISH_BUCKET
   - AXOLOTL_BUCKET
   - CUSTOM_FIREWORK
-  - NI_ExampleItem
-  - SIMPLE_BAIT
-  - WATERING_CAN
+  # You can also use PACK:misc
+  # to cover all the products above.

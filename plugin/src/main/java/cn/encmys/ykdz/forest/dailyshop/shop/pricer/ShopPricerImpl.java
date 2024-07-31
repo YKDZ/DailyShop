@@ -31,17 +31,31 @@ public class ShopPricerImpl implements ShopPricer {
 
     @Override
     public double getBuyPrice(@NotNull String productId) {
-        return cachedPrices.get(productId).getBuy();
+        PricePair pricePair = cachedPrices.get(productId);
+        if (pricePair == null) {
+            LogUtils.warn("Product " + productId + " do not have buy-price cached. This is likely a bug.");
+            return -1d;
+        }
+        return pricePair.getBuy();
     }
 
     @Override
     public double getSellPrice(@NotNull String productId) {
-        return cachedPrices.get(productId).getSell();
+        PricePair pricePair = cachedPrices.get(productId);
+        if (pricePair == null) {
+            LogUtils.warn("Product " + productId + " do not have sell-price cached. This is likely a bug.");
+            return -1d;
+        }
+        return pricePair.getSell();
     }
 
     @Override
     public void cachePrice(@NotNull String productId) {
         Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
+        if (product == null) {
+            LogUtils.warn("Try to cache product " + productId + " which does not exist.");
+            return;
+        }
         Price buyPrice = product.getBuyPrice();
         Price sellPrice = product.getSellPrice();
         double buy = 0d;
@@ -57,20 +71,26 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-sell", Integer.toString(historySell));
                 double price = TextUtils.evaluateFormula(buyPrice.getFormula(), vars);
                 buy = buyPrice.isRound() ? Math.round(price) : price;
-            } case BUNDLE_AUTO_NEW -> {
+            }
+            case BUNDLE_AUTO_NEW -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
                     Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
+                    if (content == null) {
+                        return;
+                    }
                     buy += content.getBuyPrice().getNewPrice() * contentStack;
                 }
-            } case BUNDLE_AUTO_REUSE -> {
+            }
+            case BUNDLE_AUTO_REUSE -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
                     buy += getBuyPrice(contentId) * contentStack;
                 }
-            } default -> buy = buyPrice.getNewPrice();
+            }
+            default -> buy = buyPrice.getNewPrice();
         }
 
         switch (sellPrice.getPriceMode()) {
@@ -80,20 +100,27 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-sell", Integer.toString(historySell));
                 double price = TextUtils.evaluateFormula(sellPrice.getFormula(), vars);
                 sell = sellPrice.isRound() ? Math.round(price) : price;
-            } case BUNDLE_AUTO_NEW -> {
+            }
+            case BUNDLE_AUTO_NEW -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
                     Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
+                    if (content == null) {
+                        LogUtils.warn("Bundle product " + productId + " may have an invalid content " + contentId + ".");
+                        continue;
+                    }
                     sell += content.getSellPrice().getNewPrice() * contentStack;
                 }
-            } case BUNDLE_AUTO_REUSE -> {
+            }
+            case BUNDLE_AUTO_REUSE -> {
                 for (Map.Entry<String, Integer> entry : ((BundleProduct) product).getBundleContents().entrySet()) {
                     String contentId = entry.getKey();
                     int contentStack = entry.getValue();
                     sell += getSellPrice(contentId) * contentStack;
                 }
-            } default -> sell = sellPrice.getNewPrice();
+            }
+            default -> sell = sellPrice.getNewPrice();
         }
 
         // 避免 buy-price <= sell-price 的刷钱漏洞
@@ -118,13 +145,13 @@ public class ShopPricerImpl implements ShopPricer {
     }
 
     @Override
-    public void setCachedPrices(@NotNull Map<String, PricePair> cachedPrices) {
-        this.cachedPrices = cachedPrices;
+    public Map<String, PricePair> getCachedPrices() {
+        return cachedPrices;
     }
 
     @Override
-    public Map<String, PricePair> getCachedPrices() {
-        return cachedPrices;
+    public void setCachedPrices(@NotNull Map<String, PricePair> cachedPrices) {
+        this.cachedPrices = cachedPrices;
     }
 
     private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {

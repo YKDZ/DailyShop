@@ -103,9 +103,14 @@ public class ItemProduct extends Product {
     }
 
     @Override
+    public boolean isProductItemCacheable() {
+        return isCacheable && getType() == ProductType.ITEM;
+    }
+
+    @Override
     public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-        BaseItem baseItem = getItemDecorator().getItem();
+        BaseItem baseItem = getItemDecorator().getBaseItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);
         } else {

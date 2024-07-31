@@ -43,7 +43,7 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
-    public void setShopMode(String shopId, ShoppingMode shoppingMode) {
+    public void setShoppingMode(String shopId, ShoppingMode shoppingMode) {
         shopModes.put(shopId, shoppingMode);
     }
 

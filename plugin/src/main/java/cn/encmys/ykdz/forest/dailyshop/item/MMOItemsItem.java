@@ -75,7 +75,7 @@ public class MMOItemsItem implements BaseItem {
         return mmoItem == null ? new ItemStack(Material.AIR) : mmoItem.newBuilder().build();
     }
 
-    public Type getType()  {
+    public Type getType() {
         return type;
     }
 

@@ -82,6 +82,11 @@ public class CommandProduct extends Product {
     }
 
     @Override
+    public boolean isProductItemCacheable() {
+        return false;
+    }
+
+    @Override
     public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
         return false;
     }

@@ -49,8 +49,14 @@ public class BundleProduct extends Product {
     public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
-            int contentStack = entry.getValue();
-            DailyShop.PRODUCT_FACTORY.getProduct(contentId).give(shop, inv, player, contentStack);
+            Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
+
+            if (content == null) {
+                break;
+            }
+
+            int contentStack = entry.getValue() * stack;
+            content.give(shop, inv, player, contentStack);
         }
     }
 
@@ -63,9 +69,15 @@ public class BundleProduct extends Product {
     public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
-            int contentStack = entry.getValue();
+            Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
 
-            DailyShop.PRODUCT_FACTORY.getProduct(contentId).take(shop, inv, player, contentStack);
+            if (content == null) {
+                break;
+            }
+
+            int contentStack = entry.getValue() * stack;
+
+            content.take(shop, inv, player, contentStack);
         }
     }
 
@@ -81,7 +93,12 @@ public class BundleProduct extends Product {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
-            int contentStack = entry.getValue();
+
+            if (content == null) {
+                break;
+            }
+
+            int contentStack = entry.getValue() * stack;
 
             if (content.has(shop, inv, player, 1) < contentStack) {
                 count = 0;
@@ -103,13 +120,18 @@ public class BundleProduct extends Product {
     public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
-            int contentStack = entry.getValue();
+            int contentStack = entry.getValue() * stack;
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
-            if (!content.canHold(shop, inv, player, contentStack)) {
+            if (content != null && !content.canHold(shop, inv, player, contentStack)) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isProductItemCacheable() {
+        return false;
     }
 
     @Override

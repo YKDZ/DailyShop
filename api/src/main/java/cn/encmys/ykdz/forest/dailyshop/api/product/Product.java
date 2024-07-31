@@ -22,7 +22,7 @@ public abstract class Product {
     @Nullable
     private final BaseItemDecorator itemDecorator;
     private final ProductStock productStock;
-    private final boolean isCacheable;
+    protected final boolean isCacheable;
 
     public Product(
             String id,
@@ -91,9 +91,7 @@ public abstract class Product {
 
     public abstract boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack);
 
-    public boolean isCacheable() {
-        return isCacheable;
-    }
+    public abstract boolean isProductItemCacheable();
 
     public abstract boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player);
 }

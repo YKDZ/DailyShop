@@ -67,10 +67,10 @@ products:
     buy-commands:
       - "lp user %player_name% permission settemp cmi.command.fly true 30m"
       - "tell %player_name% Now you can fly in 30 minutes!"
-#    sell-commands:
-#      - "tell You can also \"sell\" a command."
-#      - "tell I don't really know what this feature is for."
-#      - "tell I just implemented it :)"
+    #    sell-commands:
+    #      - "tell You can also \"sell\" a command."
+    #      - "tell I don't really know what this feature is for."
+    #      - "tell I just implemented it :)"
     sell-price:
       disable: true
     rarity: ancient

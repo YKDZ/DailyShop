@@ -22,18 +22,17 @@ default-settings:
 products:
   WARM_COLOR_WOOL_BUNDLE:
     icon:
-      base: ORANGE_SHULKER_BOX
+      base: BARREL
       amount: 1
       name: "<white>Warm Color Wool Bundle"
       lore:
         - "<gray>A product bundle that contains"
-        - "<gray>all the <gold>warm color <gray>wool x 16."
+        - "<gray>all the <gold>warm color <gray>wool."
     buy-price:
       bundle-auto-new: true
     sell-price:
       disable: true
     bundle-contents:
-      - ORANGE_WOOL
       - YELLOW_WOOL
       - BROWN_WOOL
       # Three "stack" of red_wool.
@@ -43,12 +42,12 @@ products:
 
   COLD_COLOR_WOOL_BUNDLE:
     icon:
-      base: BLUE_SHULKER_BOX
+      base: BARREL
       amount: 1
       name: "<white>Cold Color Wool Bundle"
       lore:
         - "<gray>A product bundle that contains"
-        - "<gray>all the <blue>cold color <gray>wool x 16."
+        - "<gray>all the <blue>cold color <gray>wool."
     bundle-contents:
       - MAGENTA_WOOL
       - LIGHT_BLUE_WOOL

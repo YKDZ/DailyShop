@@ -9,6 +9,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.PlaceholderExpansion {
     @Override
@@ -32,12 +33,10 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     }
 
     @NotNull
-    private static String restockTimer(OfflinePlayer player, String params) {
-        String shopId = params.replace("restock_timer_", "");
-        Shop shop = DailyShopImpl.SHOP_FACTORY.getShop(shopId);
-        if (shop == null) {
-            return "Shop " + shopId + " do not exist.";
-        }
+    private static String restockTimer(String params) {
+        Shop shop = getShop(params, "restock_timer_");
+        if (shop == null) return "Shop " + extractShopId(params, "restock_timer_") + " do not exist.";
+
         long timeRemaining = (shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50L) - System.currentTimeMillis();
         if (timeRemaining > 0) {
             long hours = timeRemaining / (60 * 60 * 1000);
@@ -49,27 +48,25 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     }
 
     @NotNull
-    private static String merchantBalance(OfflinePlayer player, String params) {
-        String shopId = params.replace("merchant_balance_", "");
-        Shop shop = DailyShopImpl.SHOP_FACTORY.getShop(shopId);
-        if (shop == null) {
-            return "Shop " + shopId + " do not exist.";
-        }
+    private static String merchantBalance(String params) {
+        Shop shop = getShop(params, "merchant_balance_");
+        if (shop == null) return "Shop " + extractShopId(params, "merchant_balance_") + " do not exist.";
+
         return MessageConfig.format_decimal.format(shop.getShopCashier().getBalance());
     }
 
     @NotNull
-    private static String cartTotalPrice(OfflinePlayer player, String params) {
-        String shopId = params.replace("cart_total_price_", "");
-        Shop shop = DailyShopImpl.SHOP_FACTORY.getShop(shopId);
-        Profile profile = DailyShop.PROFILE_FACTORY.getProfile((Player) player);
-        if (shop == null) {
-            return "Shop " + shopId + " do not exist.";
-        }
-        if (profile == null) {
-            return "Profile " + shopId + " do not exist.";
-        }
-        ShopOrder cart = profile.getCart(shopId);
+    private static String cartTotalPrice(@Nullable OfflinePlayer player, String params) {
+        Player target = validatePlayer(player);
+        if (target == null) return "Need a player to work.";
+
+        Shop shop = getShop(params, "cart_total_price_");
+        if (shop == null) return "Shop " + extractShopId(params, "cart_total_price_") + " do not exist.";
+
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
+        if (profile == null) return "Profile " + extractShopId(params, "cart_total_price_") + " do not exist.";
+
+        ShopOrder cart = profile.getCart(extractShopId(params, "cart_total_price_"));
         if (!cart.isBilled()) {
             shop.getShopCashier().billOrder(cart);
         }
@@ -77,25 +74,41 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     }
 
     @NotNull
-    private static String shoppingMode(OfflinePlayer player, String params) {
-        String shopId = params.replace("shopping_mode_", "");
-        Shop shop = DailyShopImpl.SHOP_FACTORY.getShop(shopId);
-        if (shop == null) {
-            return "Shop " + shopId + " do not exist.";
-        }
-        Profile profile = DailyShop.PROFILE_FACTORY.getProfile((Player) player);
-        if (profile == null) {
-            return "Player " + player.getName() + " do not have profile.";
-        }
-        return profile.getShoppingMode(shopId).name();
+    private static String shoppingMode(@Nullable OfflinePlayer player, String params) {
+        Player target = validatePlayer(player);
+        if (target == null) return "Need a player to work.";
+
+        Shop shop = getShop(params, "shopping_mode_");
+        if (shop == null) return "Shop " + extractShopId(params, "shopping_mode_") + " do not exist.";
+
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
+        if (profile == null) return "Player " + player.getName() + " do not have profile.";
+
+        return profile.getShoppingMode(extractShopId(params, "shopping_mode_")).name();
+    }
+
+    @Nullable
+    private static Shop getShop(String params, String prefix) {
+        String shopId = extractShopId(params, prefix);
+        return DailyShopImpl.SHOP_FACTORY.getShop(shopId);
+    }
+
+    @NotNull
+    private static String extractShopId(String params, String prefix) {
+        return params.replace(prefix, "");
+    }
+
+    @Nullable
+    private static Player validatePlayer(@Nullable OfflinePlayer player) {
+        return player == null ? null : player.getPlayer();
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
+    public String onRequest(@Nullable OfflinePlayer player, @NotNull String params) {
         if (params.contains("restock_timer_")) {
-            return restockTimer(player, params);
+            return restockTimer(params);
         } else if (params.contains("merchant_balance_")) {
-            return merchantBalance(player, params);
+            return merchantBalance(params);
         } else if (params.contains("cart_total_price_")) {
             return cartTotalPrice(player, params);
         } else if (params.contains("shopping_mode_")) {

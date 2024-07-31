@@ -84,7 +84,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         Product product = DailyShop.PRODUCT_FACTORY.getProduct("DIAMOND_ORE");
         // 为商品补货
         if (product.getProductStock().isStock()) {
-            product.getProductStock().restock();
+            product.getProductStock().stock();
         }
     }
 }

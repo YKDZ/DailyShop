@@ -202,7 +202,6 @@ public class ShopCommand {
                                         }}));
                                         return;
                                     }
-                                    // TODO 不同结果的提示处理
                                     profile.settleCart(shop);
                                 })
                 );
@@ -239,11 +238,12 @@ public class ShopCommand {
                                         // TODO 提示信息
                                         return;
                                     }
-                                    profile.setShopMode(shopId, profile.getShoppingMode(shopId) == ShoppingMode.DIRECT ? ShoppingMode.CART : ShoppingMode.DIRECT);
+                                    profile.setShoppingMode(shopId, profile.getShoppingMode(shopId) == ShoppingMode.DIRECT ? ShoppingMode.CART : ShoppingMode.DIRECT);
                                     // TODO 提示消息
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage("<gray>成功将玩家 <white>{player} <gray>的购物模式切换为 <white>{mode}.", null, new HashMap<>() {{
                                         put("shop", shop.getName());
                                         put("player", player.getDisplayName());
+                                        put("mode", profile.getShoppingMode(shopId).name());
                                     }}));
                                 }))
                 );

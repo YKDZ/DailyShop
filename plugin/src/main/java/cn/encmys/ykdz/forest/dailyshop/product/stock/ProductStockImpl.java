@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public class ProductStockImpl implements ProductStock {
     private final String productId;
-    @Expose
-    private int currentGlobalAmount;
     private final int initialGlobalAmount;
     @Expose
     private final Map<UUID, Integer> currentPlayerAmount = new HashMap<>();
@@ -25,6 +23,8 @@ public class ProductStockImpl implements ProductStock {
     private final boolean playerOverflow;
     private final boolean globalInherit;
     private final boolean playerInherit;
+    @Expose
+    private int currentGlobalAmount;
 
     public ProductStockImpl(@NotNull String productId, int initialGlobalAmount, int initialPlayerAmount, boolean globalReplenish, boolean playerReplenish, boolean globalOverflow, boolean playerOverflow, boolean globalInherit, boolean playerInherit) {
         this.productId = productId;
@@ -70,14 +70,14 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
-    public void setCurrentPlayerAmount(@NotNull UUID playerUUID, int amount) {
-        this.currentPlayerAmount.put(playerUUID, amount);
-    }
-
-    @Override
     public void setCurrentPlayerAmount(Map<UUID, Integer> amount) {
         this.currentPlayerAmount.clear();
         this.currentPlayerAmount.putAll(amount);
+    }
+
+    @Override
+    public void setCurrentPlayerAmount(@NotNull UUID playerUUID, int amount) {
+        this.currentPlayerAmount.put(playerUUID, amount);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class ProductStockImpl implements ProductStock {
     }
 
     @Override
-    public void restock() {
+    public void stock() {
         if (!isStock()) {
             return;
         }

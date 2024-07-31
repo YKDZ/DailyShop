@@ -23,7 +23,7 @@ public interface Shop {
 
     boolean isCached(String productId);
 
-    void cacheProductItem(Product product);
+    void cacheProductItem(@NotNull Product product);
 
     @Nullable
     ItemStack getCachedProductItem(@NotNull Product product);

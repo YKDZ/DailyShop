@@ -156,8 +156,10 @@ public class SQLiteDatabase implements Database {
                 stmt.setString(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        List<String> listedProducts = gson.fromJson(rs.getString("listed_products"), new TypeToken<List<String>>() {}.getType());
-                        Map<String, PricePair> cachedPrices = gson.fromJson(rs.getString("cached_prices"), new TypeToken<Map<String, PricePairImpl>>() {}.getType());
+                        List<String> listedProducts = gson.fromJson(rs.getString("listed_products"), new TypeToken<List<String>>() {
+                        }.getType());
+                        Map<String, PricePair> cachedPrices = gson.fromJson(rs.getString("cached_prices"), new TypeToken<Map<String, PricePairImpl>>() {
+                        }.getType());
                         long lastRestocking = rs.getLong("last_restocking");
                         double balance = rs.getDouble("balance");
 
@@ -220,15 +222,18 @@ public class SQLiteDatabase implements Database {
                     stmt.setInt(paramIndex, numEntries);
                     try (ResultSet rs = stmt.executeQuery()) {
                         while (rs.next()) {
-                            List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {}.getType());
+                            List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {
+                            }.getType());
                             if (productId != null && !productIds.contains(productId)) {
                                 continue; // 跳过不包含指定商品ID的日志
                             }
                             SettlementLogType type = SettlementLogType.valueOf(rs.getString("type"));
                             Date transitionTime = rs.getTimestamp("transition_time");
                             double price = rs.getDouble("price");
-                            List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {}.getType());
-                            List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {}.getType());
+                            List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {
+                            }.getType());
+                            List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {
+                            }.getType());
 
                             logs.add(SettlementLogImpl.of(type, customer)
                                     .setTransitionTime(transitionTime)

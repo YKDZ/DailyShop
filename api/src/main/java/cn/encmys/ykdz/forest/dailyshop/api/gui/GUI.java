@@ -14,7 +14,7 @@ import java.util.UUID;
 public abstract class GUI {
     protected final Map<UUID, Window> windows = new HashMap<>();
 
-    public abstract Item buildNormalIcon(IconRecord record);
+    public abstract Item buildNormalIcon(IconRecord record, Player player);
 
     public abstract void open(@NotNull Player player);
 
@@ -29,9 +29,10 @@ public abstract class GUI {
     }
 
     public void close(Player player) {
-        UUID uuid = player.getUniqueId();
-        getWindows().get(uuid).close();
-        getWindows().remove(uuid);
+        Window window = getWindows().get(player.getUniqueId());
+        if (window != null) {
+            window.close();
+        }
     }
 
     public Map<UUID, Window> getWindows() {

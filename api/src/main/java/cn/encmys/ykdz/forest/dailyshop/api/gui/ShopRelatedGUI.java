@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import xyz.xenondevs.invui.item.Item;
 
 import java.util.List;
@@ -49,5 +50,5 @@ public abstract class ShopRelatedGUI extends GUI {
         return shop;
     }
 
-    public abstract Item buildNormalIcon(IconRecord record);
+    public abstract Item buildNormalIcon(IconRecord record, Player player);
 }

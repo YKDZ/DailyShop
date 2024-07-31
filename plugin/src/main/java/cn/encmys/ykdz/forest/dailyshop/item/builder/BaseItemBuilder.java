@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.builder;
+package cn.encmys.ykdz.forest.dailyshop.item.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;

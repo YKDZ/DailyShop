@@ -1,10 +1,11 @@
-package cn.encmys.ykdz.forest.dailyshop.builder;
+package cn.encmys.ykdz.forest.dailyshop.item.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -17,7 +18,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
-import cn.encmys.ykdz.forest.dailyshop.gui.icon.NormalIcon;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import org.bukkit.entity.Player;
@@ -34,13 +34,11 @@ import java.util.*;
 public class ProductIconBuilder {
     public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
-        Item icon = new NormalIcon() {
+        AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
                 Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-                decorator.setNameFormat(ShopConfig.getProductNameFormat(shopId));
-                decorator.setLoreFormat(ShopConfig.getProductLoreFormat(shopId));
-                decorator.setBundleContentsLineFormat(ShopConfig.getBundleContentsLineFormat(shopId));
+                ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
 
                 // 处理捆绑包商品的列表 lore
                 List<String> bundleContentsLore = new ArrayList<>();
@@ -52,7 +50,7 @@ public class ProductIconBuilder {
                             if (content == null) {
                                 continue;
                             }
-                            bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(decorator.getBundleContentsLineFormat(), null, new HashMap<>() {{
+                            bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(record.formatBundleContentsLine(), null, new HashMap<>() {{
                                 put("name", content.getIconDecorator().getName());
                                 put("amount", String.valueOf(content.getItemDecorator().getAmount()));
                             }}));
@@ -80,11 +78,11 @@ public class ProductIconBuilder {
                 }};
 
                 return new ItemBuilder(
-                        new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getItem().build(null))
+                        new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(null))
                                 .setCustomModelData(decorator.getCustomModelData())
                                 .setItemFlags(decorator.getItemFlags())
-                                .setLore(TextUtils.decorateText(decorator.getLoreFormat(), null, vars, listVars))
-                                .setDisplayName(TextUtils.decorateText(decorator.getNameFormat(), null, vars))
+                                .setLore(TextUtils.decorateText(record.formatLore(), null, vars, listVars))
+                                .setDisplayName(TextUtils.decorateText(record.formatName(), null, vars))
                                 .setBannerPatterns(decorator.getPatternsData())
                                 .setFireworkEffects(decorator.getFireworkEffectData())
                                 .build(decorator.getAmount()));
@@ -94,11 +92,14 @@ public class ProductIconBuilder {
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
                 Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
                 Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+                if (shop == null || profile == null) {
+                    return;
+                }
                 ShopPricer shopPricer = shop.getShopPricer();
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", decorator.getName());
                     put("amount", String.valueOf(decorator.getAmount()));
-                    put("shop", DailyShop.SHOP_FACTORY.getShop(shopId).getName());
+                    put("shop", shop.getName());
                     put("cost", MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())));
                     put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())));
                 }};
@@ -130,7 +131,7 @@ public class ProductIconBuilder {
         // 根据需求设置是否自动刷新
         if (product.getProductStock().isPlayerStock()
                 || product.getProductStock().isGlobalStock()) {
-            ((Icon) icon).startUpdater(Config.period_updateProductIcon);
+            icon.startUpdater(Config.period_updateProductIcon);
         }
         return icon;
     }
@@ -140,7 +141,7 @@ public class ProductIconBuilder {
         SettlementResult result = shopCashier.settle(
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.SELL_TO)
-                        .addProduct(product, 1)
+                        .modifyProduct(product, 1)
         );
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -166,7 +167,7 @@ public class ProductIconBuilder {
         SettlementResult result = shopCashier.settle(
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_FROM)
-                        .addProduct(product, 1)
+                        .modifyProduct(product, 1)
         );
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -189,7 +190,7 @@ public class ProductIconBuilder {
         ShopOrder order =
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_ALL_FROM)
-                        .addProduct(product, 1);
+                        .modifyProduct(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
             switch (result) {
@@ -211,12 +212,15 @@ public class ProductIconBuilder {
 
     private static void addToCart(Player player, Shop shop, Product product, Map<String, String> vars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        if (profile == null) {
+            return;
+        }
         ShopOrder cart = profile.getCart(shop.getId());
         // 构建一个新订单并等待被检查与合并
         // 避免反复检测购物车中的商品
         ShopOrder newOrder = new ShopOrderImpl(player)
                 .setOrderType(cart.getOrderType())
-                .addProduct(product, 1);
+                .modifyProduct(product, 1);
         shop.getShopCashier().billOrder(newOrder);
         // 在一个限制或情况“无法被玩家解决”的情况下
         // 阻止玩家将商品加入购物车

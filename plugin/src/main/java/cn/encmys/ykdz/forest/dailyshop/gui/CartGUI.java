@@ -11,10 +11,9 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.OrderUtils;
-import cn.encmys.ykdz.forest.dailyshop.builder.NormalIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.ScrollGui;
@@ -23,6 +22,7 @@ import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CartGUI extends ShopRelatedGUI {
     public CartGUI(Shop shop) {
@@ -32,11 +32,15 @@ public class CartGUI extends ShopRelatedGUI {
     @Override
     public void open(@NotNull Player player) {
         CartGUIRecord record = ShopConfig.getCartGUIRecord(shop.getId());
-        String title = PlaceholderAPIHook.isHooked() ? PlaceholderAPI.setPlaceholders(player, record.title()) : record.title();
 
         Window window = Window.single()
-                .setGui(buildGUIBuilder(player).build())
-                .setTitle(title)
+                .setGui(buildGUIBuilder(player))
+                .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
+                    put("shop-name", shop.getName());
+                    put("shop-id", shop.getId());
+                    put("player-name", player.getName());
+                    put("player-uuid", player.getUniqueId().toString());
+                }}))
                 .setCloseHandlers(new ArrayList<>() {{
                     add(() -> getWindows().remove(player.getUniqueId()));
                 }})
@@ -49,7 +53,7 @@ public class CartGUI extends ShopRelatedGUI {
 
     @Override
     @NotNull
-    public ScrollGui.Builder<Item> buildGUIBuilder(Player player) {
+    public ScrollGui.Builder<Item> buildGUIBuilder(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         if (profile == null) {
             throw new RuntimeException("Try to open cart GUI without profile");
@@ -70,28 +74,26 @@ public class CartGUI extends ShopRelatedGUI {
         // 普通图标
         if (record.icons() != null) {
             for (IconRecord icon : record.icons()) {
-                guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon));
+                guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
             }
         }
 
         // 商品图标
         for (String productId : cart.getOrderedProducts().keySet()) {
             Item content = OrderUtils.toCartGUIItem(shop, cart, productId);
-            if (content != null) {
-                guiBuilder.addContent(content);
-            }
+            guiBuilder.addContent(content);
         }
 
         return guiBuilder;
     }
 
     @Override
-    public Item buildNormalIcon(IconRecord record) {
+    public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
             LogUtils.warn("Icon cart-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, this);
+        return NormalIconBuilder.build(decorator, shop, player);
     }
 }

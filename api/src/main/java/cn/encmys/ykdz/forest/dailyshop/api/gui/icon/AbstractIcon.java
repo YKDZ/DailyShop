@@ -1,6 +1,5 @@
-package cn.encmys.ykdz.forest.dailyshop.gui.icon;
+package cn.encmys.ykdz.forest.dailyshop.api.gui.icon;
 
-import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.Icon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -11,7 +10,7 @@ import xyz.xenondevs.invui.InvUI;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public abstract class NormalIcon extends AbstractItem implements Icon {
+public abstract class AbstractIcon extends AbstractItem {
     private BukkitTask task;
 
     public void startUpdater(long period) {

@@ -239,11 +239,12 @@ public class ShopConfig {
                 iconSection.getInt("amount", 1),
                 TextUtils.parseTimeToTicks(iconSection.getString("update-period", "0s")),
                 iconSection.getInt("custom-model-data"),
-                iconSection.getInt("scroll", 0),
                 iconSection.getConfigurationSection("commands"),
                 iconSection.getStringList("item-flags"),
                 iconSection.getStringList("banner-patterns"),
                 iconSection.getStringList("firework-effects"),
-                iconSection.getStringList("potion-effects"));
+                iconSection.getStringList("potion-effects"),
+                iconSection.getConfigurationSection("features")
+        );
     }
 }

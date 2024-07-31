@@ -31,7 +31,7 @@ public interface ProductStock {
 
     boolean isStock();
 
-    void restock();
+    void stock();
 
     void modifyPlayer(UUID uuid, int amount);
 
