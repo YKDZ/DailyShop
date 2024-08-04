@@ -38,6 +38,7 @@ public final class DailyShopImpl extends DailyShop {
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
+        GUIConfig.load();
 
         DailyShop.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
@@ -75,6 +76,7 @@ public final class DailyShopImpl extends DailyShop {
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
+        GUIConfig.load();
 
         DATABASE = new SQLiteDatabase();
 
@@ -86,7 +88,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShopImpl.SCHEDULER = new SchedulerImpl();
 
         CommandAPI.onEnable();
-        new CommandHandler(INSTANCE).load();
+        CommandHandler.load();
 
         setupBStats();
     }

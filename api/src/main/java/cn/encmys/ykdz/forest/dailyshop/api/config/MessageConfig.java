@@ -1,6 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,6 +15,7 @@ import java.text.DecimalFormat;
 public class MessageConfig {
     public static DecimalFormat format_decimal;
     public static String format_time;
+    public static String placeholderAPI_cartTotalPrice_notSellToMode;
     public static String messages_prefix;
     public static String messages_noPermission;
     public static String messages_command_reload_success;
@@ -53,6 +58,8 @@ public class MessageConfig {
         format_decimal = new DecimalFormat(config.getString("format.decimal", "###,###.##"));
         format_time = config.getString("format.time", "%02dh:%02dm:%02ds");
 
+        placeholderAPI_cartTotalPrice_notSellToMode = config.getString("placeholder-api.cart-total-price.not-sell-to-mode", "Not sell-to mode");
+
         messages_prefix = config.getString("messages.prefix", "<gold>DailyShop <gray>-");
         messages_noPermission = getMessage("messages.no-permission");
         messages_command_reload_success = getMessage("messages.command.reload.success");
@@ -83,12 +90,24 @@ public class MessageConfig {
         return config.getString(path, "<red>There may be an error in your language file. The related key is: " + path);
     }
 
-    public static String getActionMessage(String shopId, String path) {
-        String shopMessage = ShopConfig.getConfig(shopId).getString("messages.action." + path);
+    public static String getShopOverrideableMessage(String shopId, String path) {
+        String shopMessage = ShopConfig.getConfig(shopId).getString(path);
         if (shopId == null || shopId.isEmpty() || shopMessage == null) {
-            return getMessage("messages.action." + path);
+            return getMessage(path);
         } else {
             return shopMessage;
         }
+    }
+
+    public static String getCartSettleMessage(SettlementResult result) {
+        return getConfig().getString("messages.action.cart.settle-cart." + result.getConfigKey());
+    }
+
+    public static String getTerm(OrderType orderType) {
+        return config.getString("terms." + EnumUtils.toConfigName(OrderType.class) + "." + EnumUtils.toConfigName(orderType));
+    }
+
+    public static String getTerm(ShoppingMode shoppingMode) {
+        return config.getString("terms." + EnumUtils.toConfigName(ShoppingMode.class) + "." + EnumUtils.toConfigName(shoppingMode));
     }
 }

@@ -102,16 +102,6 @@ products:
     # enable cache to reduce the lag.
     cacheable: true
 
-  # This product will not load if ItemsAdder plugin is not installed.
-  PIZZA:
-    item:
-      base: IA:iasurvival:pizza
-      amount: 1
-    icon:
-      lore:
-        - "<gray>This is a Steel Ingot from <white>ItemsAdder<gray>."
-        - "<gray>These lore will not be applied to the product item."
-
   # This product will not load if MythicMobs plugin is not installed.
   SkeletonKingSword:
     item:

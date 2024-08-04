@@ -40,6 +40,4 @@ public interface Shop {
     ShopStocker getShopStocker();
 
     int getSize();
-
-    ShopRelatedGUI getCartGUI();
 }

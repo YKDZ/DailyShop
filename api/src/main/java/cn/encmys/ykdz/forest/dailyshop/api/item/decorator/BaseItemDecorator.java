@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseItemDecorator {
-    protected BaseItem item;
+    protected BaseItem baseItem;
     // 通用属性
     protected String name;
     protected long period;
@@ -27,7 +27,7 @@ public abstract class BaseItemDecorator {
     protected ClickType featuresBackToShop;
     protected ClickType featuresOpenCart;
     protected ClickType featuresSwitchShoppingMode;
-    protected ClickType featuresChangeCartMode;
+    protected ClickType featuresSwitchCartMode;
     protected ClickType featuresCleanCart;
     protected ClickType featuresClearCart;
 
@@ -93,9 +93,9 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setFeaturesSwitchShoppingMode(ClickType featuresSwitchShoppingMode);
 
-    public abstract ClickType getFeaturesChangeCartMode();
+    public abstract ClickType getFeaturesSwitchCartMode();
 
-    public abstract BaseItemDecorator setFeaturesChangeCartMode(ClickType featuresChangeCartMode);
+    public abstract BaseItemDecorator setFeaturesSwitchCartMode(ClickType featuresChangeCartMode);
 
     public abstract ClickType getFeaturesCleanCart();
 

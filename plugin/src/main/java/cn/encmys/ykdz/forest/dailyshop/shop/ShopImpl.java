@@ -6,7 +6,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
-import cn.encmys.ykdz.forest.dailyshop.gui.CartGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.HistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductItemBuilder;
@@ -29,7 +28,6 @@ public class ShopImpl implements Shop {
     private final int size;
     private final ShopGUI shopGUI;
     private final HistoryGUI historyGUI;
-    private final CartGUI cartGUI;
     private final ShopPricer shopPricer;
     private final ShopCashier shopCashier;
     private final ShopStocker shopStocker;
@@ -47,7 +45,6 @@ public class ShopImpl implements Shop {
         this.size = size;
         shopGUI = new ShopGUI(this);
         historyGUI = new HistoryGUI(this);
-        cartGUI = new CartGUI(this);
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this, merchant);
         shopStocker = new ShopStockerImpl(this, restockEnabled, restockPeriod, allProductsId);
@@ -66,11 +63,6 @@ public class ShopImpl implements Shop {
     @Override
     public ShopGUI getShopGUI() {
         return shopGUI;
-    }
-
-    @Override
-    public CartGUI getCartGUI() {
-        return cartGUI;
     }
 
     @Override

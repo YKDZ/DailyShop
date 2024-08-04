@@ -161,7 +161,7 @@ public class ProductCommand {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
                     }
                     if (!keyValue.isEmpty()) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.parseInternalVar(MessageConfig.messages_command_product_check_success, vars));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_product_check_success, player, vars));
                         return;
                     }
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);

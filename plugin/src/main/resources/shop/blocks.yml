@@ -5,12 +5,23 @@ settings:
     enabled: true
     period: "10m"
 
-messages:
-  notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
-
 sounds:
-  buy: ENTITY_VILLAGER_YES
-  sell: ENTITY_VILLAGER_YES
+  # Delete section to disable sound of specify action.
+  # See wiki for all sound-able actions.
+  sell-to:
+    # Value format:
+    # sound:volume:pitch
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  buy-from:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  buy-all-from:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  add-1-to-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
 
 shop-gui:
   title: "Welcome %player_name%"
@@ -51,12 +62,17 @@ shop-gui:
       lore:
         - "<dark_gray>✖ <white>Left Click"
         - "   <gray>Open cart"
-        - "<dark_gray>✖ <white>Right Click"
+        - "<dark_gray>✖ <aqua>Right Click"
         - "   <gray>Switch shopping mode"
+        - "   <gray>Current shopping mode: <white>%dailyshop_shopping_mode_{shop-id}%"
+        - "<dark_gray>✖ <aqua>Shift + Right Click"
+        - "   <gray>Switch cart mode"
+        - "   <gray>Current cart mode: <white>%dailyshop_cart_mode_{shop-id}%"
         - " "
       features:
         open-cart: LEFT
         switch-shopping-mode: RIGHT
+        switch-cart-mode: SHIFT_RIGHT
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -79,7 +95,19 @@ shop-gui:
     misc:
       disabled-price: "<red>✘"
     # For stock feature etc.
+    # Set to 0s or delete to disable update.
     update-period: "3s"
+    features:
+      # Work only when shopping mode = direct
+      # Delete, leave blank or set to UNKNOWN to disable an action.
+      sell-to: LEFT
+      buy-from: RIGHT
+      buy-all-from: SHIFT_RIGHT
+      # Work only when shopping mode = cart
+      # Delete, leave blank or set to UNKNOWN to disable an action.
+      add-1-to-cart: LEFT
+      remove-1-from-cart: RIGHT
+      remove-all-from-cart: DROP
 
 history-gui:
   title: "Trading history on {shop-name}"
@@ -126,74 +154,6 @@ history-gui:
         - "<gray>Price: {price}"
         - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
-
-cart-gui:
-  title: "Cart for shop {shop-name}"
-  # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
-  # The x character is the placeholder
-  # for the history slot.
-  layout:
-    - "- # # # # # # # u"
-    - "# x x x x x x x #"
-    - "# x x x x x x x #"
-    - "- # # # @ # # # n"
-  icons:
-    "#":
-      item: BROWN_STAINED_GLASS_PANE
-      name: " "
-      lore:
-        - "<dark_gray>Wall of Cart"
-        - " "
-    "u":
-      item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: -1
-    "n":
-      item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: 1
-    "@":
-      item: PAPER
-      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
-      lore:
-        - " "
-        - "<dark_gray>✖ Settle the cart"
-        - " "
-      update-period: "1s"
-      features:
-        settle-cart: LEFT
-        clean-cart: RIGHT
-        clear-cart: DROP
-    "-":
-      item: ARROW
-      name: "<white>Back to shop"
-      features:
-        back-to-shop: LEFT
-  cart-product-icon:
-    format:
-      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
-      lore:
-        - " "
-        - "<gray>Stack: <white>{stack}"
-        - " "
-        - "<dark_gray>✖ <white>Left Click"
-        - "   <gray>Add 1 stack"
-        - "<dark_gray>✖ <white>Right Click"
-        - "   <gray>Remove 1 stack"
-        - "<dark_gray>✖ <white>Shift + Left Click"
-        - "   <gray>Enter the amount of the stack"
-        - "   <gray>inside an anvil gui"
-        - " "
-    features:
-      add-1-stack: LEFT
-      remove-1-stack: RIGHT
-      remove-all: DROP
-      input-in-anvil: SHIFT_LEFT
 
 products:
   # Use PACK: as prefix to import the entire

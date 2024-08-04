@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,29 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     }
 
     @NotNull
+    private static String cartTotalPrice(@Nullable OfflinePlayer player, String params) {
+        Player target = validatePlayer(player);
+        if (target == null) return "Need a player to work.";
+
+        Shop shop = getShop(params, "cart_total_price_");
+        if (shop == null) return "Shop " + extractShopId(params, "cart_total_price_") + " do not exist.";
+
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
+        if (profile == null) return "Profile " + extractShopId(params, "cart_total_price_") + " do not exist.";
+
+        ShopOrder cart = profile.getCart();
+
+        if (cart.getOrderType() != OrderType.SELL_TO) {
+            return MessageConfig.placeholderAPI_cartTotalPrice_notSellToMode;
+        }
+
+        if (!cart.isBilled()) {
+            shop.getShopCashier().billOrder(cart);
+        }
+        return MessageConfig.format_decimal.format(cart.getTotalPrice());
+    }
+
+    @NotNull
     private static String restockTimer(String params) {
         Shop shop = getShop(params, "restock_timer_");
         if (shop == null) return "Shop " + extractShopId(params, "restock_timer_") + " do not exist.";
@@ -56,24 +80,6 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     }
 
     @NotNull
-    private static String cartTotalPrice(@Nullable OfflinePlayer player, String params) {
-        Player target = validatePlayer(player);
-        if (target == null) return "Need a player to work.";
-
-        Shop shop = getShop(params, "cart_total_price_");
-        if (shop == null) return "Shop " + extractShopId(params, "cart_total_price_") + " do not exist.";
-
-        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
-        if (profile == null) return "Profile " + extractShopId(params, "cart_total_price_") + " do not exist.";
-
-        ShopOrder cart = profile.getCart(extractShopId(params, "cart_total_price_"));
-        if (!cart.isBilled()) {
-            shop.getShopCashier().billOrder(cart);
-        }
-        return String.valueOf(cart.getTotalPrice());
-    }
-
-    @NotNull
     private static String shoppingMode(@Nullable OfflinePlayer player, String params) {
         Player target = validatePlayer(player);
         if (target == null) return "Need a player to work.";
@@ -84,7 +90,37 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
         if (profile == null) return "Player " + player.getName() + " do not have profile.";
 
-        return profile.getShoppingMode(extractShopId(params, "shopping_mode_")).name();
+        return MessageConfig.getTerm(profile.getShoppingMode(extractShopId(params, "shopping_mode_")));
+    }
+
+    @NotNull
+    private static String cartMode(@Nullable OfflinePlayer player, String params) {
+        Player target = validatePlayer(player);
+        if (target == null) return "Need a player to work.";
+
+        Shop shop = getShop(params, "cart_mode_");
+        if (shop == null) return "Shop " + extractShopId(params, "cart_mode_") + " do not exist.";
+
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
+        if (profile == null) return "Player " + player.getName() + " do not have profile.";
+
+        return MessageConfig.getTerm(profile.getCart().getOrderType());
+    }
+
+    @Override
+    public String onRequest(@Nullable OfflinePlayer player, @NotNull String params) {
+        if (params.contains("restock_timer_")) {
+            return restockTimer(params);
+        } else if (params.contains("merchant_balance_")) {
+            return merchantBalance(params);
+        } else if (params.contains("cart_total_price_")) {
+            return cartTotalPrice(player, params);
+        } else if (params.contains("shopping_mode_")) {
+            return shoppingMode(player, params);
+        } else if (params.contains("cart_mode_")) {
+            return cartMode(player, params);
+        }
+        return null;
     }
 
     @Nullable
@@ -101,19 +137,5 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
     @Nullable
     private static Player validatePlayer(@Nullable OfflinePlayer player) {
         return player == null ? null : player.getPlayer();
-    }
-
-    @Override
-    public String onRequest(@Nullable OfflinePlayer player, @NotNull String params) {
-        if (params.contains("restock_timer_")) {
-            return restockTimer(params);
-        } else if (params.contains("merchant_balance_")) {
-            return merchantBalance(params);
-        } else if (params.contains("cart_total_price_")) {
-            return cartTotalPrice(player, params);
-        } else if (params.contains("shopping_mode_")) {
-            return shoppingMode(player, params);
-        }
-        return null;
     }
 }

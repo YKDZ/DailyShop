@@ -1,0 +1,84 @@
+sounds:
+  settle-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+
+cart:
+  title: "Cart for player {player-name}"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
+  # The x character is the placeholder
+  # for the history slot.
+  layout:
+    - "- # # # # # # # u"
+    - "# x x x x x x x #"
+    - "# x x x x x x x #"
+    - "- # # # @ # # # n"
+  icons:
+    "#":
+      item: BROWN_STAINED_GLASS_PANE
+      name: " "
+      lore:
+        - "<dark_gray>Wall of Cart"
+        - " "
+    "u":
+      item: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: -1
+    "n":
+      item: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: 1
+    "@":
+      item: PAPER
+      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
+      lore:
+        - " "
+        - "<dark_gray>✖ <aqua>Left Click"
+        - "   <gray>Settle Cart"
+        - "<dark_gray>✖ <aqua>Right Click"
+        - "   <gray>Clean Cart"
+        - "<dark_gray>✖ <white>Drop"
+        - "   <gray>Clear Cart"
+        - " "
+      update-period: "1s"
+      features:
+        settle-cart: LEFT
+        clean-cart: RIGHT
+        clear-cart: DROP
+    "-":
+      item: ARROW
+      name: "<white>Back to shop"
+      features:
+        back-to-shop: LEFT
+  cart-product-icon:
+    format:
+      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
+      lore:
+        - " "
+        - "<gray>Stack: <white>{stack}"
+        - "<gray>Price: <white>{price}"
+        - " "
+        - "<dark_gray>✖ <aqua>Left Click"
+        - "   <gray>Add 1 stack"
+        - "<dark_gray>✖ <aqua>Right Click"
+        - "   <gray>Remove 1 stack"
+        - "<dark_gray>✖ <aqua>Drop"
+        - "   <gray>Remove this product"
+        - "<dark_gray>✖ <aqua>Shift + Left Click"
+        - "   <gray>Enter the amount of the stack"
+        - "   <gray>inside an anvil gui"
+        - " "
+    # For price update etc.
+    # Set to 0s or delete to disable update.
+    update-period: "1s"
+    features:
+      # Delete, leave blank or set to UNKNOWN to disable an action.
+      add-1-stack: LEFT
+      remove-1-stack: RIGHT
+      remove-all: DROP
+      input-in-anvil: SHIFT_LEFT

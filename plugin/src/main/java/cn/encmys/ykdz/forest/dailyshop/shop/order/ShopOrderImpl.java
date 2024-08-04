@@ -24,7 +24,7 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder combineOrder(ShopOrder order) {
+    public @NotNull ShopOrder combineOrder(ShopOrder order) {
         if (customer.getUniqueId() != order.getCustomer().getUniqueId()) {
             LogUtils.warn("Try to combine orders with different customer.");
             return this;
@@ -45,7 +45,7 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder setOrderType(OrderType orderType) {
+    public @NotNull ShopOrder setOrderType(@NotNull OrderType orderType) {
         if (isSettled) {
             return this;
         }
@@ -55,12 +55,12 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder modifyStack(@NotNull Product product, int amount) {
+    public @NotNull ShopOrder modifyStack(@NotNull Product product, int amount) {
         return modifyStack(product.getId(), amount);
     }
 
     @Override
-    public ShopOrder modifyStack(@NotNull String productId, int amount) {
+    public @NotNull ShopOrder modifyStack(@NotNull String productId, int amount) {
         if (isSettled) {
             return this;
         }
@@ -69,12 +69,12 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder setStack(@NotNull Product product, int amount) {
+    public @NotNull ShopOrder setStack(@NotNull Product product, int amount) {
         return setStack(product.getId(), amount);
     }
 
     @Override
-    public ShopOrder setStack(@NotNull String productId, int amount) {
+    public @NotNull ShopOrder setStack(@NotNull String productId, int amount) {
         if (isSettled) {
             return this;
         }
@@ -98,7 +98,7 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public OrderType getOrderType() {
+    public @NotNull OrderType getOrderType() {
         return orderType;
     }
 
@@ -118,7 +118,7 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder setBill(Map<String, Double> bill) {
+    public @NotNull ShopOrder setBill(Map<String, Double> bill) {
         if (isSettled) {
             return this;
         }
@@ -138,17 +138,12 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public ShopOrder setBilled(boolean billed) {
+    public @NotNull ShopOrder setBilled(boolean billed) {
         if (isSettled) {
             return this;
         }
         isBilled = billed;
         return this;
-    }
-
-    @Override
-    public double getBill(Product product) {
-        return bill.getOrDefault(product.getId(), -1d);
     }
 
     @Override

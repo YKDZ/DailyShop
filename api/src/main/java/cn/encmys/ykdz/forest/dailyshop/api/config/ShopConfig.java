@@ -1,13 +1,20 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.*;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.RecordUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.structure.Markers;
@@ -70,27 +77,6 @@ public class ShopConfig {
         return getConfig(shopId).getBoolean("settings.restock.enabled", false);
     }
 
-    public static String getShopGUITitle(String shopId) {
-        return getShopGUISection(shopId).getString("title");
-    }
-
-    public static String getHistoryGUITitle(String shopId) {
-        return getHistoryGuiSection(shopId).getString("title");
-    }
-
-    public static String getProductNameFormat(String shopId) {
-        return getShopGUISection(shopId).getString("product-icon.format.name", "{name}");
-    }
-
-    public static String getBundleContentsLineFormat(String shopId) {
-        return getShopGUISection(shopId).getString("product-icon.format.bundle-contents-line", "<dark_gray>- {name} x {amount}");
-    }
-
-    @NotNull
-    public static List<String> getProductLoreFormat(String shopId) {
-        return getShopGUISection(shopId).getStringList("product-icon.format.lore");
-    }
-
     public static String getDisabledPrice(String shopId) {
         return getShopGUISection(shopId).getString("product-icon.misc.disabled-price");
     }
@@ -102,24 +88,6 @@ public class ShopConfig {
     @NotNull
     public static List<String> getAllProductsId(String shopId) {
         return getConfig(shopId).getStringList("products");
-    }
-
-    public static String getRestockNotification(String shopId) {
-        return getConfig(shopId).getString("messages.notification");
-    }
-
-    public static Sound getBuySound(String shopId) {
-        String sound = getConfig(shopId).getString("sounds.buy", "ENTITY_VILLAGER_YES").toUpperCase();
-        return Sound.valueOf(sound);
-    }
-
-    public static Sound getSellSound(String shopId) {
-        String sound = getConfig(shopId).getString("sounds.sell", "ENTITY_VILLAGER_YES").toUpperCase();
-        return Sound.valueOf(sound);
-    }
-
-    public static ConfigurationSection getHistoryGuiSection(String shopId) {
-        return getConfig(shopId).getConfigurationSection("history-gui");
     }
 
     @NotNull
@@ -146,7 +114,7 @@ public class ShopConfig {
                 mainSection.getString("title", "{shop}"),
                 mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
                 mainSection.getStringList("layout"),
-                getIconRecords(mainSection.getConfigurationSection("icons")),
+                ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new HistoryIconRecord(
                         productIconSection.getString("format.name", "{date}"),
                         productIconSection.getStringList("format.lore"),
@@ -169,82 +137,31 @@ public class ShopConfig {
                 mainSection.getString("title", "{shop}"),
                 mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
                 mainSection.getStringList("layout"),
-                getIconRecords(mainSection.getConfigurationSection("icons")),
+                ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new ProductIconRecord(
                         productIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
                         productIconSection.getStringList("format.lore"),
                         productIconSection.getString("format.bundle-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
-                        productIconSection.getString("misc.disabled-price", "<red>✘")
+                        productIconSection.getString("misc.disabled-price", "<red>✘"),
+                        TextUtils.parseTimeToTicks(productIconSection.getString("update-period", "3s")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.sell-to")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.buy-from")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.buy-all-from")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.add-1-to-cart")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.remove-1-from-cart")),
+                        EnumUtils.getEnumFromName(ClickType.class, productIconSection.getString("features.remove-all-from-cart"))
                 )
         );
     }
 
-    @NotNull
-    public static CartGUIRecord getCartGUIRecord(@NotNull String shopId) {
-        ConfigurationSection mainSection = getConfig(shopId).getConfigurationSection("cart-gui");
-        if (mainSection == null) {
-            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
-        }
-        ConfigurationSection cartIconSection = mainSection.getConfigurationSection("cart-product-icon");
-        if (cartIconSection == null) {
-            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
-        }
-        return new CartGUIRecord(
-                mainSection.getString("title", "{shop}"),
-                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
-                mainSection.getStringList("layout"),
-                getIconRecords(mainSection.getConfigurationSection("icons")),
-                new CartProductIconRecord(
-                        cartIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
-                        cartIconSection.getStringList("format.lore")
-                )
-        );
-    }
-
+    /**
+     * @param shopId   Shop to get sound config from
+     * @param soundKey Format like "sell-to.success" or "buy-all-from.failure"
+     * @return SoundRecord, null if key not exist
+     */
     @Nullable
-    public static IconRecord getIconRecord(@NotNull ConfigurationSection iconsSection, char iconKey) {
-        ConfigurationSection iconSection = iconsSection.getConfigurationSection("icons." + iconKey);
-        if (iconSection == null) {
-            return null;
-        }
-        return getIconRecord(iconKey, iconSection);
-    }
-
-    @NotNull
-    public static List<IconRecord> getIconRecords(@Nullable ConfigurationSection iconsSection) {
-        if (iconsSection == null) {
-            throw new RuntimeException("Attempted to read gui information, but the icons configuration section is empty.");
-        }
-        List<IconRecord> icons = new ArrayList<>();
-        for (String key : iconsSection.getKeys(false)) {
-            char iconKey = key.charAt(0);
-            ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
-
-            if (iconSection == null) {
-                continue;
-            }
-
-            icons.add(getIconRecord(iconKey, iconSection));
-        }
-        return icons;
-    }
-
-    @NotNull
-    public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
-        return new IconRecord(
-                iconKey,
-                iconSection.getString("item", "DIRT"),
-                iconSection.getString("name", null),
-                iconSection.getStringList("lore"),
-                iconSection.getInt("amount", 1),
-                TextUtils.parseTimeToTicks(iconSection.getString("update-period", "0s")),
-                iconSection.getInt("custom-model-data"),
-                iconSection.getConfigurationSection("commands"),
-                iconSection.getStringList("item-flags"),
-                iconSection.getStringList("banner-patterns"),
-                iconSection.getStringList("firework-effects"),
-                iconSection.getStringList("potion-effects"),
-                iconSection.getConfigurationSection("features")
-        );
+    public static SoundRecord getSoundRecord(String shopId, String soundKey) {
+        String soundData = getConfig(shopId).getString("sounds." + soundKey);
+        return RecordUtils.fromSoundData(soundData);
     }
 }

@@ -6,6 +6,19 @@ format:
   decimal: "###,###.##"
   time: "%02dh:%02dm:%02ds"
 
+terms:
+  order-type:
+    sell-to: "Shop sell to Customer"
+    buy-from: "Shop buy from Customer"
+    buy-all-from: "Shop buy all from Customer"
+  shopping-mode:
+    direct: "Direct Transaction"
+    cart: "Shopping Cart Transaction"
+
+placeholder-api:
+  cart-total-price:
+    not-sell-to-mode: "Not sell-to mode"
+
 messages:
   prefix: "<dark_gray>[<gold>🔔<dark_gray>] "
   no-permission: "<red>You do not have enough permission to do this."

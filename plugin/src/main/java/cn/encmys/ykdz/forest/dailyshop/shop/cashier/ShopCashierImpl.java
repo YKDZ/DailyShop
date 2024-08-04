@@ -86,11 +86,14 @@ public class ShopCashierImpl implements ShopCashier {
         Bukkit.getPluginManager().callEvent(shopSettleEvent);
         // Event
 
-        return switch (order.getOrderType()) {
+        SettlementResult result = switch (order.getOrderType()) {
             case BUY_FROM -> buyFrom(order);
             case BUY_ALL_FROM -> buyAllFrom(order);
             case SELL_TO -> sellTo(order);
         };
+
+        System.out.println(result);
+        return result;
     }
 
     private SettlementResult sellTo(@NotNull ShopOrder order) {
@@ -160,6 +163,7 @@ public class ShopCashierImpl implements ShopCashier {
     private SettlementResult buyAllFrom(@NotNull ShopOrder order) {
         // 计算订单中每种商品的玩家拥有量
         // 并储存到订单中
+        // 以便 ShopCashier#billOrder 能计算出正确的订单价格
         for (String productId : order.getOrderedProducts().keySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
             if (product == null) continue;
@@ -177,11 +181,11 @@ public class ShopCashierImpl implements ShopCashier {
             if (product == null) continue;
 
             // 当前未上架（购物车暂存）
-            if (shop.getShopStocker().isListedProduct(product.getId())) {
+            if (!shop.getShopStocker().isListedProduct(product.getId())) {
                 return SettlementResult.NOT_LISTED;
             }
             // 商品未开放购买
-            else if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
+            else if (product.getBuyPrice().getPriceMode() == PriceMode.DISABLE || order.getBilledPrice(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户余额不足
@@ -213,7 +217,7 @@ public class ShopCashierImpl implements ShopCashier {
             if (product == null) continue;
 
             // 当前未上架（购物车暂存）
-            if (shop.getShopStocker().isListedProduct(product.getId())) {
+            if (!shop.getShopStocker().isListedProduct(product.getId())) {
                 return SettlementResult.NOT_LISTED;
             }
             // 商人模式余额不足
@@ -221,7 +225,7 @@ public class ShopCashierImpl implements ShopCashier {
                 return SettlementResult.NOT_ENOUGH_MERCHANT_BALANCE;
             }
             // 商品未开放收购
-            else if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBill(product) == -1d) {
+            else if (product.getSellPrice().getPriceMode() == PriceMode.DISABLE || order.getBilledPrice(product) == -1d) {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户没有足够的商品

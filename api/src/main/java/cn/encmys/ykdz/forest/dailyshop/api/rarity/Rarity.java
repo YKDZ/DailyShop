@@ -1,9 +1,9 @@
 package cn.encmys.ykdz.forest.dailyshop.api.rarity;
 
 public interface Rarity {
-    String getId();
+    String id();
 
-    String getName();
+    String name();
 
-    int getWeight();
+    int weight();
 }

@@ -26,10 +26,13 @@ public class TextUtils {
         );
     }
 
-    public static String decorateText(@NotNull String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+    public static String decorateText(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+        if (text == null) {
+            return null;
+        }
         String internalResult = parseInternalVar(text, normalVars);
         if (internalResult == null) {
-            return "";
+            return null;
         }
         AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
         return adventureManager.componentToLegacy(
@@ -43,10 +46,13 @@ public class TextUtils {
         return parsePlaceholder(parseInternalVar(parseInternalListVar(text, listVars), normalVars), player);
     }
 
-    public static String decorateTextKeepMiniMessage(@NotNull String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+    public static String decorateTextKeepMiniMessage(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+        if (text == null) {
+            return null;
+        }
         String internalResult = parseInternalVar(text, normalVars);
         if (internalResult == null) {
-            return "";
+            return null;
         }
         return parsePlaceholder(internalResult, player);
     }
@@ -211,14 +217,14 @@ public class TextUtils {
             }
 
             String valueStr = part.substring(0, part.length() - 1);
-            long value;
+            double value;
             try {
-                value = Long.parseLong(valueStr);
+                value = Double.parseDouble(valueStr);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid number: " + valueStr);
             }
 
-            ticks += value * timeUnits.get(unit);
+            ticks += (long) (value * timeUnits.get(unit));
         }
 
         return ticks;

@@ -7,16 +7,17 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.BaseItemBuilder;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BaseItemDecoratorImpl extends BaseItemDecorator {
-    public BaseItemDecoratorImpl(@NotNull BaseItem item, boolean setDefaultName) {
-        this.item = item;
+    public BaseItemDecoratorImpl(@NotNull BaseItem baseItem, boolean setDefaultName) {
+        this.baseItem = baseItem;
         if (setDefaultName) {
-            setName(item.getDisplayName());
+            setName(baseItem.getDisplayName());
         }
     }
 
@@ -26,15 +27,14 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
             return null;
         }
         BaseItemDecorator decorator = new BaseItemDecoratorImpl(item, setDefaultName)
+                .setName(record.name())
                 .setLore(record.lore())
                 .setAmount(record.amount())
                 .setUpdatePeriod(record.updatePeriod())
                 .setItemFlags(record.itemFlags())
                 .setCustomModelData(record.customModalData())
                 .setBannerPatterns(record.bannerPatterns());
-        if (setDefaultName) {
-            decorator.setName(record.name());
-        }
+
         if (record.commands() != null) {
             decorator.setCommands(new HashMap<>() {{
                 put(ClickType.LEFT, record.commands().getStringList("left"));
@@ -57,7 +57,10 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     .setFeaturesBackToShop(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("back-to-shop")))
                     .setFeaturesSettleCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("settle-cart")))
                     .setFeaturesOpenCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("open-cart")))
-                    .setFeaturesSwitchShoppingMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-shopping-mode")));
+                    .setFeaturesSwitchShoppingMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-shopping-mode")))
+                    .setFeaturesSwitchCartMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-cart-mode")))
+                    .setFeaturesCleanCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clean-cart")))
+                    .setFeaturesClearCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clear-cart")));
 
         }
         return decorator;
@@ -65,11 +68,11 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
 
     @Override
     public BaseItem getBaseItem() {
-        return item;
+        return baseItem;
     }
 
     @Override
-    public BaseItemDecorator setName(String name) {
+    public BaseItemDecorator setName(@Nullable String name) {
         if (name == null) {
             return this;
         }
@@ -78,7 +81,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public BaseItemDecorator setLore(List<String> lore) {
+    public BaseItemDecorator setLore(@NotNull List<String> lore) {
         this.lore = lore;
         return this;
     }
@@ -237,13 +240,13 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public ClickType getFeaturesChangeCartMode() {
-        return featuresChangeCartMode;
+    public ClickType getFeaturesSwitchCartMode() {
+        return featuresSwitchCartMode;
     }
 
     @Override
-    public BaseItemDecorator setFeaturesChangeCartMode(ClickType featuresChangeCartMode) {
-        this.featuresChangeCartMode = featuresChangeCartMode;
+    public BaseItemDecorator setFeaturesSwitchCartMode(ClickType featuresSwitchCartMode) {
+        this.featuresSwitchCartMode = featuresSwitchCartMode;
         return this;
     }
 

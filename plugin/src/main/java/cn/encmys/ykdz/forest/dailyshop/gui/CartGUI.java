@@ -1,10 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.GUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -23,21 +23,20 @@ import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class CartGUI extends ShopRelatedGUI {
-    public CartGUI(Shop shop) {
-        super(shop);
+public class CartGUI extends PlayerRelatedGUI {
+    public CartGUI(Player player) {
+        super(player);
     }
 
     @Override
-    public void open(@NotNull Player player) {
-        CartGUIRecord record = ShopConfig.getCartGUIRecord(shop.getId());
+    public void open() {
+        CartGUIRecord record = GUIConfig.getCartGUIRecord();
 
         Window window = Window.single()
                 .setGui(buildGUIBuilder(player))
                 .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
-                    put("shop-name", shop.getName());
-                    put("shop-id", shop.getId());
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
@@ -58,9 +57,8 @@ public class CartGUI extends ShopRelatedGUI {
         if (profile == null) {
             throw new RuntimeException("Try to open cart GUI without profile");
         }
-        ShopOrder cart = profile.getCart(shop.getId());
-        String shopId = shop.getId();
-        CartGUIRecord record = ShopConfig.getCartGUIRecord(shopId);
+        Map<String, ShopOrder> cart = profile.getCart();
+        CartGUIRecord record = GUIConfig.getCartGUIRecord();
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(record.layout().toArray(new String[0]));
@@ -79,9 +77,16 @@ public class CartGUI extends ShopRelatedGUI {
         }
 
         // 商品图标
-        for (String productId : cart.getOrderedProducts().keySet()) {
-            Item content = OrderUtils.toCartGUIItem(shop, cart, productId);
-            guiBuilder.addContent(content);
+        for (Map.Entry<String, ShopOrder> entry : cart.entrySet()) {
+            Shop shop = DailyShop.SHOP_FACTORY.getShop(entry.getKey());
+            if (shop == null) {
+                continue;
+            }
+            ShopOrder cartOrder = entry.getValue();
+            for (String productId : cartOrder.getOrderedProducts().keySet()) {
+                Item content = OrderUtils.toCartGUIItem(shop, cartOrder, productId);
+                guiBuilder.addContent(content);
+            }
         }
 
         return guiBuilder;
@@ -91,9 +96,9 @@ public class CartGUI extends ShopRelatedGUI {
     public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
-            LogUtils.warn("Icon cart-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
+            LogUtils.warn("Icon cart.icons." + record + " in cart gui has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, shop, player);
+        return NormalIconBuilder.build(decorator, null, player);
     }
 }

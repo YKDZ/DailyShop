@@ -1,8 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ConfigUtils {
@@ -72,5 +76,52 @@ public class ConfigUtils {
             value = defaultSection.getBoolean(key, defaultValue);
         }
         return value;
+    }
+
+    @Nullable
+    public static IconRecord getIconRecord(@NotNull ConfigurationSection iconsSection, char iconKey) {
+        ConfigurationSection iconSection = iconsSection.getConfigurationSection("icons." + iconKey);
+        if (iconSection == null) {
+            return null;
+        }
+        return getIconRecord(iconKey, iconSection);
+    }
+
+    @NotNull
+    public static List<IconRecord> getIconRecords(@Nullable ConfigurationSection iconsSection) {
+        if (iconsSection == null) {
+            throw new RuntimeException("Attempted to read gui information, but the icons configuration section is empty.");
+        }
+        List<IconRecord> icons = new ArrayList<>();
+        for (String key : iconsSection.getKeys(false)) {
+            char iconKey = key.charAt(0);
+            ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
+
+            if (iconSection == null) {
+                continue;
+            }
+
+            icons.add(getIconRecord(iconKey, iconSection));
+        }
+        return icons;
+    }
+
+    @NotNull
+    public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
+        return new IconRecord(
+                iconKey,
+                iconSection.getString("item", "DIRT"),
+                iconSection.getString("name", null),
+                iconSection.getStringList("lore"),
+                iconSection.getInt("amount", 1),
+                TextUtils.parseTimeToTicks(iconSection.getString("update-period", "0s")),
+                iconSection.getInt("custom-model-data"),
+                iconSection.getConfigurationSection("commands"),
+                iconSection.getStringList("item-flags"),
+                iconSection.getStringList("banner-patterns"),
+                iconSection.getStringList("firework-effects"),
+                iconSection.getStringList("potion-effects"),
+                iconSection.getConfigurationSection("features")
+        );
     }
 }

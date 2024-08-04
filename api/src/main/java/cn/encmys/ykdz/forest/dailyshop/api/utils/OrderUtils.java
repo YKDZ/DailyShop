@@ -1,12 +1,14 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.GUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -21,14 +23,14 @@ import java.util.Map;
 
 public class OrderUtils {
     @NotNull
-    public static Item toCartGUIItem(@NotNull Shop shop, @NotNull ShopOrder cart, @NotNull String productId) {
-        CartProductIconRecord iconRecord = ShopConfig.getCartGUIRecord(shop.getId()).cartProductIcon();
+    public static Item toCartGUIItem(@NotNull Shop shop, @NotNull ShopOrder cartOrder, @NotNull String productId) {
+        CartProductIconRecord iconRecord = GUIConfig.getCartGUIRecord().cartProductIcon();
         Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
 
-        return new AbstractIcon() {
+        AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
-                int stack = cart.getOrderedProducts().getOrDefault(productId, 0);
+                int stack = cartOrder.getOrderedProducts().getOrDefault(productId, 0);
 
                 if (stack <= 0 || product == null) {
                     return new xyz.xenondevs.invui.item.builder.ItemBuilder(Material.AIR);
@@ -42,6 +44,11 @@ public class OrderUtils {
                         put("amount", String.valueOf(product.getIconDecorator().getAmount()));
                     }
                     put("stack", String.valueOf(stack));
+                    // 保证购物车商品数量更新时能立刻看到价格变化
+                    if (!cartOrder.isBilled()) {
+                        shop.getShopCashier().billOrder(cartOrder);
+                    }
+                    put("price", cartOrder.getOrderType() == OrderType.SELL_TO ? MessageConfig.format_decimal.format(cartOrder.getBilledPrice(product)) : MessageConfig.placeholderAPI_cartTotalPrice_notSellToMode);
                 }};
 
                 String name = TextUtils.decorateText(iconRecord.formatName(), null, vars);
@@ -57,18 +64,26 @@ public class OrderUtils {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-                // TODO 尊重配置文件
-                switch (clickType) {
-                    case LEFT:
-                        cart.modifyStack(product, 1);
-                        notifyWindows();
-                    case RIGHT:
-                        cart.modifyStack(product, -1);
-                        notifyWindows();
-                    case DROP:
-                        cart.setStack(product, 0);
+                if (iconRecord.featuresAdd1Stack() == clickType) {
+                    cartOrder.modifyStack(product, 1);
                 }
+                if (iconRecord.featuresRemove1Stack() == clickType) {
+                    cartOrder.modifyStack(product, -1);
+                }
+                if (iconRecord.featuresRemoveAll() == clickType) {
+                    cartOrder.setStack(product, 0);
+                }
+                if (iconRecord.featuresInputInAnvil() == clickType) {
+                    // TODO 输入功能
+                }
+                notifyWindows();
             }
         };
+
+        if (iconRecord.updatePeriod() > 0) {
+            icon.startUpdater(iconRecord.updatePeriod());
+        }
+
+        return icon;
     }
 }

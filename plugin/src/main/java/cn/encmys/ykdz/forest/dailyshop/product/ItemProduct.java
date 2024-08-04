@@ -45,7 +45,6 @@ public class ItemProduct extends Product {
     @Override
     public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
         ItemStack item = shop.getCachedProductItem(this);
-        // Check whether player has enough inventory space at first
         IntStream.range(0, stack).forEach(i -> inv.addItem(item));
     }
 
@@ -56,7 +55,11 @@ public class ItemProduct extends Product {
 
     @Override
     public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
-        int needed = getItemDecorator().getAmount() * stack;
+        BaseItemDecorator decorator = getItemDecorator();
+        if (decorator == null) {
+            return;
+        }
+        int needed = decorator.getAmount() * stack;
         if (has(shop, inv, player, 1) < stack) {
             return;
         }
@@ -82,8 +85,12 @@ public class ItemProduct extends Product {
 
     @Override
     public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
+        BaseItemDecorator decorator = getItemDecorator();
+        if (decorator == null) {
+            return 0;
+        }
         int total = 0;
-        int stackedAmount = getItemDecorator().getAmount() * stack;
+        int stackedAmount = decorator.getAmount() * stack;
         for (ItemStack check : inv) {
             if (check != null && isMatch(shop.getId(), check, player)) {
                 total += check.getAmount();
@@ -109,8 +116,12 @@ public class ItemProduct extends Product {
 
     @Override
     public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
+        BaseItemDecorator decorator = getItemDecorator();
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-        BaseItem baseItem = getItemDecorator().getBaseItem();
+        if (decorator == null || shop == null) {
+            return false;
+        }
+        BaseItem baseItem = decorator.getBaseItem();
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);
         } else {

@@ -57,17 +57,17 @@ public class ShopStockerImpl implements ShopStocker {
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
             int totalWeight = allProducts.values().stream()
-                    .mapToInt(p -> p.getRarity().getWeight()).sum();
+                    .mapToInt(p -> p.getRarity().weight()).sum();
 
             for (int i = 0; i < getShop().getSize(); i++) {
                 int needed = random.nextInt(totalWeight) + 1; // 避免出现 0
                 int runningWeight = 0;
                 for (String productId : temp) {
                     Product product = allProducts.get(productId);
-                    runningWeight += product.getRarity().getWeight();
+                    runningWeight += product.getRarity().weight();
                     if (needed <= runningWeight) {
                         productsPreparedToBeListed.add(product);
-                        totalWeight -= product.getRarity().getWeight();
+                        totalWeight -= product.getRarity().weight();
                         temp.remove(productId);
                         break;
                     }

@@ -17,14 +17,13 @@ public class Config {
     public static double logUsageLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static long period_saveData;
-    public static long period_updateProductIcon;
     public static long period_checkRestocking;
     public static int version;
 
     public static void load() {
         File file = new File(path);
 
-        // 当 config.yml 不存在时初始化所有配置文件
+        // 当 config.yml 不存在时尝试初始化所有配置文件
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("config.yml", false);
@@ -33,6 +32,7 @@ public class Config {
             DailyShop.INSTANCE.saveResource("product/misc.yml", false);
             DailyShop.INSTANCE.saveResource("shop/black_market.yml", false);
             DailyShop.INSTANCE.saveResource("shop/blocks.yml", false);
+            DailyShop.INSTANCE.saveResource("gui/cart.yml", false);
             DailyShop.INSTANCE.saveResource("lang/en_US.yml", false);
         }
 
@@ -48,7 +48,6 @@ public class Config {
         language_message = config.getString("language.message", "en_US");
         language_minecraftLang = config.getString("language.minecraft-lang", "en_us").toLowerCase();
         period_saveData = TextUtils.parseTimeToTicks(config.getString("period.save-data", "5m"));
-        period_updateProductIcon = TextUtils.parseTimeToTicks(config.getString("period.update-product-icon", "3s"));
         period_checkRestocking = TextUtils.parseTimeToTicks(config.getString("period.check-restocking", "3s"));
         priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
         logUsageLimit_entryAmount = config.getInt("log-usage-limit.entry-amount", 500);

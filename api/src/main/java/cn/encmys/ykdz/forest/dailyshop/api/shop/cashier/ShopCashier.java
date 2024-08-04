@@ -11,6 +11,8 @@ public interface ShopCashier {
     /**
      * Calculate the prices of all products in given ShopOrder and store them (ignore given totalStack value).
      * Each ShopOrder can only be billed once.
+     * <p>
+     * Orders of type BUY_ALL_FROM are unlikely to get the billing value before being settled.
      * @param order ShopOrder that will be calculated
      */
     void billOrder(@NotNull ShopOrder order);

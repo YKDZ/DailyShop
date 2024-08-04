@@ -1,7 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.item.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
@@ -17,9 +16,11 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -34,11 +35,15 @@ import java.util.*;
 public class ProductIconBuilder {
     public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
+        ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
         AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
                 Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-                ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
+
+                if (shop == null) {
+                    return new ItemBuilder(Material.AIR);
+                }
 
                 // 处理捆绑包商品的列表 lore
                 List<String> bundleContentsLore = new ArrayList<>();
@@ -52,7 +57,7 @@ public class ProductIconBuilder {
                             }
                             bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(record.formatBundleContentsLine(), null, new HashMap<>() {{
                                 put("name", content.getIconDecorator().getName());
-                                put("amount", String.valueOf(content.getItemDecorator().getAmount()));
+                                put("amount", String.valueOf(content.getItemDecorator() != null ? content.getItemDecorator().getAmount() : content.getIconDecorator().getAmount()));
                             }}));
                         }
                     }
@@ -69,7 +74,7 @@ public class ProductIconBuilder {
                     put("initial-global-stock", String.valueOf(product.getProductStock().getInitialGlobalAmount()));
                     put("current-player-stock", String.valueOf(player == null ? -1 : product.getProductStock().getCurrentPlayerAmount(player.getUniqueId())));
                     put("initial-player-stock", String.valueOf(product.getProductStock().getInitialPlayerAmount()));
-                    put("rarity", product.getRarity().getName());
+                    put("rarity", product.getRarity().name());
                 }};
                 // 列表行的变量
                 Map<String, List<String>> listVars = new HashMap<>() {{
@@ -99,119 +104,91 @@ public class ProductIconBuilder {
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", decorator.getName());
                     put("amount", String.valueOf(decorator.getAmount()));
-                    put("shop", shop.getName());
-                    put("cost", MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())));
-                    put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())));
+                    put("shop-name", shop.getName());
+                    put("shop-id", shop.getId());
                 }};
 
-                // TODO 尊重配置文件
-                // 玩家从商店购买商品
-                if (clickType == ClickType.LEFT) {
-                    switch (profile.getShoppingMode(shopId)) {
-                        case DIRECT -> sellToDirectly(shop, player, product, vars);
-                        case CART -> addToCart(player, shop, product, vars);
-                    }
+                if (record.featuresSellTo() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.DIRECT) {
+                    sellToDirectly(shop, player, product, vars);
                 }
-                // 玩家向商店出售商品（仅直接模式）
-                else if (clickType == ClickType.RIGHT) {
-                    switch (profile.getShoppingMode(shopId)) {
-                        case DIRECT -> buyFromDirectly(shop, player, product, vars);
-                        case CART -> removeFromCart(player, shop, product);
-                    }
+                if (record.featuresBuyFrom() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.DIRECT) {
+                    buyFromDirectly(shop, player, product, vars);
                 }
-                // 玩家向商店出售背包内全部商品（仅直接模式）
-                else if (clickType == ClickType.SHIFT_RIGHT) {
+                if (record.featuresBuyAllFrom() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.DIRECT) {
                     buyAllFromDirectly(shop, player, product, vars);
                 }
-
-                // 根据需求刷新菜单界面
-                if (profile.getShoppingMode(shopId) == ShoppingMode.DIRECT &&
-                        (product.getProductStock().isPlayerStock()
-                                || product.getProductStock().isGlobalStock())) {
-                    notifyWindows();
+                if (record.featuresAdd1ToCart() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.CART) {
+                    addToCart(player, shop, product, vars);
+                }
+                if (record.featuresRemove1FromCart() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.CART) {
+                    remove1FromCart(player, shop, product, vars);
+                }
+                if (record.featuresRemoveAllFromCart() == clickType && profile.getShoppingMode(shopId) == ShoppingMode.CART) {
+                    removeAllFromCart(player, shop, product, vars);
                 }
             }
         };
         // 根据需求设置是否自动刷新
         if (product.getProductStock().isPlayerStock()
                 || product.getProductStock().isGlobalStock()) {
-            icon.startUpdater(Config.period_updateProductIcon);
+            ProductIconRecord productIconRecord = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
+            if (productIconRecord.updatePeriod() > 0) {
+                icon.startUpdater(productIconRecord.updatePeriod());
+            }
         }
         return icon;
     }
 
     private static void sellToDirectly(Shop shop, Player player, Product product, Map<String, String> vars) {
         ShopCashier shopCashier = shop.getShopCashier();
-        SettlementResult result = shopCashier.settle(
+        ShopOrder order =
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.SELL_TO)
-                        .modifyStack(product, 1)
-        );
+                        .modifyStack(product, 1);
+        SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            switch (result) {
-                case TRANSITION_DISABLED ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.disable"), player, vars);
-                case NOT_ENOUGH_MONEY ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.money"), player, vars);
-                case NOT_ENOUGH_GLOBAL_STOCK ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.stock.global"), player, vars);
-                case NOT_ENOUGH_PLAYER_STOCK ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.stock.player"), player, vars);
-                case NOT_ENOUGH_INVENTORY_SPACE ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.inventory-space"), player, vars);
-            }
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "sell-to.failure");
         } else {
-            sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.success"), player, vars);
-            player.playSound(player.getLocation(), ShopConfig.getBuySound(shop.getId()), 1f, 1f);
+            vars.put("cost", MessageConfig.format_decimal.format(order.getTotalPrice()));
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "sell-to.success");
         }
     }
 
     private static void buyFromDirectly(Shop shop, Player player, Product product, Map<String, String> vars) {
         ShopCashier shopCashier = shop.getShopCashier();
-        SettlementResult result = shopCashier.settle(
+        ShopOrder order =
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_FROM)
-                        .modifyStack(product, 1)
-        );
+                        .modifyStack(product, 1);
+        SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            switch (result) {
-                case TRANSITION_DISABLED ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.disable"), player, vars);
-                case NOT_ENOUGH_PRODUCT ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.not-enough"), player, vars);
-                case NOT_ENOUGH_MERCHANT_BALANCE ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.merchant-balance"), player, vars);
-            }
-            return;
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "buy-from.failure");
+        } else {
+            vars.put("earn", MessageConfig.format_decimal.format(order.getTotalPrice()));
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "buy-from.success");
         }
-        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.success"), player, vars);
-        player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
     private static void buyAllFromDirectly(Shop shop, Player player, Product product, Map<String, String> vars) {
         ShopCashier shopCashier = shop.getShopCashier();
-        ShopPricer shopPricer = shop.getShopPricer();
         ShopOrder order =
                 new ShopOrderImpl(player)
                         .setOrderType(OrderType.BUY_ALL_FROM)
                         .modifyStack(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            switch (result) {
-                case NOT_ENOUGH_PRODUCT ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.not-enough"), player, vars);
-                case TRANSITION_DISABLED ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.disable"), player, vars);
-                case NOT_ENOUGH_MERCHANT_BALANCE ->
-                        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.merchant-balance"), player, vars);
-            }
-            return;
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "buy-all-from.failure");
+        } else {
+            vars.put("earn", MessageConfig.format_decimal.format(order.getTotalPrice()));
+            // TODO 为收购全部操作增加单独的提示逻辑
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.playSound(shop, player, "buy-all-from.success");
         }
-        // TODO 为收购全部操作增加单独的提示逻辑
-//        vars.put("earn", MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId()) * stack));
-//        vars.put("stack", String.valueOf(stack));
-        sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.success"), player, vars);
-        player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
     private static void addToCart(Player player, Shop shop, Product product, Map<String, String> vars) {
@@ -219,48 +196,56 @@ public class ProductIconBuilder {
         if (profile == null) {
             return;
         }
-        ShopOrder cart = profile.getCart(shop.getId());
+        ShopOrder cart = profile.getCartOrder(shop.getId());
         // 构建一个新订单并等待被检查与合并
         // 避免反复检测购物车中的商品
         ShopOrder newOrder = new ShopOrderImpl(player)
                 .setOrderType(cart.getOrderType())
                 .modifyStack(product, 1);
+        // 一个订单在被判断是否能成功前必须被计算订单价值
         shop.getShopCashier().billOrder(newOrder);
         // 在一个限制或情况“无法被玩家解决”的情况下
         // 阻止玩家将商品加入购物车
-        switch (newOrder.getOrderType() == OrderType.SELL_TO ? shop.getShopCashier().canSellTo(newOrder) : shop.getShopCashier().canBuyFrom(newOrder)) {
-            case TRANSITION_DISABLED -> {
-                switch (newOrder.getOrderType()) {
-                    // TODO 为无法加入购物车单独指定提示信息
-                    case BUY_ALL_FROM ->
-                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell-all.failure.disable"), player, vars);
-                    case BUY_FROM ->
-                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "sell.failure.disable"), player, vars);
-                    case SELL_TO ->
-                            sendMessage(MessageConfig.getActionMessage(shop.getId(), "buy.failure.disable"), player, vars);
-                }
+        SettlementResult result = newOrder.getOrderType() == OrderType.SELL_TO ? shop.getShopCashier().canSellTo(newOrder) : shop.getShopCashier().canBuyFrom(newOrder);
+        if (result != SettlementResult.SUCCESS) {
+            switch (newOrder.getOrderType()) {
+                case BUY_ALL_FROM ->
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+                case BUY_FROM ->
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+                case SELL_TO ->
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
             }
+        } else {
+            cart.combineOrder(newOrder);
+            profile.setCartOrder(shop.getId(), cart);
+            PlayerUtils.playSound(shop, player, "add-1-to-cart.success");
         }
-        cart.combineOrder(newOrder);
-        profile.setCartOrder(shop.getId(), cart);
-        // TODO 加入购物车音效
-        player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
     }
 
-    private static void removeFromCart(Player player, Shop shop, Product product) {
+    private static void remove1FromCart(Player player, Shop shop, Product product, Map<String, String> vars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         if (profile == null) {
             return;
         }
-        ShopOrder cart = profile.getCart(shop.getId());
+        ShopOrder cart = profile.getCartOrder(shop.getId());
         if (cart.getOrderedProducts().containsKey(product.getId())) {
             cart.setStack(product, cart.getOrderedProducts().get(product.getId()) - 1);
         }
-        // TODO 移出购物车音效
-        player.playSound(player.getLocation(), ShopConfig.getSellSound(shop.getId()), 1f, 1f);
+
+        PlayerUtils.playSound(shop, player, "remove-1-from-cart.success");
     }
 
-    private static void sendMessage(String message, Player player, Map<String, String> vars) {
-        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextKeepMiniMessage(message, player, vars));
+    private static void removeAllFromCart(Player player, Shop shop, Product product, Map<String, String> vars) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        if (profile == null) {
+            return;
+        }
+        ShopOrder cart = profile.getCartOrder(shop.getId());
+        if (cart.getOrderedProducts().containsKey(product.getId())) {
+            cart.setStack(product, 0);
+        }
+
+        PlayerUtils.playSound(shop, player, "remove-all-from-cart.success");
     }
 }

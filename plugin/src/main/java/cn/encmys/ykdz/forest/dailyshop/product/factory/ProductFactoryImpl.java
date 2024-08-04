@@ -98,6 +98,8 @@ public class ProductFactoryImpl implements ProductFactory {
                 return;
             }
 
+            // 首先尊重 baseItem 可能自带的名称（一般特指原版物品的自动本地化物品名机制）
+            // 其次再应用插件内指定的名称
             itemDecorator = new BaseItemDecoratorImpl(item, false)
                     .setName(itemSection.getString("name"))
                     .setLore(itemSection.getStringList("lore"))

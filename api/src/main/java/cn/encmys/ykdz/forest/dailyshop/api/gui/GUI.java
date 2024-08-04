@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public abstract class GUI {
+    protected static final char markerIdentifier = 'x';
+
     protected final Map<UUID, Window> windows = new HashMap<>();
 
     public abstract Item buildNormalIcon(IconRecord record, Player player);
-
-    public abstract void open(@NotNull Player player);
 
     @NotNull
     public abstract ScrollGui.Builder<Item> buildGUIBuilder(Player player);

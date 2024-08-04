@@ -1,21 +1,25 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import xyz.xenondevs.invui.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public abstract class ShopRelatedGUI extends GUI {
-    protected static final char markerIdentifier = 'x';
     protected final Shop shop;
 
     public ShopRelatedGUI(Shop shop) {
         this.shop = shop;
     }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public abstract void open(@NotNull Player player);
 
     public int getRowsWithMarker() {
         ConfigurationSection section = ShopConfig.getShopGUISection(shop.getId());
@@ -45,10 +49,4 @@ public abstract class ShopRelatedGUI extends GUI {
         }
         return colCount;
     }
-
-    public Shop getShop() {
-        return shop;
-    }
-
-    public abstract Item buildNormalIcon(IconRecord record, Player player);
 }

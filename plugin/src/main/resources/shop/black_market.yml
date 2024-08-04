@@ -11,16 +11,27 @@ settings:
     overflow: false
     inherit: false
 
+# This optional section override the same section (messages.action.shop) in your lang file (en_US.yml etc.)
 messages:
   notification: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
-  # This optional section override the same section (messages.action) in your lang file (en_US.yml etc.)
   action:
-    buy:
-      success: "<gray>You successfully buy <reset>{name} <gray>x <white>{amount} <gray>in the most mysterious market"
+    shop:
+      sell-to:
+        success: "<gray>You successfully buy <reset>{name} <gray>x <white>{amount} <gray>in the most mysterious market"
 
 sounds:
-  buy: ENTITY_VILLAGER_YES
-  sell: ENTITY_VILLAGER_YES
+  sell-to:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  buy-from:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  buy-all-from:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  add-to-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
 
 shop-gui:
   title: "Accede to Every Plea"
@@ -123,71 +134,6 @@ history-gui:
         - "<gray>Price: {price}"
         - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
-
-cart-gui:
-  title: "Cart for {shop-name}"
-  # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
-  # The x character is the placeholder
-  # for the history slot.
-  layout:
-    - "- # # # # # # # u"
-    - "# x x x x x x x #"
-    - "# x x x x x x x #"
-    - "- # # # @ # # # n"
-  icons:
-    "#":
-      item: BROWN_STAINED_GLASS_PANE
-      name: " "
-      lore:
-        - "<dark_gray>Wall of Cart"
-        - " "
-    "u":
-      item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: -1
-    "n":
-      item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: 1
-    "@":
-      item: PAPER
-      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
-      lore:
-        - " "
-        - "<dark_gray>✖ Settle the cart"
-        - " "
-      update-period: "1s"
-      features:
-        settle-cart: LEFT
-    "-":
-      item: ARROW
-      name: "<white>Back to shop"
-      features:
-        back-to-shop: LEFT
-  cart-product-icon:
-    format:
-      name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
-      lore:
-        - " "
-        - "<gray>Stack: <white>{stack}"
-        - " "
-        - "<dark_gray>✖ <white>Left Click"
-        - "   <gray>Add 1 stack"
-        - "<dark_gray>✖ <white>Right Click"
-        - "   <gray>Remove 1 stack"
-        - "<dark_gray>✖ <white>Shift + Left Click"
-        - "   <gray>Enter the amount of the stack"
-        - "   <gray>inside an anvil gui"
-        - " "
-    features:
-      add-1-stack: LEFT
-      remove-1-stack: RIGHT
-      input-in-anvil: SHIFT_LEFT
 
 products:
   - WARM_WELCOME

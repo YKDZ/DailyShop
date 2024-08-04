@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.shop.order;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -12,23 +13,30 @@ import java.util.Map;
  * As a stipulation, ShopOrder of type OrderType.BUY_ALL_FROM needs to ensure that each key of map orderedProducts has a value of 1 in order to work properly.
  */
 public interface ShopOrder {
+    @NotNull
     ShopOrder combineOrder(ShopOrder order);
 
-    ShopOrder setOrderType(OrderType orderType);
-
+    @NotNull
     ShopOrder modifyStack(Product product, int amount);
 
+    @NotNull
     ShopOrder modifyStack(String productId, int amount);
 
+    @NotNull
     ShopOrder setStack(Product product, int amount);
 
+    @NotNull
     ShopOrder setStack(String productId, int amount);
+
+    @NotNull
+    OrderType getOrderType();
 
     boolean isSettled();
 
     void setSettled(boolean settled);
 
-    OrderType getOrderType();
+    @NotNull
+    ShopOrder setOrderType(@NotNull OrderType orderType);
 
     Player getCustomer();
 
@@ -36,15 +44,15 @@ public interface ShopOrder {
 
     double getBilledPrice(Product product);
 
+    @NotNull
     ShopOrder setBill(Map<String, Double> bill);
 
     double getTotalPrice();
 
     boolean isBilled();
 
+    @NotNull
     ShopOrder setBilled(boolean billed);
-
-    double getBill(Product product);
 
     void clear();
 }

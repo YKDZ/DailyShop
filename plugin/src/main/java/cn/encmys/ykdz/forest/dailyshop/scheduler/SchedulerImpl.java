@@ -2,7 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.scheduler;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.scheduler.Scheduler;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
@@ -28,7 +28,7 @@ public class SchedulerImpl implements Scheduler {
                 if (shop.getShopStocker().needRestock() && shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50 <= now) {
                     shop.getShopStocker().stock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.parseInternalVar(ShopConfig.getRestockNotification(shop.getId()), new HashMap<>() {{
+                        DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "messages.notification.restock"), player, new HashMap<>() {{
                             put("shop", shop.getName());
                         }}));
                     }
