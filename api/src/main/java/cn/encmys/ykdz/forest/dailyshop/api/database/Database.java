@@ -1,8 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.api.database;
 
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProfileData;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ShopData;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
@@ -17,6 +19,10 @@ public interface Database {
     void saveShopData(@NotNull List<Shop> dataMap);
 
     CompletableFuture<ShopData> queryShopData(@NotNull String id);
+
+    void saveProfileData(@NotNull List<Profile> profiles);
+
+    CompletableFuture<ProfileData> queryProfileData(@NotNull UUID ownerUUID);
 
     void saveProductData(List<Product> data);
 

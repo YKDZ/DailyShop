@@ -10,10 +10,10 @@ cart:
   # The x character is the placeholder
   # for the history slot.
   layout:
-    - "- # # # # # # # u"
+    - "# # # 1 # 2 # # u"
     - "# x x x x x x x #"
     - "# x x x x x x x #"
-    - "- # # # @ # # # n"
+    - "# # # # @ # # # n"
   icons:
     "#":
       item: BROWN_STAINED_GLASS_PANE
@@ -35,7 +35,7 @@ cart:
         scroll-amount: 1
     "@":
       item: PAPER
-      name: "<gray>Total Price: <white>%dailyshop_cart_total_price_{shop-id}%"
+      name: "<gray>Total Price: <white>{cart-total-price}"
       lore:
         - " "
         - "<dark_gray>✖ <aqua>Left Click"
@@ -50,11 +50,26 @@ cart:
         settle-cart: LEFT
         clean-cart: RIGHT
         clear-cart: DROP
-    "-":
-      item: ARROW
-      name: "<white>Back to shop"
-      features:
-        back-to-shop: LEFT
+    "1":
+      item: OAK_WOOD
+      name: "<#A0522D>Blocks Shop"
+      lore:
+        - " "
+        - "<dark_gray>✖ <white>Go to block shop"
+        - " "
+      commands:
+        left:
+          - "dailyshop shop open blocks %player_name%"
+    "2":
+      item: ENDER_EYE
+      name: "<gray>Black Market"
+      lore:
+        - " "
+        - "<dark_gray>✖ <white>Go to black market"
+        - " "
+      commands:
+        left:
+          - "dailyshop shop open black_market %player_name%"
   cart-product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"

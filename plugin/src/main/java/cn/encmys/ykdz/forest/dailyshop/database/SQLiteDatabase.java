@@ -3,20 +3,27 @@ package cn.encmys.ykdz.forest.dailyshop.database;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProfileData;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ShopData;
 import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.stock.ProductStockImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sqlite.SQLiteDataSource;
@@ -30,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SQLiteDatabase implements Database {
+    private static final BukkitScheduler scheduler = DailyShop.INSTANCE.getServer().getScheduler();
     private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private static final String path = DailyShop.INSTANCE.getDataFolder() + "/data/database.db";
     private final SQLiteDataSource dataSource;
@@ -49,7 +57,10 @@ public class SQLiteDatabase implements Database {
              Statement stmt = conn.createStatement()) {
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS dailyshop_profile (
-                        id TEXT NOT NULL PRIMARY KEY
+                        owner_uuid TEXT NOT NULL PRIMARY KEY,
+                        cart TEXT NOT NULL,
+                        cart_mode TEXT NOT NULL,
+                        shopping_modes TEXT NOT NULL
                     );""");
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS dailyshop_product (
@@ -83,24 +94,66 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void saveProductData(@NotNull List<Product> data) {
-        CompletableFuture.runAsync(() -> {
-            try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_product (id, stock_data) VALUES (?, ?)")
-            ) {
-                conn.setAutoCommit(false);
-                for (Product product : data) {
-                    stmt.setString(1, product.getId());
-                    stmt.setString(2, gson.toJson(product.getProductStock()));
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-                conn.commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                LogUtils.error("Error saving product data: " + e.getMessage());
+    public void saveProfileData(@NotNull List<Profile> data) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_profile (owner_uuid, cart, cart_mode, shopping_modes) VALUES (?, ?, ?, ?)")
+        ) {
+            conn.setAutoCommit(false);
+            for (Profile profile : data) {
+                stmt.setString(1, profile.getOwner().getUniqueId().toString());
+                stmt.setString(2, gson.toJson(profile.getCart(), new TypeToken<Map<String, ShopOrderImpl>>() {
+                }.getType()));
+                stmt.setString(3, gson.toJson(profile.getCartMode()));
+                stmt.setString(4, gson.toJson(profile.getShoppingModes(), new TypeToken<Map<String, ShoppingMode>>() {
+                }.getType()));
+                stmt.addBatch();
             }
+            stmt.executeBatch();
+            conn.commit();
+        } catch (SQLException e) {
+            LogUtils.error("Error saving profile data: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public CompletableFuture<ProfileData> queryProfileData(@NotNull UUID ownerUUID) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement("SELECT owner_uuid, cart, cart_mode, shopping_modes FROM dailyshop_profile WHERE owner_uuid = ?")) {
+                stmt.setString(1, ownerUUID.toString());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        Map<String, ShopOrder> cart = gson.fromJson(rs.getString("cart"), new TypeToken<Map<String, ShopOrderImpl>>() {
+                        }.getType());
+                        OrderType cartMode = gson.fromJson(rs.getString("cart_mode"), OrderType.class);
+                        Map<String, ShoppingMode> shoppingModes = gson.fromJson(rs.getString("shopping_modes"), new TypeToken<Map<String, ShoppingMode>>() {
+                        }.getType());
+                        return new ProfileData(ownerUUID, cart, cartMode, shoppingModes);
+                    }
+                }
+            } catch (SQLException e) {
+                LogUtils.error("Error querying profile data for owner uuid " + ownerUUID + ": " + e.getMessage());
+            }
+            return null;
         });
+    }
+
+    @Override
+    public void saveProductData(@NotNull List<Product> data) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_product (id, stock_data) VALUES (?, ?)")
+        ) {
+            conn.setAutoCommit(false);
+            for (Product product : data) {
+                stmt.setString(1, product.getId());
+                stmt.setString(2, gson.toJson(product.getProductStock()));
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+            conn.commit();
+        } catch (SQLException e) {
+            LogUtils.error("Error saving product data: " + e.getMessage());
+        }
     }
 
     @Override
@@ -111,13 +164,11 @@ public class SQLiteDatabase implements Database {
                 stmt.setString(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        String stockData = rs.getString("stock_data");
-                        ProductStock stock = gson.fromJson(stockData, ProductStockImpl.class);
+                        ProductStock stock = gson.fromJson(rs.getString("stock_data"), ProductStockImpl.class);
                         return new ProductData(id, stock);
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
                 LogUtils.error("Error querying product data for id " + id + ": " + e.getMessage());
             }
             return null;
@@ -126,26 +177,23 @@ public class SQLiteDatabase implements Database {
 
     @Override
     public void saveShopData(@NotNull List<Shop> data) {
-        CompletableFuture.runAsync(() -> {
-            try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_shop (id, listed_products, cached_prices, last_restocking, balance) VALUES (?, ?, ?, ?, ?)")
-            ) {
-                conn.setAutoCommit(false);
-                for (Shop shop : data) {
-                    stmt.setString(1, shop.getId());
-                    stmt.setString(2, gson.toJson(shop.getShopStocker().getListedProducts()));
-                    stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
-                    stmt.setLong(4, shop.getShopStocker().getLastRestocking());
-                    stmt.setDouble(5, shop.getShopCashier().getBalance());
-                    stmt.addBatch();
-                }
-                stmt.executeBatch();
-                conn.commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                LogUtils.error("Error saving shop data: " + e.getMessage());
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_shop (id, listed_products, cached_prices, last_restocking, balance) VALUES (?, ?, ?, ?, ?)")
+        ) {
+            conn.setAutoCommit(false);
+            for (Shop shop : data) {
+                stmt.setString(1, shop.getId());
+                stmt.setString(2, gson.toJson(shop.getShopStocker().getListedProducts()));
+                stmt.setString(3, gson.toJson(shop.getShopPricer().getCachedPrices()));
+                stmt.setLong(4, shop.getShopStocker().getLastRestocking());
+                stmt.setDouble(5, shop.getShopCashier().getBalance());
+                stmt.addBatch();
             }
-        });
+            stmt.executeBatch();
+            conn.commit();
+        } catch (SQLException e) {
+            LogUtils.error("Error saving shop data: " + e.getMessage());
+        }
     }
 
     @Override
@@ -167,7 +215,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogUtils.error("Error querying shop data for id " + id + ": " + e.getMessage());
             }
             return null;
         });
@@ -175,7 +223,7 @@ public class SQLiteDatabase implements Database {
 
     @Override
     public void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log) {
-        CompletableFuture.runAsync(() -> {
+        scheduler.runTaskAsynchronously(DailyShop.INSTANCE, () -> {
             String sql = "INSERT INTO dailyshop_settlement_log (shop_id, customer, type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {

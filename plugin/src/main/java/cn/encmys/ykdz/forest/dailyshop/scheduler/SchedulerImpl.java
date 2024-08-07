@@ -28,7 +28,7 @@ public class SchedulerImpl implements Scheduler {
                 if (shop.getShopStocker().needRestock() && shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50 <= now) {
                     shop.getShopStocker().stock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "messages.notification.restock"), player, new HashMap<>() {{
+                        DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.notification.restock"), player, new HashMap<>() {{
                             put("shop", shop.getName());
                         }}));
                     }
@@ -45,7 +45,7 @@ public class SchedulerImpl implements Scheduler {
             DailyShop.PROFILE_FACTORY.save();
             DailyShop.PRODUCT_FACTORY.save();
             DailyShop.SHOP_FACTORY.save();
-            LogUtils.info("Successfully save shop and product data.");
+            LogUtils.info("Successfully save all plugin data.");
         }, 0, Config.period_saveData);
     }
 }

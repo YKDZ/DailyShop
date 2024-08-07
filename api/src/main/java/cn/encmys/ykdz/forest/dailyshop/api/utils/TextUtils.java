@@ -17,7 +17,7 @@ public class TextUtils {
     private static final String optionalMarker = "?";
     private static final String singleMarker = "~";
 
-    public static List<String> decorateText(@NotNull List<String> text, @Nullable Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+    public static List<String> decorateText(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
         AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
         return adventureManager.componentToLegacy(
                 adventureManager.getComponentFromMiniMessage(
@@ -26,7 +26,7 @@ public class TextUtils {
         );
     }
 
-    public static String decorateText(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+    public static String decorateText(@Nullable String text, Player player, @Nullable Map<String, String> normalVars) {
         if (text == null) {
             return null;
         }
@@ -42,11 +42,11 @@ public class TextUtils {
         );
     }
 
-    public static List<String> decorateTextKeepMiniMessage(@NotNull List<String> text, @Nullable Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+    public static List<String> decorateTextKeepMiniMessage(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
         return parsePlaceholder(parseInternalVar(parseInternalListVar(text, listVars), normalVars), player);
     }
 
-    public static String decorateTextKeepMiniMessage(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+    public static String decorateTextKeepMiniMessage(@Nullable String text, Player player, @Nullable Map<String, String> normalVars) {
         if (text == null) {
             return null;
         }
@@ -57,13 +57,13 @@ public class TextUtils {
         return parsePlaceholder(internalResult, player);
     }
 
-    public static List<String> parsePlaceholder(@NotNull List<String> text, @Nullable Player player) {
+    public static List<String> parsePlaceholder(@NotNull List<String> text, Player player) {
         return text.stream()
                 .map((line) -> parsePlaceholder(line, player))
                 .toList();
     }
 
-    public static String parsePlaceholder(@NotNull String text, @Nullable Player player) {
+    public static String parsePlaceholder(@NotNull String text, Player player) {
         return PlaceholderAPI.setPlaceholders(player, text);
     }
 

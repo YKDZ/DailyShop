@@ -1,0 +1,18 @@
+stack-picker:
+  title: " "
+  layout:
+    - "1 2 3"
+  icons:
+    1:
+      item: PAPER
+      name: "<white>{stack}"
+      lore:
+        - " "
+        - "<gray>Enter the number of stack you want to set above"
+        - "<gray>Close to confirm"
+        - " "
+      update-period: "0.5s"
+    2:
+      item: AIR
+    3:
+      item: AIR

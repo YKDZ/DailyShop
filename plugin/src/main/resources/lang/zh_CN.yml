@@ -8,9 +8,9 @@ format:
 
 terms:
   order-type:
-    sell-to: "出售"
-    buy-from: "收购"
-    buy-all-from: "收购全部"
+    sell-to: "从商店购买"
+    buy-from: "向商店出售"
+    buy-all-from: "向商店出售全部"
   shopping-mode:
     direct: "直接交易"
     cart: "购物车交易"
@@ -22,6 +22,7 @@ placeholder-api:
 messages:
   prefix: "<dark_gray>[<gold>🔔<dark_gray>] "
   no-permission: "<red>你没有这么做的权限."
+  # 此块可以被商店配置覆盖
   notification:
     restock: "<dark_gray>[<red>!<dark_gray>] <white>Shop {shop} <white>just restocked!"
   command:
@@ -55,7 +56,7 @@ messages:
         failure:
           null-meta: "<red>无法在你手中的物品中获取任何配置键."
   action:
-    # 所有 shop 下的语言键都可以被商店的相同配置覆盖
+    # 此块可以被商店配置覆盖
     shop:
       # 商店向玩家出售商品
       sell-to:
@@ -86,13 +87,30 @@ messages:
     cart:
       # 结算购物车
       settle-cart:
-        success: "<gray>成功结算了在商店 <reset>{shop-name}<gray>中的购物车."
-        failure:
-          not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
-          money: "<gray>你的余额不足以购买购物车中所有的商品."
-          inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
-          player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
-          global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+        sell-to:
+          success: "<gray>成功购入了购物车中的所有商品. 共花费 <white>{cost}<gray>."
+          failure:
+            not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
+            money: "<gray>你的余额不足以购买购物车中所有的商品."
+            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
+            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
+            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+        buy-from:
+          success: "<gray>成功出售了购物车中列出的全部商品. 共赚得 <white>{earn}<gray>."
+          failure:
+            not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
+            money: "<gray>你的余额不足以购买购物车中所有的商品."
+            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
+            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
+            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+        buy-all-from:
+          success: "<gray>成功出售了背包中全部的购物车中列出的商品类型. 共赚得 <white>{earn}<gray>"
+          failure:
+            not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
+            money: "<gray>你的余额不足以购买购物车中所有的商品."
+            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
+            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
+            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
       # 切换购物车的模式
       switch-cart-mode:
         success: "<gray>成功将购物车模式切换为 <white>{mode}."

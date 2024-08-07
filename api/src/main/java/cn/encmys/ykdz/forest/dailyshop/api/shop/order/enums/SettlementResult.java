@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums;
 
 public enum SettlementResult {
+    INVALID_CUSTOMER("failure.customer"),
     DUPLICATED("failure.duplicated"),
     CANCELLED("failure.cancelled"),
     UNKNOWN("failure.unknown"),

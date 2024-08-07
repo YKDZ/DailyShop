@@ -18,16 +18,15 @@ import xyz.xenondevs.invui.gui.structure.Markers;
 import java.io.File;
 import java.io.IOException;
 
-public class GUIConfig {
+public class CartGUIConfig {
     private static final String path = DailyShop.INSTANCE.getDataFolder() + "/gui";
     private static final String cartGUIPath = path + "/cart.yml";
-    private static YamlConfiguration cartGUIConfig;
+    private static final YamlConfiguration cartGUIConfig = new YamlConfiguration();
 
     public static void load() {
         File file = new File(cartGUIPath);
 
         if (!file.exists()) {
-            file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("gui/cart.yml", false);
         }
 
@@ -38,12 +37,12 @@ public class GUIConfig {
         }
     }
 
-    public static YamlConfiguration getCartGUIConfig() {
+    public static YamlConfiguration getConfig() {
         return cartGUIConfig;
     }
 
     @NotNull
-    public static CartGUIRecord getCartGUIRecord() {
+    public static CartGUIRecord getGUIRecord() {
         ConfigurationSection mainSection = cartGUIConfig.getConfigurationSection("cart");
         if (mainSection == null) {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
@@ -53,7 +52,7 @@ public class GUIConfig {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         return new CartGUIRecord(
-                mainSection.getString("title", "{shop}"),
+                mainSection.getString("title", "Cart for player {player-name}"),
                 mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
                 mainSection.getStringList("layout"),
                 ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
@@ -69,7 +68,7 @@ public class GUIConfig {
         );
     }
 
-    public static SoundRecord getCartGUISoundRecord(String soundKey) {
+    public static SoundRecord getSoundRecord(String soundKey) {
         String soundData = cartGUIConfig.getString("sounds." + soundKey);
         return RecordUtils.fromSoundData(soundData);
     }

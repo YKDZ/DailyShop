@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -41,12 +40,12 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void give(@NotNull Shop shop, Player player, int stack) {
         give(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
+    public void give(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
@@ -61,12 +60,12 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void take(@NotNull Shop shop, Player player, int stack) {
         take(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
+    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
@@ -82,12 +81,12 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public int has(@NotNull Shop shop, Player player, int stack) {
         return has(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
+    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
         int count = Integer.MAX_VALUE;
 
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
@@ -112,12 +111,12 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, Player player, int stack) {
         return canHold(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
         for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
             String contentId = entry.getKey();
             int contentStack = entry.getValue() * stack;
@@ -135,7 +134,7 @@ public class BundleProduct extends Product {
     }
 
     @Override
-    public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
+    public boolean isMatch(@NotNull String shopId, ItemStack item, Player player) {
         return false;
     }
 }

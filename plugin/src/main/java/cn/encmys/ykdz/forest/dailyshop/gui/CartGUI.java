@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.GUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
@@ -15,7 +15,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -32,10 +32,10 @@ public class CartGUI extends PlayerRelatedGUI {
 
     @Override
     public void open() {
-        CartGUIRecord record = GUIConfig.getCartGUIRecord();
+        CartGUIRecord record = CartGUIConfig.getGUIRecord();
 
         Window window = Window.single()
-                .setGui(buildGUIBuilder(player))
+                .setGui(buildGUI(player))
                 .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
@@ -51,14 +51,15 @@ public class CartGUI extends PlayerRelatedGUI {
     }
 
     @Override
-    @NotNull
-    public ScrollGui.Builder<Item> buildGUIBuilder(@NotNull Player player) {
+    public void close() {
+        windows.get(player.getUniqueId()).close();
+    }
+
+    @Override
+    public Gui buildGUI(Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        if (profile == null) {
-            throw new RuntimeException("Try to open cart GUI without profile");
-        }
         Map<String, ShopOrder> cart = profile.getCart();
-        CartGUIRecord record = GUIConfig.getCartGUIRecord();
+        CartGUIRecord record = CartGUIConfig.getGUIRecord();
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(record.layout().toArray(new String[0]));
@@ -89,7 +90,7 @@ public class CartGUI extends PlayerRelatedGUI {
             }
         }
 
-        return guiBuilder;
+        return guiBuilder.build();
     }
 
     @Override

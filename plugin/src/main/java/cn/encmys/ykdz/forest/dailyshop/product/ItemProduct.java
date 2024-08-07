@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.IntStream;
 
@@ -38,23 +37,23 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public void give(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void give(@NotNull Shop shop, Player player, int stack) {
         give(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
+    public void give(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
         ItemStack item = shop.getCachedProductItem(this);
         IntStream.range(0, stack).forEach(i -> inv.addItem(item));
     }
 
     @Override
-    public void take(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public void take(@NotNull Shop shop, Player player, int stack) {
         take(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
+    public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
         BaseItemDecorator decorator = getItemDecorator();
         if (decorator == null) {
             return;
@@ -79,12 +78,12 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public int has(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public int has(@NotNull Shop shop, Player player, int stack) {
         return has(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack) {
+    public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
         BaseItemDecorator decorator = getItemDecorator();
         if (decorator == null) {
             return 0;
@@ -100,12 +99,12 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, Player player, int stack) {
         return canHold(shop, player.getInventory(), player, stack);
     }
 
     @Override
-    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack) {
+    public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
         return PlayerUtils.hasInventorySpace(inv, shop.getCachedProductItemOrCreateOne(this, player), stack);
     }
 
@@ -115,7 +114,7 @@ public class ItemProduct extends Product {
     }
 
     @Override
-    public boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player) {
+    public boolean isMatch(@NotNull String shopId, ItemStack item, Player player) {
         BaseItemDecorator decorator = getItemDecorator();
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
         if (decorator == null || shop == null) {

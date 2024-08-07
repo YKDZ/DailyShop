@@ -52,6 +52,7 @@ public class AdventureManagerImpl extends AdventureManager {
 
     @Override
     public void sendMessageWithPrefix(CommandSender sender, String s) {
+        if (s == null || s.isBlank()) return;
         sendMessage(sender, MessageConfig.messages_prefix + s);
     }
 

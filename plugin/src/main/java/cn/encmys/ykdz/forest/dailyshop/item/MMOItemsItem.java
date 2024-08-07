@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -65,7 +64,7 @@ public class MMOItemsItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         MMOItem mmoItem;
         if (player == null) {
             mmoItem = MMOItems.plugin.getMMOItem(getType(), getId().toUpperCase(Locale.ENGLISH));

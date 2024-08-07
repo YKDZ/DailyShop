@@ -176,10 +176,6 @@ public class ShopCommand {
                                         }}));
                                         return;
                                     }
-                                    if (profile == null) {
-                                        // TODO 提示信息
-                                        return;
-                                    }
                                     profile.setShoppingMode(shopId, profile.getShoppingMode(shopId) == ShoppingMode.DIRECT ? ShoppingMode.CART : ShoppingMode.DIRECT);
                                     // TODO 提示消息
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage("<gray>成功将玩家 <white>{player} <gray>的购物模式切换为 <white>{mode}.", null, new HashMap<>() {{

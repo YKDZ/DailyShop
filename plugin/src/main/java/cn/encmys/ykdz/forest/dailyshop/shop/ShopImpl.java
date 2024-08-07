@@ -97,7 +97,7 @@ public class ShopImpl implements Shop {
 
     @Override
     @NotNull
-    public ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, @Nullable Player player) {
+    public ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, Player player) {
         if (product.getItemDecorator() == null) {
             throw new RuntimeException("Check Product#isCacheable before Shop#getCachedProductItemOrCreateOne");
         }

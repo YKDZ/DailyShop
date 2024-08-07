@@ -7,7 +7,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.SimpleItem;
@@ -19,7 +18,7 @@ import java.util.Map;
 
 public class SettlementLogUtils {
     @NotNull
-    public static Item toHistoryGuiItem(@NotNull Shop shop, @NotNull SettlementLog log, @Nullable Player player) {
+    public static Item toHistoryGuiItem(@NotNull Shop shop, @NotNull SettlementLog log, Player player) {
         HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shop.getId());
 
         Map<String, String> vars = new HashMap<>() {{

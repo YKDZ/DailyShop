@@ -63,11 +63,10 @@ public class CommandUtils {
             Bukkit.getScheduler().runTaskLaterAsynchronously(
                     DailyShop.INSTANCE,
                     () -> IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand)),
-                   delay
-           );
+                    delay
+            );
         } else {
             IntStream.range(0, repeat).forEach(i -> Bukkit.dispatchCommand(finalCommandSender, parsedCommand));
         }
     }
-
 }

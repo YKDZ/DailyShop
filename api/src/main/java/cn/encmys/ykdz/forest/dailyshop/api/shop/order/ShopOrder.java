@@ -1,11 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.order;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * ShopOrder stores the product and customer information involved in each transaction. The total price for each ShopOrder cannot be calculated individually (because the price information is stored independently in each Shop's ShopPricer instance) and needs to be calculated using the ShopCashier#billOrder method.
@@ -38,7 +39,7 @@ public interface ShopOrder {
     @NotNull
     ShopOrder setOrderType(@NotNull OrderType orderType);
 
-    Player getCustomer();
+    UUID getCustomerUUID();
 
     Map<String, Integer> getOrderedProducts();
 
@@ -55,4 +56,6 @@ public interface ShopOrder {
     ShopOrder setBilled(boolean billed);
 
     void clear();
+
+    void clean(@NotNull Shop shop);
 }

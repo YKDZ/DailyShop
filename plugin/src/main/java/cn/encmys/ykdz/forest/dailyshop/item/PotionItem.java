@@ -8,7 +8,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PotionItem extends VanillaItem implements BaseItem {
     private final Material potionType;
@@ -25,7 +24,7 @@ public class PotionItem extends VanillaItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         ItemStack potion = new ItemStack(getPotionType());
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
 

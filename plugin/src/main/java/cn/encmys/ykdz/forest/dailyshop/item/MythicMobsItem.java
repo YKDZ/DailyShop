@@ -8,7 +8,6 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.items.MythicItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public class MythicMobsItem implements BaseItem {
     private final String id;
@@ -46,7 +45,7 @@ public class MythicMobsItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         return MythicBukkit.inst().getItemManager().getItemStack(id);
     }
 

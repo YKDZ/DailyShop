@@ -18,6 +18,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.BalanceUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -97,6 +98,11 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     private SettlementResult sellTo(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return SettlementResult.INVALID_CUSTOMER;
+        }
+
         SettlementResult result = canSellTo(order);
         if (result == SettlementResult.SUCCESS) {
             for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -118,10 +124,10 @@ public class ShopCashierImpl implements ShopCashier {
                 if (stock.isPlayerStock()) stock.modifyPlayer(order);
 
                 // 处理余额
-                BalanceUtils.removeBalance(order.getCustomer(), order.getBilledPrice(product));
+                BalanceUtils.removeBalance(customer, order.getBilledPrice(product));
 
                 // 给予商品
-                product.give(shop, order.getCustomer(), stack);
+                product.give(shop, customer, stack);
             }
             logSettlement(order);
         }
@@ -129,6 +135,11 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     private SettlementResult buyFrom(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return SettlementResult.INVALID_CUSTOMER;
+        }
+
         SettlementResult result = canBuyFrom(order);
         if (result == SettlementResult.SUCCESS) {
             for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
@@ -150,10 +161,10 @@ public class ShopCashierImpl implements ShopCashier {
                 if (stock.isPlayerStock()) stock.modifyPlayer(order);
 
                 // 处理余额
-                BalanceUtils.addBalance(order.getCustomer(), order.getBilledPrice(product));
+                BalanceUtils.addBalance(customer, order.getBilledPrice(product));
 
                 // 收取商品
-                product.take(shop, order.getCustomer(), stack);
+                product.take(shop, customer, stack);
             }
         }
         logSettlement(order);
@@ -161,13 +172,18 @@ public class ShopCashierImpl implements ShopCashier {
     }
 
     private SettlementResult buyAllFrom(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return SettlementResult.INVALID_CUSTOMER;
+        }
+
         // 计算订单中每种商品的玩家拥有量
         // 并储存到订单中
         // 以便 ShopCashier#billOrder 能计算出正确的订单价格
         for (String productId : order.getOrderedProducts().keySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
             if (product == null) continue;
-            order.setStack(product, product.has(shop, order.getCustomer(), 1));
+            order.setStack(product, product.has(shop, customer, 1));
         }
         billOrder(order);
         return buyFrom(order);
@@ -175,6 +191,11 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public SettlementResult canSellTo(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return SettlementResult.INVALID_CUSTOMER;
+        }
+
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
 
@@ -189,11 +210,11 @@ public class ShopCashierImpl implements ShopCashier {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户余额不足
-            else if (BalanceUtils.checkBalance(order.getCustomer()) < order.getBilledPrice(product)) {
+            else if (BalanceUtils.checkBalance(customer) < order.getBilledPrice(product)) {
                 return SettlementResult.NOT_ENOUGH_MONEY;
             }
             // 商品个人库存不足
-            else if (product.getProductStock().isPlayerStock() && product.getProductStock().ifReachPlayerLimit(order.getCustomer().getUniqueId())) {
+            else if (product.getProductStock().isPlayerStock() && product.getProductStock().ifReachPlayerLimit(order.getCustomerUUID())) {
                 return SettlementResult.NOT_ENOUGH_PLAYER_STOCK;
             }
             // 商品总库存不足
@@ -210,6 +231,11 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public SettlementResult canBuyFrom(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return SettlementResult.INVALID_CUSTOMER;
+        }
+
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
@@ -229,7 +255,7 @@ public class ShopCashierImpl implements ShopCashier {
                 return SettlementResult.TRANSITION_DISABLED;
             }
             // 客户没有足够的商品
-            else if (product.has(shop, order.getCustomer(), stack) == 0) {
+            else if (product.has(shop, customer, stack) == 0) {
                 return SettlementResult.NOT_ENOUGH_PRODUCT;
             }
         }
@@ -238,13 +264,18 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public boolean canHold(@NotNull ShopOrder order) {
+        Player customer = Bukkit.getPlayer(order.getCustomerUUID());
+        if (customer == null) {
+            return false;
+        }
+
         for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
             int stack = entry.getValue();
 
             if (product == null) continue;
 
-            if (!product.canHold(shop, order.getCustomer(), stack)) {
+            if (!product.canHold(shop, customer, stack)) {
                 return false;
             }
         }
@@ -266,7 +297,7 @@ public class ShopCashierImpl implements ShopCashier {
         }
 
         SettlementLog log;
-        UUID customerUUID = order.getCustomer().getUniqueId();
+        UUID customerUUID = order.getCustomerUUID();
 
         switch (order.getOrderType()) {
             case BUY_ALL_FROM -> log = SettlementLogImpl.buyAllFromLog(customerUUID);

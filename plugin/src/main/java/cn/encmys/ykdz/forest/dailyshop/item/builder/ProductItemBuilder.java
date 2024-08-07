@@ -6,13 +6,12 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProductItemBuilder {
-    public static ItemStack build(@NotNull BaseItemDecorator decorator, @NotNull Shop shop, @Nullable Player player) {
+    public static ItemStack build(@NotNull BaseItemDecorator decorator, @NotNull Shop shop, Player player) {
         Map<String, String> vars = new HashMap<>() {{
             if (player != null) {
                 put("player-name", player.getName());

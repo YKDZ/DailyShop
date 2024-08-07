@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.jetbrains.annotations.Nullable;
 
 public class FireworkRocketItem extends VanillaItem implements BaseItem {
     private final int power;
@@ -16,7 +15,7 @@ public class FireworkRocketItem extends VanillaItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         ItemStack firework = new ItemStack(Material.FIREWORK_ROCKET);
         FireworkMeta meta = (FireworkMeta) firework.getItemMeta();
         if (meta == null) {

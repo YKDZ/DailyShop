@@ -10,12 +10,11 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -32,7 +31,7 @@ public class HistoryGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public void open(@NotNull Player player) {
+    public void open(Player player) {
         HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shop.getId());
 
         List<SettlementLog> logs;
@@ -42,14 +41,14 @@ public class HistoryGUI extends ShopRelatedGUI {
             LogUtils.warn("Error querying logs for " + shop.getId() + ": " + e.getMessage());
             throw new RuntimeException(e);
         }
-        ScrollGui.Builder<Item> builder = buildGUIBuilder(player);
+        Gui gui = buildGUI(player);
 
-        for (SettlementLog log : logs) {
-            builder.addContent(SettlementLogUtils.toHistoryGuiItem(shop, log, player));
-        }
+//        for (SettlementLog log : logs) {
+//            gui.addContent(SettlementLogUtils.toHistoryGuiItem(shop, log, player));
+//        }
 
         Window window = Window.single()
-                .setGui(builder.build())
+                .setGui(gui)
                 .setViewer(player)
                 .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
                     put("shop-name", shop.getName());
@@ -67,7 +66,7 @@ public class HistoryGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public ScrollGui.@NotNull Builder<Item> buildGUIBuilder(Player player) {
+    public Gui buildGUI(Player player) {
         String shopId = shop.getId();
         HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shopId);
 
@@ -87,7 +86,7 @@ public class HistoryGUI extends ShopRelatedGUI {
             }
         }
 
-        return guiBuilder;
+        return guiBuilder.build();
     }
 
     @Override

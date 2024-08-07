@@ -35,9 +35,6 @@ public class CartCommand {
                         return;
                     }
                     Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-                    if (profile == null) {
-                        return;
-                    }
                     profile.getCartGUI().open();
                 });
     }

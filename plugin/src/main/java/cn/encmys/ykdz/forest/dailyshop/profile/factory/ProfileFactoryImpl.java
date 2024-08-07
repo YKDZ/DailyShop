@@ -1,15 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.profile.factory;
 
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.factory.ProfileFactory;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.profile.ProfileImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ProfileFactoryImpl implements ProfileFactory {
     private final static Map<UUID, Profile> profiles = new HashMap<>();
@@ -21,23 +21,37 @@ public class ProfileFactoryImpl implements ProfileFactory {
         return profile;
     }
 
-    @Nullable
-    public Profile getProfile(@NotNull Player player) {
-        return profiles.get(player.getUniqueId());
+    @NotNull
+    public Profile getProfile(Player player) {
+        Profile profile = profiles.get(player.getUniqueId());
+        if (profile == null) {
+            return buildProfile(player);
+        }
+        return profile;
     }
 
     @Override
     public Map<UUID, Profile> getProfiles() {
-        return profiles;
+        return Collections.unmodifiableMap(profiles);
     }
 
     @Override
     public void save() {
-
+        List<Profile> data = new ArrayList<>();
+        for (Profile profile : profiles.values()) {
+            if (!profile.getCart().isEmpty() ||
+                    profile.getCartMode() != OrderType.SELL_TO ||
+                    profile.getShoppingModes().containsValue(ShoppingMode.CART)
+            ) {
+                data.add(profile);
+            }
+        }
+        DailyShop.DATABASE.saveProfileData(data);
     }
 
     @Override
     public void unload() {
-
+        save();
+        profiles.clear();
     }
 }

@@ -38,7 +38,10 @@ public final class DailyShopImpl extends DailyShop {
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
-        GUIConfig.load();
+        CartGUIConfig.load();
+        StackPickerGUIConfig.load();
+
+        saveDefaultConfig();
 
         DailyShop.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
@@ -76,7 +79,8 @@ public final class DailyShopImpl extends DailyShop {
         RarityConfig.load();
         ProductConfig.load();
         ShopConfig.load();
-        GUIConfig.load();
+        CartGUIConfig.load();
+        StackPickerGUIConfig.load();
 
         DATABASE = new SQLiteDatabase();
 

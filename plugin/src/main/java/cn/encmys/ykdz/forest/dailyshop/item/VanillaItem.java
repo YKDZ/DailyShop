@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class VanillaItem implements BaseItem {
     private final Material material;
@@ -17,7 +16,7 @@ public class VanillaItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         return new ItemStack(getMaterial());
     }
 

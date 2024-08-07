@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
@@ -33,7 +32,7 @@ import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import java.util.*;
 
 public class ProductIconBuilder {
-    public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Player player, @NotNull String shopId, @NotNull Product product) {
+    public static Item build(@NotNull BaseItemDecorator decorator, Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
         ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
         AbstractIcon icon = new AbstractIcon() {
@@ -147,11 +146,11 @@ public class ProductIconBuilder {
                         .modifyStack(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.sell-to." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "sell-to.failure");
         } else {
             vars.put("cost", MessageConfig.format_decimal.format(order.getTotalPrice()));
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.sell-to." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "sell-to.success");
         }
     }
@@ -164,11 +163,11 @@ public class ProductIconBuilder {
                         .modifyStack(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-from." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "buy-from.failure");
         } else {
             vars.put("earn", MessageConfig.format_decimal.format(order.getTotalPrice()));
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-from." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "buy-from.success");
         }
     }
@@ -181,21 +180,18 @@ public class ProductIconBuilder {
                         .modifyStack(product, 1);
         SettlementResult result = shopCashier.settle(order);
         if (result != SettlementResult.SUCCESS) {
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-all-from." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "buy-all-from.failure");
         } else {
             vars.put("earn", MessageConfig.format_decimal.format(order.getTotalPrice()));
             // TODO 为收购全部操作增加单独的提示逻辑
-            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+            PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-all-from." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(shop, player, "buy-all-from.success");
         }
     }
 
     private static void addToCart(Player player, Shop shop, Product product, Map<String, String> vars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        if (profile == null) {
-            return;
-        }
         ShopOrder cart = profile.getCartOrder(shop.getId());
         // 构建一个新订单并等待被检查与合并
         // 避免反复检测购物车中的商品
@@ -210,11 +206,11 @@ public class ProductIconBuilder {
         if (result != SettlementResult.SUCCESS) {
             switch (newOrder.getOrderType()) {
                 case BUY_ALL_FROM ->
-                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-all-from." + result.getConfigKey()), player, vars);
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-all-from." + result.getConfigKey()), player, vars);
                 case BUY_FROM ->
-                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "buy-from." + result.getConfigKey()), player, vars);
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-from." + result.getConfigKey()), player, vars);
                 case SELL_TO ->
-                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableMessage(shop.getId(), "sell-to." + result.getConfigKey()), player, vars);
+                        PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.sell-to." + result.getConfigKey()), player, vars);
             }
         } else {
             cart.combineOrder(newOrder);

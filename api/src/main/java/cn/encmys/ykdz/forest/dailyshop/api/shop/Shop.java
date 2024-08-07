@@ -29,7 +29,7 @@ public interface Shop {
     ItemStack getCachedProductItem(@NotNull Product product);
 
     @NotNull
-    ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, @Nullable Player player);
+    ItemStack getCachedProductItemOrCreateOne(@NotNull Product product, Player player);
 
     ShopPricer getShopPricer();
 

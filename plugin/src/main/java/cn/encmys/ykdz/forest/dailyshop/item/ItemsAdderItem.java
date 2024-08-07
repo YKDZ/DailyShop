@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ItemsAdderItem implements BaseItem {
     private final String namespacedId;
@@ -42,7 +41,7 @@ public class ItemsAdderItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         CustomStack stack = CustomStack.getInstance(getNamespacedId());
         if (stack != null) {
             return stack.getItemStack();

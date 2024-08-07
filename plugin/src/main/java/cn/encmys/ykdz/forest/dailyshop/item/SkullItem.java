@@ -5,7 +5,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.SkullUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public class SkullItem extends VanillaItem implements BaseItem {
     /**
@@ -19,7 +18,7 @@ public class SkullItem extends VanillaItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         return SkullUtils.getSkullFromURL(getData());
     }
 

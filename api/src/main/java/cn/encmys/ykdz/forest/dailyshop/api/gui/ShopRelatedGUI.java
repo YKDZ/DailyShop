@@ -4,7 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import xyz.xenondevs.invui.window.Window;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public abstract class ShopRelatedGUI extends GUI {
         return shop;
     }
 
-    public abstract void open(@NotNull Player player);
+    public abstract void open(Player player);
 
     public int getRowsWithMarker() {
         ConfigurationSection section = ShopConfig.getShopGUISection(shop.getId());
@@ -48,5 +48,12 @@ public abstract class ShopRelatedGUI extends GUI {
             }
         }
         return colCount;
+    }
+
+    public void close(Player player) {
+        Window window = getWindows().get(player.getUniqueId());
+        if (window != null) {
+            window.close();
+        }
     }
 }

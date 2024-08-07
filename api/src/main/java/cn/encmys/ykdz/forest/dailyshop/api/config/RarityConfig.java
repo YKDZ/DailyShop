@@ -19,7 +19,6 @@ public class RarityConfig {
         File file = new File(path);
 
         if (!file.exists()) {
-            file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("rarities.yml", false);
         }
 

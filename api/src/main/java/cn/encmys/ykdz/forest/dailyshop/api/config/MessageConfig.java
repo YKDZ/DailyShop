@@ -42,7 +42,6 @@ public class MessageConfig {
         File file = new File(DailyShop.INSTANCE.getDataFolder(), "lang/" + Config.language_message + ".yml");
 
         if (!file.exists()) {
-            file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("lang/" + Config.language_message + ".yml", false);
         }
 
@@ -90,7 +89,7 @@ public class MessageConfig {
         return config.getString(path, "<red>There may be an error in your language file. The related key is: " + path);
     }
 
-    public static String getShopOverrideableMessage(String shopId, String path) {
+    public static String getShopOverrideableString(String shopId, String path) {
         String shopMessage = ShopConfig.getConfig(shopId).getString(path);
         if (shopId == null || shopId.isEmpty() || shopMessage == null) {
             return getMessage(path);
@@ -99,8 +98,8 @@ public class MessageConfig {
         }
     }
 
-    public static String getCartSettleMessage(SettlementResult result) {
-        return getConfig().getString("messages.action.cart.settle-cart." + result.getConfigKey());
+    public static String getCartSettleMessage(OrderType type, SettlementResult result) {
+        return getConfig().getString("messages.action.cart.settle-cart." + type.getConfigKey() + "." + result.getConfigKey());
     }
 
     public static String getTerm(OrderType orderType) {

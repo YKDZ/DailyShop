@@ -75,23 +75,23 @@ public abstract class Product {
         return productStock;
     }
 
-    public abstract void give(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract void give(@NotNull Shop shop, Player player, int stack);
 
-    public abstract void give(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack);
+    public abstract void give(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack);
 
-    public abstract void take(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract void take(@NotNull Shop shop, Player player, int stack);
 
-    public abstract void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack);
+    public abstract void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack);
 
-    public abstract int has(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract int has(@NotNull Shop shop, Player player, int stack);
 
-    public abstract int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, @Nullable Player player, int stack);
+    public abstract int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack);
 
-    public abstract boolean canHold(@NotNull Shop shop, @NotNull Player player, int stack);
+    public abstract boolean canHold(@NotNull Shop shop, Player player, int stack);
 
-    public abstract boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, @Nullable Player player, int stack);
+    public abstract boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack);
 
     public abstract boolean isProductItemCacheable();
 
-    public abstract boolean isMatch(@NotNull String shopId, ItemStack item, @Nullable Player player);
+    public abstract boolean isMatch(@NotNull String shopId, ItemStack item, Player player);
 }

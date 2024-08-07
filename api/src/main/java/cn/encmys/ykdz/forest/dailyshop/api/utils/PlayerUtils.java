@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.GUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -45,7 +45,7 @@ public class PlayerUtils {
     }
 
     public static void playCartGUISound(Player player, String soundKey) {
-        SoundRecord sound = GUIConfig.getCartGUISoundRecord(soundKey);
+        SoundRecord sound = CartGUIConfig.getSoundRecord(soundKey);
         if (sound != null) {
             player.playSound(player.getLocation(), sound.sound(), sound.volume(), sound.pitch());
         }

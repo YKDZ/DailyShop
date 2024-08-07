@@ -18,6 +18,10 @@ public class ProductConfig {
     public static void load() {
         File directory = new File(path);
 
+        if (!directory.exists() || !directory.isDirectory()) {
+            directory.getParentFile().mkdirs();
+        }
+
         File[] files = directory.listFiles();
 
         if (files != null) {

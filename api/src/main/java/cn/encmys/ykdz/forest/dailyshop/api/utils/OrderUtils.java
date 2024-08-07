@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.GUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class OrderUtils {
     @NotNull
     public static Item toCartGUIItem(@NotNull Shop shop, @NotNull ShopOrder cartOrder, @NotNull String productId) {
-        CartProductIconRecord iconRecord = GUIConfig.getCartGUIRecord().cartProductIcon();
+        CartProductIconRecord iconRecord = CartGUIConfig.getGUIRecord().cartProductIcon();
         Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
 
         AbstractIcon icon = new AbstractIcon() {
@@ -74,7 +74,7 @@ public class OrderUtils {
                     cartOrder.setStack(product, 0);
                 }
                 if (iconRecord.featuresInputInAnvil() == clickType) {
-                    // TODO 输入功能
+                    DailyShop.PROFILE_FACTORY.getProfile(player).pickProductStack(shop, productId);
                 }
                 notifyWindows();
             }

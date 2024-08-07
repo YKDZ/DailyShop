@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.profile;
 
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
@@ -34,9 +35,19 @@ public interface Profile {
      */
     SettlementResult settleCart();
 
+    void cleanCart();
+
+    void clearCart();
+
     OrderType getCartMode();
 
     void setCartMode(OrderType cartMode);
 
     PlayerRelatedGUI getCartGUI();
+
+    double getCartTotalPrice();
+
+    void pickProductStack(Shop shop, String productId);
+
+    PlayerRelatedGUI getCurrentStackPickerGUI();
 }

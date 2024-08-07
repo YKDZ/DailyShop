@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
-import org.jetbrains.annotations.Nullable;
 
 public class TropicalFishBucketItem extends VanillaItem implements BaseItem {
     private final TropicalFish.Pattern pattern;
@@ -22,7 +21,7 @@ public class TropicalFishBucketItem extends VanillaItem implements BaseItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         ItemStack bucket = new ItemStack(Material.TROPICAL_FISH_BUCKET);
         TropicalFishBucketMeta meta = (TropicalFishBucketMeta) bucket.getItemMeta();
         if (meta == null) {

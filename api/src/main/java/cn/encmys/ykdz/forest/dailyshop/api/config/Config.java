@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
-    protected static String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
-    protected static YamlConfiguration config = new YamlConfiguration();
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
+    private static final YamlConfiguration config = new YamlConfiguration();
     public static String language_message;
     public static String language_minecraftLang;
     public static int logUsageLimit_entryAmount;
@@ -25,7 +25,6 @@ public class Config {
 
         // 当 config.yml 不存在时尝试初始化所有配置文件
         if (!file.exists()) {
-            file.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("config.yml", false);
             DailyShop.INSTANCE.saveResource("product/ores.yml", false);
             DailyShop.INSTANCE.saveResource("product/wools.yml", false);

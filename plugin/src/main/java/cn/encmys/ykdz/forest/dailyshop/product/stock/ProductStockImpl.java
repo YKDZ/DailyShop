@@ -167,7 +167,7 @@ public class ProductStockImpl implements ProductStock {
             LogUtils.warn("Try to handle stock for an unsettled order.");
             return;
         }
-        UUID uuid = order.getCustomer().getUniqueId();
+        UUID uuid = order.getCustomerUUID();
         int amount = order.getOrderedProducts().get(productId) * (order.getOrderType() == OrderType.SELL_TO ? -1 : 1);
         modifyPlayer(uuid, amount);
     }

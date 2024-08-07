@@ -14,4 +14,6 @@ public abstract class PlayerRelatedGUI extends GUI {
     }
 
     public abstract void open();
+
+    public abstract void close();
 }

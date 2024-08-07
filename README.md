@@ -25,6 +25,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [x] Cart
 - [x] Merchant
 - [x] Buy more
+- [ ] More gui type
 
 ## API
 

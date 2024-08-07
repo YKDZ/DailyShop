@@ -14,8 +14,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -31,7 +30,7 @@ public class ShopGUI extends ShopRelatedGUI {
     }
 
     @Override
-    public ScrollGui.@NotNull Builder<Item> buildGUIBuilder(@Nullable Player player) {
+    public Gui buildGUI(Player player) {
         String shopId = shop.getId();
         List<String> listedProduct = shop.getShopStocker().getListedProducts();
         ShopGUIRecord record = ShopConfig.getShopGUIRecord(shopId);
@@ -61,14 +60,14 @@ public class ShopGUI extends ShopRelatedGUI {
             guiBuilder.addContent(ProductIconBuilder.build(product.getIconDecorator(), player, shopId, product));
         }
 
-        return guiBuilder;
+        return guiBuilder.build();
     }
 
     @Override
-    public void open(@NotNull Player player) {
+    public void open(Player player) {
         ShopGUIRecord record = ShopConfig.getShopGUIRecord(shop.getId());
         Window window = Window.single()
-                .setGui(buildGUIBuilder(player))
+                .setGui(buildGUI(player))
                 .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
                     put("shop-name", shop.getName());
                     put("shop-id", shop.getId());

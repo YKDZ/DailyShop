@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class AxolotlBucketItem extends VanillaItem {
     private final Axolotl.Variant variant;
@@ -17,7 +16,7 @@ public class AxolotlBucketItem extends VanillaItem {
     }
 
     @Override
-    public ItemStack build(@Nullable Player player) {
+    public ItemStack build(Player player) {
         ItemStack item = new ItemStack(Material.AXOLOTL_BUCKET);
         AxolotlBucketMeta meta = (AxolotlBucketMeta) item.getItemMeta();
 
