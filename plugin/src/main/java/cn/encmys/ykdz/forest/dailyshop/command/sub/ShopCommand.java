@@ -23,7 +23,6 @@ public class ShopCommand {
         return new CommandAPICommand("shop")
                 .withSubcommands(
                         getShopOpenCommand(),
-                        getShopHistoryCommand(),
                         getShopRestockCommand(),
                         getShopCacheCommand(),
                         getShopMiscCommand()
@@ -63,38 +62,6 @@ public class ShopCommand {
                         put("shop-name", shop.getName());
                     }});
                     shop.getShopGUI().open(player);
-                });
-    }
-
-    private CommandAPICommand getShopHistoryCommand() {
-        return new CommandAPICommand("history")
-                .withPermission("dailyshop.command.shop.history")
-                .withArguments(
-                        new StringArgument("shop")
-                                .replaceSuggestions(ArgumentSuggestions.strings(ShopConfig.getAllId())),
-                        new PlayerArgument("player")
-                )
-                .executes((sender, args) -> {
-                    String shopId = (String) args.get("shop");
-                    Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
-                    Player player = (Player) args.get("player");
-                    if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_history_failure_invalidPlayer, player, new HashMap<>() {{
-                            put("shop-id", shopId);
-                        }}));
-                        return;
-                    }
-                    if (!player.hasPermission("dailyshop.shop.history." + shopId)) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_noPermission);
-                        return;
-                    }
-                    if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_history_failure_invalidShop, player, new HashMap<>() {{
-                            put("shop-id", (String) args.get("shop"));
-                        }}));
-                        return;
-                    }
-                    shop.getHistoryGUI().open(player);
                 });
     }
 

@@ -1,5 +1,5 @@
 # In this product pack, nearly all product data
-# except "item" is set at "default-settings".
+# except "base" is set at "default-settings".
 # This makes maintaining a large number of
 # similar products very easy.
 default-settings:
@@ -24,14 +24,14 @@ default-settings:
       # Indicates whether the product's stock can exceed
       # "size" value above when it is replenished.
       overflow: true
-      # Indicates whether the item will reset the stock to
+      # Indicates whether the base will reset the stock to
       # the "size" value above when restocked.
       inherit: true
   rarity: uncommon
-  # Whether to cache the product item.
+  # Whether to cache the product base.
   # This will reduce the lag of plugin,
   # but will ignore the player-targeted placeholder
-  # like %player_name% in the name or lore of the item.
+  # like %player_name% in the name or lore of the base.
   cacheable: true
 
 products:

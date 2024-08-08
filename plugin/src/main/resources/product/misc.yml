@@ -52,7 +52,7 @@ products:
         # Indicates whether the product's stock can exceed
         # "size" value above when it is replenished.
         overflow: false
-        # Indicates whether the item will reset the stock to
+        # Indicates whether the base will reset the stock to
         # the "size" value above when restocked.
         inherit: true
     rarity: ancient
@@ -83,9 +83,9 @@ products:
     icon:
       lore:
         - "<gray>This is a Long Sword from <white>MMOItems<gray>."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
     # For the mmoitem that has random modifier, level or stat value things,
-    # you need to disable cache to enable it, or every product item
+    # you need to disable cache to enable it, or every product base
     # that player buy will be the same without any randomization.
     cacheable: false
 
@@ -97,8 +97,8 @@ products:
     icon:
       lore:
         - "<gray>This is a Steel Ingot from <white>MMOItems<gray>."
-        - "<gray>These lore will not be applied to the product item."
-    # For the static mmoitem item like material, you should
+        - "<gray>These lore will not be applied to the product base."
+    # For the static mmoitem base like material, you should
     # enable cache to reduce the lag.
     cacheable: true
 
@@ -110,7 +110,7 @@ products:
     icon:
       lore:
         - "<gray>This is a Skeleton King Sword from <white>MythicMobs<gray>."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
 
   CUSTOM_BANNER:
     item:
@@ -127,7 +127,7 @@ products:
     icon:
       lore:
         - "<gray>This is a Custom Banner with 6 patterns."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
       # Prevent too long product icon lore.
       # (Hide the banner pattern lore)
       item-flags:
@@ -141,7 +141,7 @@ products:
     icon:
       lore:
         - "<gray>This is a Custom Head."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
 
   SPLASH_POTION_OF_LEAPING:
     item:
@@ -155,7 +155,7 @@ products:
       name: "<white>Splash Potion of Leaping"
       lore:
         - "<gray>This is a Vanilla Potion."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
 
   TROPICAL_FISH_BUCKET:
     item:
@@ -165,7 +165,7 @@ products:
       name: "<white>Tropical Fish Bucket"
       lore:
         - "<gray>This is a Tropical Fish Bucket."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
 
   AXOLOTL_BUCKET:
     item:
@@ -175,7 +175,7 @@ products:
       name: "<white>Axolotl Bucket"
       lore:
         - "<gray>This is a Axolotl Bucket."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."
 
   CUSTOM_FIREWORK:
     item:
@@ -188,4 +188,4 @@ products:
       name: "<white>Tropical Fish Bucket"
       lore:
         - "<gray>This is a Tropical Fish Bucket."
-        - "<gray>These lore will not be applied to the product item."
+        - "<gray>These lore will not be applied to the product base."

@@ -2,7 +2,6 @@ package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.PlayerArgument;
@@ -10,19 +9,19 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
-public class CartCommand {
-    public static CartCommand INSTANCE = new CartCommand();
+public class OrderHistoryCommand {
+    public static OrderHistoryCommand INSTANCE = new OrderHistoryCommand();
 
-    public CommandAPICommand getCartCommand() {
-        return new CommandAPICommand("cart")
+    public CommandAPICommand getHistoryCommand() {
+        return new CommandAPICommand("history")
                 .withSubcommands(
-                        getCartOpenCommand()
+                        getHistoryOpenCommand()
                 );
     }
 
-    private CommandAPICommand getCartOpenCommand() {
+    private CommandAPICommand getHistoryOpenCommand() {
         return new CommandAPICommand("open")
-                .withPermission("dailyshop.command.cart.open")
+                .withPermission("dailyshop.command.history.open")
                 .withArguments(
                         new PlayerArgument("player")
                 )
@@ -34,8 +33,7 @@ public class CartCommand {
                         }}));
                         return;
                     }
-                    Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-                    profile.getCartGUI().open();
+                    DailyShop.PROFILE_FACTORY.getProfile(player).getOrderHistoryGUI().open();
                 });
     }
 }

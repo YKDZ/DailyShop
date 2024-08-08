@@ -110,7 +110,7 @@ public class ConfigUtils {
     public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
         return new IconRecord(
                 iconKey,
-                iconSection.getString("item", "DIRT"),
+                iconSection.getString("base", "DIRT"),
                 iconSection.getString("name", null),
                 iconSection.getStringList("lore"),
                 iconSection.getInt("amount", 1),

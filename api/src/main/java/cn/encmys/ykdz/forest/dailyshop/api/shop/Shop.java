@@ -35,8 +35,6 @@ public interface Shop {
 
     ShopCashier getShopCashier();
 
-    ShopRelatedGUI getHistoryGUI();
-
     ShopStocker getShopStocker();
 
     int getSize();

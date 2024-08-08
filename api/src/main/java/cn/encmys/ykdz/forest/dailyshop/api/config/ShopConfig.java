@@ -2,8 +2,6 @@ package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
@@ -97,29 +95,6 @@ public class ShopConfig {
                 getConfig(shopId).getBoolean("settings.merchant.supply", false),
                 getConfig(shopId).getBoolean("settings.merchant.overflow", false),
                 getConfig(shopId).getBoolean("settings.merchant.inherit", false)
-        );
-    }
-
-    @NotNull
-    public static HistoryGUIRecord getHistoryGUIRecord(@NotNull String shopId) {
-        ConfigurationSection mainSection = getConfig(shopId).getConfigurationSection("history-gui");
-        if (mainSection == null) {
-            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
-        }
-        ConfigurationSection productIconSection = mainSection.getConfigurationSection("history-icon");
-        if (productIconSection == null) {
-            throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
-        }
-        return new HistoryGUIRecord(
-                mainSection.getString("title", "{shop}"),
-                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
-                mainSection.getStringList("layout"),
-                ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
-                new HistoryIconRecord(
-                        productIconSection.getString("format.name", "{date}"),
-                        productIconSection.getStringList("format.lore"),
-                        productIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}")
-                )
         );
     }
 

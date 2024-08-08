@@ -32,6 +32,8 @@ public class Config {
             DailyShop.INSTANCE.saveResource("shop/black_market.yml", false);
             DailyShop.INSTANCE.saveResource("shop/blocks.yml", false);
             DailyShop.INSTANCE.saveResource("gui/cart.yml", false);
+            DailyShop.INSTANCE.saveResource("gui/stack-picker.yml", false);
+            DailyShop.INSTANCE.saveResource("gui/order-history.yml", false);
             DailyShop.INSTANCE.saveResource("lang/en_US.yml", false);
         }
 

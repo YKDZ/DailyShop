@@ -7,7 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
@@ -61,8 +61,8 @@ public class ShopPricerImpl implements ShopPricer {
         double buy = 0d;
         double sell = 0d;
 
-        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, SettlementLogType.SELL_TO);
-        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, SettlementLogType.BUY_FROM, SettlementLogType.BUY_ALL_FROM);
+        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
+        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
 
         switch (buyPrice.getPriceMode()) {
             case FORMULA -> {
@@ -154,7 +154,7 @@ public class ShopPricerImpl implements ShopPricer {
         this.cachedPrices = cachedPrices;
     }
 
-    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
+    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types) {
         int totalSales = 0;
 
         List<SettlementLog> logs;
@@ -168,11 +168,10 @@ public class ShopPricerImpl implements ShopPricer {
         for (SettlementLog log : logs) {
             List<String> productIds = log.getOrderedProductIds();
             List<Integer> productStacks = log.getOrderedProductStacks();
-            int totalStack = log.getTotalStack();
 
             for (int i = 0; i < productIds.size(); i++) {
                 if (productIds.get(i).equals(productId)) {
-                    totalSales += productStacks.get(i) * totalStack;
+                    totalSales += productStacks.get(i);
                 }
             }
         }

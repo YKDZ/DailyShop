@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.gui.CartGUI;
+import cn.encmys.ykdz.forest.dailyshop.gui.OrderHistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.StackPickerGUI;
 import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import org.bukkit.entity.Player;
@@ -28,10 +29,12 @@ public class ProfileImpl implements Profile {
     private OrderType cartMode = OrderType.SELL_TO;
     private final Map<String, ShoppingMode> shoppingModes = new HashMap<>();
     private StackPickerGUI currentStackPickerGUI;
+    private OrderHistoryGUI orderHistoryGUI;
 
     public ProfileImpl(Player owner) {
         this.owner = owner;
         this.cartGUI = new CartGUI(owner);
+        this.orderHistoryGUI = new OrderHistoryGUI(owner);
         try {
             ProfileData data = DailyShop.DATABASE.queryProfileData(owner.getUniqueId()).get();
             if (data != null) {
@@ -177,5 +180,10 @@ public class ProfileImpl implements Profile {
     @Override
     public PlayerRelatedGUI getCurrentStackPickerGUI() {
         return currentStackPickerGUI;
+    }
+
+    @Override
+    public PlayerRelatedGUI getOrderHistoryGUI() {
+        return orderHistoryGUI;
     }
 }

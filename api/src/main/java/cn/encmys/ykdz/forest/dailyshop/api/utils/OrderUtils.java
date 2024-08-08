@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.CartProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;

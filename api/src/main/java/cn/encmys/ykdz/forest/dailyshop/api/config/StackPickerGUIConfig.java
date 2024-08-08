@@ -14,8 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class StackPickerGUIConfig {
-    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/gui";
-    private static final String stackPickerGUIPath = path + "/stack-picker.yml";
+    private static final String stackPickerGUIPath = DailyShop.INSTANCE.getDataFolder() + "/gui/stack-picker.yml";
     private static final YamlConfiguration stackPickerGUIConfig = new YamlConfiguration();
 
     public static void load() {

@@ -12,7 +12,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
@@ -224,18 +223,17 @@ public class SQLiteDatabase implements Database {
     @Override
     public void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log) {
         scheduler.runTaskAsynchronously(DailyShop.INSTANCE, () -> {
-            String sql = "INSERT INTO dailyshop_settlement_log (shop_id, customer, type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO dailyshop_settlement_log (customer, shop_id, type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, shopId);
-                stmt.setString(2, log.getCustomerUUID().toString());
+                stmt.setString(1, log.getCustomerUUID().toString());
+                stmt.setString(2, shopId);
                 stmt.setString(3, log.getType().name());
                 stmt.setTimestamp(4, Timestamp.from(log.getTransitionTime().toInstant()));
-                stmt.setDouble(5, log.getPrice());
+                stmt.setDouble(5, log.getTotalPrice());
                 stmt.setString(6, gson.toJson(log.getOrderedProductIds()));
                 stmt.setString(7, gson.toJson(log.getOrderedProductNames()));
                 stmt.setString(8, gson.toJson(log.getOrderedProductStacks()));
-                stmt.setInt(9, log.getTotalStack());
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 e.fillInStackTrace();
@@ -244,56 +242,63 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<List<SettlementLog>> queryLogs(@NotNull String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull SettlementLogType... types) {
+    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types) {
         return CompletableFuture.supplyAsync(() -> {
             List<SettlementLog> logs = new ArrayList<>();
             String typeList = Stream.of(types)
                     .map(Enum::name)
                     .collect(Collectors.joining("','", "'", "'"));
-            long sevenDaysAgo = System.currentTimeMillis() - (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
-            Timestamp sevenDaysAgoTimestamp = new Timestamp(sevenDaysAgo);
+            long timeLimitMillis = (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
+            Timestamp timeLimitTimestamp = new Timestamp(System.currentTimeMillis() - timeLimitMillis);
 
-            String sql = "SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks FROM dailyshop_settlement_log WHERE shop_id = ? AND type IN (" + typeList + ") AND transition_time > ? ";
-            if (customer != null) {
-                sql += "AND customer = ? ";
+            StringBuilder sql = new StringBuilder("SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks FROM dailyshop_settlement_log WHERE transition_time > ? ");
+            if (shopId != null) {
+                sql.append("AND shop_id = ? ");
             }
-            sql += "LIMIT ?";
+            sql.append("AND type IN (").append(typeList).append(") ");
+            if (customer != null) {
+                sql.append("AND customer = ? ");
+            }
+            sql.append("LIMIT ?");
 
-            try (Connection conn = dataSource.getConnection()) {
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setString(1, shopId);
-                    stmt.setTimestamp(2, sevenDaysAgoTimestamp);
-                    int paramIndex = 3;
-                    if (customer != null) {
-                        stmt.setString(paramIndex++, customer.toString());
-                    }
-                    stmt.setInt(paramIndex, numEntries);
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {
-                            }.getType());
-                            if (productId != null && !productIds.contains(productId)) {
-                                continue; // 跳过不包含指定商品ID的日志
-                            }
-                            SettlementLogType type = SettlementLogType.valueOf(rs.getString("type"));
-                            Date transitionTime = rs.getTimestamp("transition_time");
-                            double price = rs.getDouble("price");
-                            List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {
-                            }.getType());
-                            List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {
-                            }.getType());
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
-                            logs.add(SettlementLogImpl.of(type, customer)
-                                    .setTransitionTime(transitionTime)
-                                    .setPrice(price)
-                                    .setOrderedProductIds(productIds)
-                                    .setOrderedProductNames(names)
-                                    .setOrderedProductStacks(stacks));
+                int paramIndex = 1;
+                stmt.setTimestamp(paramIndex++, timeLimitTimestamp);
+                if (shopId != null) {
+                    stmt.setString(paramIndex++, shopId);
+                }
+                if (customer != null) {
+                    stmt.setString(paramIndex++, customer.toString());
+                }
+                stmt.setInt(paramIndex, numEntries);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {
+                        }.getType());
+                        if (productId != null && !productIds.contains(productId)) {
+                            continue; // 跳过不包含指定商品ID的日志
                         }
+                        OrderType type = OrderType.valueOf(rs.getString("type"));
+                        Date transitionTime = rs.getTimestamp("transition_time");
+                        double price = rs.getDouble("price");
+                        List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {
+                        }.getType());
+                        List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {
+                        }.getType());
+
+                        logs.add(SettlementLogImpl.of(type, customer)
+                                .setTransitionTime(transitionTime)
+                                .setTotalPrice(price)
+                                .setOrderedProductIds(productIds)
+                                .setOrderedProductNames(names)
+                                .setOrderedProductStacks(stacks));
                     }
                 }
             } catch (SQLException e) {
-                e.fillInStackTrace();
+                e.printStackTrace();
             }
             return logs;
         });

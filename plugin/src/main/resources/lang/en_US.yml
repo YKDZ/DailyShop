@@ -44,14 +44,14 @@ messages:
           invalid-shop: "<red>Shop {shop} <red>do not exist!"
       cache:
         clear:
-          success: "<green>Successfully clear all the internal cache (product item, gui builder, etc.) of shop {shop}!"
+          success: "<green>Successfully clear all the internal cache (product base, gui builder, etc.) of shop {shop}!"
           failure:
             invalid-shop: "<red>Shop {shop} <red>do not exist!"
     product:
       check:
-        success: "<green>Successfully get <gold>{keys} <green>from item in your hand! Check the console for more info."
+        success: "<green>Successfully get <gold>{keys} <green>from base in your hand! Check the console for more info."
         failure:
-          null-meta: "<red>It seems that no key can be obtained from the item in your hand."
+          null-meta: "<red>It seems that no key can be obtained from the base in your hand."
   action:
     buy:
       success: "<gray>Successfully buy <reset>{name} <gray>x <white>{amount} <gray>from shop <reset>{shop}<gray>. The cost is <white>{cost}."

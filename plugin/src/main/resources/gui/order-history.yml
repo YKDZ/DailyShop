@@ -1,0 +1,47 @@
+order-history:
+  title: "Order History for player {player-name}"
+  # Available option is HORIZONTAL and VERTICAL
+  scroll-mode: HORIZONTAL
+  # The x character is the placeholder
+  # for the history slot.
+  layout:
+    - "# # # # # # # # u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x u"
+    - "# x x x x x x x n"
+    - "# x x x x x x x n"
+    - "# # # # # # # # n"
+  icons:
+    "#":
+      base: BROWN_STAINED_GLASS_PANE
+      name: " "
+      lore:
+        - "<dark_gray>Wall of History"
+        - " "
+    "u":
+      base: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: -1
+    "n":
+      base: RED_STAINED_GLASS_PANE
+      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      features:
+        scroll: LEFT
+        scroll-amount: 1
+  history-icon:
+    format:
+      name: "{date}"
+      lore:
+        - ""
+        - "<gray>Products:"
+        - "{order-contents}"
+        - ""
+        - "<gray>Type: {type}"
+        - ""
+        - "<gray>Total Price: {total-price}"
+        - " "
+      order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+    misc:
+      date-precision: 5

@@ -94,6 +94,16 @@ public class CartGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    public int getLayoutContentSlotAmount() {
+        return 0;
+    }
+
+    @Override
+    public int getLayoutContentSlotLineAmount() {
+        return 0;
+    }
+
+    @Override
     public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {

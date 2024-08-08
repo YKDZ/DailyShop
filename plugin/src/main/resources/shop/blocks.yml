@@ -35,29 +35,29 @@ shop-gui:
     - "# # # # c # # # n"
   icons:
     "#":
-      item: BROWN_STAINED_GLASS_PANE
+      base: BROWN_STAINED_GLASS_PANE
       name: " "
       lore:
         - "<dark_gray>Wall of Block Shop"
         - " "
     "@":
-      item: CLOCK
+      base: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-period: "1s"
     "u":
-      item: GREEN_STAINED_GLASS_PANE
+      base: GREEN_STAINED_GLASS_PANE
       name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
       features:
         scroll: LEFT
         scroll-amount: -1
     "n":
-      item: RED_STAINED_GLASS_PANE
+      base: RED_STAINED_GLASS_PANE
       name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
       features:
         scroll: LEFT
         scroll-amount: 1
     "c":
-      item: MINECART
+      base: MINECART
       name: " "
       lore:
         - "<dark_gray>✖ <white>Left Click"
@@ -108,52 +108,6 @@ shop-gui:
       add-1-to-cart: LEFT
       remove-1-from-cart: RIGHT
       remove-all-from-cart: DROP
-
-history-gui:
-  title: "Trading history on {shop-name}"
-  # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
-  # The x character is the placeholder
-  # for the history slot.
-  layout:
-    - "# # # # # # # # u"
-    - "# x x x x x x x u"
-    - "# x x x x x x x u"
-    - "# x x x x x x x n"
-    - "# x x x x x x x n"
-    - "# # # # # # # # n"
-  icons:
-    "#":
-      item: BROWN_STAINED_GLASS_PANE
-      name: " "
-      lore:
-        - "<dark_gray>Wall of History"
-        - " "
-    "u":
-      item: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: -1
-    "n":
-      item: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
-      features:
-        scroll: LEFT
-        scroll-amount: 1
-  history-icon:
-    format:
-      name: "{date}"
-      lore:
-        - ""
-        - "<gray>Products:"
-        - "{order-contents}"
-        - ""
-        - "<gray>Action: {action}"
-        - ""
-        - "<gray>Price: {price}"
-        - " "
-      order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
 
 products:
   # Use PACK: as prefix to import the entire

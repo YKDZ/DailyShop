@@ -50,4 +50,6 @@ public interface Profile {
     void pickProductStack(Shop shop, String productId);
 
     PlayerRelatedGUI getCurrentStackPickerGUI();
+
+    PlayerRelatedGUI getOrderHistoryGUI();
 }

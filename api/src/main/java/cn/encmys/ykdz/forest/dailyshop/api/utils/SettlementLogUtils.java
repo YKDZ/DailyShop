@@ -1,8 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.OrderHistoryGUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,13 +18,14 @@ import java.util.Map;
 
 public class SettlementLogUtils {
     @NotNull
-    public static Item toHistoryGuiItem(@NotNull Shop shop, @NotNull SettlementLog log, Player player) {
-        HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shop.getId());
+    public static Item toHistoryGuiItem(@NotNull SettlementLog log, Player player) {
+        OrderHistoryGUIRecord record = OrderHistoryGUIConfig.getGUIRecord();
 
         Map<String, String> vars = new HashMap<>() {{
-            put("date", log.getTransitionTime().toString());
-            put("price", String.valueOf(log.getPrice()));
-            put("action", log.getType().name());
+            put("date", MessageConfig.formatTime(log.getTransitionTime(), record.historyIconRecord().miscDatePrecision()));
+            put("price", MessageConfig.format_decimal.format(log.getTotalPrice()));
+            put("type", MessageConfig.getTerm(log.getType()));
+            put("total-price", MessageConfig.format_decimal.format(log.getTotalPrice()));
         }};
 
         String orderContentsLineFormat = record.historyIconRecord().formatOrderContentsLine();
@@ -38,7 +39,7 @@ public class SettlementLogUtils {
 
             orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(orderContentsLineFormat, player, new HashMap<>() {{
                 put("name", name);
-                put("amount", Integer.toString(stack * log.getTotalStack()));
+                put("amount", Integer.toString(stack));
             }}));
         }
         listVars.put("order-contents", orderContentsLines);
@@ -50,6 +51,8 @@ public class SettlementLogUtils {
                 new ItemBuilder(new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(Material.PAPER)
                         .setDisplayName(name)
                         .setLore(lore)
-                        .build(log.getTotalStack())));
+                        .build(1)
+                )
+        );
     }
 }

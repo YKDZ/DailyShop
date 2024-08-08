@@ -4,7 +4,7 @@ stack-picker:
     - "1 2 3"
   icons:
     1:
-      item: PAPER
+      base: PAPER
       name: "<white>{stack}"
       lore:
         - " "
@@ -13,6 +13,6 @@ stack-picker:
         - " "
       update-period: "0.5s"
     2:
-      item: AIR
+      base: AIR
     3:
-      item: AIR
+      base: AIR

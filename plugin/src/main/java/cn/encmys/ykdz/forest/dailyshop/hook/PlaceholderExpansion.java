@@ -41,9 +41,9 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             long hours = timeRemaining / (60 * 60 * 1000);
             long minutes = (timeRemaining % (60 * 60 * 1000)) / (60 * 1000);
             long seconds = (timeRemaining % (60 * 1000)) / 1000;
-            return String.format(MessageConfig.format_time, hours, minutes, seconds);
+            return String.format(MessageConfig.format_timer, hours, minutes, seconds);
         }
-        return String.format(MessageConfig.format_time, 0, 0, 0);
+        return String.format(MessageConfig.format_timer, 0, 0, 0);
     }
 
     @NotNull
@@ -63,8 +63,6 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         if (shop == null) return "Shop " + extractShopId(params, "shopping_mode_") + " do not exist.";
 
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
-        if (profile == null) return "Player " + player.getName() + " do not have profile.";
-
         return MessageConfig.getTerm(profile.getShoppingMode(extractShopId(params, "shopping_mode_")));
     }
 
@@ -74,8 +72,6 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         if (target == null) return "Need a player to work.";
 
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
-        if (profile == null) return "Player " + player.getName() + " do not have profile.";
-
         return MessageConfig.getTerm(profile.getCartMode());
     }
 

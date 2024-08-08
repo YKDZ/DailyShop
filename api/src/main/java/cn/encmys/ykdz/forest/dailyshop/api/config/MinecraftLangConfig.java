@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Use to translate the display name of the vanilla item in gui to specific language.
+ * Use to translate the display name of the vanilla base in gui to specific language.
  * Inspired by <a href="https://github.com/ManyouTeam/UltimateShop">UltimateShop</a>.
  */
 public class MinecraftLangConfig {

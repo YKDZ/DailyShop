@@ -1,15 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.HistoryGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.OrderHistoryGUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
@@ -25,34 +25,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class HistoryGUI extends ShopRelatedGUI {
-    public HistoryGUI(Shop shop) {
-        super(shop);
+public class OrderHistoryGUI extends PlayerRelatedGUI {
+    public OrderHistoryGUI(Player player) {
+        super(player);
     }
 
     @Override
-    public void open(Player player) {
-        HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shop.getId());
-
-        List<SettlementLog> logs;
-        try {
-            logs = DailyShop.DATABASE.queryLogs(shop.getId(), player.getUniqueId(), null, 365, 100, SettlementLogType.BUY_ALL_FROM, SettlementLogType.BUY_FROM, SettlementLogType.SELL_TO).get();
-        } catch (InterruptedException | ExecutionException e) {
-            LogUtils.warn("Error querying logs for " + shop.getId() + ": " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public void open() {
+        OrderHistoryGUIRecord record = OrderHistoryGUIConfig.getGUIRecord();
         Gui gui = buildGUI(player);
-
-//        for (SettlementLog log : logs) {
-//            gui.addContent(SettlementLogUtils.toHistoryGuiItem(shop, log, player));
-//        }
 
         Window window = Window.single()
                 .setGui(gui)
                 .setViewer(player)
                 .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
-                    put("shop-name", shop.getName());
-                    put("shop-id", shop.getId());
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
@@ -66,9 +52,21 @@ public class HistoryGUI extends ShopRelatedGUI {
     }
 
     @Override
+    public void close() {
+
+    }
+
+    @Override
     public Gui buildGUI(Player player) {
-        String shopId = shop.getId();
-        HistoryGUIRecord record = ShopConfig.getHistoryGUIRecord(shopId);
+        OrderHistoryGUIRecord record = OrderHistoryGUIConfig.getGUIRecord();
+
+        List<SettlementLog> logs;
+        try {
+            logs = DailyShop.DATABASE.queryLogs(null, player.getUniqueId(), null, 365, 100, OrderType.BUY_ALL_FROM, OrderType.BUY_FROM, OrderType.SELL_TO).get();
+        } catch (InterruptedException | ExecutionException e) {
+            LogUtils.warn("Error querying logs for " + player.getDisplayName() + ": " + e.getMessage());
+            throw new RuntimeException(e);
+        }
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(record.layout().toArray(new String[0]));
@@ -86,16 +84,31 @@ public class HistoryGUI extends ShopRelatedGUI {
             }
         }
 
+        // 日志图标
+        for (SettlementLog log : logs) {
+            guiBuilder.addContent(SettlementLogUtils.toHistoryGuiItem(log, player));
+        }
+
         return guiBuilder.build();
+    }
+
+    @Override
+    public int getLayoutContentSlotAmount() {
+        return 0;
+    }
+
+    @Override
+    public int getLayoutContentSlotLineAmount() {
+        return 0;
     }
 
     @Override
     public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
-            LogUtils.warn("Icon history-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
+            LogUtils.warn("Icon history-gui.icons." + record + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, shop, player);
+        return NormalIconBuilder.build(decorator, null, player);
     }
 }

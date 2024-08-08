@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.shop.cashier.log;
 
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,7 @@ public class SettlementLogImpl extends SettlementLog {
     private SettlementLogImpl() {
     }
 
-    public static SettlementLog of(SettlementLogType type, UUID customer) {
+    public static SettlementLog of(OrderType type, UUID customer) {
         switch (type) {
             case SELL_TO -> {
                 return SettlementLogImpl.sellToLog(customer);
@@ -28,21 +28,21 @@ public class SettlementLogImpl extends SettlementLog {
     public static SettlementLog buyFromLog(UUID customer) {
         return new SettlementLogImpl()
                 .setCustomer(customer)
-                .setType(SettlementLogType.BUY_FROM)
+                .setType(OrderType.BUY_FROM)
                 .setTransitionTime(new Date());
     }
 
     public static SettlementLog buyAllFromLog(UUID customer) {
         return new SettlementLogImpl()
                 .setCustomer(customer)
-                .setType(SettlementLogType.BUY_ALL_FROM)
+                .setType(OrderType.BUY_ALL_FROM)
                 .setTransitionTime(new Date());
     }
 
     public static SettlementLog sellToLog(UUID customer) {
         return new SettlementLogImpl()
                 .setCustomer(customer)
-                .setType(SettlementLogType.SELL_TO)
+                .setType(OrderType.SELL_TO)
                 .setTransitionTime(new Date());
     }
 
@@ -53,7 +53,7 @@ public class SettlementLogImpl extends SettlementLog {
     }
 
     @Override
-    public SettlementLog setType(SettlementLogType type) {
+    public SettlementLog setType(OrderType type) {
         this.type = type;
         return this;
     }
@@ -65,19 +65,8 @@ public class SettlementLogImpl extends SettlementLog {
     }
 
     @Override
-    public SettlementLog setPrice(double price) {
+    public SettlementLog setTotalPrice(double price) {
         this.price = price;
-        return this;
-    }
-
-    @Override
-    public int getTotalStack() {
-        return totalStack;
-    }
-
-    @Override
-    public SettlementLog setTotalStack(int totalStack) {
-        this.totalStack = totalStack;
         return this;
     }
 
@@ -87,7 +76,7 @@ public class SettlementLogImpl extends SettlementLog {
     }
 
     @Override
-    public SettlementLogType getType() {
+    public OrderType getType() {
         return type;
     }
 
@@ -97,7 +86,7 @@ public class SettlementLogImpl extends SettlementLog {
     }
 
     @Override
-    public double getPrice() {
+    public double getTotalPrice() {
         return price;
     }
 

@@ -40,6 +40,7 @@ public final class DailyShopImpl extends DailyShop {
         ShopConfig.load();
         CartGUIConfig.load();
         StackPickerGUIConfig.load();
+        OrderHistoryGUIConfig.load();
 
         saveDefaultConfig();
 
@@ -81,6 +82,7 @@ public final class DailyShopImpl extends DailyShop {
         ShopConfig.load();
         CartGUIConfig.load();
         StackPickerGUIConfig.load();
+        OrderHistoryGUIConfig.load();
 
         DATABASE = new SQLiteDatabase();
 

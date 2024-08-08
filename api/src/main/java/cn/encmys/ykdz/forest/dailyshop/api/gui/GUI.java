@@ -29,4 +29,8 @@ public abstract class GUI {
     public Map<UUID, Window> getWindows() {
         return windows;
     }
+
+    public abstract int getLayoutContentSlotAmount();
+
+    public abstract int getLayoutContentSlotLineAmount();
 }

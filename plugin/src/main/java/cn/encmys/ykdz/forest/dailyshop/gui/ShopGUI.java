@@ -64,6 +64,16 @@ public class ShopGUI extends ShopRelatedGUI {
     }
 
     @Override
+    public int getLayoutContentSlotAmount() {
+        return 0;
+    }
+
+    @Override
+    public int getLayoutContentSlotLineAmount() {
+        return 0;
+    }
+
+    @Override
     public void open(Player player) {
         ShopGUIRecord record = ShopConfig.getShopGUIRecord(shop.getId());
         Window window = Window.single()

@@ -41,7 +41,7 @@ public class ProductCommand {
                     Map<String, String> vars = new HashMap<>();
                     ItemStack item = PlayerUtils.getItemInMainHand(player);
                     List<String> keyValue = new ArrayList<>() {{
-                        add("<yellow>The following are possible configuration key value obtained from the item.");
+                        add("<yellow>The following are possible configuration key value obtained from the base.");
                         add("<yellow>Please pay attention to the <red>yml format <yellow>when copying to the configuration file:");
                     }};
                     // Banner

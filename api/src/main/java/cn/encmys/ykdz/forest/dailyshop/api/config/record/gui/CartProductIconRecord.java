@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.api.config.record.shop;
+package cn.encmys.ykdz.forest.dailyshop.api.config.record.gui;
 
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;

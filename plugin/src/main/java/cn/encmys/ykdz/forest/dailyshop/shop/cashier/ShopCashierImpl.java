@@ -9,7 +9,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.enums.SettlementLogType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
@@ -306,8 +305,8 @@ public class ShopCashierImpl implements ShopCashier {
         }
 
         DailyShop.DATABASE.insertSettlementLog(shop.getId(), log
-                .setPrice(order.getTotalPrice())
-                .setType(SettlementLogType.getFromOrderType(order.getOrderType()))
+                .setTotalPrice(order.getTotalPrice())
+                .setType(order.getOrderType())
                 .setOrderedProductIds(orderedProductIds)
                 .setOrderedProductNames(orderedProductNames)
                 .setOrderedProductStacks(orderedProductStacks)

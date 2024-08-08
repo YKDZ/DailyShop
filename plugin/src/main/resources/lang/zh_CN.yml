@@ -4,7 +4,14 @@
 
 format:
   decimal: "#######.##"
-  time: "%02dh:%02dm:%02ds"
+  timer: "%02dh:%02dm:%02ds"
+  date:
+    year: "年"
+    month: "月"
+    day: "日"
+    hour: "时"
+    minute: "分"
+    second: "秒"
 
 terms:
   order-type:

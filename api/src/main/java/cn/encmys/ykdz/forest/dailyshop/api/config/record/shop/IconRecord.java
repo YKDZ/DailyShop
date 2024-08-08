@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public record IconRecord(char key, @NotNull String item,
+public record IconRecord(char key, @NotNull String base,
                          @Nullable String name, @Nullable List<String> lore,
                          int amount, long updatePeriod,
                          int customModalData, @Nullable ConfigurationSection commands,

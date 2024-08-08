@@ -22,7 +22,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     public static BaseItemDecorator get(IconRecord record, boolean setDefaultName) {
-        BaseItem item = BaseItemBuilder.get(record.item());
+        BaseItem item = BaseItemBuilder.get(record.base());
         if (item == null) {
             return null;
         }

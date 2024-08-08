@@ -13,28 +13,28 @@ cart:
     - "# # # 1 # 2 # # u"
     - "# x x x x x x x #"
     - "# x x x x x x x #"
-    - "# # # # @ # # # n"
+    - "# # # @ # h # # n"
   icons:
     "#":
-      item: BROWN_STAINED_GLASS_PANE
+      base: BROWN_STAINED_GLASS_PANE
       name: " "
       lore:
         - "<dark_gray>Wall of Cart"
         - " "
     "u":
-      item: GREEN_STAINED_GLASS_PANE
+      base: GREEN_STAINED_GLASS_PANE
       name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
       features:
         scroll: LEFT
         scroll-amount: -1
     "n":
-      item: RED_STAINED_GLASS_PANE
+      base: RED_STAINED_GLASS_PANE
       name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
       features:
         scroll: LEFT
         scroll-amount: 1
     "@":
-      item: PAPER
+      base: PAPER
       name: "<gray>Total Price: <white>{cart-total-price}"
       lore:
         - " "
@@ -51,7 +51,7 @@ cart:
         clean-cart: RIGHT
         clear-cart: DROP
     "1":
-      item: OAK_WOOD
+      base: OAK_WOOD
       name: "<#A0522D>Blocks Shop"
       lore:
         - " "
@@ -61,7 +61,7 @@ cart:
         left:
           - "dailyshop shop open blocks %player_name%"
     "2":
-      item: ENDER_EYE
+      base: ENDER_EYE
       name: "<gray>Black Market"
       lore:
         - " "
@@ -70,6 +70,16 @@ cart:
       commands:
         left:
           - "dailyshop shop open black_market %player_name%"
+    "h":
+      base: BOOK
+      name: "<gray>Order History"
+      lore:
+        - " "
+        - "<dark_gray>✖ <white>Check your order history"
+        - " "
+      commands:
+        left:
+          - "dailyshop history open %player_name%"
   cart-product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"

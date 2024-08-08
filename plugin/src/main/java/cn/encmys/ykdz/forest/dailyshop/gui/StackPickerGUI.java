@@ -59,6 +59,16 @@ public class StackPickerGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    public int getLayoutContentSlotAmount() {
+        return 0;
+    }
+
+    @Override
+    public int getLayoutContentSlotLineAmount() {
+        return 0;
+    }
+
+    @Override
     public void open() {
         StackPickerGUIRecord guiRecord = StackPickerGUIConfig.getGUIRecord();
         Window window = AnvilWindow.single()
