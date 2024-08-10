@@ -39,8 +39,8 @@ public class ProfileFactoryImpl implements ProfileFactory {
     public void save() {
         List<Profile> data = new ArrayList<>();
         for (Profile profile : profiles.values()) {
-            if (!profile.getCart().isEmpty() ||
-                    profile.getCartMode() != OrderType.SELL_TO ||
+            if (!profile.getCart().getOrders().isEmpty() ||
+                    profile.getCart().getMode() != OrderType.SELL_TO ||
                     profile.getShoppingModes().containsValue(ShoppingMode.CART)
             ) {
                 data.add(profile);

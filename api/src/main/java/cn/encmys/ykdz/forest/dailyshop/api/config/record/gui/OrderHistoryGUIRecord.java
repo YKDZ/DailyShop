@@ -9,5 +9,6 @@ import java.util.List;
 
 public record OrderHistoryGUIRecord(@NotNull String title, @NotNull Marker scrollMode,
                                     @NotNull List<String> layout, @Nullable List<IconRecord> icons,
-                                    @NotNull HistoryIconRecord historyIconRecord) {
+                                    @NotNull HistoryIconRecord historyIconRecord,
+                                    @NotNull IconRecord historyPlaceholderIconRecord) {
 }

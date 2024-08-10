@@ -2,12 +2,14 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Marker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class ConfigUtils {
     public static ConfigurationSection inheritPriceSection(@Nullable ConfigurationSection section, @Nullable ConfigurationSection defaultSection) {
@@ -123,5 +125,39 @@ public class ConfigUtils {
                 iconSection.getStringList("potion-effects"),
                 iconSection.getConfigurationSection("features")
         );
+    }
+
+    public static int getLayoutMarkerAmount(List<String> layout, char markerIdentifier) {
+        return layout.stream()
+                .flatMapToInt(String::chars)
+                .filter(c -> c == markerIdentifier)
+                .map(c -> 1)
+                .sum();
+    }
+
+    public static int getLayoutMarkerRowAmount(List<String> layout, char markerIdentifier) {
+        return (int) layout.stream()
+                .filter(line -> line.indexOf(markerIdentifier) != -1)
+                .count();
+    }
+
+    public static int getLayoutMarkerColumAmount(List<String> layout, char markerIdentifier) {
+        if (layout.isEmpty()) {
+            return 0;
+        }
+
+        int maxColumnCount = layout.stream()
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+
+        return (int) IntStream.range(0, maxColumnCount)
+                .filter(colIndex -> layout.stream()
+                        .anyMatch(str -> str.length() > colIndex && str.charAt(colIndex) == markerIdentifier))
+                .count();
+    }
+
+    public static int getLastLineMarkerAmount(List<String> layout, char markerIdentifier, Marker marker) {
+        return 0;
     }
 }

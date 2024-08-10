@@ -23,6 +23,8 @@ public abstract class BaseItemDecorator {
     protected Map<ClickType, List<String>> commands = new HashMap<>();
     protected ClickType featuresScroll;
     protected int featuresScrollAmount;
+    protected ClickType featuresPageChange;
+    protected int featuresPageChangeAmount;
     protected ClickType featuresSettleCart;
     protected ClickType featuresBackToShop;
     protected ClickType featuresOpenCart;
@@ -30,6 +32,7 @@ public abstract class BaseItemDecorator {
     protected ClickType featuresSwitchCartMode;
     protected ClickType featuresCleanCart;
     protected ClickType featuresClearCart;
+    protected ClickType featuresLoadMoreLog;
 
     public abstract ClickType getFeaturesSettleCart();
 
@@ -104,4 +107,16 @@ public abstract class BaseItemDecorator {
     public abstract ClickType getFeaturesClearCart();
 
     public abstract BaseItemDecorator setFeaturesClearCart(ClickType featuresClearCart);
+
+    public abstract ClickType getFeaturesPageChange();
+
+    public abstract BaseItemDecorator setFeaturesPageChange(ClickType featuresPageChange);
+
+    public abstract int setFeaturesPageChangeAmount();
+
+    public abstract BaseItemDecorator setFeaturesPageChangeAmount(int featuresPageChangeAmount);
+
+    public abstract ClickType getFeaturesLoadMoreLog();
+
+    public abstract BaseItemDecorator setFeaturesLoadMoreLog(ClickType featuresLoadMoreLog);
 }

@@ -1,12 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
@@ -26,17 +26,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CartGUI extends PlayerRelatedGUI {
-    public CartGUI(Player player) {
+    private final CartGUIRecord guiRecord;
+
+    public CartGUI(Player player, CartGUIRecord guiRecord) {
         super(player);
+        this.guiRecord = guiRecord;
     }
 
     @Override
     public void open() {
-        CartGUIRecord record = CartGUIConfig.getGUIRecord();
-
         Window window = Window.single()
                 .setGui(buildGUI(player))
-                .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
+                .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
@@ -45,34 +46,29 @@ public class CartGUI extends PlayerRelatedGUI {
                 }})
                 .build(player);
 
-        window.open();
+        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.CART);
 
         getWindows().put(player.getUniqueId(), window);
-    }
-
-    @Override
-    public void close() {
-        windows.get(player.getUniqueId()).close();
+        window.open();
     }
 
     @Override
     public Gui buildGUI(Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        Map<String, ShopOrder> cart = profile.getCart();
-        CartGUIRecord record = CartGUIConfig.getGUIRecord();
+        Map<String, ShopOrder> cart = profile.getCart().getOrders();
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
-                .setStructure(record.layout().toArray(new String[0]));
+                .setStructure(guiRecord.layout().toArray(new String[0]));
 
-        if (record.scrollMode().isHorizontal()) {
+        if (guiRecord.scrollMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
         }
 
         // 普通图标
-        if (record.icons() != null) {
-            for (IconRecord icon : record.icons()) {
+        if (guiRecord.icons() != null) {
+            for (IconRecord icon : guiRecord.icons()) {
                 guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
             }
         }
@@ -91,16 +87,6 @@ public class CartGUI extends PlayerRelatedGUI {
         }
 
         return guiBuilder.build();
-    }
-
-    @Override
-    public int getLayoutContentSlotAmount() {
-        return 0;
-    }
-
-    @Override
-    public int getLayoutContentSlotLineAmount() {
-        return 0;
     }
 
     @Override

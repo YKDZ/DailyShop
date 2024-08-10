@@ -92,7 +92,6 @@ public class ShopCashierImpl implements ShopCashier {
             case SELL_TO -> sellTo(order);
         };
 
-        System.out.println(result);
         return result;
     }
 
@@ -200,8 +199,12 @@ public class ShopCashierImpl implements ShopCashier {
 
             if (product == null) continue;
 
+            // 订单为空（实际上在 ProfileImpl#settleCart 中用于处理购物车为空的情况）
+            if (order.getOrderedProducts().isEmpty()) {
+                return SettlementResult.EMPTY;
+            }
             // 当前未上架（购物车暂存）
-            if (!shop.getShopStocker().isListedProduct(product.getId())) {
+            else if (!shop.getShopStocker().isListedProduct(product.getId())) {
                 return SettlementResult.NOT_LISTED;
             }
             // 商品未开放购买
@@ -241,8 +244,12 @@ public class ShopCashierImpl implements ShopCashier {
 
             if (product == null) continue;
 
+            // 订单为空（实际上在 ProfileImpl#settleCart 中用于处理购物车为空的情况）
+            if (order.getOrderedProducts().isEmpty()) {
+                return SettlementResult.EMPTY;
+            }
             // 当前未上架（购物车暂存）
-            if (!shop.getShopStocker().isListedProduct(product.getId())) {
+            else if (!shop.getShopStocker().isListedProduct(product.getId())) {
                 return SettlementResult.NOT_LISTED;
             }
             // 商人模式余额不足

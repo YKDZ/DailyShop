@@ -44,7 +44,8 @@ public class OrderHistoryGUIConfig {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         ConfigurationSection historyIconSection = mainSection.getConfigurationSection("history-icon");
-        if (historyIconSection == null) {
+        ConfigurationSection historyPlaceholderIconSection = mainSection.getConfigurationSection("history-placeholder-icon");
+        if (historyIconSection == null || historyPlaceholderIconSection == null) {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         return new OrderHistoryGUIRecord(
@@ -57,7 +58,8 @@ public class OrderHistoryGUIConfig {
                         historyIconSection.getStringList("format.lore"),
                         historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
                         historyIconSection.getInt("misc.date-precision", 5)
-                )
+                ),
+                ConfigUtils.getIconRecord('#', historyPlaceholderIconSection)
         );
     }
 

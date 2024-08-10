@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.shop;
 
+import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
@@ -41,7 +42,7 @@ public class ShopImpl implements Shop {
         this.id = id;
         this.name = name;
         this.size = size;
-        shopGUI = new ShopGUI(this);
+        shopGUI = new ShopGUI(this, ShopConfig.getShopGUIRecord(id));
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this, merchant);
         shopStocker = new ShopStockerImpl(this, restockEnabled, restockPeriod, allProductsId);

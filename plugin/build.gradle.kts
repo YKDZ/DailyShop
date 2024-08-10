@@ -15,7 +15,7 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade:9.5.1")
     annotationProcessor("dev.jorel:commandapi-annotations:9.5.1")
 
-    implementation("xyz.xenondevs.invui:invui:1.33")
+    implementation("xyz.xenondevs.invui:invui:1.34")
 
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.3")

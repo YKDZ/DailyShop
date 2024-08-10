@@ -54,13 +54,16 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         if (record.features() != null) {
             decorator.setFeaturesScroll(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("scroll")))
                     .setFeaturesScrollAmount(record.features().getInt("scroll-amount", 0))
+                    .setFeaturesPageChange(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("page-change")))
+                    .setFeaturesPageChangeAmount(record.features().getInt("page-change-amount", 0))
                     .setFeaturesBackToShop(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("back-to-shop")))
                     .setFeaturesSettleCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("settle-cart")))
                     .setFeaturesOpenCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("open-cart")))
                     .setFeaturesSwitchShoppingMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-shopping-mode")))
                     .setFeaturesSwitchCartMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-cart-mode")))
                     .setFeaturesCleanCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clean-cart")))
-                    .setFeaturesClearCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clear-cart")));
+                    .setFeaturesClearCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clear-cart")))
+                    .setFeaturesLoadMoreLog(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("load-more-log")));
 
         }
         return decorator;
@@ -269,6 +272,39 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     @Override
     public BaseItemDecorator setFeaturesClearCart(ClickType featuresClearCart) {
         this.featuresClearCart = featuresClearCart;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesPageChange() {
+        return featuresPageChange;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesPageChange(ClickType featuresPageChange) {
+        this.featuresPageChange = featuresPageChange;
+        return this;
+    }
+
+    @Override
+    public int setFeaturesPageChangeAmount() {
+        return featuresPageChangeAmount;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesPageChangeAmount(int featuresPageChangeAmount) {
+        this.featuresPageChangeAmount = featuresPageChangeAmount;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesLoadMoreLog() {
+        return featuresLoadMoreLog;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesLoadMoreLog(ClickType featuresLoadMoreLog) {
+        this.featuresLoadMoreLog = featuresLoadMoreLog;
         return this;
     }
 }

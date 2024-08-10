@@ -34,7 +34,7 @@ public interface ShopOrder {
 
     boolean isSettled();
 
-    void setSettled(boolean settled);
+    ShopOrder setSettled(boolean settled);
 
     @NotNull
     ShopOrder setOrderType(@NotNull OrderType orderType);
@@ -58,4 +58,8 @@ public interface ShopOrder {
     void clear();
 
     void clean(@NotNull Shop shop);
+
+    ShopOrder setOrderedProducts(@NotNull Map<String, Integer> orderedProducts);
+
+    ShopOrder setCustomerUUID(UUID customerUUID);
 }

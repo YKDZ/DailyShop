@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.StackPickerGUIRecor
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
@@ -19,12 +20,14 @@ import xyz.xenondevs.invui.window.Window;
 import java.util.ArrayList;
 
 public class StackPickerGUI extends PlayerRelatedGUI {
+    private final StackPickerGUIRecord guiRecord;
     private final ShopOrder order;
     private final String targetProductId;
     private int stack;
 
-    public StackPickerGUI(Player player, ShopOrder order, String targetProductId) {
+    public StackPickerGUI(Player player, ShopOrder order, String targetProductId, StackPickerGUIRecord guiRecord) {
         super(player);
+        this.guiRecord = guiRecord;
         this.order = order;
         this.targetProductId = targetProductId;
         this.stack = order.getOrderedProducts().get(targetProductId);
@@ -42,8 +45,6 @@ public class StackPickerGUI extends PlayerRelatedGUI {
 
     @Override
     public Gui buildGUI(Player player) {
-        StackPickerGUIRecord guiRecord = StackPickerGUIConfig.getGUIRecord();
-
         Gui.Builder.Normal guiBuilder = Gui.normal()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
@@ -56,16 +57,6 @@ public class StackPickerGUI extends PlayerRelatedGUI {
         }
 
         return guiBuilder.build();
-    }
-
-    @Override
-    public int getLayoutContentSlotAmount() {
-        return 0;
-    }
-
-    @Override
-    public int getLayoutContentSlotLineAmount() {
-        return 0;
     }
 
     @Override
@@ -95,9 +86,10 @@ public class StackPickerGUI extends PlayerRelatedGUI {
                 }})
                 .build(player);
 
-        window.open();
+        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.STACK_PICKER);
 
         getWindows().put(player.getUniqueId(), window);
+        window.open();
     }
 
     @Override

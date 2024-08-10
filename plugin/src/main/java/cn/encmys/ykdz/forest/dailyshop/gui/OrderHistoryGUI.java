@@ -1,17 +1,19 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.OrderHistoryGUIConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
+import cn.encmys.ykdz.forest.dailyshop.item.builder.OrderHistoryIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import xyz.xenondevs.invui.gui.Gui;
@@ -24,21 +26,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.IntStream;
 
 public class OrderHistoryGUI extends PlayerRelatedGUI {
-    public OrderHistoryGUI(Player player) {
+    private final OrderHistoryGUIRecord guiRecord;
+    private final int pageSize;
+    private ScrollGui<Item> gui;
+    private int currentPage = 1;
+
+    public OrderHistoryGUI(Player player, OrderHistoryGUIRecord guiRecord) {
         super(player);
+        this.guiRecord = guiRecord;
+        this.pageSize = ConfigUtils.getLayoutMarkerAmount(guiRecord.layout(), markerIdentifier) / 5;
     }
 
     @Override
     public void open() {
-        OrderHistoryGUIRecord record = OrderHistoryGUIConfig.getGUIRecord();
-        Gui gui = buildGUI(player);
+        currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
+        loadMore();
 
         Window window = Window.single()
-                .setGui(gui)
+                .setGui(buildGUI(player))
                 .setViewer(player)
-                .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
+                .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
@@ -47,59 +57,37 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
                 }})
                 .build();
 
+        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.ORDER_HISTORY);
+
         getWindows().put(player.getUniqueId(), window);
         window.open();
     }
 
     @Override
-    public void close() {
-
-    }
-
-    @Override
     public Gui buildGUI(Player player) {
-        OrderHistoryGUIRecord record = OrderHistoryGUIConfig.getGUIRecord();
-
-        List<SettlementLog> logs;
-        try {
-            logs = DailyShop.DATABASE.queryLogs(null, player.getUniqueId(), null, 365, 100, OrderType.BUY_ALL_FROM, OrderType.BUY_FROM, OrderType.SELL_TO).get();
-        } catch (InterruptedException | ExecutionException e) {
-            LogUtils.warn("Error querying logs for " + player.getDisplayName() + ": " + e.getMessage());
-            throw new RuntimeException(e);
+        if (gui != null) {
+            return gui;
         }
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
-                .setStructure(record.layout().toArray(new String[0]));
+                .setStructure(guiRecord.layout().toArray(new String[0]));
 
-        if (record.scrollMode().isHorizontal()) {
+        if (guiRecord.scrollMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
         }
 
         // 普通图标
-        if (record.icons() != null) {
-            for (IconRecord iconRecord : record.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord, player));
+        if (guiRecord.icons() != null) {
+            for (IconRecord icon : guiRecord.icons()) {
+                guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
             }
         }
 
-        // 日志图标
-        for (SettlementLog log : logs) {
-            guiBuilder.addContent(SettlementLogUtils.toHistoryGuiItem(log, player));
-        }
+        gui = guiBuilder.build();
 
-        return guiBuilder.build();
-    }
-
-    @Override
-    public int getLayoutContentSlotAmount() {
-        return 0;
-    }
-
-    @Override
-    public int getLayoutContentSlotLineAmount() {
-        return 0;
+        return gui;
     }
 
     @Override
@@ -110,5 +98,27 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
             return null;
         }
         return NormalIconBuilder.build(decorator, null, player);
+    }
+
+    public void loadMore() {
+        DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
+                DailyShop.INSTANCE,
+                () -> {
+                    List<Item> contents = new ArrayList<>();
+                    IntStream.range(1, ++currentPage).forEach(page -> {
+                        try {
+                            List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(null, player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get();
+                            for (SettlementLog log : logs) {
+                                contents.add(
+                                        OrderHistoryIconBuilder.build(log, player)
+                                );
+                            }
+                        } catch (ExecutionException | InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    gui.setContent(contents);
+                }
+        );
     }
 }

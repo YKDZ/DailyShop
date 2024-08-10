@@ -15,5 +15,7 @@ public abstract class PlayerRelatedGUI extends GUI {
 
     public abstract void open();
 
-    public abstract void close();
+    public void close() {
+        getWindows().get(player.getUniqueId()).close();
+    }
 }

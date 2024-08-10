@@ -102,7 +102,7 @@ public class SQLiteDatabase implements Database {
                 stmt.setString(1, profile.getOwner().getUniqueId().toString());
                 stmt.setString(2, gson.toJson(profile.getCart(), new TypeToken<Map<String, ShopOrderImpl>>() {
                 }.getType()));
-                stmt.setString(3, gson.toJson(profile.getCartMode()));
+                stmt.setString(3, gson.toJson(profile.getCart().getMode()));
                 stmt.setString(4, gson.toJson(profile.getShoppingModes(), new TypeToken<Map<String, ShoppingMode>>() {
                 }.getType()));
                 stmt.addBatch();
@@ -259,6 +259,7 @@ public class SQLiteDatabase implements Database {
             if (customer != null) {
                 sql.append("AND customer = ? ");
             }
+            sql.append("ORDER BY transition_time DESC "); // 按 transition_time 降序排序
             sql.append("LIMIT ?");
 
             try (Connection conn = dataSource.getConnection();
@@ -273,6 +274,71 @@ public class SQLiteDatabase implements Database {
                     stmt.setString(paramIndex++, customer.toString());
                 }
                 stmt.setInt(paramIndex, numEntries);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        List<String> productIds = gson.fromJson(rs.getString("ordered_product_ids"), new TypeToken<List<String>>() {
+                        }.getType());
+                        if (productId != null && !productIds.contains(productId)) {
+                            continue; // 跳过不包含指定商品ID的日志
+                        }
+                        OrderType type = OrderType.valueOf(rs.getString("type"));
+                        Date transitionTime = rs.getTimestamp("transition_time");
+                        double price = rs.getDouble("price");
+                        List<String> names = gson.fromJson(rs.getString("ordered_product_names"), new TypeToken<List<String>>() {
+                        }.getType());
+                        List<Integer> stacks = gson.fromJson(rs.getString("ordered_product_stacks"), new TypeToken<List<Integer>>() {
+                        }.getType());
+
+                        logs.add(SettlementLogImpl.of(type, customer)
+                                .setTransitionTime(transitionTime)
+                                .setTotalPrice(price)
+                                .setOrderedProductIds(productIds)
+                                .setOrderedProductNames(names)
+                                .setOrderedProductStacks(stacks));
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return logs;
+        });
+    }
+
+    @Override
+    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<SettlementLog> logs = new ArrayList<>();
+            String typeList = Stream.of(types)
+                    .map(Enum::name)
+                    .collect(Collectors.joining("','", "'", "'"));
+            long timeLimitMillis = (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
+            Timestamp timeLimitTimestamp = new Timestamp(System.currentTimeMillis() - timeLimitMillis);
+
+            StringBuilder sql = new StringBuilder("SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks FROM dailyshop_settlement_log WHERE transition_time > ? ");
+            if (shopId != null) {
+                sql.append("AND shop_id = ? ");
+            }
+            sql.append("AND type IN (").append(typeList).append(") ");
+            if (customer != null) {
+                sql.append("AND customer = ? ");
+            }
+            sql.append("ORDER BY transition_time DESC "); // 按 transition_time 降序排序
+            sql.append("LIMIT ? OFFSET ?");
+
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+                int paramIndex = 1;
+                stmt.setTimestamp(paramIndex++, timeLimitTimestamp);
+                if (shopId != null) {
+                    stmt.setString(paramIndex++, shopId);
+                }
+                if (customer != null) {
+                    stmt.setString(paramIndex++, customer.toString());
+                }
+                stmt.setInt(paramIndex++, pageSize); // 设置每页的条目数量
+                stmt.setInt(paramIndex, (pageIndex - 1) * pageSize); // 设置偏移量
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {

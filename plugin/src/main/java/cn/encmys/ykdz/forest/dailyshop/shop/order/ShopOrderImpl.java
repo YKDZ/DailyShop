@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ShopOrderImpl implements ShopOrder {
+public class ShopOrderImpl implements ShopOrder, Cloneable {
     @Expose
-    private final UUID customerUUID;
+    private UUID customerUUID;
     @Expose
     private final Map<String, Integer> orderedProducts = new HashMap<>();
     @Expose
@@ -26,6 +26,10 @@ public class ShopOrderImpl implements ShopOrder {
     private boolean isSettled = false;
     @Expose
     private boolean isBilled = false;
+
+    public ShopOrderImpl(UUID customerUUID) {
+        this.customerUUID = customerUUID;
+    }
 
     public ShopOrderImpl(Player customer) {
         this.customerUUID = customer.getUniqueId();
@@ -101,8 +105,9 @@ public class ShopOrderImpl implements ShopOrder {
     }
 
     @Override
-    public void setSettled(boolean settled) {
+    public ShopOrder setSettled(boolean settled) {
         isSettled = settled;
+        return this;
     }
 
     @Override
@@ -194,5 +199,30 @@ public class ShopOrderImpl implements ShopOrder {
                 }
             }
         }
+    }
+
+    @Override
+    public ShopOrder setOrderedProducts(@NotNull Map<String, Integer> orderedProducts) {
+        this.orderedProducts.clear();
+        this.orderedProducts.putAll(orderedProducts);
+        return this;
+    }
+
+    @Override
+    public ShopOrder setCustomerUUID(UUID customerUUID) {
+        this.customerUUID = customerUUID;
+        return this;
+    }
+
+    @Override
+    public ShopOrder clone() throws CloneNotSupportedException {
+        ShopOrder shopOrder = (ShopOrder) super.clone();
+        return shopOrder
+                .setCustomerUUID(customerUUID)
+                .setOrderType(orderType)
+                .setBill(bill)
+                .setBilled(isBilled)
+                .setSettled(isSettled)
+                .setOrderedProducts(orderedProducts);
     }
 }

@@ -5,6 +5,7 @@ public enum SettlementResult {
     DUPLICATED("failure.duplicated"),
     CANCELLED("failure.cancelled"),
     UNKNOWN("failure.unknown"),
+    EMPTY("failure.empty"),
     TRANSITION_DISABLED("failure.disabled"),
     NOT_ENOUGH_MONEY("failure.money"),
     NOT_ENOUGH_PRODUCT("failure.product"),

@@ -70,7 +70,7 @@ messages:
         success: "<gray>成功在商店 <reset>{shop-name}<gray> 购买了 <reset>{name} <gray>x <white>{amount}<gray>. 共花费 <white>{cost}."
         failure:
           money: "<gray>你的余额不足以购买 <reset>{name} <gray>x <white>{amount}<gray>."
-          disable: "<gray>你不能从商店 <reset>{shop-name}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>."
+          disabled: "<gray>你不能从商店 <reset>{shop-name}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>."
           global-stock: "<gray>你不能从商店 <reset>{shop-name}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>. 商店的总库存不足."
           player-stock: "<gray>你不能从商店 <reset>{shop-name}<gray> 购买 <reset>{name} <gray>x <white>{amount}<gray>. 商店分配给你的商品配额已经被消耗完了."
           inventory-space: "<gray>你的背包空间无法容纳 <reset>{name} <gray>x <white>{amount}<gray>."
@@ -78,25 +78,41 @@ messages:
       buy-from:
         success: "<gray>成功向商店 <reset>{shop-name}<gray> 出售了 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
         failure:
-          disable: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
+          disabled: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
           product: "<gray>你的背包中没有足够的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
           merchant-balance: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>. 商店已经没有足够的余额从你手中购买商品了."
       # 商店从玩家处收购玩家背包中拥有的所有商品
       buy-all-from:
         success: "<gray>成功向商店 <reset>{shop-name}<gray> 出售了背包中全部 <white>{stack} <gray>份的 <reset>{name} <gray>x <white>{amount}<gray>. 你赚得了 <white>{earn}."
         failure:
-          disable: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
-          product: "<gray>你的背包中没有任何一份的 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
+          disabled: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>."
+          product: "<gray>你的背包中没有任何 <reset>{name} <gray>x <white>{amount} <gray>可供出售."
           merchant-balance: "<gray>你不能向商店 <reset>{shop-name}<gray> 出售 <reset>{name} <gray>x <white>{amount}<gray>. 商店已经没有足够的余额从你手中购买商品了."
       # 切换玩家在某个商店的购物模式
       switch-shopping-mode:
         success: "<gray>成功将在商店 <reset>{shop-name}<gray> 购物模式切换为 <white>{mode}."
+      # 将一个组某商品添加到购物车
+      add-1-to-cart:
+        success: "" # <gray>成功将 <white>1 <gray>组 <reset>{name} <gray>x <white>{amount} <gray>添加到购物车.
+        failure:
+          disabled: "<gray>商品 <reset>{name} <gray>x <white>{amount} <gray>不能被 {mode}."
+      # 将一个组某商品移出购物车
+      remove-1-from-cart:
+        success: "" # <gray>成功将 <white>1 <gray>组 <reset>{name} <gray>x <white>{amount} <gray>移出购物车.
+      # 将购物车中的所有某商品移出
+      remove-all-from-cart:
+        success: "" # <gray>成功将 <white>{stack} <gray>组 <reset>{name} <gray>x <white>{amount} <gray>移出购物车.
     cart:
+      # 打开购物车
+      open-cart:
+        success: "" # <gray>成功打开购物车
       # 结算购物车
+      # 此块可以被商店配置覆盖
       settle-cart:
         sell-to:
           success: "<gray>成功购入了购物车中的所有商品. 共花费 <white>{cost}<gray>."
           failure:
+            empty: "<gray>你的购物车空空如也, 无需结算."
             not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
             money: "<gray>你的余额不足以购买购物车中所有的商品."
             inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
@@ -105,19 +121,15 @@ messages:
         buy-from:
           success: "<gray>成功出售了购物车中列出的全部商品. 共赚得 <white>{earn}<gray>."
           failure:
+            empty: "<gray>你的购物车空空如也, 无需结算."
             not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
-            money: "<gray>你的余额不足以购买购物车中所有的商品."
-            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
-            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
-            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+            product: "<gray>你的背包中没有足够的商品物品可供出售."
         buy-all-from:
           success: "<gray>成功出售了背包中全部的购物车中列出的商品类型. 共赚得 <white>{earn}<gray>"
           failure:
+            empty: "<gray>你的购物车空空如也, 无需结算."
             not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
-            money: "<gray>你的余额不足以购买购物车中所有的商品."
-            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
-            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
-            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+            product: "<gray>你的背包中没有足够的商品物品可供出售."
       # 切换购物车的模式
       switch-cart-mode:
         success: "<gray>成功将购物车模式切换为 <white>{mode}."

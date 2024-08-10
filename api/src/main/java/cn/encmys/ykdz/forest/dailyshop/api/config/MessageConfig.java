@@ -44,6 +44,10 @@ public class MessageConfig {
     public static String messages_command_product_check_failure_nullMeta;
     public static String messages_command_shop_cache_clear_success;
     public static String messages_command_shop_cache_clear_failure_invalidShop;
+    public static String messages_action_cart_openCart_success;
+    public static String messages_action_cart_switchCartMode_success;
+    public static String messages_action_cart_cleanCart_success;
+    public static String messages_action_cart_clearCart_success;
     public static int version;
     private static final YamlConfiguration config = new YamlConfiguration();
 
@@ -93,6 +97,12 @@ public class MessageConfig {
         messages_command_shop_cache_clear_failure_invalidShop = getMessage("messages.command.shop.cache.clear.failure.invalid-shop");
         messages_command_product_check_success = getMessage("messages.command.product.check.success");
         messages_command_product_check_failure_nullMeta = getMessage("messages.command.product.check.failure.null-meta");
+
+        messages_action_cart_openCart_success = getMessage("messages.action.cart.open-cart.success");
+        messages_action_cart_switchCartMode_success = getMessage("messages.action.cart.switch-cart-mode.success");
+        messages_action_cart_cleanCart_success = getMessage("messages.action.cart.clean-cart.success");
+        messages_action_cart_clearCart_success = getMessage("messages.action.cart.clear-cart.success");
+
         version = config.getInt("version");
     }
 

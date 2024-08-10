@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
@@ -25,28 +26,30 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ShopGUI extends ShopRelatedGUI {
-    public ShopGUI(Shop shop) {
+    private final ShopGUIRecord guiRecord;
+
+    public ShopGUI(Shop shop, ShopGUIRecord guiRecord) {
         super(shop);
+        this.guiRecord = guiRecord;
     }
 
     @Override
     public Gui buildGUI(Player player) {
         String shopId = shop.getId();
         List<String> listedProduct = shop.getShopStocker().getListedProducts();
-        ShopGUIRecord record = ShopConfig.getShopGUIRecord(shopId);
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
-                .setStructure(record.layout().toArray(new String[0]));
+                .setStructure(guiRecord.layout().toArray(new String[0]));
 
-        if (record.scrollMode().isHorizontal()) {
+        if (guiRecord.scrollMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
         }
 
         // 普通图标
-        if (record.icons() != null) {
-            for (IconRecord iconRecord : record.icons()) {
+        if (guiRecord.icons() != null) {
+            for (IconRecord iconRecord : guiRecord.icons()) {
                 guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord, player));
             }
         }
@@ -61,16 +64,6 @@ public class ShopGUI extends ShopRelatedGUI {
         }
 
         return guiBuilder.build();
-    }
-
-    @Override
-    public int getLayoutContentSlotAmount() {
-        return 0;
-    }
-
-    @Override
-    public int getLayoutContentSlotLineAmount() {
-        return 0;
     }
 
     @Override
@@ -89,9 +82,10 @@ public class ShopGUI extends ShopRelatedGUI {
                 }})
                 .build(player);
 
-        window.open();
+        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.SHOP);
 
         getWindows().put(player.getUniqueId(), window);
+        window.open();
     }
 
     @Override

@@ -1,10 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -37,17 +34,9 @@ public class PlayerUtils {
         return false;
     }
 
-    public static void playSound(Shop shop, Player player, String soundKey) {
-        SoundRecord sound = ShopConfig.getSoundRecord(shop.getId(), soundKey);
-        if (sound != null) {
-            player.playSound(player.getLocation(), sound.sound(), sound.volume(), sound.pitch());
-        }
-    }
-
-    public static void playCartGUISound(Player player, String soundKey) {
-        SoundRecord sound = CartGUIConfig.getSoundRecord(soundKey);
-        if (sound != null) {
-            player.playSound(player.getLocation(), sound.sound(), sound.volume(), sound.pitch());
+    public static void playSound(SoundRecord soundRecord, Player player) {
+        if (soundRecord != null) {
+            player.playSound(player.getLocation(), soundRecord.sound(), soundRecord.volume(), soundRecord.pitch());
         }
     }
 

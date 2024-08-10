@@ -2,6 +2,9 @@ sounds:
   settle-cart:
     success: ENTITY_VILLAGER_YES
     failure: ENTITY_VILLAGER_NO:0.5:1
+  remove-1-from-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
 
 cart:
   title: "Cart for player {player-name}"

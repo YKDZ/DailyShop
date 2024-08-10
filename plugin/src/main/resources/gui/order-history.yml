@@ -10,7 +10,7 @@ order-history:
     - "# x x x x x x x u"
     - "# x x x x x x x n"
     - "# x x x x x x x n"
-    - "# # # # # # # # n"
+    - "# # # # @ # # # n"
   icons:
     "#":
       base: BROWN_STAINED_GLASS_PANE
@@ -30,6 +30,12 @@ order-history:
       features:
         scroll: LEFT
         scroll-amount: 1
+    "@":
+      base: MINECART
+      name: "<white>Shopping Cart"
+      commands:
+        left:
+          - "dailyshop cart open %player_name%"
   history-icon:
     format:
       name: "{date}"
@@ -45,3 +51,6 @@ order-history:
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
     misc:
       date-precision: 5
+  history-placeholder-icon:
+    base: GRAY_STAINED_GLASS_PANE
+    name: "<gray>Loading..."

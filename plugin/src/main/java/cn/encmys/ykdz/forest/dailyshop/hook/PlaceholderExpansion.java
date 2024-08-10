@@ -72,7 +72,7 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         if (target == null) return "Need a player to work.";
 
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(target);
-        return MessageConfig.getTerm(profile.getCartMode());
+        return MessageConfig.getTerm(profile.getCart().getMode());
     }
 
     @Override
