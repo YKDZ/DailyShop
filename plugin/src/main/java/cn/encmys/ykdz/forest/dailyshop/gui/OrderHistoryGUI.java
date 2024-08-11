@@ -101,11 +101,12 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     }
 
     public void loadMore() {
+        currentPage += 1;
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
                 () -> {
                     List<Item> contents = new ArrayList<>();
-                    IntStream.range(1, ++currentPage).forEach(page -> {
+                    IntStream.range(1, currentPage).forEach(page -> {
                         try {
                             List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(null, player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get();
                             for (SettlementLog log : logs) {

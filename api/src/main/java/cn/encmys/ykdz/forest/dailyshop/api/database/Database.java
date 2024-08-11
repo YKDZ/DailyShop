@@ -33,4 +33,8 @@ public interface Database {
     CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types);
 
     CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types);
+
+    CompletableFuture<Integer> cleanLogs(@Nullable UUID customerUUID, int limitInDay);
+
+    CompletableFuture<Integer> countLogs(@Nullable String customerUUID, int days);
 }

@@ -38,7 +38,7 @@ order-history:
           - "dailyshop cart open %player_name%"
   history-icon:
     format:
-      name: "{date}"
+      name: "<white>{date}"
       lore:
         - ""
         - "<gray>Products:"
@@ -51,6 +51,3 @@ order-history:
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
     misc:
       date-precision: 5
-  history-placeholder-icon:
-    base: GRAY_STAINED_GLASS_PANE
-    name: "<gray>Loading..."
