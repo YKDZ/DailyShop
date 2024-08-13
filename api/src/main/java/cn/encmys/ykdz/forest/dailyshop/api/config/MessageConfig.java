@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -15,6 +16,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class MessageConfig {
+    private static final String resourcePath = "lang/" + Config.language_message + ".yml";
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/" + resourcePath;
     public static DecimalFormat format_decimal;
     public static String format_timer;
     public static SimpleDateFormat format_date;
@@ -43,21 +46,32 @@ public class MessageConfig {
     public static String messages_action_cart_cleanCart_success;
     public static String messages_action_cart_clearCart_success;
     public static int version;
-    private static final YamlConfiguration config = new YamlConfiguration();
+    private static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(DailyShop.INSTANCE.getDataFolder(), "lang/" + Config.language_message + ".yml");
+        File file = new File(path);
 
         if (!file.exists()) {
-            DailyShop.INSTANCE.saveResource("lang/" + Config.language_message + ".yml", false);
+            DailyShop.INSTANCE.saveResource(resourcePath, false);
         }
 
         try {
             config.load(file);
+            merge();
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
             error.printStackTrace();
         }
+    }
+
+    private static void merge() throws IOException {
+        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
+        if (newConfig.getInt("version") != config.getInt("version")) {
+            ConfigUtils.mergeConfig(config, newConfig);
+        }
+        config = newConfig;
+        config.save(path);
+        LogUtils.info("Successfully merged " + resourcePath + " to new version.");
     }
 
     private static void setUp() {

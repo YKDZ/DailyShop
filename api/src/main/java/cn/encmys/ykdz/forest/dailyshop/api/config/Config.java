@@ -1,6 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,8 +11,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class Config {
-    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/config.yml";
-    private static final YamlConfiguration config = new YamlConfiguration();
+    private static final String resourcePath = "config.yml";
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/" + resourcePath;
+    private static YamlConfiguration config = new YamlConfiguration();
     public static String language_message;
     public static String language_minecraftLang;
     public static int logUsageLimit_entryAmount;
@@ -25,7 +28,7 @@ public class Config {
 
         // 当 config.yml 不存在时尝试初始化所有配置文件
         if (!file.exists()) {
-            DailyShop.INSTANCE.saveResource("config.yml", false);
+            DailyShop.INSTANCE.saveResource(resourcePath, false);
             DailyShop.INSTANCE.saveResource("product/ores.yml", false);
             DailyShop.INSTANCE.saveResource("product/wools.yml", false);
             DailyShop.INSTANCE.saveResource("product/misc.yml", false);
@@ -39,10 +42,21 @@ public class Config {
 
         try {
             config.load(file);
+            merge();
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
             error.printStackTrace();
         }
+    }
+
+    private static void merge() throws IOException {
+        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
+        if (newConfig.getInt("version") != config.getInt("version")) {
+            ConfigUtils.mergeConfig(config, newConfig);
+        }
+        config = newConfig;
+        config.save(path);
+        LogUtils.info("Successfully merged " + resourcePath + " to new version.");
     }
 
     private static void setUp() {

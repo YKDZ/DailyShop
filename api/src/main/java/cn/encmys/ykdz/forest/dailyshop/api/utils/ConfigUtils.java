@@ -1,11 +1,17 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
+import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Marker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -170,5 +176,33 @@ public class ConfigUtils {
             case 3 -> new Locale(parts[0], parts[1], parts[2]);  // 语言代码 + 国家代码 + 变体
             default -> throw new IllegalArgumentException("Invalid locale format: " + locale);
         };
+    }
+
+    public static void mergeConfig(YamlConfiguration oldConfig, YamlConfiguration newConfig) {
+        for (String key : oldConfig.getKeys(true)) {
+            if (key.equals("version")) {
+                continue;
+            }
+            if (newConfig.contains(key) && !(newConfig.get(key) instanceof ConfigurationSection)) {
+                newConfig.set(key, oldConfig.get(key));
+            }
+        }
+    }
+
+    public static YamlConfiguration loadYamlFromResource(String path) {
+        InputStream inputStream = DailyShop.INSTANCE.getResource(path);
+        ;
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Resource not found: " + path);
+        }
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            config.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace(); // 处理编码异常
+        } catch (Exception e) {
+            e.printStackTrace(); // 处理其它异常
+        }
+        return config;
     }
 }
