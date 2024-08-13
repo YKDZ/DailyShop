@@ -146,7 +146,6 @@ public class ShopCommand {
                                         return;
                                     }
                                     profile.setShoppingMode(shopId, profile.getShoppingMode(shopId) == ShoppingMode.DIRECT ? ShoppingMode.CART : ShoppingMode.DIRECT);
-                                    // TODO 提示消息
                                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_misc_switchShoppingMode_success, null, new HashMap<>() {{
                                         put("shop-id", shopId);
                                         put("shop-name", shop.getName());
