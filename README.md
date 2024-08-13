@@ -26,6 +26,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [x] Merchant
 - [x] Buy more
 - [ ] More gui type
+- [ ] Cart Collection & Order again
 
 ## API
 
