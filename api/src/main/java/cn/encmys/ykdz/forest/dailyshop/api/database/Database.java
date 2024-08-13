@@ -36,5 +36,5 @@ public interface Database {
 
     CompletableFuture<Integer> cleanLogs(@Nullable UUID customerUUID, int limitInDay);
 
-    CompletableFuture<Integer> countLogs(@Nullable String customerUUID, int days);
+    CompletableFuture<Integer> countLogs(@NotNull UUID customerUUID, int limitInDay);
 }

@@ -1,9 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopSettingsRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ShopConfig {
-    private static String path = DailyShop.INSTANCE.getDataFolder() + "/shop";
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/shop";
     private static final HashMap<String, YamlConfiguration> configs = new HashMap<>();
 
     public static void load() {
@@ -59,28 +60,14 @@ public class ShopConfig {
         return new ArrayList<>(configs.keySet());
     }
 
-    public static int getSize(String shopId) {
-        return getConfig(shopId).getInt("settings.size");
-    }
-
-    public static String getName(String shopId) {
-        return getConfig(shopId).getString("settings.name");
-    }
-
-    public static long getRestockPeriod(String shopId) {
-        return TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock.period", "10m"));
-    }
-
-    public static boolean getRestockEnabled(String shopId) {
-        return getConfig(shopId).getBoolean("settings.restock.enabled", false);
-    }
-
-    public static String getDisabledPrice(String shopId) {
-        return getShopGUISection(shopId).getString("product-icon.misc.disabled-price");
-    }
-
-    public static ConfigurationSection getShopGUISection(String shopId) {
-        return getConfig(shopId).getConfigurationSection("shop-gui");
+    public static ShopSettingsRecord getShopSettingsRecord(String shopId) {
+        return new ShopSettingsRecord(
+                getConfig(shopId).getInt("settings.size", 16),
+                getConfig(shopId).getString("settings.name", "<red>Shop name not found!"),
+                getConfig(shopId).getBoolean("settings.restock.enabled"),
+                TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock.period")),
+                getMerchantRecord(shopId)
+        );
     }
 
     @NotNull
@@ -89,7 +76,7 @@ public class ShopConfig {
     }
 
     @NotNull
-    public static MerchantRecord getMerchant(@NotNull String shopId) {
+    public static MerchantRecord getMerchantRecord(@NotNull String shopId) {
         return new MerchantRecord(
                 getConfig(shopId).getDouble("settings.merchant.balance", -1d),
                 getConfig(shopId).getBoolean("settings.merchant.supply", false),

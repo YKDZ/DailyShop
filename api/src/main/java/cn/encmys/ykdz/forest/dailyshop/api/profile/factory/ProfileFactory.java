@@ -15,6 +15,8 @@ public interface ProfileFactory {
 
     Map<UUID, Profile> getProfiles();
 
+    void removeProfile(Player player);
+
     void save();
 
     void unload();

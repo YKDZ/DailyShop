@@ -13,8 +13,8 @@ import java.util.*;
 
 public class CartImpl implements Cart {
     private final UUID ownerUUID;
-    private Map<String, ShopOrder> cartOrders = new HashMap<>();
-    private OrderType cartMode = OrderType.SELL_TO;
+    private Map<String, ShopOrder> orders = new HashMap<>();
+    private OrderType mode = OrderType.SELL_TO;
 
     public CartImpl(UUID ownerUUID) {
         this.ownerUUID = ownerUUID;
@@ -22,26 +22,27 @@ public class CartImpl implements Cart {
 
     @Override
     public void setOrder(String shopId, ShopOrder shopOrder) {
-        cartOrders.put(shopId, shopOrder);
+        orders.put(shopId, shopOrder);
     }
 
     @Override
-    public @NotNull Map<String, ShopOrder> getOrders() {
-        return Collections.unmodifiableMap(cartOrders);
+    @NotNull
+    public Map<String, ShopOrder> getOrders() {
+        return Collections.unmodifiableMap(orders);
     }
 
     @Override
     public void setOrders(Map<String, ShopOrder> cartOrders) {
-        this.cartOrders = cartOrders;
+        this.orders = cartOrders;
     }
 
     @Override
     public ShopOrder getOrder(@NotNull String shopId) {
-        ShopOrder cartOrder = cartOrders.get(shopId);
+        ShopOrder cartOrder = orders.get(shopId);
         if (cartOrder == null) {
             cartOrder = new ShopOrderImpl(ownerUUID)
                     .setOrderType(OrderType.SELL_TO);
-            cartOrders.put(shopId, cartOrder);
+            orders.put(shopId, cartOrder);
         }
         return cartOrder;
     }
@@ -52,24 +53,44 @@ public class CartImpl implements Cart {
     }
 
     @Override
-    public SettlementResult settle() {
-        if (cartOrders.isEmpty()) {
-            return SettlementResult.EMPTY;
-        }
-        ShopOrder orderForCheck = new ShopOrderImpl(ownerUUID);
-        // TODO 合并检查
-        clear();
-        return SettlementResult.SUCCESS;
+    public Map<String, SettlementResult> settle() {
+        Map<String, SettlementResult> result = new HashMap<>() {{
+            for (String shopId : orders.keySet()) {
+                put(shopId, SettlementResult.UNKNOWN);
+            }
+        }};
+        // 目前的设计难以同时处理两个来自不同商店的 ShopOrder
+        // 所以选择将购物车中的商品按商店分开结算（允许仅部分交易成功）
+        orders.entrySet().removeIf(entry -> {
+            String shopId = entry.getKey();
+            Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+            if (shop == null) {
+                return false;
+            }
+            ShopOrder cartOrder = entry.getValue();
+            SettlementResult orderResult = mode == OrderType.SELL_TO ?
+                    shop.getShopCashier().canSellTo(cartOrder) :
+                    shop.getShopCashier().canBuyFrom(cartOrder);
+            result.put(shopId, orderResult);
+            // 若成功交易则删除购物车中的此 ShopOrder
+            if (orderResult == SettlementResult.SUCCESS) {
+                shop.getShopCashier().settle(cartOrder);
+                return true;
+            } else {
+                return false;
+            }
+        });
+        return result;
     }
 
     @Override
     public void clear() {
-        cartOrders.clear();
+        orders.clear();
     }
 
     @Override
     public void clean() {
-        Iterator<Map.Entry<String, ShopOrder>> iterator = cartOrders.entrySet().iterator();
+        Iterator<Map.Entry<String, ShopOrder>> iterator = orders.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, ShopOrder> entry = iterator.next();
             ShopOrder cartOrder = entry.getValue();
@@ -88,19 +109,19 @@ public class CartImpl implements Cart {
 
     @Override
     public OrderType getMode() {
-        return cartMode;
+        return mode;
     }
 
     @Override
     public void setMode(@NotNull OrderType cartMode) {
-        this.cartMode = cartMode;
-        for (ShopOrder order : cartOrders.values()) {
+        this.mode = cartMode;
+        for (ShopOrder order : orders.values()) {
             order.setOrderType(cartMode);
         }
     }
 
     @Override
     public double getTotalPrice() {
-        return cartOrders.values().stream().mapToDouble(ShopOrder::getTotalPrice).sum();
+        return orders.values().stream().mapToDouble(ShopOrder::getTotalPrice).sum();
     }
 }

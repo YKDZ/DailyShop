@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public record HistoryIconRecord(@NotNull String formatName, @NotNull List<String> formatLore,
-                                @NotNull String formatOrderContentsLine, int miscDatePrecision) {
+                                @NotNull String formatOrderContentsLine) {
 }

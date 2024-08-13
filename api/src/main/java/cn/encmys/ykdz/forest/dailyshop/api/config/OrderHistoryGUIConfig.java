@@ -16,36 +16,35 @@ import java.io.File;
 import java.io.IOException;
 
 public class OrderHistoryGUIConfig {
-    private static final String cartGUIPath = DailyShop.INSTANCE.getDataFolder() + "/gui/order-history.yml";
-    private static final YamlConfiguration cartGUIConfig = new YamlConfiguration();
+    private static final String orderHistoryGUIPath = DailyShop.INSTANCE.getDataFolder() + "/gui/order-history.yml";
+    private static final YamlConfiguration orderHistoryGUIConfig = new YamlConfiguration();
 
     public static void load() {
-        File file = new File(cartGUIPath);
+        File file = new File(orderHistoryGUIPath);
 
         if (!file.exists()) {
             DailyShop.INSTANCE.saveResource("gui/order-history.yml", false);
         }
 
         try {
-            cartGUIConfig.load(file);
+            orderHistoryGUIConfig.load(file);
         } catch (IOException | InvalidConfigurationException error) {
             error.printStackTrace();
         }
     }
 
     public static YamlConfiguration getConfig() {
-        return cartGUIConfig;
+        return orderHistoryGUIConfig;
     }
 
     @NotNull
     public static OrderHistoryGUIRecord getGUIRecord() {
-        ConfigurationSection mainSection = cartGUIConfig.getConfigurationSection("order-history");
+        ConfigurationSection mainSection = orderHistoryGUIConfig.getConfigurationSection("order-history");
         if (mainSection == null) {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         ConfigurationSection historyIconSection = mainSection.getConfigurationSection("history-icon");
-        ConfigurationSection historyPlaceholderIconSection = mainSection.getConfigurationSection("history-placeholder-icon");
-        if (historyIconSection == null || historyPlaceholderIconSection == null) {
+        if (historyIconSection == null) {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
         return new OrderHistoryGUIRecord(
@@ -56,15 +55,13 @@ public class OrderHistoryGUIConfig {
                 new HistoryIconRecord(
                         historyIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
                         historyIconSection.getStringList("format.lore"),
-                        historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
-                        historyIconSection.getInt("misc.date-precision", 5)
-                ),
-                ConfigUtils.getIconRecord('#', historyPlaceholderIconSection)
+                        historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}")
+                )
         );
     }
 
     public static SoundRecord getSoundRecord(String soundKey) {
-        String soundData = cartGUIConfig.getString("sounds." + soundKey);
+        String soundData = orderHistoryGUIConfig.getString("sounds." + soundKey);
         return RecordUtils.fromSoundData(soundData);
     }
 }

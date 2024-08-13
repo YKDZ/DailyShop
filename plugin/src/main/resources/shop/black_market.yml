@@ -16,7 +16,7 @@ messages:
   action:
     shop:
       sell-to:
-        success: "<gray>You successfully buy <reset>{name} <gray>x <white>{amount} <gray>in the most mysterious market"
+        success: "<gray>You successfully spent <white>{cost} <gray>to buy <reset>{name} <gray>x <white>{amount} <gray>in the most mysterious market."
 
 sounds:
   sell-to:
@@ -29,6 +29,12 @@ sounds:
     success: ENTITY_VILLAGER_YES
     failure: ENTITY_VILLAGER_NO:0.5:1
   add-1-to-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  remove-1-from-cart:
+    success: ENTITY_VILLAGER_YES
+    failure: ENTITY_VILLAGER_NO:0.5:1
+  remove-all-from-cart:
     success: ENTITY_VILLAGER_YES
     failure: ENTITY_VILLAGER_NO:0.5:1
 
@@ -63,14 +69,10 @@ shop-gui:
         - "<dark_gray>✖ <aqua>Right Click"
         - "   <gray>Switch shopping mode"
         - "   <gray>Current shopping mode: <white>%dailyshop_shopping_mode_{shop-id}%"
-        - "<dark_gray>✖ <aqua>Shift + Right Click"
-        - "   <gray>Switch cart mode"
-        - "   <gray>Current cart mode: <white>%dailyshop_cart_mode_{shop-id}%"
         - " "
       features:
         open-cart: LEFT
         switch-shopping-mode: RIGHT
-        switch-cart-mode: SHIFT_RIGHT
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
@@ -89,7 +91,7 @@ shop-gui:
         - " "
         - "<gray>Rarity: <reset>{rarity}"
         - " "
-      bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+      bundle-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{total-amount}"
     misc:
       disabled-price: "<red>✘"
     # For stock feature etc.

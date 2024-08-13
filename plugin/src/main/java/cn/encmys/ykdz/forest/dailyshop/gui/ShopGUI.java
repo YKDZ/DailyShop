@@ -2,8 +2,8 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ShopGUIRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
@@ -15,6 +15,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
@@ -23,7 +24,6 @@ import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ShopGUI extends ShopRelatedGUI {
     private final ShopGUIRecord guiRecord;
@@ -35,9 +35,6 @@ public class ShopGUI extends ShopRelatedGUI {
 
     @Override
     public Gui buildGUI(Player player) {
-        String shopId = shop.getId();
-        List<String> listedProduct = shop.getShopStocker().getListedProducts();
-
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
@@ -55,15 +52,20 @@ public class ShopGUI extends ShopRelatedGUI {
         }
 
         // 商品图标
-        for (String productId : listedProduct) {
+        for (String productId : shop.getShopStocker().getListedProducts()) {
             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
             if (product == null) {
                 continue;
             }
-            guiBuilder.addContent(ProductIconBuilder.build(product.getIconDecorator(), player, shopId, product));
+            guiBuilder.addContent(ProductIconBuilder.build(product.getIconDecorator(), player, shop.getId(), product));
         }
 
         return guiBuilder.build();
+    }
+
+    @Override
+    public void loadContent(@Nullable Player player) {
+        return;
     }
 
     @Override
@@ -95,6 +97,6 @@ public class ShopGUI extends ShopRelatedGUI {
             LogUtils.warn("Icon shop-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, shop, player);
+        return NormalIconBuilder.build(decorator, shop, this, player);
     }
 }

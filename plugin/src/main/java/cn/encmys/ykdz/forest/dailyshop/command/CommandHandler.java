@@ -7,6 +7,9 @@ import cn.encmys.ykdz.forest.dailyshop.command.sub.OrderHistoryCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.ProductCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.ShopCommand;
 import dev.jorel.commandapi.CommandAPICommand;
+import org.bukkit.entity.Player;
+
+import java.util.concurrent.ExecutionException;
 
 public class CommandHandler {
     public static void load() {
@@ -17,7 +20,8 @@ public class CommandHandler {
                         ShopCommand.INSTANCE.getShopCommand(),
                         ProductCommand.INSTANCE.getShopCommand(),
                         CartCommand.INSTANCE.getCartCommand(),
-                        OrderHistoryCommand.INSTANCE.getHistoryCommand()
+                        OrderHistoryCommand.INSTANCE.getHistoryCommand(),
+                        getTestCommand()
                 )
                 .register();
     }
@@ -39,6 +43,17 @@ public class CommandHandler {
                     DailyShop.PRODUCT_FACTORY.save();
                     DailyShop.SHOP_FACTORY.save();
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_save_success);
+                });
+    }
+
+    private static CommandAPICommand getTestCommand() {
+        return new CommandAPICommand("test")
+                .executes((sender, args) -> {
+                    try {
+                        System.out.println(DailyShop.DATABASE.countLogs(((Player) sender).getUniqueId(), 11111111).get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
     }
 }

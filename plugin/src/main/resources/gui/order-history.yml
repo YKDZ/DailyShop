@@ -30,6 +30,7 @@ order-history:
       features:
         scroll: LEFT
         scroll-amount: 1
+        load-more-log: LEFT
     "@":
       base: MINECART
       name: "<white>Shopping Cart"
@@ -49,5 +50,3 @@ order-history:
         - "<gray>Total Price: {total-price}"
         - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
-    misc:
-      date-precision: 5

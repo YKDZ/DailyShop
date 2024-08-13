@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.item.decorator;
 
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;

@@ -1,4 +1,4 @@
-package cn.encmys.ykdz.forest.dailyshop.api.config.record.shop;
+package cn.encmys.ykdz.forest.dailyshop.api.config.record.misc;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;

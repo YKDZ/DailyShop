@@ -1,10 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.shop;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopSettingsRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
@@ -32,20 +32,14 @@ public class ShopImpl implements Shop {
     private final ShopStocker shopStocker;
     private final Map<String, ItemStack> cachedProduct = new HashMap<>();
 
-    /**
-     * @param id            Shop id
-     * @param restockPeriod Shop restock period in ticks
-     * @param allProductsId ID of all possible products
-     * @param size          Maximum number of items in the shop at the same time
-     */
-    public ShopImpl(String id, String name, boolean restockEnabled, long restockPeriod, List<String> allProductsId, int size, MerchantRecord merchant) {
+    public ShopImpl(String id, ShopSettingsRecord settings, List<String> allProductsId) {
         this.id = id;
-        this.name = name;
-        this.size = size;
+        this.name = settings.name();
+        this.size = settings.size();
         shopGUI = new ShopGUI(this, ShopConfig.getShopGUIRecord(id));
         shopPricer = new ShopPricerImpl(this);
-        shopCashier = new ShopCashierImpl(this, merchant);
-        shopStocker = new ShopStockerImpl(this, restockEnabled, restockPeriod, allProductsId);
+        shopCashier = new ShopCashierImpl(this, settings.merchant());
+        shopStocker = new ShopStockerImpl(this, settings.restockEnabled(), settings.restockPeriod(), allProductsId);
     }
 
     @Override

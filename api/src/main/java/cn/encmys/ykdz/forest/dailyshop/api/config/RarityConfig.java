@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RarityConfig {
-    private static String path = DailyShop.INSTANCE.getDataFolder() + "/rarities.yml";
-    private static YamlConfiguration config = new YamlConfiguration();
+    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/rarities.yml";
+    private static final YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
         File file = new File(path);

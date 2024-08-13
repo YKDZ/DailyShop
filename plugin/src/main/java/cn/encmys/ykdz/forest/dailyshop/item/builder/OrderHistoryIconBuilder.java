@@ -29,7 +29,7 @@ public class OrderHistoryIconBuilder {
                 new ItemBuilder(Material.AIR),
                 () -> {
                     Map<String, String> vars = new HashMap<>() {{
-                        put("date", MessageConfig.formatTime(log.getTransitionTime(), record.historyIconRecord().miscDatePrecision()));
+                        put("date", MessageConfig.format_date.format(log.getTransitionTime()));
                         put("price", MessageConfig.format_decimal.format(log.getTotalPrice()));
                         put("type", MessageConfig.getTerm(log.getType()));
                         put("total-price", MessageConfig.format_decimal.format(log.getTotalPrice()));

@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
@@ -16,6 +16,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.OrderHistoryIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
@@ -43,7 +44,7 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     @Override
     public void open() {
         currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
-        loadMore();
+        loadContent(player);
 
         Window window = Window.single()
                 .setGui(buildGUI(player))
@@ -66,6 +67,7 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     @Override
     public Gui buildGUI(Player player) {
         if (gui != null) {
+            gui.setCurrentLine(0);
             return gui;
         }
 
@@ -97,25 +99,35 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
             LogUtils.warn("Icon history-gui.icons." + record + " has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, null, player);
+        return NormalIconBuilder.build(decorator, null, this, player);
     }
 
-    public void loadMore() {
-        currentPage += 1;
+    @Override
+    public void loadContent(@Nullable Player player) {
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
                 () -> {
+                    int count;
+                    try {
+                        count = DailyShop.DATABASE.countLogs(this.player.getUniqueId(), 11111).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (pageSize * currentPage >= count) {
+                        return;
+                    }
                     List<Item> contents = new ArrayList<>();
-                    IntStream.range(1, currentPage).forEach(page -> {
+                    IntStream.range(1, ++currentPage).forEach(page -> {
+                        List<SettlementLog> logs;
                         try {
-                            List<SettlementLog> logs = DailyShop.DATABASE.queryLogs(null, player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get();
-                            for (SettlementLog log : logs) {
-                                contents.add(
-                                        OrderHistoryIconBuilder.build(log, player)
-                                );
-                            }
-                        } catch (ExecutionException | InterruptedException e) {
+                            logs = new ArrayList<>(DailyShop.DATABASE.queryLogs(null, this.player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get());
+                        } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
+                        }
+                        for (SettlementLog log : logs) {
+                            contents.add(
+                                    OrderHistoryIconBuilder.build(log, this.player)
+                            );
                         }
                     });
                     gui.setContent(contents);

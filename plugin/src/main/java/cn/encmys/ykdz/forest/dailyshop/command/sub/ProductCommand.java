@@ -46,7 +46,7 @@ public class ProductCommand {
                     }};
                     // Banner
                     if (item.getType().toString().contains("BANNER")) {
-                        vars.put("keys", "base, banner-patterns");
+                        vars.put("keys", "base, amount, banner-patterns");
                         BannerMeta meta = (BannerMeta) item.getItemMeta();
                         if (meta == null) {
                             DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
@@ -61,7 +61,7 @@ public class ProductCommand {
                     }
                     // Potion
                     else if (item.getType().toString().contains("POTION")) {
-                        vars.put("keys", "base");
+                        vars.put("keys", "base, amount");
                         String type = item.getType().toString().replace("_POTION", "");
                         if (type.equals("POTION")) {
                             type = "DRINK";
@@ -77,7 +77,7 @@ public class ProductCommand {
                     }
                     // Firework
                     else if (item.getType() == Material.FIREWORK_ROCKET) {
-                        vars.put("keys", "base, firework-effects");
+                        vars.put("keys", "base, amount, firework-effects");
                         FireworkMeta meta = (FireworkMeta) item.getItemMeta();
                         if (meta == null) {
                             DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
@@ -125,7 +125,7 @@ public class ProductCommand {
                     else if (item.getType() == Material.AXOLOTL_BUCKET) {
                         AxolotlBucketMeta meta = (AxolotlBucketMeta) item.getItemMeta();
                         if (meta != null) {
-                            vars.put("keys", "base");
+                            vars.put("keys", "base, amount");
                             keyValue.add("<#C28456>base: <#346659>AXOLOTL_BUCKET:" + meta.getVariant().name());
                         }
                     }
@@ -133,7 +133,7 @@ public class ProductCommand {
                     else if (item.getType() == Material.TROPICAL_FISH_BUCKET) {
                         TropicalFishBucketMeta meta = (TropicalFishBucketMeta) item.getItemMeta();
                         if (meta != null && meta.hasVariant()) {
-                            vars.put("keys", "base");
+                            vars.put("keys", "base, amount");
                             keyValue.add("<#C28456>base: <#346659>TROPICAL_FISH_BUCKET:" + meta.getPattern().name() + ":" + meta.getBodyColor().name() + ":" + meta.getPatternColor().name());
                         }
                     }
@@ -142,20 +142,24 @@ public class ProductCommand {
                         Type itemType = Type.get(MMOItems.getTypeName(item));
                         String itemId = MMOItems.getID(item);
                         if (itemType != null && itemId != null) {
-                            vars.put("keys", "base");
+                            vars.put("keys", "base, amount");
                             keyValue.add("<#C28456>base: <#346659>MI:" + itemType.getId() + ":" + itemId);
                         }
                     }
                     // MythicMobs
                     else if (MythicMobsHook.isHooked() && MythicBukkit.inst().getItemManager().isMythicItem(item)) {
                         String id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-                        vars.put("keys", "base");
+                        vars.put("keys", "base, amount");
                         keyValue.add("<#C28456>base: <#346659>MM:" + id);
                     }
-                    // 原版物品 base
+                    // 原版物品
                     else {
-                        vars.put("keys", "base");
+                        vars.put("keys", "base, amount");
                         keyValue.add("<#C28456>base: <#346659>" + item.getType());
+                    }
+                    // amount
+                    if (vars.get("keys").contains("amount")) {
+                        keyValue.add("<#C28456>amount: " + item.getAmount());
                     }
                     for (String out : keyValue) {
                         DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);

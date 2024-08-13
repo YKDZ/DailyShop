@@ -9,16 +9,16 @@ import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.stock.ProductStock;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
-import cn.encmys.ykdz.forest.dailyshop.api.profile.cart.Cart;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.stock.ProductStockImpl;
-import cn.encmys.ykdz.forest.dailyshop.profile.cart.CartImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.log.SettlementLogImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.order.ShopOrderImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -57,7 +57,8 @@ public class SQLiteDatabase implements Database {
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS dailyshop_profile (
                         owner_uuid TEXT NOT NULL PRIMARY KEY,
-                        cart TEXT NOT NULL,
+                        cart_orders TEXT NOT NULL,
+                        cart_mode TEXT NOT NULL,
                         shopping_modes TEXT NOT NULL
                     );""");
             stmt.execute("""
@@ -94,14 +95,18 @@ public class SQLiteDatabase implements Database {
     @Override
     public void saveProfileData(@NotNull List<Profile> data) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_profile (owner_uuid, cart, shopping_modes) VALUES (?, ?, ?)")
+             PreparedStatement stmt = conn.prepareStatement("REPLACE INTO dailyshop_profile (owner_uuid, cart_orders, cart_mode, shopping_modes) VALUES (?, ?, ?, ?)")
         ) {
             conn.setAutoCommit(false);
             for (Profile profile : data) {
                 stmt.setString(1, profile.getOwner().getUniqueId().toString());
-                stmt.setString(2, gson.toJson(profile.getCart(), CartImpl.class));
-                stmt.setString(3, gson.toJson(profile.getShoppingModes(), new TypeToken<Map<String, ShoppingMode>>() {
-                }.getType()));
+                stmt.setString(2, gson.toJson(profile.getCart().getOrders(), new TypeToken<Map<String, ShopOrderImpl>>() {
+                }
+                        .getType()));
+                stmt.setString(3, gson.toJson(profile.getCart().getMode(), OrderType.class));
+                stmt.setString(4, gson.toJson(profile.getShoppingModes(), new TypeToken<Map<String, ShoppingMode>>() {
+                }
+                        .getType()));
                 stmt.addBatch();
             }
             stmt.executeBatch();
@@ -115,14 +120,16 @@ public class SQLiteDatabase implements Database {
     public CompletableFuture<ProfileData> queryProfileData(@NotNull UUID ownerUUID) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("SELECT owner_uuid, cart, shopping_modes FROM dailyshop_profile WHERE owner_uuid = ?")) {
+                 PreparedStatement stmt = conn.prepareStatement("SELECT owner_uuid, cart_orders, cart_mode, shopping_modes FROM dailyshop_profile WHERE owner_uuid = ?")) {
                 stmt.setString(1, ownerUUID.toString());
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        Cart cart = gson.fromJson(rs.getString("cart"), CartImpl.class);
+                        Map<String, ShopOrder> cartOrders = gson.fromJson(rs.getString("cart_orders"), new TypeToken<Map<String, ShopOrderImpl>>() {
+                        }.getType());
+                        OrderType cartMode = gson.fromJson(rs.getString("cart_mode"), OrderType.class);
                         Map<String, ShoppingMode> shoppingModes = gson.fromJson(rs.getString("shopping_modes"), new TypeToken<Map<String, ShoppingMode>>() {
                         }.getType());
-                        return new ProfileData(ownerUUID, cart, shoppingModes);
+                        return new ProfileData(ownerUUID, cartOrders, cartMode, shoppingModes);
                     }
                 }
             } catch (SQLException e) {
@@ -366,23 +373,13 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Integer> cleanLogs(@Nullable UUID customerUUID, int limitInDay) {
+    public CompletableFuture<Integer> cleanLogs(@NotNull UUID customerUUID, int limitInDay) {
         return CompletableFuture.supplyAsync(() -> {
             String sql;
-            if (customerUUID != null) {
-                sql = "DELETE FROM dailyshop_settlement_log " +
-                        "WHERE transition_time < datetime('now', '-' || ? || ' days') " +
-                        "AND customer = ?";
-            } else {
-                sql = "DELETE FROM dailyshop_settlement_log " +
-                        "WHERE transition_time < datetime('now', '-' || ? || ' days')";
-            }
+            sql = "DELETE FROM dailyshop_settlement_log WHERE customer = ?";
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, limitInDay);
-                if (customerUUID != null) {
-                    stmt.setString(2, customerUUID.toString());
-                }
+                stmt.setString(1, customerUUID.toString());
                 return stmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -392,32 +389,21 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Integer> countLogs(@Nullable String customerUUID, int days) {
+    public CompletableFuture<Integer> countLogs(@NotNull UUID customerUUID, int days) {
         return CompletableFuture.supplyAsync(() -> {
-            String sql;
-            if (customerUUID != null) {
-                sql = "SELECT COUNT(*) FROM dailyshop_settlement_log " +
-                        "WHERE transition_time >= datetime('now', '-' || ? || ' days') " +
-                        "AND customer = ?";
-            } else {
-                sql = "SELECT COUNT(*) FROM dailyshop_settlement_log " +
-                        "WHERE transition_time >= datetime('now', '-' || ? || ' days')";
-            }
-            int count = 0;
+            String sql = ("SELECT COUNT(*) FROM dailyshop_settlement_log WHERE customer = ?");
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, days);
-                if (customerUUID != null) {
-                    stmt.setString(2, customerUUID);
-                }
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    count = rs.getInt(1);
+                stmt.setString(1, customerUUID.toString());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogUtils.error("Error counting logs: " + e.getMessage());
             }
-            return count;
+            return 0;
         });
     }
 }

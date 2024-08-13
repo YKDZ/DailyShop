@@ -2,9 +2,6 @@ sounds:
   settle-cart:
     success: ENTITY_VILLAGER_YES
     failure: ENTITY_VILLAGER_NO:0.5:1
-  remove-1-from-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
 
 cart:
   title: "Cart for player {player-name}"
@@ -43,6 +40,9 @@ cart:
         - " "
         - "<dark_gray>✖ <aqua>Left Click"
         - "   <gray>Settle Cart"
+        - "<dark_gray>✖ <aqua>Shift + Right Click"
+        - "   <gray>Switch cart mode"
+        - "   <gray>Current cart mode: <white>%dailyshop_cart_mode%"
         - "<dark_gray>✖ <aqua>Right Click"
         - "   <gray>Clean Cart"
         - "<dark_gray>✖ <white>Drop"
@@ -52,6 +52,7 @@ cart:
       features:
         settle-cart: LEFT
         clean-cart: RIGHT
+        switch-cart-mode: SHIFT_RIGHT
         clear-cart: DROP
     "1":
       base: OAK_WOOD
@@ -103,7 +104,7 @@ cart:
         - " "
     # For price update etc.
     # Set to 0s or delete to disable update.
-    update-period: "1s"
+    update-period: "0s"
     features:
       # Delete, leave blank or set to UNKNOWN to disable an action.
       add-1-stack: LEFT

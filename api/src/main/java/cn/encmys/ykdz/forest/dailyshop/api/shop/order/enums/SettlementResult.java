@@ -14,6 +14,7 @@ public enum SettlementResult {
     NOT_ENOUGH_GLOBAL_STOCK("failure.global-stock"),
     NOT_ENOUGH_MERCHANT_BALANCE("failure.merchant-balance"),
     NOT_LISTED("failure.not-listed"),
+    PARTIAL_SUCCESS("partial-success"),
     SUCCESS("success");
 
     private final String configKey;

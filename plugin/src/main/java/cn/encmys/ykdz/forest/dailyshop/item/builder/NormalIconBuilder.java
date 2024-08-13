@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.item.builder;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractControlIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
@@ -15,7 +16,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
-import cn.encmys.ykdz.forest.dailyshop.gui.OrderHistoryGUI;
 import cn.encmys.ykdz.forest.dailyshop.gui.StackPickerGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -35,14 +35,14 @@ import java.util.List;
 import java.util.Map;
 
 public class NormalIconBuilder {
-    public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, Player player) {
+    public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         if (decorator.getFeaturesScroll() != null) {
-            return buildControlIcon(decorator, shop, player);
+            return buildControlIcon(decorator, shop, workGUI, player);
         }
-        return buildIcon(decorator, shop, player);
+        return buildIcon(decorator, shop, workGUI, player);
     }
 
-    private static Item buildIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, Player player) {
+    private static Item buildIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
@@ -76,13 +76,13 @@ public class NormalIconBuilder {
     }
 
     // TODO 支持更多种类的 Gui
-    private static Item buildControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, Player player) {
+    private static Item buildControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
                 return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
-                    put("current-scroll", String.valueOf(gui.getCurrentLine()));
-                    put("max-scroll", String.valueOf(gui.getMaxLine()));
+                    put("current-scroll", String.valueOf(gui.getCurrentLine() + 1));
+                    put("max-scroll", String.valueOf(gui.getMaxLine()) + 1);
                 }});
             }
 
@@ -215,21 +215,42 @@ public class NormalIconBuilder {
         // 结算后购物车被清空的情况下无法获取总价
         // 故需要提前缓存
         double totalPrice = profile.getCart().getTotalPrice();
-        SettlementResult result = profile.getCart().settle();
-        if (result != SettlementResult.SUCCESS) {
+        Map<String, SettlementResult> result = profile.getCart().settle();
+        // 根据结果集进行文字和音效提示
+        // 购物车为空
+        if (result.isEmpty()) {
             PlayerUtils.playSound(CartGUIConfig.getSoundRecord("settle-cart.failure"), player);
-            PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), result), player, new HashMap<>() {{
+            PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), SettlementResult.EMPTY), player, new HashMap<>() {{
                 put("mode", MessageConfig.getTerm(profile.getCart().getMode()));
-                if (profile.getCart().getMode() == OrderType.SELL_TO) {
-                    put("cost", MessageConfig.format_decimal.format(totalPrice));
-                } else {
-                    put("earn", MessageConfig.format_decimal.format(totalPrice));
-                }
             }});
-        } else {
+            return;
+        }
+        // 因各种原因失败的 ShopOrder
+        for (Map.Entry<String, SettlementResult> entry : result.entrySet()) {
+            String shopId = entry.getKey();
+            Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+            if (shop == null) {
+                continue;
+            }
+            SettlementResult settlementResult = entry.getValue();
+            if (settlementResult != SettlementResult.SUCCESS) {
+                // 仅提示错误
+                PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), settlementResult), player, new HashMap<>() {{
+                    put("shop-name", shop.getName());
+                    put("shop-id", shop.getId());
+                    put("mode", MessageConfig.getTerm(profile.getCart().getMode()));
+                    if (profile.getCart().getMode() == OrderType.SELL_TO) {
+                        put("cost", MessageConfig.format_decimal.format(totalPrice));
+                    } else {
+                        put("earn", MessageConfig.format_decimal.format(totalPrice));
+                    }
+                }});
+            }
+        }
+        // 全部成功
+        if (result.values().stream().allMatch(r -> r == SettlementResult.SUCCESS)) {
             PlayerUtils.playSound(CartGUIConfig.getSoundRecord("settle-cart.success"), player);
-            profile.getCartGUI().close();
-            PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), result), player, new HashMap<>() {{
+            PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), SettlementResult.SUCCESS), player, new HashMap<>() {{
                 put("mode", MessageConfig.getTerm(profile.getCart().getMode()));
                 if (profile.getCart().getMode() == OrderType.SELL_TO) {
                     put("cost", MessageConfig.format_decimal.format(totalPrice));
@@ -238,13 +259,29 @@ public class NormalIconBuilder {
                 }
             }});
         }
+        // 部分成功
+        else if (result.containsValue(SettlementResult.SUCCESS)) {
+            PlayerUtils.playSound(CartGUIConfig.getSoundRecord("settle-cart.success"), player);
+            PlayerUtils.sendMessage(MessageConfig.getCartSettleMessage(profile.getCart().getMode(), SettlementResult.PARTIAL_SUCCESS), player, new HashMap<>() {{
+                put("mode", MessageConfig.getTerm(profile.getCart().getMode()));
+                if (profile.getCart().getMode() == OrderType.SELL_TO) {
+                    put("cost", MessageConfig.format_decimal.format(totalPrice - profile.getCart().getTotalPrice()));
+                } else {
+                    put("earn", MessageConfig.format_decimal.format(totalPrice - profile.getCart().getTotalPrice()));
+                }
+            }});
+        }
+        // 失败音效
+        else {
+            PlayerUtils.playSound(CartGUIConfig.getSoundRecord("settle-cart.failure"), player);
+        }
+        profile.getCartGUI().loadContent(player);
     }
 
     private static void featuresLoadMoreLog(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         if (profile.getViewingGuiType() == GUIType.ORDER_HISTORY) {
-            OrderHistoryGUI orderHistoryGUI = (OrderHistoryGUI) profile.getOrderHistoryGUI();
-            orderHistoryGUI.loadMore();
+            profile.getOrderHistoryGUI().loadContent(player);
         }
     }
 
@@ -297,7 +334,9 @@ public class NormalIconBuilder {
     }
 
     private static void cleanCart(Player player) {
-        DailyShop.PROFILE_FACTORY.getProfile(player).getCart().clean();
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        profile.getCart().clean();
+        profile.getCartGUI().loadContent(player);
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_cleanCart_success, player, new HashMap<>() {{
             put("player-name", player.getDisplayName());
         }});
@@ -305,7 +344,9 @@ public class NormalIconBuilder {
     }
 
     private static void clearCart(Player player) {
-        DailyShop.PROFILE_FACTORY.getProfile(player).getCart().clear();
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        profile.getCart().clear();
+        profile.getCartGUI().loadContent(player);
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_clearCart_success, player, new HashMap<>() {{
             put("player-name", player.getDisplayName());
         }});

@@ -6,12 +6,10 @@ format:
   decimal: "#######.##"
   timer: "%02dh:%02dm:%02ds"
   date:
-    year: "年"
-    month: "月"
-    day: "日"
-    hour: "时"
-    minute: "分"
-    second: "秒"
+    # https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
+    pattern: "yyyy年MM月dd日 HH:mm:ss"
+    # https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html
+    locale: "zh_CN"
 
 terms:
   order-type:
@@ -110,25 +108,28 @@ messages:
       # 此块可以被商店配置覆盖
       settle-cart:
         sell-to:
-          success: "<gray>成功购入了购物车中的所有商品. 共花费 <white>{cost}<gray>."
+          success: "<gray>成功花费 <white>{cost}<gray> 购入了购物车中的所有商品."
+          partial-success: "<gray>成功花费 <white>{cost}<gray> 购入了购物车中的部分商品."
           failure:
-            empty: "<gray>你的购物车空空如也, 无需结算."
+            empty: "" # <gray>你的购物车中没有属于商店 <reset>{shop-name} <gray>的商品, 无需结算.
             not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
-            money: "<gray>你的余额不足以购买购物车中所有的商品."
-            inventory-space: "<gray>你的背包无法装下购物车中的所有商品."
-            player-stock: "<gray>你已经耗尽了购物车中的某件商品分配给你的个人库存, 尝试清理购物车."
-            global-stock: "<gray>购物车中的某件商品的库存不足, 尝试清理购物车."
+            money: "<gray>你的余额不足以购买购物车中属于商店 <reset>{shop-name} <gray>的所有商品."
+            inventory-space: "<gray>你的背包无法装下购物车中所有属于商店 <reset>{shop-name} <gray>的商品."
+            player-stock: "<gray>你已经耗尽了购物车中属于商店 <reset>{shop-name} <gray>的某件商品分配给你的个人库存, 尝试清理购物车."
+            global-stock: "<gray>你的购物车中属于商店 <reset>{shop-name} <gray>的某件商品的库存不足, 尝试清理购物车."
         buy-from:
-          success: "<gray>成功出售了购物车中列出的全部商品. 共赚得 <white>{earn}<gray>."
+          success: "<gray>成功出售了购物车中列出的的全部商品. 共赚得 <white>{earn}<gray>."
+          partial-success: "<gray>成功出售了购物车中列出的的部分商品. 共赚得 <white>{earn}<gray>."
           failure:
-            empty: "<gray>你的购物车空空如也, 无需结算."
-            not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
+            empty: "" # <gray>你的购物车中没有属于商店 <reset>{shop-name} <gray>的商品, 无需结算.
+            not-listed: "<gray>你的购物车中有当前未上架的属于商店 <reset>{shop-name} <gray>商品, 尝试清理购物车."
             product: "<gray>你的背包中没有足够的商品物品可供出售."
         buy-all-from:
-          success: "<gray>成功出售了背包中全部的购物车中列出的商品类型. 共赚得 <white>{earn}<gray>"
+          success: "<gray>成功出售了背包中有的全部购物车中列出的的全部商品. 共赚得 <white>{earn}<gray>."
+          partial-success: "<gray>成功出售了背包中有的全部购物车中列出的的部分商品. 共赚得 <white>{earn}<gray>."
           failure:
-            empty: "<gray>你的购物车空空如也, 无需结算."
-            not-listed: "<gray>你的购物车中有当前未上架的商品, 尝试清理购物车."
+            empty: "" # <gray>你的购物车中没有属于商店 <reset>{shop-name} <gray>的商品, 无需结算.
+            not-listed: "<gray>你的购物车中有当前未上架的属于商店 <reset>{shop-name} <gray>商品, 尝试清理购物车."
             product: "<gray>你的背包中没有足够的商品物品可供出售."
       # 切换购物车的模式
       switch-cart-mode:
@@ -140,4 +141,5 @@ messages:
       clear-cart:
         success: "<gray>成功清空了购物车."
 
+# 不要更改此处
 version: 1

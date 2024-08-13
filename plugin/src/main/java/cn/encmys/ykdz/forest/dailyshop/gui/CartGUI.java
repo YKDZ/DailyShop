@@ -2,7 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
@@ -15,6 +15,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
@@ -23,10 +24,12 @@ import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CartGUI extends PlayerRelatedGUI {
     private final CartGUIRecord guiRecord;
+    private ScrollGui<Item> gui;
 
     public CartGUI(Player player, CartGUIRecord guiRecord) {
         super(player);
@@ -35,6 +38,8 @@ public class CartGUI extends PlayerRelatedGUI {
 
     @Override
     public void open() {
+        loadContent(player);
+
         Window window = Window.single()
                 .setGui(buildGUI(player))
                 .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
@@ -54,8 +59,10 @@ public class CartGUI extends PlayerRelatedGUI {
 
     @Override
     public Gui buildGUI(Player player) {
-        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        Map<String, ShopOrder> cart = profile.getCart().getOrders();
+        if (gui != null) {
+            gui.setCurrentLine(0);
+            return gui;
+        }
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
@@ -73,20 +80,10 @@ public class CartGUI extends PlayerRelatedGUI {
             }
         }
 
-        // 商品图标
-        for (Map.Entry<String, ShopOrder> entry : cart.entrySet()) {
-            Shop shop = DailyShop.SHOP_FACTORY.getShop(entry.getKey());
-            if (shop == null) {
-                continue;
-            }
-            ShopOrder cartOrder = entry.getValue();
-            for (String productId : cartOrder.getOrderedProducts().keySet()) {
-                Item content = OrderUtils.toCartGUIItem(shop, cartOrder, productId);
-                guiBuilder.addContent(content);
-            }
-        }
+        ScrollGui<Item> gui = guiBuilder.build();
+        this.gui = gui;
 
-        return guiBuilder.build();
+        return gui;
     }
 
     @Override
@@ -96,6 +93,32 @@ public class CartGUI extends PlayerRelatedGUI {
             LogUtils.warn("Icon cart.icons." + record + " in cart gui has invalid base setting. Please check it.");
             return null;
         }
-        return NormalIconBuilder.build(decorator, null, player);
+        return NormalIconBuilder.build(decorator, null, this, player);
+    }
+
+    @Override
+    public void loadContent(@Nullable Player player) {
+        DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
+                DailyShop.INSTANCE,
+                () -> {
+                    Profile profile = DailyShop.PROFILE_FACTORY.getProfile(this.player);
+                    Map<String, ShopOrder> cart = profile.getCart().getOrders();
+                    List<Item> contents = new ArrayList<>();
+
+                    for (Map.Entry<String, ShopOrder> entry : cart.entrySet()) {
+                        Shop shop = DailyShop.SHOP_FACTORY.getShop(entry.getKey());
+                        if (shop == null) {
+                            continue;
+                        }
+                        ShopOrder cartOrder = entry.getValue();
+                        for (String productId : cartOrder.getOrderedProducts().keySet()) {
+                            Item content = OrderUtils.toCartGUIItem(shop, cartOrder, productId);
+                            contents.add(content);
+                        }
+                    }
+
+                    gui.setContent(contents);
+                }
+        );
     }
 }

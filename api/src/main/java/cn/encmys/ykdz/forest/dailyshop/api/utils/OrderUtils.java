@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
@@ -64,6 +65,7 @@ public class OrderUtils {
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+                Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
                 if (iconRecord.featuresAdd1Stack() == clickType) {
                     cartOrder.modifyStack(product, 1);
                 }
@@ -76,6 +78,7 @@ public class OrderUtils {
                 if (iconRecord.featuresInputInAnvil() == clickType) {
                     DailyShop.PROFILE_FACTORY.getProfile(player).pickProductStack(shop, productId);
                 }
+                profile.getCartGUI().loadContent(player);
                 notifyWindows();
             }
         };

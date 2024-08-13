@@ -10,9 +10,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProfileFactoryImpl implements ProfileFactory {
-    private final static Map<UUID, Profile> profiles = new HashMap<>();
+    private final static Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
+    ;
 
     @Override
     public Profile buildProfile(Player player) {
@@ -33,6 +35,14 @@ public class ProfileFactoryImpl implements ProfileFactory {
     @Override
     public Map<UUID, Profile> getProfiles() {
         return Collections.unmodifiableMap(profiles);
+    }
+
+    @Override
+    public void removeProfile(Player player) {
+        if (player.isOnline()) {
+            return;
+        }
+        profiles.remove(player.getUniqueId());
     }
 
     @Override

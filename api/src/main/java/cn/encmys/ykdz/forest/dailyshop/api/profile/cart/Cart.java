@@ -19,7 +19,7 @@ public interface Cart {
 
     UUID getOwnerUUID();
 
-    SettlementResult settle();
+    Map<String, SettlementResult> settle();
 
     void clear();
 

@@ -3,7 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.item.builder;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ProductIconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ProductIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
@@ -29,10 +29,13 @@ import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductIconBuilder {
-    public static Item build(@NotNull BaseItemDecorator decorator, Player player, @NotNull String shopId, @NotNull Product product) {
+    public static Item build(@NotNull BaseItemDecorator decorator, @NotNull Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
         ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
         AbstractIcon icon = new AbstractIcon() {
@@ -47,16 +50,19 @@ public class ProductIconBuilder {
                 // 处理捆绑包商品的列表 lore
                 List<String> bundleContentsLore = new ArrayList<>();
                 if (product instanceof BundleProduct) {
-                    Set<String> bundleContents = ((BundleProduct) product).getBundleContents().keySet();
+                    Map<String, Integer> bundleContents = ((BundleProduct) product).getBundleContents();
                     if (!bundleContents.isEmpty()) {
-                        for (String contentId : bundleContents) {
-                            Product content = productFactory.getProduct(contentId);
+                        for (Map.Entry<String, Integer> entry : bundleContents.entrySet()) {
+                            Product content = productFactory.getProduct(entry.getKey());
+                            int stack = entry.getValue();
                             if (content == null) {
                                 continue;
                             }
                             bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(record.formatBundleContentsLine(), null, new HashMap<>() {{
                                 put("name", content.getIconDecorator().getName());
                                 put("amount", String.valueOf(content.getItemDecorator() != null ? content.getItemDecorator().getAmount() : content.getIconDecorator().getAmount()));
+                                put("stack", String.valueOf(stack));
+                                put("total-amount", String.valueOf(stack * (content.getItemDecorator() != null ? content.getItemDecorator().getAmount() : content.getIconDecorator().getAmount())));
                             }}));
                         }
                     }
@@ -67,11 +73,11 @@ public class ProductIconBuilder {
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", decorator.getName());
                     put("amount", String.valueOf(decorator.getAmount()));
-                    put("buy-price", shopPricer.getBuyPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
-                    put("sell-price", shopPricer.getSellPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())) : ShopConfig.getDisabledPrice(shopId));
+                    put("buy-price", shopPricer.getBuyPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getBuyPrice(product.getId())) : record.miscDisabledPrice());
+                    put("sell-price", shopPricer.getSellPrice(product.getId()) != -1d ? MessageConfig.format_decimal.format(shopPricer.getSellPrice(product.getId())) : record.miscDisabledPrice());
                     put("current-global-stock", String.valueOf(product.getProductStock().getCurrentGlobalAmount()));
                     put("initial-global-stock", String.valueOf(product.getProductStock().getInitialGlobalAmount()));
-                    put("current-player-stock", String.valueOf(player == null ? -1 : product.getProductStock().getCurrentPlayerAmount(player.getUniqueId())));
+                    put("current-player-stock", String.valueOf(product.getProductStock().getCurrentPlayerAmount(player.getUniqueId())));
                     put("initial-player-stock", String.valueOf(product.getProductStock().getInitialPlayerAmount()));
                     put("rarity", product.getRarity().name());
                 }};

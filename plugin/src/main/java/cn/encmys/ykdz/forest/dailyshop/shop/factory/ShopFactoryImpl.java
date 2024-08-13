@@ -60,12 +60,8 @@ public class ShopFactoryImpl implements ShopFactory {
 
         Shop shop = new ShopImpl(
                 id,
-                ShopConfig.getName(id),
-                ShopConfig.getRestockEnabled(id),
-                ShopConfig.getRestockPeriod(id),
-                products,
-                ShopConfig.getSize(id),
-                ShopConfig.getMerchant(id)
+                ShopConfig.getShopSettingsRecord(id),
+                products
         );
 
         // 从数据库加载一系列商店数据

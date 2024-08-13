@@ -1,6 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Marker;
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -159,5 +160,15 @@ public class ConfigUtils {
 
     public static int getLastLineMarkerAmount(List<String> layout, char markerIdentifier, Marker marker) {
         return 0;
+    }
+
+    public static Locale getLocale(String locale) {
+        String[] parts = locale.split("_", -1);
+        return switch (parts.length) {
+            case 1 -> new Locale(parts[0]);  // 仅语言代码
+            case 2 -> new Locale(parts[0], parts[1]);  // 语言代码 + 国家代码
+            case 3 -> new Locale(parts[0], parts[1], parts[2]);  // 语言代码 + 国家代码 + 变体
+            default -> throw new IllegalArgumentException("Invalid locale format: " + locale);
+        };
     }
 }

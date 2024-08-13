@@ -1,7 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
@@ -29,4 +30,6 @@ public abstract class GUI {
     public Map<UUID, Window> getWindows() {
         return windows;
     }
+
+    public abstract void loadContent(@Nullable Player player);
 }
