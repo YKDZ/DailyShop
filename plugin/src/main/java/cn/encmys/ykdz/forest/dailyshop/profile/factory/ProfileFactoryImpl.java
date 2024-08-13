@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ProfileFactoryImpl implements ProfileFactory {
     private final static Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
-    ;
 
     @Override
     public Profile buildProfile(Player player) {

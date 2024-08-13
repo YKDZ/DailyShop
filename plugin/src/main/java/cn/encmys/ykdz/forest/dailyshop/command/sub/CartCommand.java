@@ -29,13 +29,14 @@ public class CartCommand {
                 .executes((sender, args) -> {
                     Player player = (Player) args.get("player");
                     if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_cart_failure_invalidPlayer, player, new HashMap<>() {{
-
-                        }}));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_cart_open_failure_invalidPlayer, null, new HashMap<>()));
                         return;
                     }
                     Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
                     profile.getCartGUI().open();
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_cart_open_success, null, new HashMap<>() {{
+                        put("player-name", player.getName());
+                    }}));
                 });
     }
 }

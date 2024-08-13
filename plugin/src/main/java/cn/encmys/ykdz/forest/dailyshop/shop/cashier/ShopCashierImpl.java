@@ -86,13 +86,11 @@ public class ShopCashierImpl implements ShopCashier {
         Bukkit.getPluginManager().callEvent(shopSettleEvent);
         // Event
 
-        SettlementResult result = switch (order.getOrderType()) {
+        return switch (order.getOrderType()) {
             case BUY_FROM -> buyFrom(order);
             case BUY_ALL_FROM -> buyAllFrom(order);
             case SELL_TO -> sellTo(order);
         };
-
-        return result;
     }
 
     private SettlementResult sellTo(@NotNull ShopOrder order) {

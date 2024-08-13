@@ -69,10 +69,10 @@ public final class DailyShopImpl extends DailyShop {
             return;
         }
 
-        new PlaceholderAPIHook();
-        new MMOItemsHook();
-        new ItemsAdderHook();
-        new MythicMobsHook();
+        PlaceholderAPIHook.load();
+        MMOItemsHook.load();
+        ItemsAdderHook.load();
+        MythicMobsHook.load();
 
         Config.load();
         MinecraftLangConfig.load();

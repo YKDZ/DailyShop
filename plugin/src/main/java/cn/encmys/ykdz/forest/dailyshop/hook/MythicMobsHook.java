@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 public class MythicMobsHook {
 
-    public MythicMobsHook() {
+    public static void load() {
         if (isHooked()) {
             LogUtils.info("Hooked into MythicMobs.");
         }

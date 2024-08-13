@@ -18,25 +18,31 @@ public class MythicMobsItem implements BaseItem {
 
     @Override
     public String getDisplayName() {
-        ItemManager itemManager = MythicBukkit.inst().getItemManager();
-        for (MythicItem item : itemManager.getItems()) {
-            if (item.getInternalName().equals(getId())) {
-                return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(item.getDisplayName());
+        try (MythicBukkit mythicBukkit = MythicBukkit.inst()) {
+            ItemManager itemManager = mythicBukkit.getItemManager();
+            for (MythicItem item : itemManager.getItems()) {
+                if (item.getInternalName().equals(getId())) {
+                    return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(item.getDisplayName());
+                }
             }
+            return null;
         }
-        return null;
     }
 
     @Override
     public boolean isSimilar(ItemStack item) {
-        ItemManager itemManager = MythicBukkit.inst().getItemManager();
-        return itemManager.isMythicItem(item) && itemManager.getMythicTypeFromItem(item).equals(getId());
+        try (MythicBukkit mythicBukkit = MythicBukkit.inst()) {
+            ItemManager itemManager = mythicBukkit.getItemManager();
+            return itemManager.isMythicItem(item) && itemManager.getMythicTypeFromItem(item).equals(getId());
+        }
     }
 
     @Override
     public boolean isExist() {
-        ItemManager itemManager = MythicBukkit.inst().getItemManager();
-        return itemManager.getItem(id).isPresent();
+        try (MythicBukkit mythicBukkit = MythicBukkit.inst()) {
+            ItemManager itemManager = mythicBukkit.getItemManager();
+            return itemManager.getItem(id).isPresent();
+        }
     }
 
     @Override
@@ -46,7 +52,9 @@ public class MythicMobsItem implements BaseItem {
 
     @Override
     public ItemStack build(Player player) {
-        return MythicBukkit.inst().getItemManager().getItemStack(id);
+        try (MythicBukkit mythicBukkit = MythicBukkit.inst()) {
+            return mythicBukkit.getItemManager().getItemStack(id);
+        }
     }
 
     public String getId() {

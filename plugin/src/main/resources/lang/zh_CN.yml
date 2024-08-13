@@ -41,18 +41,13 @@ messages:
         failure:
           invalid-shop: "<red>商店 {shop-name} <red>不存在!"
           invalid-player: "<red>指定的玩家不存在!"
-      history:
-        success: "" # <gray>成功进入商店 <reset>{shop-name}<gray>!
-        failure:
-          invalid-shop: "<red>商店 {shop-name} <red>不存在!"
-          invalid-player: "<red>指定的玩家不存在!"
       restock:
-        success: "<green>成功手动刷新了商店 {shop-name}<green>!"
+        success: "<gray>成功手动刷新了商店 {shop-name}<gray>!"
         failure:
           invalid-shop: "<red>商店 {shop-id} <red>不存在!"
       cache:
         clear:
-          success: "<green>成功清除商店 {shop-name} 中的所有内部缓存（商品物品、商店 GUI 等）!"
+          success: "<gray>成功清除商店 <white>{shop-id} 中的所有内部缓存（商品物品、商店 GUI 等）!"
           failure:
             invalid-shop: "<red>商店 {shop-id} <red>不存在!"
     product:
@@ -60,6 +55,21 @@ messages:
         success: "<green>成功在你手中的物品中获取了 <gold>{keys} <green>配置键! 检查控制台以获取更多信息."
         failure:
           null-meta: "<red>无法在你手中的物品中获取任何配置键."
+    cart:
+      open:
+        success: "<gray>成功打开了玩家 <reset>{player-name} <gray>的购物车."
+        failure:
+          invalid-player: "<red>指定的玩家不存在!"
+    order-history:
+      open:
+        success: "" # <gray>成功打开玩家 <reset>{player-name} <gray>的购物历史!
+        failure:
+          invalid-player: "<red>指定的玩家不存在!"
+    switch-shopping-mode:
+      success: "<gray>成功将玩家 <white>{player} <gray>在商店 <reset>{shop-name} <gray>的购物模式切换为 <white>{mode}<gray>."
+      failure:
+        invalid-shop: "<red>商店 <white>{shop-id} <red>不存在!"
+        invalid-player: "<red>指定的玩家不存在!"
   action:
     # 此块可以被商店配置覆盖
     shop:
@@ -142,4 +152,4 @@ messages:
         success: "<gray>成功清空了购物车."
 
 # 不要更改此处
-version: 1
+version: 2

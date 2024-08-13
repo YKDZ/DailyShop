@@ -9,8 +9,6 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class OrderHistoryCommand {
     public static OrderHistoryCommand INSTANCE = new OrderHistoryCommand();
@@ -32,12 +30,13 @@ public class OrderHistoryCommand {
                 .executes((sender, args) -> {
                     Player player = (Player) args.get("player");
                     if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_cart_failure_invalidPlayer, player, new HashMap<>() {{
-
-                        }}));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_orderHistory_open_failure_invalidPlayer, null, new HashMap<>()));
                         return;
                     }
                     DailyShop.PROFILE_FACTORY.getProfile(player).getOrderHistoryGUI().open();
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_orderHistory_open_success, player, new HashMap<>() {{
+                        put("player-name", player.getName());
+                    }}));
                 });
     }
 
@@ -49,29 +48,6 @@ public class OrderHistoryCommand {
                         new IntegerArgument("day")
                 )
                 .executes((sender, args) -> {
-                    UUID targetUUID = null;
-                    int day;
-                    Player player = (Player) args.get("player");
-                    if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_cart_failure_invalidPlayer, player, new HashMap<>() {{
-
-                        }}));
-                        return;
-                    }
-                    targetUUID = player.getUniqueId();
-                    if (args.get("day") != null) {
-                        day = Integer.parseInt(args.get("day").toString());
-                    } else {
-                        day = Integer.MAX_VALUE;
-                    }
-                    UUID finalTargetUUID = targetUUID;
-                    DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(DailyShop.INSTANCE, () -> {
-                        try {
-                            int amount = DailyShop.DATABASE.cleanLogs(finalTargetUUID, day).get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
                 });
     }
 }

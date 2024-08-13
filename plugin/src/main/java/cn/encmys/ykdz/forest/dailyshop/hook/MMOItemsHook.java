@@ -4,7 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import org.bukkit.Bukkit;
 
 public class MMOItemsHook {
-    public MMOItemsHook() {
+    public static void load() {
         if (isHooked()) {
             LogUtils.info("Hooked into MMOItems.");
         }

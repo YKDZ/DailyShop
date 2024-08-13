@@ -45,7 +45,6 @@ public class SQLiteDatabase implements Database {
         File dbFile = new File(path);
 
         if (!dbFile.exists()) {
-            dbFile.getParentFile().mkdirs();
             DailyShop.INSTANCE.saveResource("data/database.db", false);
         }
 
@@ -301,7 +300,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogUtils.error("Error when querying logs: " + e.getMessage());
             }
             return logs;
         });
@@ -366,7 +365,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogUtils.error("Error when querying logs: " + e.getMessage());
             }
             return logs;
         });
@@ -382,7 +381,7 @@ public class SQLiteDatabase implements Database {
                 stmt.setString(1, customerUUID.toString());
                 return stmt.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+                LogUtils.error("Error when cleaning logs: " + e.getMessage());
             }
             return 0;
         });

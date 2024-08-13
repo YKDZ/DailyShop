@@ -62,7 +62,6 @@ public class StackPickerGUI extends PlayerRelatedGUI {
 
     @Override
     public void loadContent(@Nullable Player player) {
-        return;
     }
 
     @Override

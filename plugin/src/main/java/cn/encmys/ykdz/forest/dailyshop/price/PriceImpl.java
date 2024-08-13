@@ -13,24 +13,6 @@ public class PriceImpl extends Price {
         buildPrice(priceSection);
     }
 
-    public PriceImpl(double fixed) {
-        this.fixed = fixed;
-        this.priceMode = PriceMode.FIXED;
-    }
-
-    public PriceImpl(double mean, double dev, boolean round) {
-        this.mean = mean;
-        this.dev = dev;
-        this.round = round;
-        priceMode = PriceMode.GAUSSIAN;
-    }
-
-    public PriceImpl(double min, double max) {
-        this.min = min;
-        this.max = max;
-        priceMode = PriceMode.MINMAX;
-    }
-
     @Override
     protected void buildPrice(@NotNull ConfigurationSection priceSection) {
         if (priceSection.contains("fixed")) {

@@ -41,18 +41,13 @@ messages:
         failure:
           invalid-shop: "<red>Shop <reset>{shop-name} <red>do not exist!"
           invalid-player: "<red>Player invalid!"
-      history:
-        success: "" # <gray>Successfully opened order history!
-        failure:
-          invalid-shop: "<red>Shop <reset>{shop-name} <red>do not exist!"
-          invalid-player: "<red>Player invalid!"
       restock:
-        success: "<green>Successfully restocked shop <reset>{shop-name} <green>manually!"
+        success: "<gray>Successfully restocked shop <reset>{shop-name} <gray>manually!"
         failure:
           invalid-shop: "<red>Shop {shop-id} <red>do not exist!"
       cache:
         clear:
-          success: "<green>Successfully cleared all internal cache of shop <reset>{shop-name}<green>!"
+          success: "<gray>Successfully cleared all internal cache of shop <reset>{shop-name}<gray>!"
           failure:
             invalid-shop: "<red>Shop {shop-id} <red>do not exist!"
     product:
@@ -60,6 +55,21 @@ messages:
         success: "<green>Successfully generated config value of key <gold>{keys}<green> for item in your hand! Check console to get more information."
         failure:
           null-meta: "<red>Can not get any config key from item in your hand!"
+    cart:
+      open:
+        success: "<gray>Successfully opened shopping cart for player <reset>{player-name}<gray>."
+        failure:
+          invalid-player: "<red>Player invalid!"
+    order-history:
+      open:
+        success: "" # <gray>Successfully opened order history for player <reset>{player-name}<gray>!
+        failure:
+          invalid-player: "<red>Player invalid!"
+    switch-shopping-mode:
+      success: "<gray>Successfully switched shopping mode of player <white>{player} <gray>in shop <white>{shop-name} <gray>to <white>{mode}<gray>."
+      failure:
+        invalid-shop: "<red>Shop {shop-id} <red>do not exist!"
+        invalid-player: "<red>Player invalid!"
   action:
     # This section can be overridden by same section in shop config
     shop:
@@ -142,4 +152,4 @@ messages:
         success: "<gray>Successfully cleared the cart."
 
 # Do not change this
-version: 1
+version: 2

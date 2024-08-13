@@ -147,10 +147,15 @@ public class ProductCommand {
                         }
                     }
                     // MythicMobs
-                    else if (MythicMobsHook.isHooked() && MythicBukkit.inst().getItemManager().isMythicItem(item)) {
-                        String id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-                        vars.put("keys", "base, amount");
-                        keyValue.add("<#C28456>base: <#346659>MM:" + id);
+                    else if (MythicMobsHook.isHooked()) {
+                        try (MythicBukkit mythicBukkit = MythicBukkit.inst()) {
+                            if (!mythicBukkit.getItemManager().isMythicItem(item)) {
+                                return;
+                            }
+                            String id = mythicBukkit.getItemManager().getMythicTypeFromItem(item);
+                            vars.put("keys", "base, amount");
+                            keyValue.add("<#C28456>base: <#346659>MM:" + id);
+                        }
                     }
                     // 原版物品
                     else {
