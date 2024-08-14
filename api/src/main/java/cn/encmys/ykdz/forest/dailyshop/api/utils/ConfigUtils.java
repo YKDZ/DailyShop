@@ -181,7 +181,6 @@ public class ConfigUtils {
 
     public static YamlConfiguration loadYamlFromResource(String path) {
         InputStream inputStream = DailyShop.INSTANCE.getResource(path);
-        ;
         if (inputStream == null) {
             throw new IllegalArgumentException("Resource not found: " + path);
         }
