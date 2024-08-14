@@ -21,7 +21,9 @@ public class MessageConfig {
     public static DecimalFormat format_decimal;
     public static String format_timer;
     public static SimpleDateFormat format_date;
+    //
     public static String placeholderAPI_cartTotalPrice_notSellToMode;
+    //
     public static String messages_prefix;
     public static String messages_noPermission;
     public static String messages_command_reload_success;
@@ -37,11 +39,12 @@ public class MessageConfig {
     public static String messages_command_shop_cache_clear_failure_invalidShop;
     public static String messages_command_cart_open_success;
     public static String messages_command_cart_open_failure_invalidPlayer;
-    public static String messages_command_orderHistory_open_success;
-    public static String messages_command_orderHistory_open_failure_invalidPlayer;
+    public static String messages_command_history_open_success;
+    public static String messages_command_history_open_failure_invalidPlayer;
     public static String messages_command_shop_misc_switchShoppingMode_success;
     public static String messages_command_shop_misc_switchShoppingMode_failure_invalidPlayer;
     public static String messages_command_shop_misc_switchShoppingMode_failure_invalidShop;
+    //
     public static String messages_action_cart_openCart_success;
     public static String messages_action_cart_switchCartMode_success;
     public static String messages_action_cart_cleanCart_success;
@@ -58,21 +61,11 @@ public class MessageConfig {
 
         try {
             config.load(file);
-            merge();
+            config = ConfigUtils.merge(config, resourcePath, path);
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
-            LogUtils.error("Error when load message config: " + error.getMessage());
+            LogUtils.error("Error loading message config: " + error.getMessage());
         }
-    }
-
-    private static void merge() throws IOException {
-        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
-        if (newConfig.getInt("version") != config.getInt("version")) {
-            ConfigUtils.mergeConfig(config, newConfig);
-        }
-        config = newConfig;
-        config.save(path);
-        LogUtils.info("Successfully merged " + resourcePath + " to new version.");
     }
 
     private static void setUp() {
@@ -89,8 +82,8 @@ public class MessageConfig {
         messages_command_shop_open_success = getMessage("messages.command.shop.open.success");
         messages_command_shop_open_failure_invalidShop = getMessage("messages.command.shop.open.failure.invalid-shop");
         messages_command_shop_open_failure_invalidPlayer = getMessage("messages.command.shop.open.failure.invalid-player");
-        messages_command_orderHistory_open_success = getMessage("messages.command.order-history.open.success");
-        messages_command_orderHistory_open_failure_invalidPlayer = getMessage("messages.command.order-history.open.failure.invalid-player");
+        messages_command_history_open_success = getMessage("messages.command.history.open.success");
+        messages_command_history_open_failure_invalidPlayer = getMessage("messages.command.history.open.failure.invalid-player");
         messages_command_cart_open_success = getMessage("messages.command.cart.open.success");
         messages_command_cart_open_failure_invalidPlayer = getMessage("messages.command.cart.open.failure.invalid-player");
         messages_command_shop_restock_success = getMessage("messages.command.shop.restock.success");

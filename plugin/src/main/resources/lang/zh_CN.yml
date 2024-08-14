@@ -60,7 +60,7 @@ messages:
         success: "<gray>成功打开了玩家 <reset>{player-name} <gray>的购物车."
         failure:
           invalid-player: "<red>指定的玩家不存在!"
-    order-history:
+    history:
       open:
         success: "" # <gray>成功打开玩家 <reset>{player-name} <gray>的购物历史!
         failure:
@@ -152,4 +152,4 @@ messages:
         success: "<gray>成功清空了购物车."
 
 # 不要更改此处
-version: 2
+version: 3

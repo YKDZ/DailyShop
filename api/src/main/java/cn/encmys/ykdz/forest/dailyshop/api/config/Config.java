@@ -42,21 +42,11 @@ public class Config {
 
         try {
             config.load(file);
-            merge();
+            config = ConfigUtils.merge(config, resourcePath, path);
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
-            error.printStackTrace();
+            LogUtils.error("Error loading config file: " + error.getMessage());
         }
-    }
-
-    private static void merge() throws IOException {
-        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
-        if (newConfig.getInt("version") != config.getInt("version")) {
-            ConfigUtils.mergeConfig(config, newConfig);
-        }
-        config = newConfig;
-        config.save(path);
-        LogUtils.info("Successfully merged " + resourcePath + " to new version.");
     }
 
     private static void setUp() {

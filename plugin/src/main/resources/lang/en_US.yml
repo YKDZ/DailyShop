@@ -60,7 +60,7 @@ messages:
         success: "<gray>Successfully opened shopping cart for player <reset>{player-name}<gray>."
         failure:
           invalid-player: "<red>Player invalid!"
-    order-history:
+    history:
       open:
         success: "" # <gray>Successfully opened order history for player <reset>{player-name}<gray>!
         failure:
@@ -152,4 +152,4 @@ messages:
         success: "<gray>Successfully cleared the cart."
 
 # Do not change this
-version: 2
+version: 3

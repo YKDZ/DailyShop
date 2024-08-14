@@ -30,11 +30,11 @@ public class OrderHistoryCommand {
                 .executes((sender, args) -> {
                     Player player = (Player) args.get("player");
                     if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_orderHistory_open_failure_invalidPlayer, null, new HashMap<>()));
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_history_open_failure_invalidPlayer, null, new HashMap<>()));
                         return;
                     }
                     DailyShop.PROFILE_FACTORY.getProfile(player).getOrderHistoryGUI().open();
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_orderHistory_open_success, player, new HashMap<>() {{
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_history_open_success, player, new HashMap<>() {{
                         put("player-name", player.getName());
                     }}));
                 });

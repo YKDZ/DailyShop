@@ -3,14 +3,15 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Marker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,17 +179,6 @@ public class ConfigUtils {
         };
     }
 
-    public static void mergeConfig(YamlConfiguration oldConfig, YamlConfiguration newConfig) {
-        for (String key : oldConfig.getKeys(true)) {
-            if (key.equals("version")) {
-                continue;
-            }
-            if (newConfig.contains(key) && !(newConfig.get(key) instanceof ConfigurationSection)) {
-                newConfig.set(key, oldConfig.get(key));
-            }
-        }
-    }
-
     public static YamlConfiguration loadYamlFromResource(String path) {
         InputStream inputStream = DailyShop.INSTANCE.getResource(path);
         ;
@@ -198,10 +188,26 @@ public class ConfigUtils {
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace(); // 处理编码异常
-        } catch (Exception e) {
-            e.printStackTrace(); // 处理其它异常
+        } catch (IOException | InvalidConfigurationException e) {
+            LogUtils.error("Error when load yaml from resource: " + e.getMessage());
+        }
+        return config;
+    }
+
+    public static YamlConfiguration merge(YamlConfiguration config, String resourcePath, String path) throws IOException {
+        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
+        if (newConfig.getInt("version") != config.getInt("version")) {
+            for (String key : config.getKeys(true)) {
+                if (key.equals("version")) {
+                    continue;
+                }
+                if (newConfig.contains(key) && !(newConfig.get(key) instanceof ConfigurationSection)) {
+                    newConfig.set(key, config.get(key));
+                }
+            }
+            newConfig.save(path);
+            LogUtils.info("Successfully merged " + resourcePath + " to new version.");
+            return newConfig;
         }
         return config;
     }
