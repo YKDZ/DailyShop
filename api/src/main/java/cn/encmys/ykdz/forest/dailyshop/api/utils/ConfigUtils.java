@@ -205,7 +205,7 @@ public class ConfigUtils {
                 }
             }
             newConfig.save(path);
-            LogUtils.info("Successfully merged " + resourcePath + " to new version.");
+            LogUtils.info("Successfully merged " + resourcePath + " from version " + config.getInt("version") + " to version " + newConfig.getInt("version") + ".");
             return newConfig;
         }
         return config;

@@ -2,6 +2,7 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -28,7 +29,6 @@ public class SkullUtils {
         } catch (IllegalArgumentException ignored) {
             if (url.length() >= 16) {
                 url = url.toLowerCase();
-                url = url.replace("http://textures.minecraft.net/texture/", "");
                 url = url.replace("https://textures.minecraft.net/texture/", "");
 
                 ItemStack item = new ItemStack(Material.PLAYER_HEAD);
@@ -43,7 +43,7 @@ public class SkullUtils {
                 PlayerTextures pt = pp.getTextures();
 
                 try {
-                    pt.setSkin(new URL("http://textures.minecraft.net/texture/" + url));
+                    pt.setSkin(new URL("https://textures.minecraft.net/texture/" + url));
                 } catch (MalformedURLException e) {
                     LogUtils.error(e.getMessage());
                 }
@@ -61,7 +61,13 @@ public class SkullUtils {
                     return item;
                 }
 
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(Bukkit.getPlayer(url).getUniqueId()));
+                Player player = Bukkit.getPlayer(url);
+
+                if (player == null) {
+                    return item;
+                }
+
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()));
                 item.setItemMeta(meta);
                 return item;
             }
