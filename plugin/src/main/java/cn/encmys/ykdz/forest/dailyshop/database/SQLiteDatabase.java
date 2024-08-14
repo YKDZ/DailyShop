@@ -111,7 +111,7 @@ public class SQLiteDatabase implements Database {
             stmt.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            LogUtils.error("Error saving profile data: " + e.getMessage());
+            LogUtils.error(e.getMessage());
         }
     }
 
@@ -152,7 +152,7 @@ public class SQLiteDatabase implements Database {
             stmt.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            LogUtils.error("Error saving product data: " + e.getMessage());
+            LogUtils.error(e.getMessage());
         }
     }
 
@@ -192,7 +192,7 @@ public class SQLiteDatabase implements Database {
             stmt.executeBatch();
             conn.commit();
         } catch (SQLException e) {
-            LogUtils.error("Error saving shop data: " + e.getMessage());
+            LogUtils.error(e.getMessage());
         }
     }
 
@@ -300,7 +300,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                LogUtils.error("Error when querying logs: " + e.getMessage());
+                LogUtils.error(e.getMessage());
             }
             return logs;
         });
@@ -365,7 +365,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                LogUtils.error("Error when querying logs: " + e.getMessage());
+                LogUtils.error(e.getMessage());
             }
             return logs;
         });
@@ -381,7 +381,7 @@ public class SQLiteDatabase implements Database {
                 stmt.setString(1, customerUUID.toString());
                 return stmt.executeUpdate();
             } catch (SQLException e) {
-                LogUtils.error("Error when cleaning logs: " + e.getMessage());
+                LogUtils.error(e.getMessage());
             }
             return 0;
         });
@@ -400,7 +400,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                LogUtils.error("Error counting logs: " + e.getMessage());
+                LogUtils.error(e.getMessage());
             }
             return 0;
         });

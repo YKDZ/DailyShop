@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.StackPickerGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.RecordUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -27,7 +28,7 @@ public class StackPickerGUIConfig {
         try {
             stackPickerGUIConfig.load(file);
         } catch (IOException | InvalidConfigurationException error) {
-            error.printStackTrace();
+            LogUtils.error(error.getMessage());
         }
     }
 

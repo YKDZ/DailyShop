@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.HistoryIconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.RecordUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -29,7 +30,7 @@ public class OrderHistoryGUIConfig {
         try {
             orderHistoryGUIConfig.load(file);
         } catch (IOException | InvalidConfigurationException error) {
-            error.printStackTrace();
+            LogUtils.error(error.getMessage());
         }
     }
 

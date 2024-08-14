@@ -45,7 +45,7 @@ public class Config {
             config = ConfigUtils.merge(config, resourcePath, path);
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
-            LogUtils.error("Error loading config file: " + error.getMessage());
+            LogUtils.error(error.getMessage());
         }
     }
 

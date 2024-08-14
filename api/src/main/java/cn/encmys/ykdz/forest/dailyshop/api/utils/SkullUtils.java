@@ -45,7 +45,7 @@ public class SkullUtils {
                 try {
                     pt.setSkin(new URL("http://textures.minecraft.net/texture/" + url));
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    LogUtils.error(e.getMessage());
                 }
 
                 pp.setTextures(pt);

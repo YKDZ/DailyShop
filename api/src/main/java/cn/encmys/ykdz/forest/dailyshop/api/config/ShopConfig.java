@@ -6,10 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopSettingsRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.record.MerchantRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.RecordUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,7 +41,7 @@ public class ShopConfig {
                         config.load(file);
                         configs.put(file.getName().replace(".yml", ""), config);
                     } catch (IOException | InvalidConfigurationException error) {
-                        error.printStackTrace();
+                        LogUtils.error(error.getMessage());
                     }
                 }
             }

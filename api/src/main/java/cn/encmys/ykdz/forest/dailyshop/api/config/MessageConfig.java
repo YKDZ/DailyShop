@@ -64,7 +64,7 @@ public class MessageConfig {
             config = ConfigUtils.merge(config, resourcePath, path);
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
-            LogUtils.error("Error loading message config: " + error.getMessage());
+            LogUtils.error(error.getMessage());
         }
     }
 

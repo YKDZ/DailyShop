@@ -34,7 +34,7 @@ public class MinecraftLangConfig {
             loadMapFromLangFile(locateFile);
             LogUtils.info("Successfully loaded language file " + locateFile.getName());
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.error(e.getMessage());
         }
     }
 

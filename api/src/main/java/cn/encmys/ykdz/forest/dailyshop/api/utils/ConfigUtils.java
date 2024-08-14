@@ -188,7 +188,7 @@ public class ConfigUtils {
         try {
             config.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (IOException | InvalidConfigurationException e) {
-            LogUtils.error("Error when load yaml from resource: " + e.getMessage());
+            LogUtils.error(e.getMessage());
         }
         return config;
     }

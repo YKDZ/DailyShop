@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -32,7 +33,7 @@ public class ProductConfig {
                         config.load(file);
                         packs.put(file.getName().replace(".yml", ""), config);
                     } catch (IOException | InvalidConfigurationException error) {
-                        error.printStackTrace();
+                        LogUtils.error(error.getMessage());
                     }
                 }
             }
