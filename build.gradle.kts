@@ -67,6 +67,12 @@ subprojects {
         archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
     }
 
+    tasks.shadowJar {
+        destinationDirectory.set(file("C:\\Users\\YKDZ\\Desktop\\Forest项目\\插件测试端\\plugins"))
+        archiveClassifier.set("")
+        archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+    }
+
     if ("api" == project.name) {
         publishing {
             publications {
