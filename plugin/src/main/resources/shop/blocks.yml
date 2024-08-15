@@ -36,7 +36,7 @@ shop-gui:
   # The x character is the placeholder
   # for the product slot.
   layout:
-    - "# # # # # # # # u"
+    - "# # # # d # # # u"
     - "# x x x x x x x @"
     - "# # # # c # # # n"
   icons:
@@ -75,6 +75,19 @@ shop-gui:
       features:
         open-cart: LEFT
         switch-shopping-mode: RIGHT
+    "d":
+      base: PAPER
+      name: " "
+      lore:
+        - "<dark_gray>✖ <white>Left Click"
+        - "   <gray>Buy a product from shop"
+        - "<dark_gray>✖ <white>Right Click"
+        - "   <gray>Sell a product to shop"
+        - "<dark_gray>✖ <white>Shift + Right Click"
+        - "   <gray>Sell all a product"
+        - "   <gray>inside your inventory to shop"
+        - " "
+      condition:
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
