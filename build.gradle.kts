@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java")
     id("maven-publish")
@@ -63,23 +61,12 @@ subprojects {
         options.release.set(17)
     }
 
-    tasks.register<ShadowJar>("shadowJarToTarget") {
-        destinationDirectory.set(file("$rootDir/target"))
-        archiveClassifier.set("")
-        archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
-    }
-
-    tasks.register<ShadowJar>("shadowJarToPlugins") {
-        destinationDirectory.set(file("C:\\Users\\YKDZ\\Desktop\\Forest项目\\插件测试端\\plugins"))
-        archiveClassifier.set("")
-        archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
-    }
-
-    tasks.register("buildAllJars") {
-        dependsOn("shadowJarToTarget", "shadowJarToPlugins")
-    }
-
     if ("api" == project.name) {
+        tasks.shadowJar {
+            destinationDirectory.set(file("$rootDir/target"))
+            archiveClassifier.set("")
+            archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+        }
         publishing {
             publications {
                 create<MavenPublication>("mavenJava") {
@@ -89,6 +76,12 @@ subprojects {
                     artifact(tasks.shadowJar)
                 }
             }
+        }
+    } else if ("plugin" == project.name) {
+        tasks.shadowJar {
+            destinationDirectory.set(file("$rootDir/target"))
+            archiveClassifier.set("")
+            archiveFileName.set("DailyShop-" + "-" + project.version + ".jar")
         }
     }
 }

@@ -22,15 +22,3 @@ dependencies {
 
     compileOnly("com.google.code.gson:gson:2.11.0")
 }
-
-tasks {
-    shadowJar {
-        relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
-        relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.intellij")
-        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
-        relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
-        relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
-    }
-}

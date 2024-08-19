@@ -38,7 +38,6 @@ dependencies {
 
 tasks {
     shadowJar {
-        archiveFileName.set(rootProject.name + "-" + version + ".jar")
         relocate("dev.jorel.commandapi", "cn.encmys.ykdz.forest.dailyshop.libraries.commandapi")
         relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
         relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
@@ -47,5 +46,6 @@ tasks {
         relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
         relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
         relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
+        relocate("org.mozilla", "cn.encmys.ykdz.forest.dailyshop.libraries.mozilla")
     }
 }
