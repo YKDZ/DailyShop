@@ -18,6 +18,8 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     annotationProcessor("org.jetbrains:annotations:24.1.0")
 
+    compileOnly("org.mozilla:rhino:1.7.15")
+
     compileOnly("com.google.code.gson:gson:2.11.0")
 }
 

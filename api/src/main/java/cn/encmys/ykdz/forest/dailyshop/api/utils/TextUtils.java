@@ -163,7 +163,12 @@ public class TextUtils {
 
     public static double evaluateFormula(String formula, Map<String, String> vars) {
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
+        ScriptEngine engine = manager.getEngineByName("rhino");
+
+        if (engine == null) {
+            throw new UnsupportedOperationException("No JavaScript engine available. Please ensure that your environment supports Rhino.");
+        }
+
         try {
             Object result = engine.eval(parseInternalVar(formula, vars));
             if (result instanceof Double) {

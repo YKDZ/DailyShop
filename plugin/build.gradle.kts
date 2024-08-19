@@ -31,6 +31,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
+    implementation("org.mozilla:rhino:1.7.15")
+
     implementation(project(":api"))
 }
 
