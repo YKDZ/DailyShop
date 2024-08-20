@@ -61,12 +61,13 @@ subprojects {
         options.release.set(17)
     }
 
+    tasks.shadowJar {
+        destinationDirectory.set(file("$rootDir/target"))
+        archiveClassifier.set("")
+        archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+    }
+
     if ("api" == project.name) {
-        tasks.shadowJar {
-            destinationDirectory.set(file("$rootDir/target"))
-            archiveClassifier.set("")
-            archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
-        }
         publishing {
             publications {
                 create<MavenPublication>("mavenJava") {
@@ -76,12 +77,6 @@ subprojects {
                     artifact(tasks.shadowJar)
                 }
             }
-        }
-    } else if ("plugin" == project.name) {
-        tasks.shadowJar {
-            destinationDirectory.set(file("$rootDir/target"))
-            archiveClassifier.set("")
-            archiveFileName.set("DailyShop-" + "-" + project.version + ".jar")
         }
     }
 }
