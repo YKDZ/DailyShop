@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProductItemBuilder {
+    @NotNull
     public static ItemStack build(@NotNull BaseItemDecorator decorator, @NotNull Shop shop, Player player) {
         Map<String, String> vars = new HashMap<>() {{
             if (player != null) {

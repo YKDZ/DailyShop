@@ -43,7 +43,7 @@ public class ItemProduct extends Product {
 
     @Override
     public void give(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
-        ItemStack item = shop.getCachedProductItem(this);
+        ItemStack item = shop.getCachedProductItemOrBuildOne(this, player);
         IntStream.range(0, stack).forEach(i -> inv.addItem(item));
     }
 
@@ -105,7 +105,7 @@ public class ItemProduct extends Product {
 
     @Override
     public boolean canHold(@NotNull Shop shop, @NotNull Inventory inv, Player player, int stack) {
-        return PlayerUtils.hasInventorySpace(inv, shop.getCachedProductItemOrCreateOne(this, player), stack);
+        return PlayerUtils.hasInventorySpace(inv, shop.getCachedProductItemOrBuildOne(this, player), stack);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ItemProduct extends Product {
         if (baseItem.getItemType() != BaseItemType.VANILLA) {
             return baseItem.isSimilar(item);
         } else {
-            ItemStack target = shop.getCachedProductItemOrCreateOne(this, player);
+            ItemStack target = shop.getCachedProductItemOrBuildOne(this, player);
             return baseItem.isSimilar(item) && target.isSimilar(item);
         }
     }
