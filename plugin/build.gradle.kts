@@ -38,6 +38,7 @@ dependencies {
 
 tasks {
     shadowJar {
+        archiveFileName.set("DailyShop-" + project.version + ".jar")
         relocate("dev.jorel.commandapi", "cn.encmys.ykdz.forest.dailyshop.libraries.commandapi")
         relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
         relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
