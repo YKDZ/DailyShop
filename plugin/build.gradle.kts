@@ -31,7 +31,7 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
-    implementation("org.mozilla:rhino:1.7.15")
+    implementation("com.ezylang:EvalEx:3.3.0")
 
     implementation(project(":api"))
 }
@@ -47,6 +47,6 @@ tasks {
         relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
         relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
         relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
-        relocate("org.mozilla", "cn.encmys.ykdz.forest.dailyshop.libraries.mozilla")
+        relocate("com.ezylang.evalex", "cn.encmys.ykdz.forest.dailyshop.libraries.evalex")
     }
 }

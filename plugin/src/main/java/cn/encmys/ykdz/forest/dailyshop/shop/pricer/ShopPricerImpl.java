@@ -125,7 +125,7 @@ public class ShopPricerImpl implements ShopPricer {
 
         // 避免 buy-price <= sell-price 的刷钱漏洞
         // 因为难以保证动态价格落入指定范围
-        if (buy <= sell) {
+        if (buy != -1 && buy <= sell) {
             // 根据配置禁用出售或收购
             if (Config.priceCorrectByDisableSellOrBuy) {
                 LogUtils.warn("The current buy-price of product " + productId + " is " + buy + ", which is less than the sell-price of " + sell + ". Sell has been disabled.");

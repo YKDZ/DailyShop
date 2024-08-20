@@ -2,14 +2,15 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
+import com.ezylang.evalex.EvaluationException;
+import com.ezylang.evalex.Expression;
+import com.ezylang.evalex.parser.ParseException;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class TextUtils {
@@ -162,28 +163,18 @@ public class TextUtils {
     }
 
     public static double evaluateFormula(String formula, Map<String, String> vars) {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("rhino");
-
-        if (engine == null) {
-            throw new UnsupportedOperationException("No JavaScript engine available. Please ensure that your environment supports Rhino.");
-        }
-
+        Expression expression = new Expression(parseInternalVar(formula, vars));
         try {
-            Object result = engine.eval(parseInternalVar(formula, vars));
-            if (result instanceof Double) {
-                return (Double) result;
-            } else if (result instanceof Integer) {
-                return (Integer) result;
-            } else if (result instanceof Long) {
-                return (Long) result;
-            } else {
-                // 禁用此价格
+            BigDecimal result = expression.evaluate().getNumberValue();
+            if (Objects.equals(result, BigDecimal.ZERO)) {
                 return -1d;
             }
-        } catch (ScriptException e) {
-            throw new IllegalArgumentException("Failed to evaluate formula " + formula + ": " + e.getMessage());
+            return Double.parseDouble(result.toString());
+        } catch (NumberFormatException | EvaluationException | ParseException e) {
+            LogUtils.warn("There may be wrong in your price formula: " + formula + ". Price was disabled: " + e.getMessage());
         }
+        // 禁用价格
+        return -1d;
     }
 
     public List<String> legacyToMiniMessage(@NotNull List<String> text) {
