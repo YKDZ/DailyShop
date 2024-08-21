@@ -5,7 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import java.util.List;
 
 public interface ShopStocker {
-    boolean needRestock();
+    boolean needAutoRestock();
 
     void stock();
 
@@ -16,7 +16,7 @@ public interface ShopStocker {
     /**
      * @return Period in tick
      */
-    long getRestockPeriod();
+    long getAutoRestockPeriod();
 
     List<String> getListedProducts();
 
@@ -27,4 +27,6 @@ public interface ShopStocker {
     void setLastRestocking(long lastRestocking);
 
     void addListedProducts(List<String> listedProducts);
+
+    int getSize();
 }

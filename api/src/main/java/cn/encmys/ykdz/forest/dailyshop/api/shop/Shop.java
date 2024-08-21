@@ -21,7 +21,7 @@ public interface Shop {
 
     Map<String, ItemStack> getCachedProductItems();
 
-    boolean isCached(String productId);
+    boolean isProductItemCached(String productId);
 
     void cacheProductItem(@NotNull Product product);
 
@@ -36,6 +36,4 @@ public interface Shop {
     ShopCashier getShopCashier();
 
     ShopStocker getShopStocker();
-
-    int getSize();
 }

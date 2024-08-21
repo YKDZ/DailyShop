@@ -25,7 +25,6 @@ import java.util.Optional;
 public class ShopImpl implements Shop {
     private final String id;
     private final String name;
-    private final int size;
     private final ShopGUI shopGUI;
     private final ShopPricer shopPricer;
     private final ShopCashier shopCashier;
@@ -35,11 +34,10 @@ public class ShopImpl implements Shop {
     public ShopImpl(String id, ShopSettingsRecord settings, List<String> allProductsId) {
         this.id = id;
         this.name = settings.name();
-        this.size = settings.size();
         shopGUI = new ShopGUI(this, ShopConfig.getShopGUIRecord(id));
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this, settings.merchant());
-        shopStocker = new ShopStockerImpl(this, settings.restockEnabled(), settings.restockPeriod(), allProductsId);
+        shopStocker = new ShopStockerImpl(this, settings.size(), settings.autoRestockEnabled(), settings.autoRestockPeriod(), allProductsId);
     }
 
     @Override
@@ -58,7 +56,7 @@ public class ShopImpl implements Shop {
     }
 
     @Override
-    public boolean isCached(String productId) {
+    public boolean isProductItemCached(String productId) {
         return getCachedProductItems().containsKey(productId);
     }
 
@@ -76,7 +74,7 @@ public class ShopImpl implements Shop {
     @Nullable
     public ItemStack getCachedProductItem(@NotNull Product product) {
         String id = product.getId();
-        if (product.isProductItemCacheable() && !isCached(id)) {
+        if (product.isProductItemCacheable() && !isProductItemCached(id)) {
             cacheProductItem(product);
         }
         return getCachedProductItems().get(id);
@@ -100,11 +98,6 @@ public class ShopImpl implements Shop {
     @Override
     public ShopCashier getShopCashier() {
         return shopCashier;
-    }
-
-    @Override
-    public int getSize() {
-        return size;
     }
 
     @Override

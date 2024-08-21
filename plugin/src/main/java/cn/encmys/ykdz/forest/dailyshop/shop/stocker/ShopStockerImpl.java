@@ -19,22 +19,24 @@ import java.util.*;
 public class ShopStockerImpl implements ShopStocker {
     private static final Random random = new Random();
     private final Shop shop;
+    private final int size;
     private final List<String> allProductsId;
     private final List<String> listedProducts = new ArrayList<>();
-    private final boolean restockEnabled;
-    private final long restockPeriod;
+    private final boolean autoRestockEnabled;
+    private final long autoRestockPeriod;
     private long lastRestocking;
 
-    public ShopStockerImpl(@NotNull Shop shop, boolean restockEnabled, long restockPeriod, List<String> allProductsId) {
+    public ShopStockerImpl(@NotNull Shop shop, int size, boolean autoRestockEnabled, long autoRestockPeriod, List<String> allProductsId) {
         this.shop = shop;
-        this.restockEnabled = restockEnabled;
-        this.restockPeriod = restockPeriod;
+        this.size = size;
+        this.autoRestockEnabled = autoRestockEnabled;
+        this.autoRestockPeriod = autoRestockPeriod;
         this.allProductsId = allProductsId;
     }
 
     @Override
-    public boolean needRestock() {
-        return restockEnabled;
+    public boolean needAutoRestock() {
+        return autoRestockEnabled;
     }
 
     @Override
@@ -52,14 +54,14 @@ public class ShopStockerImpl implements ShopStocker {
             }
         }
 
-        if (getShop().getSize() >= allProductsId.size()) {
+        if (size == -1 || size >= allProductsId.size()) {
             productsPreparedToBeListed.addAll(allProducts.values());
         } else {
             List<String> temp = new ArrayList<>(allProductsId);
             int totalWeight = allProducts.values().stream()
                     .mapToInt(p -> p.getRarity().weight()).sum();
 
-            for (int i = 0; i < getShop().getSize(); i++) {
+            for (int i = 0; i < size; i++) {
                 int needed = random.nextInt(totalWeight) + 1; // 避免出现 0
                 int runningWeight = 0;
                 for (String productId : temp) {
@@ -114,7 +116,7 @@ public class ShopStockerImpl implements ShopStocker {
         String productId = product.getId();
 
         shop.getShopPricer().cachePrice(productId);
-        if (product.isProductItemCacheable() && !shop.isCached(productId)) {
+        if (product.isProductItemCacheable() && !shop.isProductItemCached(productId)) {
             shop.cacheProductItem(product);
         }
 
@@ -156,8 +158,8 @@ public class ShopStockerImpl implements ShopStocker {
     }
 
     @Override
-    public long getRestockPeriod() {
-        return restockPeriod;
+    public long getAutoRestockPeriod() {
+        return autoRestockPeriod;
     }
 
     @Override
@@ -183,5 +185,10 @@ public class ShopStockerImpl implements ShopStocker {
     @NotNull
     public Shop getShop() {
         return shop;
+    }
+
+    @Override
+    public int getSize() {
+        return size;
     }
 }

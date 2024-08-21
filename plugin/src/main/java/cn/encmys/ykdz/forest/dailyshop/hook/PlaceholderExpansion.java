@@ -36,7 +36,7 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
         Shop shop = getShop(params, "restock_timer_");
         if (shop == null) return "Shop " + extractShopId(params, "restock_timer_") + " do not exist.";
 
-        long timeRemaining = (shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getRestockPeriod() * 50L) - System.currentTimeMillis();
+        long timeRemaining = (shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getAutoRestockPeriod() * 50L) - System.currentTimeMillis();
         if (timeRemaining > 0) {
             long hours = timeRemaining / (60 * 60 * 1000);
             long minutes = (timeRemaining % (60 * 60 * 1000)) / (60 * 1000);

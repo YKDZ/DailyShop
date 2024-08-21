@@ -32,14 +32,14 @@ sounds:
 shop-gui:
   title: "Welcome %player_name%"
   # Available option is HORIZONTAL and VERTICAL
-  page-mode: HORIZONTAL
+  paged-mode: VERTICAL
   # The x character is the placeholder
   # for the product slot.
   layout:
-    - "# # # d # c # # u"
+    - "# # # d # @ # # #"
     - "# x x x x x x x #"
     - "# x x x x x x x #"
-    - "# # # # c # # # n"
+    - "p # # # c # # # n"
   icons:
     "#":
       base: BROWN_STAINED_GLASS_PANE
@@ -51,18 +51,18 @@ shop-gui:
       base: CLOCK
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-period: "1s"
-    "u":
+    "p":
       base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up"
+      name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
-        scroll: LEFT
-        scroll-amount: -1
+        page-change: LEFT
+        page-change-amount: -1
     "n":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down"
+      name: "<gray>Next Page: {current-page}/{total-page}"
       features:
-        scroll: LEFT
-        scroll-amount: 1
+        page-change: LEFT
+        page-change-amount: 1
     "c":
       base: MINECART
       name: " "
