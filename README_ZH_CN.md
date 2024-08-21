@@ -78,7 +78,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         shop.getShopStocker().stock();
         // 为商人模式的商店补充余额
         if (shop.getShopCashier().isMerchant()) {
-            // Increase balance by 100 
+            // 补充 100 余额 
             shop.getShopCashier().modifyBalance(100);
         }
 
