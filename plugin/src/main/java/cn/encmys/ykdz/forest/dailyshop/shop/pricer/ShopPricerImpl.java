@@ -61,14 +61,18 @@ public class ShopPricerImpl implements ShopPricer {
         double buy = 0d;
         double sell = 0d;
 
-        int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
-        int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
+        Map<String, String> additionalVars = new HashMap<>() {{
+            put("amount", String.valueOf(product.getItemDecorator() != null ? product.getItemDecorator().getAmount() : product.getIconDecorator().getAmount()));
+        }};
 
         switch (buyPrice.getPriceMode()) {
             case FORMULA -> {
+                int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
+                int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
                 Map<String, String> vars = buyPrice.getFormulaVars();
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
+                vars.putAll(additionalVars);
                 double price = TextUtils.evaluateFormula(buyPrice.getFormula(), vars);
                 buy = buyPrice.isRound() ? Math.round(price) : price;
             }
@@ -95,9 +99,12 @@ public class ShopPricerImpl implements ShopPricer {
 
         switch (sellPrice.getPriceMode()) {
             case FORMULA -> {
+                int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
+                int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
                 Map<String, String> vars = sellPrice.getFormulaVars();
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
+                vars.putAll(additionalVars);
                 double price = TextUtils.evaluateFormula(sellPrice.getFormula(), vars);
                 sell = sellPrice.isRound() ? Math.round(price) : price;
             }
