@@ -72,14 +72,14 @@ public class ShopGUI extends ShopRelatedGUI {
 
     @Override
     protected Gui buildPagedGUI(Player player) {
-        if (guiRecord.pagedMode() == null) {
+        if (guiRecord.pageMode() == null) {
             throw new IllegalStateException();
         }
 
         PagedGui.Builder<Item> guiBuilder = PagedGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
-        if (guiRecord.pagedMode().isHorizontal()) {
+        if (guiRecord.pageMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);

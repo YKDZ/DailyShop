@@ -1,16 +1,16 @@
 order-history:
   title: "Order History for player {player-name}"
   # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
+  page-mode: HORIZONTAL
   # The x character is the placeholder
   # for the history slot.
   layout:
-    - "# # # # # # # # u"
-    - "# x x x x x x x u"
-    - "# x x x x x x x u"
-    - "# x x x x x x x n"
-    - "# x x x x x x x n"
-    - "# # # # @ # # # n"
+    - "x x x x x x x x x"
+    - "x x x x x x x x x"
+    - "x x x x x x x x x"
+    - "x x x x x x x x x"
+    - "x x x x x x x x x"
+    - "p p p p @ n n n n"
   icons:
     "#":
       base: BROWN_STAINED_GLASS_PANE
@@ -18,18 +18,18 @@ order-history:
       lore:
         - "<dark_gray>Wall of History"
         - " "
-    "u":
-      base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up"
-      features:
-        scroll: LEFT
-        scroll-amount: -1
-    "n":
+    "p":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down"
+      name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
-        scroll: LEFT
-        scroll-amount: 1
+        page-change: LEFT
+        page-change-amount: -1
+    "n":
+      base: GREEN_STAINED_GLASS_PANE
+      name: "<gray>Next Page: {current-page}/{total-page}"
+      features:
+        page-change: LEFT
+        page-change-amount: 1
         load-more-log: LEFT
     "@":
       base: MINECART

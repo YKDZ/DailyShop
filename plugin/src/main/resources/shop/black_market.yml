@@ -97,7 +97,7 @@ shop-gui:
       disabled-price: "<red>✘"
     # For stock feature etc.
     # Set to 0s or delete to disable update.
-    update-period: "3s"
+    update-period: "1s"
     features:
       # Work only when shopping mode = direct
       # Delete, leave blank or set to UNKNOWN to disable an action.

@@ -40,15 +40,21 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
         super(player);
         this.guiRecord = guiRecord;
         this.guiContentType = guiRecord.scrollMode() != null ? GUIContentType.SCROLL : GUIContentType.PAGED;
-        this.pageSize = ConfigUtils.getLastLineMarkerAmount(guiRecord.layout(), markerIdentifier, guiRecord.scrollMode());
+        if (guiRecord.scrollMode() != null) {
+            this.pageSize = ConfigUtils.getLastLineMarkerAmount(guiRecord.layout(), markerIdentifier, guiRecord.scrollMode());
+        } else if (guiRecord.pageMode() != null) {
+            this.pageSize = ConfigUtils.getLayoutMarkerAmount(guiRecord.layout(), markerIdentifier);
+        } else {
+            this.pageSize = 54;
+        }
     }
 
     @Override
     public void open() {
         if (guiRecord.scrollMode() != null) {
             currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
-        } else if (guiRecord.pagedMode() != null) {
-            currentPage = guiRecord.pagedMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
+        } else if (guiRecord.pageMode() != null) {
+            currentPage = 0;
         }
         loadContent(player);
 
@@ -99,14 +105,14 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
 
     @Override
     protected Gui buildPagedGUI(Player player) {
-        if (guiRecord.pagedMode() == null) {
+        if (guiRecord.pageMode() == null) {
             throw new IllegalStateException();
         }
 
         PagedGui.Builder<Item> guiBuilder = PagedGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
-        if (guiRecord.pagedMode().isHorizontal()) {
+        if (guiRecord.pageMode().isHorizontal()) {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
         } else {
             guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
@@ -141,17 +147,19 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
                 () -> {
-                    int count;
-                    try {
-                        count = DailyShop.DATABASE.countLogs(this.player.getUniqueId(), 11111).get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (pageSize * currentPage >= count) {
-                        return;
-                    }
+                    // TODO 不重复加载
+//                    int count;
+//                    try {
+//                        count = DailyShop.DATABASE.countLogs(this.player.getUniqueId(), 11111).get();
+//                    } catch (InterruptedException | ExecutionException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    LogUtils.info("Count: " + count + " PageSize: " + pageSize + " CurrentPage: " + currentPage);
+//                    if (pageSize * currentPage >= count) {
+//                        return;
+//                    }
                     List<Item> contents = new ArrayList<>();
-                    IntStream.range(1, ++currentPage).forEach(page -> {
+                    IntStream.range(0, ++currentPage).forEach(page -> {
                         List<SettlementLog> logs;
                         try {
                             logs = new ArrayList<>(DailyShop.DATABASE.queryLogs(null, this.player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get());

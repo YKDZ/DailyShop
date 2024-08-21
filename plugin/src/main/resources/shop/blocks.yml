@@ -32,7 +32,7 @@ sounds:
 shop-gui:
   title: "Welcome %player_name%"
   # Available option is HORIZONTAL and VERTICAL
-  paged-mode: VERTICAL
+  page-mode: VERTICAL
   # The x character is the placeholder
   # for the product slot.
   layout:
@@ -52,13 +52,13 @@ shop-gui:
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-period: "1s"
     "p":
-      base: GREEN_STAINED_GLASS_PANE
+      base: RED_STAINED_GLASS_PANE
       name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
         page-change-amount: -1
     "n":
-      base: RED_STAINED_GLASS_PANE
+      base: GREEN_STAINED_GLASS_PANE
       name: "<gray>Next Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
@@ -112,7 +112,7 @@ shop-gui:
       disabled-price: "<red>✘"
     # For stock feature etc.
     # Set to 0s or delete to disable update.
-    update-period: "3s"
+    update-period: "1s"
     features:
       # Work only when shopping mode = direct
       # Delete, leave blank or set to UNKNOWN to disable an action.

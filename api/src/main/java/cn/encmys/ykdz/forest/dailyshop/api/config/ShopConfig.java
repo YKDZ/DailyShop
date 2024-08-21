@@ -95,7 +95,7 @@ public class ShopConfig {
         return new ShopGUIRecord(
                 mainSection.getString("title", "{shop}"),
                 mainSection.contains("scroll-mode") ? mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
-                mainSection.contains("paged-mode") ? mainSection.getString("paged-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
+                mainSection.contains("page-mode") ? mainSection.getString("page-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
                 mainSection.getStringList("layout"),
                 ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new ProductIconRecord(

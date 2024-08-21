@@ -51,7 +51,7 @@ public class OrderHistoryGUIConfig {
         return new OrderHistoryGUIRecord(
                 mainSection.getString("title", "Order History for player {player-name}"),
                 mainSection.contains("scroll-mode") ? mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
-                mainSection.contains("paged-mode") ? mainSection.getString("paged-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
+                mainSection.contains("page-mode") ? mainSection.getString("page-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
                 mainSection.getStringList("layout"),
                 ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new HistoryIconRecord(

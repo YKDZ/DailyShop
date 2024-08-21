@@ -7,7 +7,7 @@ import xyz.xenondevs.invui.gui.structure.Marker;
 
 import java.util.List;
 
-public record ShopGUIRecord(@NotNull String title, @Nullable Marker scrollMode, @Nullable Marker pagedMode,
+public record ShopGUIRecord(@NotNull String title, @Nullable Marker scrollMode, @Nullable Marker pageMode,
                             @NotNull List<String> layout, @Nullable List<IconRecord> icons,
                             @NotNull ProductIconRecord productIconRecord) {
 }
