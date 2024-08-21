@@ -1,7 +1,7 @@
 settings:
   name: "<#A0522D>Blocks Shop"
   size: 18
-  restock:
+  auto-restock:
     enabled: true
     period: "10m"
 
@@ -32,12 +32,13 @@ sounds:
 shop-gui:
   title: "Welcome %player_name%"
   # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
+  page-mode: HORIZONTAL
   # The x character is the placeholder
   # for the product slot.
   layout:
-    - "# # # # d # # # u"
-    - "# x x x x x x x @"
+    - "# # # d # c # # u"
+    - "# x x x x x x x #"
+    - "# x x x x x x x #"
     - "# # # # c # # # n"
   icons:
     "#":
@@ -52,13 +53,13 @@ shop-gui:
       update-period: "1s"
     "u":
       base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      name: "<gray>Scroll Up"
       features:
         scroll: LEFT
         scroll-amount: -1
     "n":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      name: "<gray>Scroll Down"
       features:
         scroll: LEFT
         scroll-amount: 1

@@ -49,7 +49,8 @@ public class CartGUIConfig {
         }
         return new CartGUIRecord(
                 mainSection.getString("title", "Cart for player {player-name}"),
-                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                mainSection.contains("scroll-mode") ? mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
+                mainSection.contains("paged-mode") ? mainSection.getString("paged-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
                 mainSection.getStringList("layout"),
                 ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new CartProductIconRecord(

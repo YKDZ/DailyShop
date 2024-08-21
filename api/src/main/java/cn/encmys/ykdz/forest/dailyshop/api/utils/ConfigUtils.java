@@ -5,18 +5,16 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Marker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.xenondevs.invui.gui.structure.Marker;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ConfigUtils {
@@ -166,7 +164,31 @@ public class ConfigUtils {
     }
 
     public static int getLastLineMarkerAmount(List<String> layout, char markerIdentifier, Marker marker) {
-        return 0;
+        if (marker.isHorizontal()) {
+            Optional<String> lastMatchingLine = layout.stream()
+                    .filter(line -> line.indexOf(markerIdentifier) != -1) // 过滤包含符号的行
+                    .reduce((first, second) -> second);         // 获取最后一个匹配的行
+            return lastMatchingLine
+                    .map(line -> (int) line.chars().filter(ch -> ch == markerIdentifier).count())
+                    .orElse(0);
+        } else {
+            // 获取行数和列数（假设所有行长度相等）
+            int columnCount = layout.isEmpty() ? 0 : layout.get(0).length();
+            // 遍历列
+            return IntStream.range(0, columnCount)
+                    .mapToObj(col -> {
+                        // 构建列数据，将每行中对应的字符拼接成一个字符串
+                        // 过滤掉列数不足的行
+                        return layout.stream()
+                                .filter(line -> line.length() > col) // 过滤掉列数不足的行
+                                .map(line -> String.valueOf(line.charAt(col)))
+                                .collect(Collectors.joining());
+                    })
+                    .filter(colData -> colData.indexOf(markerIdentifier) != -1) // 过滤包含符号的列
+                    .reduce((first, second) -> second) // 获取最后一个匹配的列
+                    .map(colData -> (int) colData.chars().filter(ch -> ch == markerIdentifier).count()) // 统计符号个数
+                    .orElse(0); // 如果没有匹配的列，返回 0
+        }
     }
 
     public static Locale getLocale(String locale) {

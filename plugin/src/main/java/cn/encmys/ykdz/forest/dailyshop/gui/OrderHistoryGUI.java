@@ -5,6 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
@@ -18,6 +19,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
+import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -32,22 +34,26 @@ import java.util.stream.IntStream;
 public class OrderHistoryGUI extends PlayerRelatedGUI {
     private final OrderHistoryGUIRecord guiRecord;
     private final int pageSize;
-    private ScrollGui<Item> gui;
     private int currentPage = 1;
 
     public OrderHistoryGUI(Player player, OrderHistoryGUIRecord guiRecord) {
         super(player);
         this.guiRecord = guiRecord;
-        this.pageSize = ConfigUtils.getLayoutMarkerAmount(guiRecord.layout(), markerIdentifier) / 5;
+        this.guiContentType = guiRecord.scrollMode() != null ? GUIContentType.SCROLL : GUIContentType.PAGED;
+        this.pageSize = ConfigUtils.getLastLineMarkerAmount(guiRecord.layout(), markerIdentifier, guiRecord.scrollMode());
     }
 
     @Override
     public void open() {
-        currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
+        if (guiRecord.scrollMode() != null) {
+            currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
+        } else if (guiRecord.pagedMode() != null) {
+            currentPage = guiRecord.pagedMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
+        }
         loadContent(player);
 
         Window window = Window.single()
-                .setGui(buildGUI(player))
+                .setGui(build(player))
                 .setViewer(player)
                 .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
                     put("player-name", player.getName());
@@ -65,10 +71,9 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     }
 
     @Override
-    public Gui buildGUI(Player player) {
-        if (gui != null) {
-            gui.setCurrentLine(0);
-            return gui;
+    protected Gui buildScrollGUI(Player player) {
+        if (guiRecord.scrollMode() == null) {
+            throw new IllegalStateException();
         }
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
@@ -93,6 +98,34 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    protected Gui buildPagedGUI(Player player) {
+        if (guiRecord.pagedMode() == null) {
+            throw new IllegalStateException();
+        }
+
+        PagedGui.Builder<Item> guiBuilder = PagedGui.items()
+                .setStructure(guiRecord.layout().toArray(new String[0]));
+
+        if (guiRecord.pagedMode().isHorizontal()) {
+            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
+        } else {
+            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
+        }
+
+        // 普通图标
+        if (guiRecord.icons() != null) {
+            for (IconRecord icon : guiRecord.icons()) {
+                guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
+            }
+        }
+
+        PagedGui<Item> gui = guiBuilder.build();
+        this.gui = gui;
+
+        return gui;
+    }
+
+    @Override
     public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
@@ -103,6 +136,7 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void loadContent(@Nullable Player player) {
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
@@ -130,7 +164,11 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
                             );
                         }
                     });
-                    gui.setContent(contents);
+                    if (gui instanceof PagedGui) {
+                        ((PagedGui<Item>) gui).setContent(contents);
+                    } else if (gui instanceof ScrollGui) {
+                        ((ScrollGui<Item>) gui).setContent(contents);
+                    }
                 }
         );
     }

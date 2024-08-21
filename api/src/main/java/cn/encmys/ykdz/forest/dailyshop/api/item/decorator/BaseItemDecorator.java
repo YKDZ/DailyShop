@@ -112,7 +112,7 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setFeaturesPageChange(ClickType featuresPageChange);
 
-    public abstract int setFeaturesPageChangeAmount();
+    public abstract int getFeaturesPageChangeAmount();
 
     public abstract BaseItemDecorator setFeaturesPageChangeAmount(int featuresPageChangeAmount);
 

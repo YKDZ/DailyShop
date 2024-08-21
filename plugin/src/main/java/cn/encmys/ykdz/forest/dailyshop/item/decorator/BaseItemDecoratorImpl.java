@@ -287,7 +287,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public int setFeaturesPageChangeAmount() {
+    public int getFeaturesPageChangeAmount() {
         return featuresPageChangeAmount;
     }
 

@@ -78,7 +78,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
         shop.getShopStocker().stock();
         // Modify balance of shop in merchant mode
         if (shop.getShopCashier().isMerchant()) {
-            // Increase balance by 100 
+            // Increase balance by 100
             shop.getShopCashier().modifyBalance(100);
         }
 

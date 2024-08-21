@@ -45,7 +45,7 @@ public class StackPickerGUI extends PlayerRelatedGUI {
     }
 
     @Override
-    public Gui buildGUI(Player player) {
+    public Gui build(Player player) {
         Gui.Builder.Normal guiBuilder = Gui.normal()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
@@ -61,6 +61,16 @@ public class StackPickerGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    protected Gui buildScrollGUI(Player player) {
+        return null;
+    }
+
+    @Override
+    protected Gui buildPagedGUI(Player player) {
+        return null;
+    }
+
+    @Override
     public void loadContent(@Nullable Player player) {
     }
 
@@ -68,7 +78,7 @@ public class StackPickerGUI extends PlayerRelatedGUI {
     public void open() {
         StackPickerGUIRecord guiRecord = StackPickerGUIConfig.getGUIRecord();
         Window window = AnvilWindow.single()
-                .setGui(buildGUI(player))
+                .setGui(build(player))
                 .setTitle(guiRecord.title())
                 .addRenameHandler((input) -> {
                     try {

@@ -20,13 +20,13 @@ order-history:
         - " "
     "u":
       base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-scroll}/{max-scroll}"
+      name: "<gray>Scroll Up"
       features:
         scroll: LEFT
         scroll-amount: -1
     "n":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-scroll}/{max-scroll}"
+      name: "<gray>Scroll Down"
       features:
         scroll: LEFT
         scroll-amount: 1

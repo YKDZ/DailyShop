@@ -61,8 +61,8 @@ public class ShopConfig {
         return new ShopSettingsRecord(
                 getConfig(shopId).getInt("settings.size", 16),
                 getConfig(shopId).getString("settings.name", "<red>Shop name not found!"),
-                getConfig(shopId).getBoolean("settings.restock.enabled"),
-                TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.restock.period")),
+                getConfig(shopId).getBoolean("settings.auto-restock.enabled"),
+                TextUtils.parseTimeToTicks(getConfig(shopId).getString("settings.auto-restock.period")),
                 getMerchantRecord(shopId)
         );
     }
@@ -94,7 +94,8 @@ public class ShopConfig {
         }
         return new ShopGUIRecord(
                 mainSection.getString("title", "{shop}"),
-                mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL,
+                mainSection.contains("scroll-mode") ? mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
+                mainSection.contains("paged-mode") ? mainSection.getString("paged-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
                 mainSection.getStringList("layout"),
                 ConfigUtils.getIconRecords(mainSection.getConfigurationSection("icons")),
                 new ProductIconRecord(

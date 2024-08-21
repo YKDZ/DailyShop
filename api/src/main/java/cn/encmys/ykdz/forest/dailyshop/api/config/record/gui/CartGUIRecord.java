@@ -7,7 +7,7 @@ import xyz.xenondevs.invui.gui.structure.Marker;
 
 import java.util.List;
 
-public record CartGUIRecord(@NotNull String title, @NotNull Marker scrollMode,
+public record CartGUIRecord(@NotNull String title, @Nullable Marker scrollMode, @Nullable Marker pagedMode,
                             @NotNull List<String> layout, @Nullable List<IconRecord> icons,
                             @NotNull CartProductIconRecord cartProductIcon) {
 }

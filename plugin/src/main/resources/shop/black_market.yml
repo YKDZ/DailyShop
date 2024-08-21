@@ -1,7 +1,8 @@
 settings:
   name: "<gray>Black Market"
-  size: 14
-  restock:
+  # Represent the size is infinity
+  size: -1
+  auto-restock:
     enabled: false
   # Allow the shop itself to have a virtual balance
   # and no longer purchase products from player when the balance is depleted.

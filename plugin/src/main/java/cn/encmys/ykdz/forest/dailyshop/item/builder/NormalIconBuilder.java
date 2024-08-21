@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractControlIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractIcon;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
@@ -36,7 +37,7 @@ import java.util.Map;
 
 public class NormalIconBuilder {
     public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
-        if (decorator.getFeaturesScroll() != null) {
+        if (decorator.getFeaturesScroll() != null || decorator.getFeaturesPageChange() != null) {
             return buildControlIcon(decorator, shop, workGUI, player);
         }
         return buildIcon(decorator, shop, workGUI, player);
@@ -75,14 +76,57 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    // TODO 支持更多种类的 Gui
     private static Item buildControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+        if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
+            return buildScrollControlIcon(decorator, shop, workGUI, player);
+        } else {
+            return buildPagedControlIcon(decorator, shop, workGUI, player);
+        }
+    }
+
+    private static Item buildScrollControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
                 return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
                     put("current-scroll", String.valueOf(gui.getCurrentLine() + 1));
-                    put("max-scroll", String.valueOf(gui.getMaxLine()) + 1);
+                    put("max-scroll", String.valueOf(gui.getMaxLine() + 1));
+                }});
+            }
+
+            @Override
+            public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+                // 通用变量
+                Map<String, String> vars = new HashMap<>() {{
+                    put("player-name", player.getName());
+                    put("player-uuid", player.getUniqueId().toString());
+                    put("click-type", clickType.name());
+                    if (shop != null) {
+                        put("shop-id", shop.getId());
+                        put("shop-name", shop.getName());
+                    }
+                }};
+                dispatchCommand(clickType, player, decorator.getCommands(), vars);
+                handleNormalFeatures(clickType, decorator, player, shop);
+                handleControlFeatures(clickType, decorator, player, shop, getGui());
+            }
+        };
+
+        // 配置自动更新
+        if (decorator.getPeriod() > 0) {
+            icon.startUpdater(decorator.getPeriod());
+        }
+
+        return icon;
+    }
+
+    private static Item buildPagedControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+        AbstractControlIcon<PagedGui<Item>> icon = new AbstractControlIcon<>() {
+            @Override
+            public ItemProvider getItemProvider(PagedGui<Item> gui) {
+                return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
+                    put("current-page", String.valueOf(gui.getCurrentPage() + 1));
+                    put("total-page", String.valueOf(gui.getPageAmount() + 1));
                 }});
             }
 
@@ -144,7 +188,7 @@ public class NormalIconBuilder {
             featuresScroll(decorator.getFeaturesScrollAmount(), (ScrollGui<?>) gui, player);
         }
         if (gui instanceof PagedGui<?> && clickType == decorator.getFeaturesPageChange()) {
-            featuresPageChange(decorator.setFeaturesPageChangeAmount(), (PagedGui<?>) gui, player);
+            featuresPageChange(decorator.getFeaturesPageChangeAmount(), (PagedGui<?>) gui, player);
         }
     }
 

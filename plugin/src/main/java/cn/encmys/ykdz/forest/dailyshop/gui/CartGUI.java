@@ -4,6 +4,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.CartGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
@@ -17,6 +18,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
+import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
@@ -29,11 +31,11 @@ import java.util.Map;
 
 public class CartGUI extends PlayerRelatedGUI {
     private final CartGUIRecord guiRecord;
-    private ScrollGui<Item> gui;
 
     public CartGUI(Player player, CartGUIRecord guiRecord) {
         super(player);
         this.guiRecord = guiRecord;
+        this.guiContentType = guiRecord.scrollMode() != null ? GUIContentType.SCROLL : GUIContentType.PAGED;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class CartGUI extends PlayerRelatedGUI {
         loadContent(player);
 
         Window window = Window.single()
-                .setGui(buildGUI(player))
+                .setGui(build(player))
                 .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
@@ -58,10 +60,9 @@ public class CartGUI extends PlayerRelatedGUI {
     }
 
     @Override
-    public Gui buildGUI(Player player) {
-        if (gui != null) {
-            gui.setCurrentLine(0);
-            return gui;
+    protected Gui buildScrollGUI(Player player) {
+        if (guiRecord.scrollMode() == null) {
+            throw new IllegalStateException();
         }
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
@@ -87,6 +88,34 @@ public class CartGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    protected Gui buildPagedGUI(Player player) {
+        if (guiRecord.pagedMode() == null) {
+            throw new IllegalStateException();
+        }
+
+        PagedGui.Builder<Item> guiBuilder = PagedGui.items()
+                .setStructure(guiRecord.layout().toArray(new String[0]));
+
+        if (guiRecord.pagedMode().isHorizontal()) {
+            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
+        } else {
+            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
+        }
+
+        // 普通图标
+        if (guiRecord.icons() != null) {
+            for (IconRecord icon : guiRecord.icons()) {
+                guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
+            }
+        }
+
+        PagedGui<Item> gui = guiBuilder.build();
+        this.gui = gui;
+
+        return gui;
+    }
+
+    @Override
     public Item buildNormalIcon(IconRecord record, Player player) {
         BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
         if (decorator == null) {
@@ -97,6 +126,7 @@ public class CartGUI extends PlayerRelatedGUI {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void loadContent(@Nullable Player player) {
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
@@ -116,8 +146,11 @@ public class CartGUI extends PlayerRelatedGUI {
                             contents.add(content);
                         }
                     }
-
-                    gui.setContent(contents);
+                    if (gui instanceof PagedGui) {
+                        ((PagedGui<Item>) gui).setContent(contents);
+                    } else if (gui instanceof ScrollGui) {
+                        ((ScrollGui<Item>) gui).setContent(contents);
+                    }
                 }
         );
     }
