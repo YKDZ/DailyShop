@@ -54,9 +54,11 @@ public class ShopStockerImpl implements ShopStocker {
             }
         }
 
+        // size == -1 代表该商店尺寸无限
         if (size == -1 || size >= allProductsId.size()) {
             productsPreparedToBeListed.addAll(allProducts.values());
         } else {
+            // 按照权重算法上架商品
             List<String> temp = new ArrayList<>(allProductsId);
             int totalWeight = allProducts.values().stream()
                     .mapToInt(p -> p.getRarity().weight()).sum();
