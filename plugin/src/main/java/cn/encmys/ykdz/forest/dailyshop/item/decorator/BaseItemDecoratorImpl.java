@@ -21,10 +21,11 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
         }
     }
 
+    @NotNull
     public static BaseItemDecorator get(IconRecord record, boolean setDefaultName) {
         BaseItem item = BaseItemBuilder.get(record.base());
         if (item == null) {
-            return null;
+            throw new IllegalArgumentException("Icon " + record.key() + " has invalid base.");
         }
         BaseItemDecorator decorator = new BaseItemDecoratorImpl(item, setDefaultName)
                 .setName(record.name())

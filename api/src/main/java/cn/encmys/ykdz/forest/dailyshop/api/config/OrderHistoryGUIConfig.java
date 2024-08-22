@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.RecordUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,6 +49,10 @@ public class OrderHistoryGUIConfig {
         if (historyIconSection == null) {
             throw new RuntimeException("Attempted to read gui information, but the configuration section is empty.");
         }
+        Material placeholderMaterial = Material.getMaterial(historyIconSection.getString("misc.placeholder-material", "PAPER").toUpperCase());
+        if (placeholderMaterial == null) {
+            placeholderMaterial = Material.PAPER;
+        }
         return new OrderHistoryGUIRecord(
                 mainSection.getString("title", "Order History for player {player-name}"),
                 mainSection.contains("scroll-mode") ? mainSection.getString("scroll-mode", "HORIZONTAL").equals("HORIZONTAL") ? Markers.CONTENT_LIST_SLOT_HORIZONTAL : Markers.CONTENT_LIST_SLOT_VERTICAL : null,
@@ -57,7 +62,8 @@ public class OrderHistoryGUIConfig {
                 new HistoryIconRecord(
                         historyIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
                         historyIconSection.getStringList("format.lore"),
-                        historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}")
+                        historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
+                        placeholderMaterial
                 )
         );
     }

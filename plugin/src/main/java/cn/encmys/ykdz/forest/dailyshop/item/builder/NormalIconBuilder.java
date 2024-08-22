@@ -3,6 +3,7 @@ package cn.encmys.ykdz.forest.dailyshop.item.builder;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
+import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.icon.AbstractControlIcon;
@@ -18,6 +19,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.utils.CommandUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.gui.StackPickerGUI;
+import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -36,22 +38,39 @@ import java.util.List;
 import java.util.Map;
 
 public class NormalIconBuilder {
-    public static Item build(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
-        if (decorator.getFeaturesScroll() != null || decorator.getFeaturesPageChange() != null) {
-            return buildControlIcon(decorator, shop, workGUI, player);
+    public static BaseItemDecorator decoratorFromIconRecord(@NotNull IconRecord iconRecord, Shop shop, Player player) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        IconRecord targetIconRecord = iconRecord;
+        for (Map.Entry<String, IconRecord> entry : iconRecord.conditionIcons().entrySet()) {
+            if (TextUtils.evaluateBooleanFormula(entry.getKey(), new HashMap<>() {{
+                put("shopping-mode-id", profile.getShoppingMode(shop.getId()).name());
+            }}, player)) {
+                targetIconRecord = entry.getValue();
+            }
         }
-        return buildIcon(decorator, shop, workGUI, player);
+        return BaseItemDecoratorImpl.get(targetIconRecord, true);
     }
 
-    private static Item buildIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    @NotNull
+    public static Item build(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
+        if (decorator.getFeaturesScroll() != null || decorator.getFeaturesPageChange() != null) {
+            return buildControlIcon(iconRecord, shop, workGUI, player);
+        }
+        return buildIcon(iconRecord, shop, workGUI, player);
+    }
+
+    private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
                 return itemFromDecorator(decorator, shop, player, null);
             }
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
                 // 通用变量
                 Map<String, String> vars = new HashMap<>() {{
                     put("player-name", player.getName());
@@ -68,6 +87,7 @@ public class NormalIconBuilder {
             }
         };
 
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
         // 配置自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
@@ -76,23 +96,24 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
         if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
-            return buildScrollControlIcon(decorator, shop, workGUI, player);
+            return buildScrollControlIcon(iconRecord, shop, workGUI, player);
         } else {
-            return buildPagedControlIcon(decorator, shop, workGUI, player);
+            return buildPagedControlIcon(iconRecord, shop, workGUI, player);
         }
     }
 
-    private static Item buildScrollControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
         AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
                 return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
                     // 当前 scroll 从 0 开始
                     put("current-line", String.valueOf(gui.getCurrentLine() + 1));
-                    // 总数从 1 开始
-                    put("max-line", String.valueOf(gui.getMaxLine()));
+                    // 总数从 0 开始
+                    put("total-line", String.valueOf(gui.getMaxLine() + 1));
                 }});
             }
 
@@ -114,7 +135,7 @@ public class NormalIconBuilder {
             }
         };
 
-        // 配置自动更新
+        // 自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
         }
@@ -122,7 +143,8 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildPagedControlIcon(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    private static Item buildPagedControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
         AbstractControlIcon<PagedGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(PagedGui<Item> gui) {
@@ -152,7 +174,7 @@ public class NormalIconBuilder {
             }
         };
 
-        // 配置自动更新
+        // 自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
         }

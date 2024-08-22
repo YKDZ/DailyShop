@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public record IconRecord(char key, @NotNull String base,
                          @Nullable String name, @Nullable List<String> lore,
@@ -12,5 +13,5 @@ public record IconRecord(char key, @NotNull String base,
                          int customModalData, @Nullable ConfigurationSection commands,
                          @Nullable List<String> itemFlags, @Nullable List<String> bannerPatterns,
                          @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects,
-                         @Nullable ConfigurationSection features) {
+                         @Nullable ConfigurationSection features, @NotNull Map<String, IconRecord> conditionIcons) {
 }

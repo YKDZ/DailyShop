@@ -1,6 +1,6 @@
 settings:
   name: "<#A0522D>Blocks Shop"
-  size: 18
+  size: 19
   auto-restock:
     enabled: true
     period: "10m"
@@ -32,13 +32,13 @@ sounds:
 shop-gui:
   title: "Welcome %player_name%"
   # Available option is HORIZONTAL and VERTICAL
-  page-mode: VERTICAL
+  scroll-mode: VERTICAL
   # The x character is the placeholder
   # for the product slot.
   layout:
-    - "# # # d # @ # # #"
-    - "# x x x x x x x #"
-    - "# x x x x x x x #"
+    - "p # # d # @ # # n"
+    - "p x x x x x x x n"
+    - "p x x x x x x x n"
     - "p # # # c # # # n"
   icons:
     "#":
@@ -53,16 +53,16 @@ shop-gui:
       update-period: "1s"
     "p":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Previous Page: {current-page}/{total-page}"
+      name: "<gray>Previous Line" # : {current-line}/{total-line}
       features:
-        page-change: LEFT
-        page-change-amount: -1
+        scroll: LEFT
+        scroll-amount: -1
     "n":
       base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Next Page: {current-page}/{total-page}"
+      name: "<gray>Next Line" # : {current-line}/{total-line}
       features:
-        page-change: LEFT
-        page-change-amount: 1
+        scroll: LEFT
+        scroll-amount: 1
     "c":
       base: MINECART
       name: " "
@@ -88,7 +88,24 @@ shop-gui:
         - "   <gray>Sell all a product"
         - "   <gray>inside your inventory to shop"
         - " "
-      condition:
+      update-period: "0.5s"
+      icons:
+        - condition: "\"{shopping-mode-id}\" == \"CART\""
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BOOK
+            lore:
+              - "<dark_gray>✖ <white>Left Click"
+              - "   <gray>Add 1 stack of product"
+              - "   <gray>to your cart"
+              - "<dark_gray>✖ <white>Right Click"
+              - "   <gray>Remove 1 stack of product"
+              - "   <gray>from your cart"
+              - "<dark_gray>✖ <white>Drop"
+              - "   <gray>Remove all this product"
+              - "   <gray>from your cart"
+              - " "
   product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"

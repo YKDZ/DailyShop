@@ -162,8 +162,12 @@ public class TextUtils {
         return result;
     }
 
-    public static double evaluateFormula(String formula, Map<String, String> vars) {
-        Expression expression = new Expression(parseInternalVar(formula, vars));
+    public static double evaluateNumberFormula(String formula, Map<String, String> vars, @Nullable Player player) {
+        formula = parseInternalVar(formula, vars);
+        if (formula == null) {
+            return -1d;
+        }
+        Expression expression = new Expression(parsePlaceholder(formula, player));
         try {
             BigDecimal result = expression.evaluate().getNumberValue();
             if (Objects.equals(result, BigDecimal.ZERO)) {
@@ -173,8 +177,21 @@ public class TextUtils {
         } catch (NumberFormatException | EvaluationException | ParseException e) {
             LogUtils.warn("There may be wrong in your price formula: " + formula + ". Price was disabled: " + e.getMessage());
         }
-        // 禁用价格
         return -1d;
+    }
+
+    public static boolean evaluateBooleanFormula(String formula, Map<String, String> vars, @Nullable Player player) {
+        formula = parseInternalVar(formula, vars);
+        if (formula == null) {
+            return false;
+        }
+        Expression expression = new Expression(parsePlaceholder(formula, player));
+        try {
+            return expression.evaluate().getBooleanValue();
+        } catch (EvaluationException | ParseException e) {
+            LogUtils.warn("There may be wrong in your condition formula: " + formula + ".");
+        }
+        return false;
     }
 
     public List<String> legacyToMiniMessage(@NotNull List<String> text) {

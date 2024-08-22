@@ -6,15 +6,12 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ShopGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
-import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
@@ -54,7 +51,7 @@ public class ShopGUI extends ShopRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord, player));
+                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player));
             }
         }
 
@@ -88,7 +85,7 @@ public class ShopGUI extends ShopRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), buildNormalIcon(iconRecord, player));
+                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player));
             }
         }
 
@@ -128,15 +125,5 @@ public class ShopGUI extends ShopRelatedGUI {
 
         getWindows().put(player.getUniqueId(), window);
         window.open();
-    }
-
-    @Override
-    public Item buildNormalIcon(IconRecord record, Player player) {
-        BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
-        if (decorator == null) {
-            LogUtils.warn("Icon shop-gui.icons." + record + " in shop " + shop.getId() + " has invalid base setting. Please check it.");
-            return null;
-        }
-        return NormalIconBuilder.build(decorator, shop, this, player);
     }
 }

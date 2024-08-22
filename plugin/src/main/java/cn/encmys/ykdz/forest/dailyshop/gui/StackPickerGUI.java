@@ -5,16 +5,12 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.StackPickerGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.StackPickerGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
-import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
-import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
-import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.AnvilWindow;
 import xyz.xenondevs.invui.window.Window;
 
@@ -35,16 +31,6 @@ public class StackPickerGUI extends PlayerRelatedGUI {
     }
 
     @Override
-    public Item buildNormalIcon(IconRecord record, Player player) {
-        BaseItemDecorator decorator = BaseItemDecoratorImpl.get(record, true);
-        if (decorator == null) {
-            LogUtils.warn("Icon stack-picker.icons." + record + " in cart gui has invalid base setting. Please check it.");
-            return null;
-        }
-        return NormalIconBuilder.build(decorator, null, this, player);
-    }
-
-    @Override
     public Gui build(Player player) {
         Gui.Builder.Normal guiBuilder = Gui.normal()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
@@ -54,7 +40,7 @@ public class StackPickerGUI extends PlayerRelatedGUI {
         }
 
         for (IconRecord icon : guiRecord.icons()) {
-            guiBuilder.addIngredient(icon.key(), buildNormalIcon(icon, player));
+            guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player));
         }
 
         return guiBuilder.build();

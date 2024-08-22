@@ -114,6 +114,10 @@ public class ConfigUtils {
         return icons;
     }
 
+    private static final List<String> nonInheritableKeys = new ArrayList<>() {{
+        add("icons");
+    }};
+
     @NotNull
     public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
         return new IconRecord(
@@ -129,8 +133,71 @@ public class ConfigUtils {
                 iconSection.getStringList("banner-patterns"),
                 iconSection.getStringList("firework-effects"),
                 iconSection.getStringList("potion-effects"),
-                iconSection.getConfigurationSection("features")
+                iconSection.getConfigurationSection("features"),
+                getConditionIconRecords(iconKey, iconSection.getMapList("icons"), iconSection)
         );
+    }
+
+    @NotNull
+    public static Map<String, IconRecord> getConditionIconRecords(char parentKey, List<Map<?, ?>> conditionIconsList, ConfigurationSection parentIconSection) {
+        Map<String, IconRecord> conditionIcons = new HashMap<>();
+        for (Map<?, ?> map : conditionIconsList) {
+            YamlConfiguration conditionIconSection = new YamlConfiguration();
+            loadMapIntoConfiguration(conditionIconSection, map, "");
+            if (conditionIconSection.getBoolean("inherit", true)) {
+                inheritIconSection(conditionIconSection.getConfigurationSection("icon"), parentIconSection);
+            }
+            conditionIcons.put(conditionIconSection.getString("condition"), new IconRecord(
+                    parentKey,
+                    // base 必须被继承以保证图标可用性
+                    conditionIconSection.getString("icon.base", parentIconSection.getString("base", "DIRT")),
+                    conditionIconSection.getString("icon.name", null),
+                    conditionIconSection.getStringList("icon.lore"),
+                    conditionIconSection.getInt("icon.amount", 1),
+                    // update-period 必须被继承以保证更新不是单向的
+                    TextUtils.parseTimeToTicks(conditionIconSection.getString("icon.update-period", parentIconSection.getString("update-period", "0s"))),
+                    conditionIconSection.getInt("icon.custom-model-data"),
+                    conditionIconSection.getConfigurationSection("icon.commands"),
+                    conditionIconSection.getStringList("icon.item-flags"),
+                    conditionIconSection.getStringList("icon.banner-patterns"),
+                    conditionIconSection.getStringList("icon.firework-effects"),
+                    conditionIconSection.getStringList("icon.potion-effects"),
+                    conditionIconSection.getConfigurationSection("icon.features"),
+                    new HashMap<>()
+            ));
+        }
+        return conditionIcons;
+    }
+
+    private static void inheritIconSection(ConfigurationSection iconSection, ConfigurationSection parentSection) {
+        // 获取默认配置节中的键值对
+        for (String key : parentSection.getKeys(true)) {
+            // 如果目标配置节中没有此键，设置默认值
+            if (!iconSection.contains(key) && !nonInheritableKeys.contains(key)) {
+                Object value = parentSection.get(key);
+                if (value instanceof ConfigurationSection defaultSection) {
+                    // 如果是嵌套的配置节，递归调用
+                    ConfigurationSection configSection = iconSection.createSection(key);
+                    inheritIconSection(configSection, defaultSection);
+                } else {
+                    // 直接设置值
+                    iconSection.set(key, value);
+                }
+            }
+        }
+    }
+
+    private static void loadMapIntoConfiguration(ConfigurationSection section, Map<?, ?> map, String path) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            String key = (String) entry.getKey();
+            Object value = entry.getValue();
+            String fullPath = path.isEmpty() ? key : path + "." + key;
+            if (value instanceof Map<?, ?>) {
+                loadMapIntoConfiguration(section.createSection(key), (Map<?, ?>) value, fullPath);
+            } else {
+                section.set(key, value);
+            }
+        }
     }
 
     public static int getLayoutMarkerAmount(List<String> layout, char markerIdentifier) {

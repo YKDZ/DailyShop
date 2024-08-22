@@ -4,13 +4,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PlayerRelatedGUI extends GUI {
-    @NotNull
     protected final Player player;
 
     public PlayerRelatedGUI(Player player) {
         this.player = player;
     }
 
+    @NotNull
     public Player getPlayer() {
         return player;
     }

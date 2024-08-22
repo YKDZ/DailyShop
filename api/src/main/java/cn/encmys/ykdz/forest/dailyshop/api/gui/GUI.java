@@ -1,13 +1,11 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui;
 
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.ScrollGui;
-import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.HashMap;
@@ -19,8 +17,6 @@ public abstract class GUI {
     protected final Map<UUID, Window> windows = new HashMap<>();
     protected GUIContentType guiContentType;
     protected Gui gui;
-
-    public abstract Item buildNormalIcon(IconRecord record, Player player);
 
     public Gui build(Player player) {
         if (gui != null) {

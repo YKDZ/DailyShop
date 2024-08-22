@@ -73,7 +73,7 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
                 vars.putAll(additionalVars);
-                double price = TextUtils.evaluateFormula(buyPrice.getFormula(), vars);
+                double price = TextUtils.evaluateNumberFormula(buyPrice.getFormula(), vars, null);
                 buy = buyPrice.isRound() ? Math.round(price) : price;
             }
             case BUNDLE_AUTO_NEW -> {
@@ -105,7 +105,7 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
                 vars.putAll(additionalVars);
-                double price = TextUtils.evaluateFormula(sellPrice.getFormula(), vars);
+                double price = TextUtils.evaluateNumberFormula(sellPrice.getFormula(), vars, null);
                 sell = sellPrice.isRound() ? Math.round(price) : price;
             }
             case BUNDLE_AUTO_NEW -> {
