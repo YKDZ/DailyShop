@@ -54,13 +54,12 @@ public class OrderHistoryIconBuilder {
                     List<String> lore = TextUtils.decorateText(record.historyIconRecord().formatLore(), player, vars, listVars);
                     String name = TextUtils.decorateText(record.historyIconRecord().formatName(), player, vars);
 
-                    // 配置文件
                     ItemStack displayItem = new ItemStack(Material.PAPER);
-                    if (!log.getOrderedProductIds().isEmpty()) {
-                        String productId = log.getOrderedProductIds().get(0);
-                        Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
+                    for (String id : log.getOrderedProductIds()) {
+                        Product product = DailyShop.PRODUCT_FACTORY.getProduct(id);
                         if (product != null) {
                             displayItem = product.getIconDecorator().getBaseItem().build(player);
+                            break;
                         }
                     }
 
