@@ -243,7 +243,7 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types) {
+    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, long timeLimitInDay, int numEntries, @NotNull OrderType... types) {
         return CompletableFuture.supplyAsync(() -> {
             List<SettlementLog> logs = new ArrayList<>();
             String typeList = Stream.of(types)
@@ -307,13 +307,13 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types) {
+    public CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, long timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types) {
         return CompletableFuture.supplyAsync(() -> {
             List<SettlementLog> logs = new ArrayList<>();
             String typeList = Stream.of(types)
                     .map(Enum::name)
                     .collect(Collectors.joining("','", "'", "'"));
-            long timeLimitMillis = (long) (timeLimitInDay * 24 * 60 * 60 * 1000);
+            long timeLimitMillis = timeLimitInDay * 24 * 60 * 60 * 1000;
             Timestamp timeLimitTimestamp = new Timestamp(System.currentTimeMillis() - timeLimitMillis);
 
             StringBuilder sql = new StringBuilder("SELECT type, transition_time, price, ordered_product_ids, ordered_product_names, ordered_product_stacks FROM dailyshop_settlement_log WHERE transition_time > ? ");
@@ -339,7 +339,7 @@ public class SQLiteDatabase implements Database {
                     stmt.setString(paramIndex++, customer.toString());
                 }
                 stmt.setInt(paramIndex++, pageSize); // 设置每页的条目数量
-                stmt.setInt(paramIndex, (pageIndex - 1) * pageSize); // 设置偏移量
+                stmt.setInt(paramIndex, pageIndex * pageSize); // 设置偏移量
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {

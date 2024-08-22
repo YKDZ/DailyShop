@@ -50,3 +50,6 @@ order-history:
         - "<gray>Total Price: {total-price}"
         - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+      # Used when all the products in the log
+      # no longer exist in your config.
+      placeholder-material: PAPER

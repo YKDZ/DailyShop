@@ -1,7 +1,6 @@
 # The traditional colour format (& symbol) is not supported,
 # please use the MiniMessage format, refer to the following page:
 # https://docs.adventure.kyori.net/minimessage/format.html
-
 format:
   decimal: "###,###.##"
   time: "%02dh:%02dm:%02ds"

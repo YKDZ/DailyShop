@@ -17,7 +17,8 @@ public class Config {
     public static String language_message;
     public static String language_minecraftLang;
     public static int logUsageLimit_entryAmount;
-    public static double logUsageLimit_timeRange;
+    public static long logUsageLimit_timeRange;
+    public static long logQueryLimit_timeRange;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static long period_saveData;
     public static long period_checkRestocking;
@@ -57,6 +58,7 @@ public class Config {
         priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
         logUsageLimit_entryAmount = config.getInt("log-usage-limit.entry-amount", 500);
         logUsageLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-usage-limit.time-range", "7d"));
+        logQueryLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-query-limit.time-range", "31d"));
         version = config.getInt("version");
     }
 

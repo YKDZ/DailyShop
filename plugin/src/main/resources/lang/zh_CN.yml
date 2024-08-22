@@ -1,7 +1,6 @@
 # 传统的颜色格式 (使用 & 符号) 不受支持,
 # 请使用 MiniMessage 格式, 参考以下页面:
 # https://docs.adventure.kyori.net/minimessage/format.html
-
 format:
   decimal: "#######.##"
   timer: "%02dh:%02dm:%02ds"

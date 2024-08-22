@@ -89,8 +89,10 @@ public class NormalIconBuilder {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
                 return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
-                    put("current-scroll", String.valueOf(gui.getCurrentLine() + 1));
-                    put("max-scroll", String.valueOf(gui.getMaxLine() + 1));
+                    // 当前 scroll 从 0 开始
+                    put("current-line", String.valueOf(gui.getCurrentLine() + 1));
+                    // 总数从 1 开始
+                    put("max-line", String.valueOf(gui.getMaxLine()));
                 }});
             }
 
@@ -125,8 +127,10 @@ public class NormalIconBuilder {
             @Override
             public ItemProvider getItemProvider(PagedGui<Item> gui) {
                 return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
+                    // 当前 page 从 0 开始
                     put("current-page", String.valueOf(gui.getCurrentPage() + 1));
-                    put("total-page", String.valueOf(gui.getPageAmount() + 1));
+                    // 总数从 1 开始
+                    put("total-page", String.valueOf(gui.getPageAmount()));
                 }});
             }
 

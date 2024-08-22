@@ -54,7 +54,7 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
         if (guiRecord.scrollMode() != null) {
             currentPage = guiRecord.scrollMode().isHorizontal() ? ConfigUtils.getLayoutMarkerColumAmount(guiRecord.layout(), markerIdentifier) : ConfigUtils.getLayoutMarkerRowAmount(guiRecord.layout(), markerIdentifier);
         } else if (guiRecord.pageMode() != null) {
-            currentPage = 0;
+            currentPage = 1;
         }
         loadContent(player);
 
@@ -154,15 +154,14 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
 //                    } catch (InterruptedException | ExecutionException e) {
 //                        throw new RuntimeException(e);
 //                    }
-//                    LogUtils.info("Count: " + count + " PageSize: " + pageSize + " CurrentPage: " + currentPage);
 //                    if (pageSize * currentPage >= count) {
 //                        return;
 //                    }
                     List<Item> contents = new ArrayList<>();
-                    IntStream.range(0, ++currentPage).forEach(page -> {
+                    IntStream.range(0, currentPage++).forEach(page -> {
                         List<SettlementLog> logs;
                         try {
-                            logs = new ArrayList<>(DailyShop.DATABASE.queryLogs(null, this.player.getUniqueId(), null, Config.logUsageLimit_timeRange, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get());
+                            logs = new ArrayList<>(DailyShop.DATABASE.queryLogs(null, this.player.getUniqueId(), null, Config.logQueryLimit_timeRange / 20 / 60 / 60 / 24, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get());
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
                         }

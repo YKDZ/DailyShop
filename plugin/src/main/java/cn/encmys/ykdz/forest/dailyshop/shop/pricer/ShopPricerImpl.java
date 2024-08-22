@@ -161,7 +161,7 @@ public class ShopPricerImpl implements ShopPricer {
         this.cachedPrices = cachedPrices;
     }
 
-    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types) {
+    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, long timeLimitInDay, int numEntries, @NotNull OrderType... types) {
         int totalSales = 0;
 
         List<SettlementLog> logs;

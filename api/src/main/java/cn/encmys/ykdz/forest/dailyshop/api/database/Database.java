@@ -30,9 +30,9 @@ public interface Database {
 
     void insertSettlementLog(@NotNull String shopId, @NotNull SettlementLog log);
 
-    CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int numEntries, @NotNull OrderType... types);
+    CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, long timeLimitInDay, int numEntries, @NotNull OrderType... types);
 
-    CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, double timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types);
+    CompletableFuture<List<SettlementLog>> queryLogs(@Nullable String shopId, @Nullable UUID customer, @Nullable String productId, long timeLimitInDay, int pageIndex, int pageSize, @NotNull OrderType... types);
 
     CompletableFuture<Integer> cleanLogs(@NotNull UUID customerUUID, int limitInDay);
 
