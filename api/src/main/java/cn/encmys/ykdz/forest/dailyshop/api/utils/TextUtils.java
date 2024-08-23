@@ -174,7 +174,9 @@ public class TextUtils {
                 return -1d;
             }
             return Double.parseDouble(result.toString());
-        } catch (NumberFormatException | EvaluationException | ParseException e) {
+        } catch (ParseException e) {
+            return -1d;
+        } catch (NumberFormatException | EvaluationException e) {
             LogUtils.warn("There may be wrong in your price formula: " + formula + ". Price was disabled: " + e.getMessage());
         }
         return -1d;
@@ -188,7 +190,9 @@ public class TextUtils {
         Expression expression = new Expression(parsePlaceholder(formula, player));
         try {
             return expression.evaluate().getBooleanValue();
-        } catch (EvaluationException | ParseException e) {
+        } catch (ParseException e) {
+            return false;
+        } catch (EvaluationException e) {
             LogUtils.warn("There may be wrong in your condition formula: " + formula + ".");
         }
         return false;

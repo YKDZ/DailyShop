@@ -118,8 +118,11 @@ public class ConfigUtils {
         add("icons");
     }};
 
-    @NotNull
-    public static IconRecord getIconRecord(char iconKey, ConfigurationSection iconSection) {
+    @Nullable
+    public static IconRecord getIconRecord(char iconKey, @Nullable ConfigurationSection iconSection) {
+        if (iconSection == null) {
+            return null;
+        }
         return new IconRecord(
                 iconKey,
                 iconSection.getString("base", "DIRT"),

@@ -74,7 +74,7 @@ public class CartGUI extends PlayerRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord icon : guiRecord.icons()) {
-                guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player));
+                guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player, null, null));
             }
         }
 
@@ -102,7 +102,7 @@ public class CartGUI extends PlayerRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord icon : guiRecord.icons()) {
-                guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player));
+                guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player, null, null));
             }
         }
 

@@ -38,13 +38,22 @@ import java.util.List;
 import java.util.Map;
 
 public class NormalIconBuilder {
-    public static BaseItemDecorator decoratorFromIconRecord(@NotNull IconRecord iconRecord, Shop shop, Player player) {
+    public static BaseItemDecorator decoratorFromIconRecord(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull Player player, @Nullable Map<String, String> additionalVars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        Map<String, String> vars = new HashMap<>() {{
+            if (shop != null) {
+                put("shopping-mode-id", profile.getShoppingMode(shop.getId()).name());
+                put("shop-id", shop.getId());
+            }
+            put("player-uuid", player.getUniqueId().toString());
+            put("player-name", player.getName());
+            if (additionalVars != null) {
+                putAll(additionalVars);
+            }
+        }};
         IconRecord targetIconRecord = iconRecord;
         for (Map.Entry<String, IconRecord> entry : iconRecord.conditionIcons().entrySet()) {
-            if (TextUtils.evaluateBooleanFormula(entry.getKey(), new HashMap<>() {{
-                put("shopping-mode-id", profile.getShoppingMode(shop.getId()).name());
-            }}, player)) {
+            if (TextUtils.evaluateBooleanFormula(entry.getKey(), vars, player)) {
                 targetIconRecord = entry.getValue();
             }
         }
@@ -52,25 +61,24 @@ public class NormalIconBuilder {
     }
 
     @NotNull
-    public static Item build(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
+    public static Item build(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         if (decorator.getFeaturesScroll() != null || decorator.getFeaturesPageChange() != null) {
-            return buildControlIcon(iconRecord, shop, workGUI, player);
+            return buildControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
         }
-        return buildIcon(iconRecord, shop, workGUI, player);
+        return buildIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
     }
 
-    private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
-                return itemFromDecorator(decorator, shop, player, null);
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, additionalVars);
+                return itemFromDecorator(decorator, shop, player, additionalVars, additionalListVars);
             }
 
             @Override
             public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
                 // 通用变量
                 Map<String, String> vars = new HashMap<>() {{
                     put("player-name", player.getName());
@@ -80,14 +88,18 @@ public class NormalIconBuilder {
                         put("shop-id", shop.getId());
                         put("shop-name", shop.getName());
                     }
+                    if (additionalVars != null) {
+                        putAll(additionalVars);
+                    }
                 }};
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 dispatchCommand(clickType, player, decorator.getCommands(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 notifyWindows();
             }
         };
 
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 配置自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
@@ -96,25 +108,29 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
+    private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
-            return buildScrollControlIcon(iconRecord, shop, workGUI, player);
+            return buildScrollControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
         } else {
-            return buildPagedControlIcon(iconRecord, shop, workGUI, player);
+            return buildPagedControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
         }
     }
 
-    private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
+    private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
-                return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
+                Map<String, String> vars = new HashMap<>() {{
                     // 当前 scroll 从 0 开始
                     put("current-line", String.valueOf(gui.getCurrentLine() + 1));
                     // 总数从 0 开始
                     put("total-line", String.valueOf(gui.getMaxLine() + 1));
-                }});
+                    if (additionalVars != null) {
+                        putAll(additionalVars);
+                    }
+                }};
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
+                return itemFromDecorator(decorator, shop, player, vars, additionalListVars);
             }
 
             @Override
@@ -128,13 +144,18 @@ public class NormalIconBuilder {
                         put("shop-id", shop.getId());
                         put("shop-name", shop.getName());
                     }
+                    if (additionalVars != null) {
+                        putAll(additionalVars);
+                    }
                 }};
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 dispatchCommand(clickType, player, decorator.getCommands(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
         };
 
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
@@ -143,17 +164,22 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildPagedControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player) {
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player);
+    private static Item buildPagedControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         AbstractControlIcon<PagedGui<Item>> icon = new AbstractControlIcon<>() {
             @Override
             public ItemProvider getItemProvider(PagedGui<Item> gui) {
-                return itemFromDecorator(decorator, shop, player, new HashMap<>() {{
+                Map<String, String> vars = new HashMap<>() {{
                     // 当前 page 从 0 开始
                     put("current-page", String.valueOf(gui.getCurrentPage() + 1));
                     // 总数从 1 开始
-                    put("total-page", String.valueOf(gui.getPageAmount()));
-                }});
+                    // 若不存在 content 则为 0
+                    put("total-page", String.valueOf(gui.getPageAmount() == 0 ? 1 : gui.getPageAmount()));
+                    if (additionalVars != null) {
+                        putAll(additionalVars);
+                    }
+                }};
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
+                return itemFromDecorator(decorator, shop, player, vars, additionalListVars);
             }
 
             @Override
@@ -167,13 +193,18 @@ public class NormalIconBuilder {
                         put("shop-id", shop.getId());
                         put("shop-name", shop.getName());
                     }
+                    if (additionalVars != null) {
+                        putAll(additionalVars);
+                    }
                 }};
+                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 dispatchCommand(clickType, player, decorator.getCommands(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
         };
 
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 自动更新
         if (decorator.getPeriod() > 0) {
             icon.startUpdater(decorator.getPeriod());
@@ -249,7 +280,7 @@ public class NormalIconBuilder {
         }
     }
 
-    private static ItemBuilder itemFromDecorator(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, Player player, @Nullable Map<String, String> additionalVars) {
+    private static ItemBuilder itemFromDecorator(@NotNull BaseItemDecorator decorator, @Nullable Shop shop, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         Map<String, String> vars = new HashMap<>() {{
             put("player-name", player.getName());
@@ -273,7 +304,7 @@ public class NormalIconBuilder {
                 new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(player))
                         .setCustomModelData(decorator.getCustomModelData())
                         .setItemFlags(decorator.getItemFlags())
-                        .setLore(TextUtils.decorateText(decorator.getLore(), player, vars, null))
+                        .setLore(TextUtils.decorateText(decorator.getLore(), player, vars, additionalListVars))
                         .setDisplayName(TextUtils.decorateText(decorator.getName(), player, vars))
                         .setBannerPatterns(decorator.getPatternsData())
                         .setFireworkEffects(decorator.getFireworkEffectData())

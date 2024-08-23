@@ -24,6 +24,13 @@ order-history:
       features:
         page-change: LEFT
         page-change-amount: -1
+      icons:
+        - condition: "{current-page} == 1"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "n":
       base: GREEN_STAINED_GLASS_PANE
       name: "<gray>Next Page: {current-page}/{total-page}"
@@ -31,6 +38,13 @@ order-history:
         page-change: LEFT
         page-change-amount: 1
         load-more-log: LEFT
+      icons:
+        - condition: "{current-page} == {total-page}"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "@":
       base: MINECART
       name: "<white>Shopping Cart"
@@ -50,7 +64,22 @@ order-history:
         - "<gray>Total Price: {total-price}"
         - " "
       order-contents-line: " <dark_gray>- <white>{name} <gray>x <white>{amount}"
+    # Used when all the products in the log
+    # no longer exist in your config or
+    # can not be build to history icon.
     misc:
-      # Used when all the products in the log
-      # no longer exist in your config.
-      placeholder-material: PAPER
+      placeholder-icon:
+        base: PAPER
+        name: "<white>{date}"
+        lore:
+          - ""
+          - "<dark_gray>This icon can only be paper"
+          - "<dark_gray>:)"
+          - ""
+          - "<gray>Products:"
+          - "{order-contents}"
+          - ""
+          - "<gray>Type: {type}"
+          - ""
+          - "<gray>Total Price: {total-price}"
+          - " "

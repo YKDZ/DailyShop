@@ -51,7 +51,7 @@ public class ShopGUI extends ShopRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player));
+                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player, null, null));
             }
         }
 
@@ -85,7 +85,7 @@ public class ShopGUI extends ShopRelatedGUI {
         // 普通图标
         if (guiRecord.icons() != null) {
             for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player));
+                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player, null, null));
             }
         }
 

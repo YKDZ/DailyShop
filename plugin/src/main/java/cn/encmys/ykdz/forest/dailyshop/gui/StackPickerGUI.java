@@ -40,7 +40,7 @@ public class StackPickerGUI extends PlayerRelatedGUI {
         }
 
         for (IconRecord icon : guiRecord.icons()) {
-            guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player));
+            guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player, null, null));
         }
 
         return guiBuilder.build();

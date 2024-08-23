@@ -13,5 +13,7 @@ public record IconRecord(char key, @NotNull String base,
                          int customModalData, @Nullable ConfigurationSection commands,
                          @Nullable List<String> itemFlags, @Nullable List<String> bannerPatterns,
                          @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects,
-                         @Nullable ConfigurationSection features, @NotNull Map<String, IconRecord> conditionIcons) {
+                         @Nullable ConfigurationSection features,
+                         // Inspired from TrMenu
+                         @NotNull Map<String, IconRecord> conditionIcons) {
 }

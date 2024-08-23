@@ -6,7 +6,7 @@ sounds:
 cart:
   title: "Cart for player {player-name}"
   # Available option is HORIZONTAL and VERTICAL
-  scroll-mode: HORIZONTAL
+  page-mode: HORIZONTAL
   # The x character is the placeholder
   # for the history slot.
   layout:
@@ -23,16 +23,30 @@ cart:
         - " "
     "u":
       base: GREEN_STAINED_GLASS_PANE
-      name: "<gray>Scroll Up: {current-line}/{max-line}"
+      name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
-        scroll: LEFT
-        scroll-amount: -1
+        page-change: LEFT
+        page-change-amount: -1
+      icons:
+        - condition: "{current-page} == 1"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "n":
       base: RED_STAINED_GLASS_PANE
-      name: "<gray>Scroll Down: {current-line}/{max-line}"
+      name: "<gray>Next Page: {current-page}/{total-page}"
       features:
-        scroll: LEFT
-        scroll-amount: 1
+        page-change: LEFT
+        page-change-amount: 1
+      icons:
+        - condition: "{current-page} == {total-page}"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "@":
       base: PAPER
       name: "<gray>Total Price: <white>{cart-total-price}"
