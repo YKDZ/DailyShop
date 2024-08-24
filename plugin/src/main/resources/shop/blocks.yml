@@ -57,12 +57,30 @@ shop-gui:
       features:
         scroll: LEFT
         scroll-amount: -1
+      icons:
+        # Use the same formula parser EvalEx like formula-price feature
+        # Result of this formula must be boolean
+        - condition: "{current-line} == 1"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "n":
       base: GREEN_STAINED_GLASS_PANE
       name: "<gray>Next Line" # : {current-line}/{total-line}
       features:
         scroll: LEFT
         scroll-amount: 1
+      icons:
+        # Use the same formula parser EvalEx like formula-price feature
+        # Result of this formula must be boolean
+        - condition: "{current-line} == 4"
+          # true by default
+          # base and update-period will be inherited anyway
+          inherit: true
+          icon:
+            base: BLACK_STAINED_GLASS_PANE
     "c":
       base: MINECART
       name: " "
@@ -90,7 +108,10 @@ shop-gui:
         - " "
       update-period: "0.5s"
       icons:
+        # Use the same formula parser EvalEx like formula-price feature
+        # Result of this formula must be boolean
         - condition: "\"{shopping-mode-id}\" == \"CART\""
+          # true by default
           # base and update-period will be inherited anyway
           inherit: true
           icon:
