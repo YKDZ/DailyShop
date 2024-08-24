@@ -51,10 +51,13 @@ public class NormalIconBuilder {
                 putAll(additionalVars);
             }
         }};
+        // 尝试找到满足条件的第一个子图标
+        // 否则使用默认图标
         IconRecord targetIconRecord = iconRecord;
         for (Map.Entry<String, IconRecord> entry : iconRecord.conditionIcons().entrySet()) {
             if (TextUtils.evaluateBooleanFormula(entry.getKey(), vars, player)) {
                 targetIconRecord = entry.getValue();
+                break;
             }
         }
         return BaseItemDecoratorImpl.get(targetIconRecord, true);
