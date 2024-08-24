@@ -20,7 +20,10 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
-                DailyShop.INSTANCE, () -> DailyShop.PROFILE_FACTORY.removeProfile(player)
+                DailyShop.INSTANCE, () -> {
+                    DailyShop.PROFILE_FACTORY.save(player.getUniqueId());
+                    DailyShop.PROFILE_FACTORY.removeProfile(player);
+                }
         );
     }
 }

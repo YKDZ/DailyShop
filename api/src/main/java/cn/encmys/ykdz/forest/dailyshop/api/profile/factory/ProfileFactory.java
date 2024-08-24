@@ -19,5 +19,7 @@ public interface ProfileFactory {
 
     void save();
 
+    void save(UUID playerUUID);
+
     void unload();
 }

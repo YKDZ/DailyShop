@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.factory.ProfileFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.profile.ProfileImpl;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,19 @@ public class ProfileFactoryImpl implements ProfileFactory {
             }
         }
         DailyShop.DATABASE.saveProfileData(data);
+    }
+
+    @Override
+    public void save(UUID playerUUID) {
+        Profile profile = profiles.get(playerUUID);
+        if (profile != null) {
+            Bukkit.getScheduler().runTaskAsynchronously(
+                    DailyShop.INSTANCE,
+                    () -> DailyShop.DATABASE.saveProfileData(new ArrayList<>() {{
+                        add(profile);
+                    }})
+            );
+        }
     }
 
     @Override
