@@ -44,7 +44,7 @@ public class ItemsAdderItem implements BaseItem {
     public ItemStack build(Player player) {
         CustomStack stack = CustomStack.getInstance(getNamespacedId());
         if (stack != null) {
-            return stack.getItemStack();
+            return stack.getItemStack().clone();
         } else {
             return new ItemStack(Material.AIR);
         }

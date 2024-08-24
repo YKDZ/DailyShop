@@ -25,6 +25,8 @@ public abstract class DailyShop extends JavaPlugin {
 
     public abstract void reload();
 
+    public abstract void init();
+
     public abstract boolean setupEconomy();
 
     public abstract void setupBStats();

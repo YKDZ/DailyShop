@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.PlaceholderAPIHook;
+import cn.encmys.ykdz.forest.dailyshop.listener.ItemsAdderListener;
 import cn.encmys.ykdz.forest.dailyshop.listener.PlayerListener;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.profile.factory.ProfileFactoryImpl;
@@ -53,12 +54,20 @@ public final class DailyShopImpl extends DailyShop {
     @Override
     public void onLoad() {
         INSTANCE = this;
-
         CommandAPI.onLoad(new CommandAPIBukkitConfig(INSTANCE));
     }
 
     @Override
     public void onEnable() {
+        if (ItemsAdderHook.isHooked()) {
+            Bukkit.getPluginManager().registerEvents(new ItemsAdderListener(), INSTANCE);
+        } else {
+            init();
+        }
+    }
+
+    @Override
+    public void init() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), INSTANCE);
 
         ADVENTURE_MANAGER = new AdventureManagerImpl(INSTANCE);
