@@ -48,9 +48,8 @@ order-history:
     "@":
       base: MINECART
       name: "<white>Shopping Cart"
-      commands:
-        left:
-          - "dailyshop cart open %player_name%"
+      features:
+        open-cart: LEFT
   history-icon:
     format:
       name: "<white>{date}"
