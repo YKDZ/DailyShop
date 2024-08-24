@@ -190,6 +190,7 @@ public class ProductIconBuilder {
             PlayerUtils.playSound(ShopConfig.getSoundRecord(shop.getId(), "buy-all-from.failure"), player);
         } else {
             vars.put("earn", MessageConfig.format_decimal.format(order.getTotalPrice()));
+            vars.put("stack", String.valueOf(order.getOrderedProducts().get(product.getId())));
             PlayerUtils.sendMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.action.shop.buy-all-from." + result.getConfigKey()), player, vars);
             PlayerUtils.playSound(ShopConfig.getSoundRecord(shop.getId(), "buy-all-from.success"), player);
         }
