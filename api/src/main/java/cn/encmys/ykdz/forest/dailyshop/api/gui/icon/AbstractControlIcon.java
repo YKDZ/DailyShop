@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.gui.icon;
 
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,6 +14,7 @@ import xyz.xenondevs.invui.item.impl.controlitem.ControlItem;
 
 public abstract class AbstractControlIcon<T extends Gui> extends ControlItem<T> {
     private BukkitTask task;
+    protected BaseItemDecorator decorator;
 
     public void startUpdater(long period) {
         if (task != null) task.cancel();
@@ -29,4 +31,12 @@ public abstract class AbstractControlIcon<T extends Gui> extends ControlItem<T> 
 
     @Override
     public abstract void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event);
+
+    public BaseItemDecorator getDecorator() {
+        return decorator;
+    }
+
+    public void setDecorator(BaseItemDecorator decorator) {
+        this.decorator = decorator;
+    }
 }

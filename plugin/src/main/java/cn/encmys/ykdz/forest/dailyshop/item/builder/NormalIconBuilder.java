@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NormalIconBuilder {
-    public static BaseItemDecorator decoratorFromIconRecord(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull Player player, @Nullable Map<String, String> additionalVars) {
+    private static BaseItemDecorator decoratorFromIconRecord(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull Player player, @Nullable Map<String, String> additionalVars) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         Map<String, String> vars = new HashMap<>() {{
             if (shop != null) {
@@ -72,11 +72,19 @@ public class NormalIconBuilder {
         return buildIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
     }
 
+    private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
+        if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
+            return buildScrollControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
+        } else {
+            return buildPagedControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
+        }
+    }
+
     private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
         AbstractIcon icon = new AbstractIcon() {
             @Override
             public ItemProvider getItemProvider() {
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, additionalVars);
+                decorator = decoratorFromIconRecord(iconRecord, shop, player, additionalVars);
                 return itemFromDecorator(decorator, shop, player, additionalVars, additionalListVars);
             }
 
@@ -102,21 +110,12 @@ public class NormalIconBuilder {
             }
         };
 
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 配置自动更新
-        if (decorator.getPeriod() > 0) {
-            icon.startUpdater(decorator.getPeriod());
+        if (icon.getDecorator().getUpdatePeriod() > 0) {
+            icon.startUpdater(icon.getDecorator().getUpdatePeriod());
         }
 
         return icon;
-    }
-
-    private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
-        if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
-            return buildScrollControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
-        } else {
-            return buildPagedControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
-        }
     }
 
     private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
@@ -132,7 +131,7 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
+                decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 return itemFromDecorator(decorator, shop, player, vars, additionalListVars);
             }
 
@@ -143,6 +142,10 @@ public class NormalIconBuilder {
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                     put("click-type", clickType.name());
+                    // 当前 scroll 从 0 开始
+                    put("current-line", String.valueOf(getGui().getCurrentLine() + 1));
+                    // 总数从 0 开始
+                    put("total-line", String.valueOf(getGui().getMaxLine() + 1));
                     if (shop != null) {
                         put("shop-id", shop.getId());
                         put("shop-name", shop.getName());
@@ -151,17 +154,15 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 dispatchCommand(clickType, player, decorator.getCommands(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
         };
 
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 自动更新
-        if (decorator.getPeriod() > 0) {
-            icon.startUpdater(decorator.getPeriod());
+        if (icon.getDecorator().getUpdatePeriod() > 0) {
+            icon.startUpdater(icon.getDecorator().getUpdatePeriod());
         }
 
         return icon;
@@ -181,7 +182,7 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
+                decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 return itemFromDecorator(decorator, shop, player, vars, additionalListVars);
             }
 
@@ -192,6 +193,11 @@ public class NormalIconBuilder {
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                     put("click-type", clickType.name());
+                    // 当前 page 从 0 开始
+                    put("current-page", String.valueOf(getGui().getCurrentPage() + 1));
+                    // 总数从 1 开始
+                    // 若不存在 content 则为 0
+                    put("total-page", String.valueOf(getGui().getPageAmount() == 0 ? 1 : getGui().getPageAmount()));
                     if (shop != null) {
                         put("shop-id", shop.getId());
                         put("shop-name", shop.getName());
@@ -200,17 +206,15 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
                 dispatchCommand(clickType, player, decorator.getCommands(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
         };
 
-        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         // 自动更新
-        if (decorator.getPeriod() > 0) {
-            icon.startUpdater(decorator.getPeriod());
+        if (icon.getDecorator().getUpdatePeriod() > 0) {
+            icon.startUpdater(icon.getDecorator().getUpdatePeriod());
         }
 
         return icon;

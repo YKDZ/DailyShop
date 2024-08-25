@@ -72,7 +72,7 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setFeaturesScroll(ClickType featuresScroll);
 
-    public abstract long getPeriod();
+    public abstract long getUpdatePeriod();
 
     public abstract BaseItemDecorator setUpdatePeriod(long period);
 

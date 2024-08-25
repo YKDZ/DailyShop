@@ -156,7 +156,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public long getPeriod() {
+    public long getUpdatePeriod() {
         return period;
     }
 

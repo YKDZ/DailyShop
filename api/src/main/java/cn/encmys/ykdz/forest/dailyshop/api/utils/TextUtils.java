@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.EvaluatorException;
 import org.mozilla.javascript.Scriptable;
 
 import java.math.BigDecimal;
@@ -171,7 +172,6 @@ public class TextUtils {
         formula = parsePlaceholder(formula, player);
 
         Scriptable scope = ctx.initStandardObjects();
-
         try {
             Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
             if (result instanceof Number) {
@@ -180,8 +180,13 @@ public class TextUtils {
                     return -1d;
                 }
                 return bigDecimalResult.doubleValue();
+            } else {
+                LogUtils.warn("Result of formula " + formula + " is not a number");
             }
-        } catch (Exception ignored) {
+        } catch (EvaluatorException e) {
+            LogUtils.warn("Evaluation error for formula: " + formula);
+        } catch (Exception e) {
+            LogUtils.warn("Unexpected error for formula: " + formula);
         }
         return -1d;
     }
@@ -194,11 +199,18 @@ public class TextUtils {
         formula = parsePlaceholder(formula, player);
 
         Scriptable scope = ctx.initStandardObjects();
-
         try {
             Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
-            return result != null && (Boolean) result;
-        } catch (Exception ignored) {
+            if (result instanceof Boolean) {
+                return (Boolean) result;
+            } else {
+                LogUtils.warn("Result of formula " + formula + " is not a boolean");
+            }
+        } catch (EvaluatorException e) {
+            LogUtils.warn("Evaluation error for formula: " + formula);
+            e.printStackTrace();
+        } catch (Exception e) {
+            LogUtils.warn("Unexpected error for formula: " + formula);
         }
         return false;
     }
