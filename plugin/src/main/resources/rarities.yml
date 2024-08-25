@@ -17,13 +17,13 @@ rarities:
     name: "<dark_purple>Rare"
     weight: 60
   epic:
-    name: "<purple>Epic"
+    name: "<#6A0DAD>Epic"
     weight: 40
   ancient:
     name: "<blue>Ancient"
     weight: 20
   legendary:
-    name: "<purple>Legendary"
+    name: "<#FFD700>Legendary"
     weight: 10
   mythic:
     name: "<gold>Mythic"
