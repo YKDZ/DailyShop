@@ -203,6 +203,12 @@ public class ProductFactoryImpl implements ProductFactory {
             return;
         }
 
+        // ListConditions
+        List<String> listConditions = productSection.getStringList("list-conditions");
+        if (listConditions.isEmpty()) {
+            listConditions = defaultSettings.getStringList("list-conditions");
+        }
+
         BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(icon, true)
                 .setAmount(iconSection.getInt("amount", 1))
                 .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
@@ -215,7 +221,7 @@ public class ProductFactoryImpl implements ProductFactory {
         // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
             allProducts.put(id,
-                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock,
+                    new CommandProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, listConditions,
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
         } else if (productSection.contains("bundle-contents")) {
@@ -239,10 +245,10 @@ public class ProductFactoryImpl implements ProductFactory {
                 }
             }
             allProducts.put(id,
-                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, bundleContents));
+                    new BundleProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, listConditions, bundleContents));
         } else {
             allProducts.put(id,
-                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconDecorator, itemDecorator, stock, isCacheable));
+                    new ItemProduct(id, buyPrice, sellPrice, rarity, iconDecorator, itemDecorator, stock, listConditions, isCacheable));
         }
     }
 

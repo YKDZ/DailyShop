@@ -110,7 +110,7 @@ shop-gui:
       icons:
         # Use the same formula parser EvalEx like formula-price feature
         # Result of this formula must be boolean
-        - condition: "\"{shopping-mode-id}\" == \"CART\""
+        - condition: "'{shopping-mode-id}' == 'CART'"
           # true by default
           # base and update-period will be inherited anyway
           inherit: true
@@ -168,3 +168,4 @@ products:
   # product pack to this shop.
   - PACK:wools
   - PACK:ores
+  - PACK:sculk

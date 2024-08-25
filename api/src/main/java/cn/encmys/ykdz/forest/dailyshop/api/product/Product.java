@@ -12,26 +12,29 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Product {
     private final String id;
     private final Price buyPrice;
     private final Price sellPrice;
     private final Rarity rarity;
-    @NotNull
     private final BaseItemDecorator iconDecorator;
-    @Nullable
     private final BaseItemDecorator itemDecorator;
     private final ProductStock productStock;
+    private final List<String> listConditions = new ArrayList<>();
     protected final boolean isCacheable;
 
     public Product(
-            String id,
-            Price buyPrice,
-            Price sellPrice,
-            Rarity rarity,
+            @NotNull String id,
+            @NotNull Price buyPrice,
+            @NotNull Price sellPrice,
+            @NotNull Rarity rarity,
             @NotNull BaseItemDecorator iconDecorator,
-            BaseItemDecorator itemDecorator,
-            ProductStock productStock,
+            @Nullable BaseItemDecorator itemDecorator,
+            @NotNull ProductStock productStock,
+            @NotNull List<String> listConditions,
             boolean isCacheable) {
         this.id = id;
         this.buyPrice = buyPrice;
@@ -40,6 +43,7 @@ public abstract class Product {
         this.iconDecorator = iconDecorator;
         this.itemDecorator = itemDecorator;
         this.productStock = productStock;
+        this.listConditions.addAll(listConditions);
         this.isCacheable = isCacheable;
     }
 
@@ -69,6 +73,10 @@ public abstract class Product {
     @Nullable
     public BaseItemDecorator getItemDecorator() {
         return itemDecorator;
+    }
+
+    public List<String> getListConditions() {
+        return listConditions;
     }
 
     public ProductStock getProductStock() {

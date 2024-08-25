@@ -2,13 +2,12 @@ package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
-import com.ezylang.evalex.EvaluationException;
-import com.ezylang.evalex.Expression;
-import com.ezylang.evalex.parser.ParseException;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -162,22 +161,27 @@ public class TextUtils {
         return result;
     }
 
+    private static final Context ctx = Context.enter();
+
     public static double evaluateNumberFormula(String formula, Map<String, String> vars, @Nullable Player player) {
         formula = parseInternalVar(formula, vars);
         if (formula == null) {
             return -1d;
         }
-        Expression expression = new Expression(parsePlaceholder(formula, player));
+        formula = parsePlaceholder(formula, player);
+
+        Scriptable scope = ctx.initStandardObjects();
+
         try {
-            BigDecimal result = expression.evaluate().getNumberValue();
-            if (Objects.equals(result, BigDecimal.ZERO)) {
-                return -1d;
+            Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
+            if (result instanceof Number) {
+                BigDecimal bigDecimalResult = new BigDecimal(result.toString());
+                if (Objects.equals(bigDecimalResult, BigDecimal.ZERO)) {
+                    return -1d;
+                }
+                return bigDecimalResult.doubleValue();
             }
-            return Double.parseDouble(result.toString());
-        } catch (ParseException e) {
-            return -1d;
-        } catch (NumberFormatException | EvaluationException e) {
-            LogUtils.warn("There may be wrong in your price formula: " + formula + ". Price was disabled: " + e.getMessage());
+        } catch (Exception ignored) {
         }
         return -1d;
     }
@@ -187,13 +191,14 @@ public class TextUtils {
         if (formula == null) {
             return false;
         }
-        Expression expression = new Expression(parsePlaceholder(formula, player));
+        formula = parsePlaceholder(formula, player);
+
+        Scriptable scope = ctx.initStandardObjects();
+
         try {
-            return expression.evaluate().getBooleanValue();
-        } catch (ParseException e) {
-            return false;
-        } catch (EvaluationException e) {
-            LogUtils.warn("There may be wrong in your condition formula: " + formula + ".");
+            Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
+            return result != null && (Boolean) result;
+        } catch (Exception ignored) {
         }
         return false;
     }

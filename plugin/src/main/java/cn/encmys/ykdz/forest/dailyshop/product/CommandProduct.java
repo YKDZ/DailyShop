@@ -27,9 +27,10 @@ public class CommandProduct extends Product {
             Rarity rarity,
             BaseItemDecorator iconBuilder,
             ProductStock productStock,
+            List<String> listConditions,
             List<String> buyCommands,
             List<String> sellCommands) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, listConditions, false);
         this.buyCommands = buyCommands;
         this.sellCommands = sellCommands;
     }

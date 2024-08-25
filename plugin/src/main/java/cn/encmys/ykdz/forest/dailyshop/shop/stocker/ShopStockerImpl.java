@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -63,17 +64,34 @@ public class ShopStockerImpl implements ShopStocker {
             int totalWeight = allProducts.values().stream()
                     .mapToInt(p -> p.getRarity().weight()).sum();
 
-            for (int i = 0; i < size; i++) {
-                int needed = random.nextInt(totalWeight) + 1; // 避免出现 0
-                int runningWeight = 0;
+            int productsAdded = 0;
+
+            while (productsAdded < size && !temp.isEmpty()) {
+                int randomValue = random.nextInt(totalWeight) + 1; // 避免出现 0
+                int cumulativeWeight = 0;
+
                 for (String productId : temp) {
                     Product product = allProducts.get(productId);
-                    runningWeight += product.getRarity().weight();
-                    if (needed <= runningWeight) {
-                        productsPreparedToBeListed.add(product);
-                        totalWeight -= product.getRarity().weight();
-                        temp.remove(productId);
-                        break;
+                    cumulativeWeight += product.getRarity().weight();
+                    if (randomValue <= cumulativeWeight) {
+                        // 根据 list-conditions 判断是否可以被上架
+                        List<String> listConditions = product.getListConditions();
+                        boolean conditionFlag = true;
+                        if (!listConditions.isEmpty()) {
+                            for (String condition : listConditions) {
+                                if (!TextUtils.evaluateBooleanFormula(condition, new HashMap<>(), null)) {
+                                    conditionFlag = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (conditionFlag) {
+                            productsPreparedToBeListed.add(product);
+                            totalWeight -= product.getRarity().weight();
+                            temp.remove(productId);
+                            productsAdded++;
+                            break;
+                        }
                     }
                 }
             }
@@ -87,13 +105,8 @@ public class ShopStockerImpl implements ShopStocker {
         }
         // Event
 
-        boolean cacheGUIMarker = true;
-        for (Product product : productsPreparedToBeListed) {
-            if (cacheGUIMarker && (product.getProductStock().isPlayerStock() || product.getProductStock().isPlayerStock())) {
-                cacheGUIMarker = false;
-            }
-            listProduct(product);
-        }
+        // 逐个上架
+        productsPreparedToBeListed.forEach(this::listProduct);
 
         getShop().getShopGUI().closeAll();
 

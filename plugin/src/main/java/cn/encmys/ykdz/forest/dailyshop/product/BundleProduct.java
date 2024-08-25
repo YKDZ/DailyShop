@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 public class BundleProduct extends Product {
@@ -25,8 +26,9 @@ public class BundleProduct extends Product {
             Rarity rarity,
             BaseItemDecorator iconBuilder,
             ProductStock productStock,
+            List<String> listConditions,
             Map<String, Integer> bundleContents) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, false);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, null, productStock, listConditions, false);
         this.bundleContents = bundleContents;
     }
 

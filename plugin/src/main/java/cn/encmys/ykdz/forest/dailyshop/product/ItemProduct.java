@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class ItemProduct extends Product {
@@ -27,8 +28,9 @@ public class ItemProduct extends Product {
             BaseItemDecorator iconBuilder,
             BaseItemDecorator productItemBuilder,
             ProductStock productStock,
+            List<String> listConditions,
             boolean isCacheable) {
-        super(id, buyPrice, sellPrice, rarity, iconBuilder, productItemBuilder, productStock, isCacheable);
+        super(id, buyPrice, sellPrice, rarity, iconBuilder, productItemBuilder, productStock, listConditions, isCacheable);
     }
 
     @Override
