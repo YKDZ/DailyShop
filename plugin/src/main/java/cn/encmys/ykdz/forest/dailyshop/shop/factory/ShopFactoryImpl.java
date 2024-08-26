@@ -43,7 +43,7 @@ public class ShopFactoryImpl implements ShopFactory {
                 String packId = productId.substring(5);
                 List<String> packProducts = ProductConfig.getAllProductId(packId);
                 if (packProducts == null) {
-                    LogUtils.warn("Product pack " + packId + " in shop " + id + " not found.");
+                    LogUtils.warn("Product pack " + packId + ".yml in shop " + id + " not found.");
                     continue;
                 }
                 products.addAll(packProducts);
