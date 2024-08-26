@@ -33,6 +33,6 @@ tasks {
         relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
         relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
         relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
-        relocate("com.ezylang.evalex", "cn.encmys.ykdz.forest.dailyshop.libraries.evalex")
+        relocate("org.mozilla", "cn.encmys.ykdz.forest.dailyshop.libraries.mozilla")
     }
 }
