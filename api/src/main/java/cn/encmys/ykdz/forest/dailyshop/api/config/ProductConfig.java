@@ -2,8 +2,10 @@ package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,7 @@ public class ProductConfig {
         }
     }
 
+    @Nullable
     public static YamlConfiguration getConfig(String packId) {
         return packs.get(packId);
     }
@@ -48,7 +51,16 @@ public class ProductConfig {
         return new ArrayList<>(packs.keySet());
     }
 
+    @Nullable
     public static List<String> getAllProductId(String packId) {
-        return Arrays.asList(getConfig(packId).getConfigurationSection("products").getKeys(false).toArray(new String[0]));
+        YamlConfiguration config = getConfig(packId);
+        if (config == null) {
+            return null;
+        }
+        ConfigurationSection section = config.getConfigurationSection("products");
+        if (section == null) {
+            return null;
+        }
+        return Arrays.asList(section.getKeys(false).toArray(new String[0]));
     }
 }

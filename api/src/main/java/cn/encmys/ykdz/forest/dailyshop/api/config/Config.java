@@ -32,6 +32,7 @@ public class Config {
             DailyShop.INSTANCE.saveResource(resourcePath, false);
             DailyShop.INSTANCE.saveResource("product/ores.yml", false);
             DailyShop.INSTANCE.saveResource("product/wools.yml", false);
+            DailyShop.INSTANCE.saveResource("product/sculk.yml", false);
             DailyShop.INSTANCE.saveResource("product/misc.yml", false);
             DailyShop.INSTANCE.saveResource("shop/black_market.yml", false);
             DailyShop.INSTANCE.saveResource("shop/blocks.yml", false);

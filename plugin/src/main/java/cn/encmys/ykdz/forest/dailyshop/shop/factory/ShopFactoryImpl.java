@@ -40,7 +40,13 @@ public class ShopFactoryImpl implements ShopFactory {
         for (String productId : ShopConfig.getAllProductsId(id)) {
             // 处理 PACK:XXX 的包导入格式
             if (productId.startsWith("PACK:")) {
-                products.addAll(ProductConfig.getAllProductId(productId.substring(5)));
+                String packId = productId.substring(5);
+                List<String> packProducts = ProductConfig.getAllProductId(packId);
+                if (packProducts == null) {
+                    LogUtils.warn("Product pack " + packId + " in shop " + id + " not found.");
+                    continue;
+                }
+                products.addAll(packProducts);
                 continue;
             }
 
