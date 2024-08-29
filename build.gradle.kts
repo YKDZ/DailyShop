@@ -62,7 +62,7 @@ subprojects {
     }
 
     tasks.shadowJar {
-        destinationDirectory.set(file("D:\\Forest项目\\插件测试端\\plugins"))
+        destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set("")
         archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
     }
