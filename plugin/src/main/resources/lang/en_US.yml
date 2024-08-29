@@ -77,9 +77,9 @@ messages:
         success: "<gray>Successfully spent <white>{cost} <gray>to buy <reset>{name} <gray>x <white>{amount}<gray> from shop <reset>{shop-name}<gray>."
         failure:
           money: "<gray>Your balance is insufficient to buy <reset>{name} <gray>x <white>{amount}<gray>."
-          disabled: "<gray>You can not buy from the store <reset>{shop-name}<gray> <reset>{name} <gray>x <white>{amount}<gray>."
-          global-stock: "<gray>You can not buy from the store <reset>{shop-name}<gray> <reset>{name} <gray>x <white>{amount}<gray>. The store's total stock is insufficient."
-          player-stock: "<gray>You can not buy from the store <reset>{shop-name}<gray> <reset>{name} <gray>x <white>{amount}<gray>. The store's allocation of products to you has been exhausted."
+          disabled: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from the store <reset>{shop-name}<gray>."
+          global-stock: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from the store <reset>{shop-name}<gray>. The store's total stock is insufficient."
+          player-stock: "<gray>You can not buy <reset>{name} <gray>x <white>{amount}<gray> from the store <reset>{shop-name}<gray>. The store's allocation of products to you has been exhausted."
           inventory-space: "<gray>Your inventory space can not hold <reset>{name} <gray>x <white>{amount}<gray>."
       # Shop buys product from player
       buy-from:

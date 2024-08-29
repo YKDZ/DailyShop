@@ -1,9 +1,10 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log;
 
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class SettlementLog {
@@ -11,9 +12,7 @@ public abstract class SettlementLog {
     protected OrderType type;
     protected Date transitionTime;
     protected double price;
-    protected List<String> orderedProductIds;
-    protected List<String> orderedProductNames;
-    protected List<Integer> orderedProductStacks;
+    protected Map<String, Integer> orderedProducts;
 
     public abstract SettlementLog setCustomer(UUID customer);
 
@@ -31,15 +30,8 @@ public abstract class SettlementLog {
 
     public abstract SettlementLog setTotalPrice(double price);
 
-    public abstract List<String> getOrderedProductIds();
+    @NotNull
+    public abstract Map<String, Integer> getOrderedProducts();
 
-    public abstract List<String> getOrderedProductNames();
-
-    public abstract SettlementLog setOrderedProductNames(List<String> orderedProductNames);
-
-    public abstract List<Integer> getOrderedProductStacks();
-
-    public abstract SettlementLog setOrderedProductStacks(List<Integer> orderedProductStacks);
-
-    public abstract SettlementLog setOrderedProductIds(List<String> orderedProductIds);
+    public abstract SettlementLog setOrderedProducts(Map<String, Integer> orderedProducts);
 }

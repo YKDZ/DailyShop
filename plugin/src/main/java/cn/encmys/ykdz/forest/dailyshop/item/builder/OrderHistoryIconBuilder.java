@@ -38,24 +38,30 @@ public class OrderHistoryIconBuilder {
                     }};
                     // 构造内部列表变量
                     Map<String, List<String>> listVars = new HashMap<>() {{
-                        String orderContentsLineFormat = record.historyIconRecord().formatOrderContentsLine();
                         List<String> orderContentsLines = new ArrayList<>();
-                        List<String> names = log.getOrderedProductNames();
-                        List<Integer> stacks = log.getOrderedProductStacks();
-                        for (int i = 0; i < names.size(); i++) {
-                            String name = names.get(i);
-                            int stack = stacks.get(i);
-                            orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(orderContentsLineFormat, player, new HashMap<>() {{
-                                put("name", name);
-                                put("amount", Integer.toString(stack));
-                            }}));
+                        Map<String, Integer> orderedProducts = log.getOrderedProducts();
+                        for (Map.Entry<String, Integer> entry : orderedProducts.entrySet()) {
+                            String productId = entry.getKey();
+                            int stack = entry.getValue();
+                            Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
+                            if (product == null) {
+                                orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(record.historyIconRecord().formatInvalidOrderContentLine(), player, new HashMap<>() {{
+                                    put("id", productId);
+                                    put("stack", Integer.toString(stack));
+                                }}));
+                            } else {
+                                orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(record.historyIconRecord().formatOrderContentLine(), player, new HashMap<>() {{
+                                    put("name", product.getIconDecorator().getName());
+                                    put("stack", Integer.toString(stack));
+                                }}));
+                            }
                         }
                         put("order-contents", orderContentsLines);
                     }};
 
                     // 构建显示物品
                     ItemStack displayItem = null;
-                    for (String id : log.getOrderedProductIds()) {
+                    for (String id : log.getOrderedProducts().keySet()) {
                         Product product = DailyShop.PRODUCT_FACTORY.getProduct(id);
                         // 其他插件的物品不保证在异步环境下能被构建
                         // 例如 MMOItems

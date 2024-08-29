@@ -20,7 +20,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ShopCashierImpl implements ShopCashier {
     private final Shop shop;
@@ -288,18 +290,6 @@ public class ShopCashierImpl implements ShopCashier {
 
     @Override
     public void logSettlement(@NotNull ShopOrder order) {
-        List<String> orderedProductIds = new ArrayList<>();
-        List<String> orderedProductNames = new ArrayList<>();
-        List<Integer> orderedProductStacks = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : order.getOrderedProducts().entrySet()) {
-            Product product = DailyShop.PRODUCT_FACTORY.getProduct(entry.getKey());
-            int stack = entry.getValue();
-            if (product == null) continue;
-            orderedProductIds.add(product.getId());
-            orderedProductNames.add(product.getIconDecorator().getName());
-            orderedProductStacks.add(stack);
-        }
-
         SettlementLog log;
         UUID customerUUID = order.getCustomerUUID();
 
@@ -312,10 +302,7 @@ public class ShopCashierImpl implements ShopCashier {
         DailyShop.DATABASE.insertSettlementLog(shop.getId(), log
                 .setTotalPrice(order.getTotalPrice())
                 .setType(order.getOrderType())
-                .setOrderedProductIds(orderedProductIds)
-                .setOrderedProductNames(orderedProductNames)
-                .setOrderedProductStacks(orderedProductStacks)
-                .setOrderedProductIds(orderedProductIds));
+                .setOrderedProducts(order.getOrderedProducts()));
     }
 
     @Override

@@ -7,5 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public record HistoryIconRecord(@NotNull String formatName, @NotNull List<String> formatLore,
-                                @NotNull String formatOrderContentsLine, @Nullable IconRecord miscPlaceholderIcon) {
+                                @NotNull String formatOrderContentLine, @NotNull String formatInvalidOrderContentLine,
+                                @Nullable IconRecord miscPlaceholderIcon) {
 }

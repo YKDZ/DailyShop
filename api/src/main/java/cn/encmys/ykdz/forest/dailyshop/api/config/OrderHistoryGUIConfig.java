@@ -57,7 +57,8 @@ public class OrderHistoryGUIConfig {
                 new HistoryIconRecord(
                         historyIconSection.getString("format.name", "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"),
                         historyIconSection.getStringList("format.lore"),
-                        historyIconSection.getString("format.order-contents-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
+                        historyIconSection.getString("format.order-content-line", " <dark_gray>- <white>{name} <gray>x <white>{amount}"),
+                        historyIconSection.getString("format.invalid-order-content-line", " <dark_gray>- <white>{id} <gray>do not exist"),
                         ConfigUtils.getIconRecord(
                                 '`',
                                 historyIconSection.getConfigurationSection("misc.placeholder-icon")

@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class ShopPricerImpl implements ShopPricer {
     private final Shop shop;
     private Map<String, PricePair> cachedPrices = new HashMap<>();
+    private SettlementLog log;
 
     public ShopPricerImpl(@NotNull ShopImpl shop) {
         this.shop = shop;
@@ -172,16 +173,11 @@ public class ShopPricerImpl implements ShopPricer {
         }
 
         // 计算总销售量
-        for (SettlementLog log : logs) {
-            List<String> productIds = log.getOrderedProductIds();
-            List<Integer> productStacks = log.getOrderedProductStacks();
-
-            for (int i = 0; i < productIds.size(); i++) {
-                if (productIds.get(i).equals(productId)) {
-                    totalSales += productStacks.get(i);
-                }
-            }
-        }
+        totalSales += logs.stream()
+                .flatMap(log -> log.getOrderedProducts().entrySet().stream())
+                .filter(entry -> entry.getKey().equals(productId))
+                .mapToInt(Map.Entry::getValue)
+                .sum();
 
         return totalSales;
     }
