@@ -13,6 +13,7 @@ default-settings:
     - |
       // Represent that all products in this pack
       // can be listed only if time in world "world" is night.
+      // You need PlaceholderAPI extension World to make this script work.
       function isNight() {
         var timeStr = "%world_time_world%".split(':');
         var hours = Number(timeStr[0]);
@@ -33,3 +34,12 @@ products:
   SCULK_SENSOR:
     item:
       base: SCULK_SENSOR
+  SCULK:
+    item:
+      base: SCULK
+  SCULK_CATALYST:
+    item:
+      base: SCULK_CATALYST
+  SCULK_SHRIEKER:
+    item:
+      base: SCULK_SHRIEKER
