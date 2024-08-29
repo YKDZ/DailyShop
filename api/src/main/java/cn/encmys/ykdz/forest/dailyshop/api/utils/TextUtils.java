@@ -12,6 +12,8 @@ import org.mozilla.javascript.Scriptable;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextUtils {
     private static final String listMarker = "|";
@@ -100,20 +102,39 @@ public class TextUtils {
         if (vars == null) {
             return line;
         }
-        // 以 optionalMarker 的行是一个可选行
-        // 如果该行包含某变量，但此变量的值是："-1"、null、空，则抹除整行
-        if (line.startsWith(optionalMarker)) {
-            for (String key : vars.keySet()) {
-                if (line.contains("{" + key + "}") && (vars.get(key).equals("-1") || vars.get(key) == null || vars.get(key).isBlank())) {
-                    return null;
-                }
+        // 正则表达式匹配所有 {} 包裹的变量
+        Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+        Matcher matcher = pattern.matcher(line);
+        // StringBuilder 用于高效地构建最终字符串
+        StringBuilder result = new StringBuilder();
+        int lastMatchEnd = 0;
+        boolean hasInvalidValue = false;
+        // 遍历所有匹配的变量
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String value = vars.get(key);
+            // 检查变量的值是否为 "-1"、null 或空字符串
+            if (value == null || value.equals("-1") || value.isBlank()) {
+                hasInvalidValue = true;
             }
-            line = line.substring(optionalMarker.length());
+            // 将前面的内容添加到 result
+            result.append(line, lastMatchEnd, matcher.start());
+            // 替换变量
+            result.append(value != null ? value : "");
+            // 更新 lastMatchEnd 为当前匹配结束位置
+            lastMatchEnd = matcher.end();
         }
-        for (Map.Entry<String, String> entry : vars.entrySet()) {
-            line = line.replace("{" + entry.getKey() + "}", entry.getValue() != null ? entry.getValue() : "");
+        // 将最后一部分内容添加到 result
+        result.append(line.substring(lastMatchEnd));
+        // 如果发现有无效值且行以 optionalMarker 开头，则返回 null
+        if (hasInvalidValue && line.startsWith(optionalMarker)) {
+            return null;
         }
-        return line;
+        // 如果行以 optionalMarker 开头，则去除它
+        if (line.startsWith(optionalMarker)) {
+            return result.substring(optionalMarker.length());
+        }
+        return result.toString();
     }
 
     public static List<String> parseInternalListVar(@NotNull List<String> lines, @Nullable Map<String, List<String>> vars) {
@@ -162,55 +183,56 @@ public class TextUtils {
         return result;
     }
 
-    private static final Context ctx = Context.enter();
-
     public static double evaluateNumberFormula(String formula, Map<String, String> vars, @Nullable Player player) {
-        formula = parseInternalVar(formula, vars);
-        if (formula == null) {
+        formula = parseInternalVar(optionalMarker + formula, vars);
+        if (formula == null || formula.isEmpty()) {
             return -1d;
         }
         formula = parsePlaceholder(formula, player);
 
-        Scriptable scope = ctx.initStandardObjects();
-        try {
-            Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
-            if (result instanceof Number) {
-                BigDecimal bigDecimalResult = new BigDecimal(result.toString());
-                if (Objects.equals(bigDecimalResult, BigDecimal.ZERO)) {
-                    return -1d;
+        try (Context ctx = Context.enter()) {
+            Scriptable scope = ctx.initStandardObjects();
+            try {
+                Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
+                if (result instanceof Number) {
+                    BigDecimal bigDecimalResult = new BigDecimal(result.toString());
+                    if (Objects.equals(bigDecimalResult, BigDecimal.ZERO)) {
+                        return -1d;
+                    }
+                    return bigDecimalResult.doubleValue();
+                } else {
+                    LogUtils.warn("Result of formula " + formula + " is not a number");
                 }
-                return bigDecimalResult.doubleValue();
-            } else {
-                LogUtils.warn("Result of formula " + formula + " is not a number");
+            } catch (EvaluatorException e) {
+                LogUtils.warn("Evaluation error for formula: " + formula + ". " + e.getMessage());
+            } catch (Exception e) {
+                LogUtils.warn("Unexpected error for formula: " + formula + ". " + e.getMessage());
             }
-        } catch (EvaluatorException e) {
-            LogUtils.warn("Evaluation error for formula: " + formula);
-        } catch (Exception e) {
-            LogUtils.warn("Unexpected error for formula: " + formula);
         }
         return -1d;
     }
 
     public static boolean evaluateBooleanFormula(String formula, Map<String, String> vars, @Nullable Player player) {
-        formula = parseInternalVar(formula, vars);
-        if (formula == null) {
+        formula = parseInternalVar(optionalMarker + formula, vars);
+        if (formula == null || formula.isEmpty()) {
             return false;
         }
         formula = parsePlaceholder(formula, player);
 
-        Scriptable scope = ctx.initStandardObjects();
-        try {
-            Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
-            if (result instanceof Boolean) {
-                return (Boolean) result;
-            } else {
-                LogUtils.warn("Result of formula " + formula + " is not a boolean");
+        try (Context ctx = Context.enter()) {
+            Scriptable scope = ctx.initStandardObjects();
+            try {
+                Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
+                if (result instanceof Boolean) {
+                    return (Boolean) result;
+                } else {
+                    LogUtils.warn("Result of formula " + formula + " is not a boolean");
+                }
+            } catch (EvaluatorException e) {
+                LogUtils.warn("Evaluation error for formula: " + formula + ". " + e.getMessage());
+            } catch (Exception e) {
+                LogUtils.warn("Unexpected error for formula: " + formula + ". " + e.getMessage());
             }
-        } catch (EvaluatorException e) {
-            LogUtils.warn("Evaluation error for formula: " + formula);
-            e.printStackTrace();
-        } catch (Exception e) {
-            LogUtils.warn("Unexpected error for formula: " + formula);
         }
         return false;
     }

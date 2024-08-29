@@ -15,6 +15,10 @@ public abstract class AbstractIcon extends AbstractItem {
     private BukkitTask task;
     protected BaseItemDecorator decorator;
 
+    public AbstractIcon(BaseItemDecorator baseDecorator) {
+        this.decorator = baseDecorator;
+    }
+
     public void startUpdater(long period) {
         if (task != null) task.cancel();
         task = Bukkit.getScheduler().runTaskTimer(InvUI.getInstance().getPlugin(), this::notifyWindows, 0, period);

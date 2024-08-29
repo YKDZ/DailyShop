@@ -69,19 +69,20 @@ public class NormalIconBuilder {
         if (decorator.getFeaturesScroll() != null || decorator.getFeaturesPageChange() != null) {
             return buildControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
         }
-        return buildIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
+        return buildIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars, decorator);
     }
 
     private static Item buildControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
+        BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, null);
         if (workGUI.getGuiContentType() == GUIContentType.SCROLL) {
-            return buildScrollControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
+            return buildScrollControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars, decorator);
         } else {
-            return buildPagedControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars);
+            return buildPagedControlIcon(iconRecord, shop, workGUI, player, additionalVars, additionalListVars, decorator);
         }
     }
 
-    private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
-        AbstractIcon icon = new AbstractIcon() {
+    private static Item buildIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars, BaseItemDecorator baseDecorator) {
+        AbstractIcon icon = new AbstractIcon(baseDecorator) {
             @Override
             public ItemProvider getItemProvider() {
                 decorator = decoratorFromIconRecord(iconRecord, shop, player, additionalVars);
@@ -118,8 +119,8 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
-        AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>() {
+    private static Item buildScrollControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars, BaseItemDecorator baseDecorator) {
+        AbstractControlIcon<ScrollGui<Item>> icon = new AbstractControlIcon<>(baseDecorator) {
             @Override
             public ItemProvider getItemProvider(ScrollGui<Item> gui) {
                 Map<String, String> vars = new HashMap<>() {{
@@ -168,8 +169,8 @@ public class NormalIconBuilder {
         return icon;
     }
 
-    private static Item buildPagedControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars) {
-        AbstractControlIcon<PagedGui<Item>> icon = new AbstractControlIcon<>() {
+    private static Item buildPagedControlIcon(@NotNull IconRecord iconRecord, @Nullable Shop shop, @NotNull GUI workGUI, Player player, @Nullable Map<String, String> additionalVars, @Nullable Map<String, List<String>> additionalListVars, BaseItemDecorator baseDecorator) {
+        AbstractControlIcon<PagedGui<Item>> icon = new AbstractControlIcon<>(baseDecorator) {
             @Override
             public ItemProvider getItemProvider(PagedGui<Item> gui) {
                 Map<String, String> vars = new HashMap<>() {{

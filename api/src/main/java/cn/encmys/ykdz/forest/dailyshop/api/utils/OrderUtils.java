@@ -28,7 +28,7 @@ public class OrderUtils {
         CartProductIconRecord iconRecord = CartGUIConfig.getGUIRecord().cartProductIcon();
         Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
 
-        AbstractIcon icon = new AbstractIcon() {
+        AbstractIcon icon = new AbstractIcon(null) {
             @Override
             public ItemProvider getItemProvider() {
                 int stack = cartOrder.getOrderedProducts().getOrDefault(productId, 0);

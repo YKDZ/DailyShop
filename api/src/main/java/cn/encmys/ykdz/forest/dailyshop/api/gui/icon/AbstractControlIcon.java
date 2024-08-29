@@ -16,6 +16,10 @@ public abstract class AbstractControlIcon<T extends Gui> extends ControlItem<T> 
     private BukkitTask task;
     protected BaseItemDecorator decorator;
 
+    public AbstractControlIcon(BaseItemDecorator baseDecorator) {
+        this.decorator = baseDecorator;
+    }
+
     public void startUpdater(long period) {
         if (task != null) task.cancel();
         task = Bukkit.getScheduler().runTaskTimer(InvUI.getInstance().getPlugin(), this::notifyWindows, 0, period);

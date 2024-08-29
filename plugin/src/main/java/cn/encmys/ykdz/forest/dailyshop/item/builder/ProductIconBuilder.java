@@ -38,7 +38,7 @@ public class ProductIconBuilder {
     public static Item build(@NotNull BaseItemDecorator decorator, @NotNull Player player, @NotNull String shopId, @NotNull Product product) {
         ProductFactory productFactory = DailyShop.PRODUCT_FACTORY;
         ProductIconRecord record = ShopConfig.getShopGUIRecord(shopId).productIconRecord();
-        AbstractIcon icon = new AbstractIcon() {
+        AbstractIcon icon = new AbstractIcon(decorator) {
             @Override
             public ItemProvider getItemProvider() {
                 Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
