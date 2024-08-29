@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
@@ -17,9 +18,7 @@ import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class ShopPricerImpl implements ShopPricer {
     private final Shop shop;
@@ -68,8 +67,8 @@ public class ShopPricerImpl implements ShopPricer {
 
         switch (buyPrice.getPriceMode()) {
             case FORMULA -> {
-                int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
-                int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
+                int historyBuy = SettlementLogUtils.getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
+                int historySell = SettlementLogUtils.getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
                 Map<String, String> vars = buyPrice.getFormulaVars();
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
@@ -100,8 +99,8 @@ public class ShopPricerImpl implements ShopPricer {
 
         switch (sellPrice.getPriceMode()) {
             case FORMULA -> {
-                int historyBuy = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
-                int historySell = getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
+                int historyBuy = SettlementLogUtils.getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.SELL_TO);
+                int historySell = SettlementLogUtils.getHistoryAmountFromLogs(shop.getId(), productId, Config.logUsageLimit_timeRange, Config.logUsageLimit_entryAmount, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
                 Map<String, String> vars = sellPrice.getFormulaVars();
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
@@ -160,25 +159,5 @@ public class ShopPricerImpl implements ShopPricer {
     @Override
     public void setCachedPrices(@NotNull Map<String, PricePair> cachedPrices) {
         this.cachedPrices = cachedPrices;
-    }
-
-    private int getHistoryAmountFromLogs(@NotNull String shopId, @NotNull String productId, long timeLimitInDay, int numEntries, @NotNull OrderType... types) {
-        int totalSales = 0;
-
-        List<SettlementLog> logs;
-        try {
-            logs = DailyShop.DATABASE.queryLogs(shopId, null, null, timeLimitInDay, numEntries, types).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-
-        // 计算总销售量
-        totalSales += logs.stream()
-                .flatMap(log -> log.getOrderedProducts().entrySet().stream())
-                .filter(entry -> entry.getKey().equals(productId))
-                .mapToInt(Map.Entry::getValue)
-                .sum();
-
-        return totalSales;
     }
 }

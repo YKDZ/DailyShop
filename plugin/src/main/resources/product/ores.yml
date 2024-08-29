@@ -39,8 +39,6 @@ products:
   COAL_ORE:
     item:
       base: COAL_ORE
-    list-conditions:
-      - ""
     buy-price:
       vars:
         - "base:30"

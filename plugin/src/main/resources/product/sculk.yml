@@ -20,6 +20,10 @@ default-settings:
         return Number(hours) >= 20 || Number(hours) < 6;
       } 
       isNight();
+    # Single-line Rhino JavaScript expression
+    # Represent that all products in this pack
+    # can not be listed when it is sold for 64 stack in total.
+    - "Number(%dailyshop_shop_blocks_history_buy_{product-id}%) <= 64"
   buy-price:
     mean: 2000
     dev: 20

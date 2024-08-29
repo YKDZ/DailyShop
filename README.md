@@ -18,7 +18,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 - [x] Transaction log
 - [x] SQL Support
 - [ ] Random amount and amount based price
-- [ ] List product by condition
+- [x] List product by condition
 - [ ] Discount
 - [ ] Manually specifying restock results
 - [x] Transition limit
