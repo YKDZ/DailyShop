@@ -7,7 +7,7 @@ plugins {
 allprojects {
 
     project.group = "cn.encmys.ykdz.forest"
-    project.version = "0.3.0-Beta"
+    project.version = "0.3.1-Beta"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -62,7 +62,7 @@ subprojects {
     }
 
     tasks.shadowJar {
-        destinationDirectory.set(file("$rootDir/target"))
+        destinationDirectory.set(file("D:\\Forest项目\\插件测试端\\plugins"))
         archiveClassifier.set("")
         archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
     }

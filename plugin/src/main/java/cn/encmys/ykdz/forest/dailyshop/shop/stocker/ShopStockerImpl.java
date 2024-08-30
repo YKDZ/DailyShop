@@ -81,6 +81,7 @@ public class ShopStockerImpl implements ShopStocker {
                             for (String condition : listConditions) {
                                 if (!TextUtils.evaluateBooleanFormula(condition, new HashMap<>() {{
                                     put("product-id", productId);
+                                    put("shop-id", shop.getId());
                                 }}, null)) {
                                     conditionFlag = false;
                                     break;

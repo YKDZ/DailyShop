@@ -25,9 +25,9 @@ order-history:
         page-change: LEFT
         page-change-amount: -1
       icons:
-        # Use the same formula parser EvalEx like formula-price feature
+        # Use the same formula parser Rhino like formula-price feature
         # Result of this formula must be boolean
-        - condition: "{current-page} == 0"
+        - condition: "{current-page} == 1"
           # true by default
           # base and update-period will be inherited anyway
           inherit: true
@@ -41,7 +41,7 @@ order-history:
         page-change-amount: 1
         load-more-log: LEFT
       icons:
-        # Use the same formula parser EvalEx like formula-price feature
+        # Use the same formula parser Rhino like formula-price feature
         # Result of this formula must be boolean
         - condition: "{current-page} == {total-page}"
           # true by default

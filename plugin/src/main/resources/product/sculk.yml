@@ -15,15 +15,16 @@ default-settings:
       // can be listed only if time in world "world" is night.
       // You need PlaceholderAPI extension World to make this script work.
       function isNight() {
-        var timeStr = "%world_time_world%".split(':');
-        var hours = Number(timeStr[0]);
+        let timeStr = "%world_time_world%".split(':');
+        let hours = Number(timeStr[0]);
         return Number(hours) >= 20 || Number(hours) < 6;
-      } 
+      }
       isNight();
     # Single-line Rhino JavaScript expression
     # Represent that all products in this pack
-    # can not be listed when it is sold for 64 stack in total.
-    - "Number(%dailyshop_shop_blocks_history_buy_{product-id}%) <= 64"
+    # can not be listed when it is sold for 64 stack
+    # in shop {shop-id} in total.
+    - "Number(%dailyshop_shop_{shop-id}_history_buy_{product-id}%) <= 64"
   buy-price:
     mean: 2000
     dev: 20

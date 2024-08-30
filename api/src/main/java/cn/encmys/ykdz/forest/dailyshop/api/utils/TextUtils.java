@@ -191,6 +191,9 @@ public class TextUtils {
         formula = parsePlaceholder(formula, player);
 
         try (Context ctx = Context.enter()) {
+            ctx.setOptimizationLevel(-1);
+            ctx.setLanguageVersion(Context.VERSION_ES6);
+            ctx.setInstructionObserverThreshold(1000);
             Scriptable scope = ctx.initStandardObjects();
             try {
                 Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
@@ -220,6 +223,9 @@ public class TextUtils {
         formula = parsePlaceholder(formula, player);
 
         try (Context ctx = Context.enter()) {
+            ctx.setOptimizationLevel(-1);
+            ctx.setLanguageVersion(Context.VERSION_ES6);
+            ctx.setInstructionObserverThreshold(1000);
             Scriptable scope = ctx.initStandardObjects();
             try {
                 Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
