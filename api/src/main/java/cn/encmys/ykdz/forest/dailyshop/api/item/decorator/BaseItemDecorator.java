@@ -33,6 +33,9 @@ public abstract class BaseItemDecorator {
     protected ClickType featuresCleanCart;
     protected ClickType featuresClearCart;
     protected ClickType featuresLoadMoreLog;
+    protected ClickType featuresOpenShop;
+    protected String featuresOpenShopTarget;
+    protected ClickType featuresOpenOrderHistory;
 
     public abstract ClickType getFeaturesSettleCart();
 
@@ -119,4 +122,16 @@ public abstract class BaseItemDecorator {
     public abstract ClickType getFeaturesLoadMoreLog();
 
     public abstract BaseItemDecorator setFeaturesLoadMoreLog(ClickType featuresLoadMoreLog);
+
+    public abstract BaseItemDecorator setFeaturesOpenShop(ClickType featuresOpenShop);
+
+    public abstract ClickType getFeaturesOpenShop();
+
+    public abstract BaseItemDecorator setFeaturesOpenShopTarget(String featuresOpenShopTarget);
+
+    public abstract String getFeaturesOpenShopTarget();
+
+    public abstract BaseItemDecorator setFeaturesOpenOrderHistory(ClickType featuresOpenOrderHistory);
+
+    public abstract ClickType getFeaturesOpenOrderHistory();
 }

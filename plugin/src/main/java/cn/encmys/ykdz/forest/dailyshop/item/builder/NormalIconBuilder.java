@@ -16,6 +16,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.CommandUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.gui.StackPickerGUI;
@@ -244,7 +245,13 @@ public class NormalIconBuilder {
             clearCart(player);
         }
         if (clickType == decorator.getFeaturesLoadMoreLog()) {
-            featuresLoadMoreLog(player);
+            loadMoreLog(player);
+        }
+        if (clickType == decorator.getFeaturesOpenShop()) {
+            openShop(decorator.getFeaturesOpenShopTarget(), player);
+        }
+        if (clickType == decorator.getFeaturesOpenOrderHistory()) {
+            openOrderHistory(player);
         }
     }
 
@@ -387,7 +394,7 @@ public class NormalIconBuilder {
         profile.getCartGUI().loadContent(player);
     }
 
-    private static void featuresLoadMoreLog(@NotNull Player player) {
+    private static void loadMoreLog(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         if (profile.getViewingGuiType() == GUIType.ORDER_HISTORY) {
             profile.getOrderHistoryGUI().loadContent(player);
@@ -460,5 +467,19 @@ public class NormalIconBuilder {
             put("player-name", player.getDisplayName());
         }});
         PlayerUtils.playSound(CartGUIConfig.getSoundRecord("clear-cart.success"), player);
+    }
+
+    private static void openShop(@NotNull String shopId, Player player) {
+        Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
+        if (shop == null) {
+            LogUtils.warn("Try to open shop " + shopId + " but shop do not exist.");
+            return;
+        }
+        shop.getShopGUI().open(player);
+    }
+
+    private static void openOrderHistory(Player player) {
+        Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
+        profile.getOrderHistoryGUI().open();
     }
 }

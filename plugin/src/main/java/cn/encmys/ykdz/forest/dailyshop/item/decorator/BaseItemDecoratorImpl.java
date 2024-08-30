@@ -64,7 +64,10 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                     .setFeaturesSwitchCartMode(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("switch-cart-mode")))
                     .setFeaturesCleanCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clean-cart")))
                     .setFeaturesClearCart(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("clear-cart")))
-                    .setFeaturesLoadMoreLog(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("load-more-log")));
+                    .setFeaturesLoadMoreLog(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("load-more-log")))
+                    .setFeaturesOpenShop(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("open-shop")))
+                    .setFeaturesOpenShopTarget(record.features().getString("open-shop-target"))
+                    .setFeaturesOpenOrderHistory(EnumUtils.getEnumFromName(ClickType.class, record.features().getString("open-order-history")));
 
         }
         return decorator;
@@ -307,5 +310,38 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     public BaseItemDecorator setFeaturesLoadMoreLog(ClickType featuresLoadMoreLog) {
         this.featuresLoadMoreLog = featuresLoadMoreLog;
         return this;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesOpenShop(ClickType featuresOpenShop) {
+        this.featuresOpenShop = featuresOpenShop;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesOpenShop() {
+        return featuresOpenShop;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesOpenShopTarget(String featuresOpenShopTarget) {
+        this.featuresOpenShopTarget = featuresOpenShopTarget;
+        return this;
+    }
+
+    @Override
+    public String getFeaturesOpenShopTarget() {
+        return featuresOpenShopTarget;
+    }
+
+    @Override
+    public BaseItemDecorator setFeaturesOpenOrderHistory(ClickType featuresOpenOrderHistory) {
+        this.featuresOpenOrderHistory = featuresOpenOrderHistory;
+        return this;
+    }
+
+    @Override
+    public ClickType getFeaturesOpenOrderHistory() {
+        return featuresOpenOrderHistory;
     }
 }

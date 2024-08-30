@@ -79,9 +79,9 @@ cart:
         - " "
         - "<dark_gray>✖ <white>Go to block shop"
         - " "
-      commands:
-        left:
-          - "dailyshop shop open blocks %player_name%"
+      features:
+        open-shop: LEFT
+        shop-shop-target: blocks
     "2":
       base: ENDER_EYE
       name: "<gray>Black Market"
@@ -89,9 +89,9 @@ cart:
         - " "
         - "<dark_gray>✖ <white>Go to black market"
         - " "
-      commands:
-        left:
-          - "dailyshop shop open black_market %player_name%"
+      features:
+        open-shop: LEFT
+        shop-shop-target: black_market
     "h":
       base: BOOK
       name: "<gray>Order History"
@@ -99,9 +99,8 @@ cart:
         - " "
         - "<dark_gray>✖ <white>Check your order history"
         - " "
-      commands:
-        left:
-          - "dailyshop history open %player_name%"
+      features:
+        open-order-history: LEFT
   cart-product-icon:
     format:
       name: "<dark_gray>Name: <reset>{name} <dark_gray>x <white>{amount}"
