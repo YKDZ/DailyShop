@@ -200,6 +200,7 @@ public class ShopStockerImpl implements ShopStocker {
         this.listedProducts.addAll(listedProducts);
     }
 
+    @Override
     @NotNull
     public Shop getShop() {
         return shop;

@@ -13,8 +13,9 @@ public abstract class SettlementLog {
     protected Date transitionTime;
     protected double price;
     protected Map<String, Integer> orderedProducts;
+    protected String settledShop;
 
-    public abstract SettlementLog setCustomer(UUID customer);
+    public abstract SettlementLog setCustomerUUID(UUID customerUUID);
 
     public abstract OrderType getType();
 
@@ -34,4 +35,8 @@ public abstract class SettlementLog {
     public abstract Map<String, Integer> getOrderedProducts();
 
     public abstract SettlementLog setOrderedProducts(Map<String, Integer> orderedProducts);
+
+    public abstract String getSettledShop();
+
+    public abstract SettlementLog setSettledShop(String settledShop);
 }

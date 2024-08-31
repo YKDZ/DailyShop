@@ -6,7 +6,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
-import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
@@ -23,7 +22,6 @@ import java.util.Map;
 public class ShopPricerImpl implements ShopPricer {
     private final Shop shop;
     private Map<String, PricePair> cachedPrices = new HashMap<>();
-    private SettlementLog log;
 
     public ShopPricerImpl(@NotNull ShopImpl shop) {
         this.shop = shop;
@@ -154,6 +152,11 @@ public class ShopPricerImpl implements ShopPricer {
     @Override
     public Map<String, PricePair> getCachedPrices() {
         return cachedPrices;
+    }
+
+    @Override
+    public Shop getShop() {
+        return shop;
     }
 
     @Override

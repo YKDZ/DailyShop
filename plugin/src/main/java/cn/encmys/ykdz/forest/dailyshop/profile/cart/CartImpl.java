@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.profile.cart;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.CartSchema;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.cart.Cart;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
@@ -13,11 +14,16 @@ import java.util.*;
 
 public class CartImpl implements Cart {
     private final UUID ownerUUID;
-    private Map<String, ShopOrder> orders = new HashMap<>();
+    private final Map<String, ShopOrder> orders = new HashMap<>();
     private OrderType mode = OrderType.SELL_TO;
 
     public CartImpl(UUID ownerUUID) {
         this.ownerUUID = ownerUUID;
+        CartSchema schema = DailyShop.DATABASE_FACTORY.getCartDao().querySchema(ownerUUID);
+        if (schema != null) {
+            orders.putAll(schema.orders());
+            mode = schema.mode();
+        }
     }
 
     @Override
@@ -29,11 +35,6 @@ public class CartImpl implements Cart {
     @NotNull
     public Map<String, ShopOrder> getOrders() {
         return Collections.unmodifiableMap(orders);
-    }
-
-    @Override
-    public void setOrders(Map<String, ShopOrder> cartOrders) {
-        this.orders = cartOrders;
     }
 
     @Override

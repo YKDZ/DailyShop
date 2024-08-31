@@ -1,7 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api;
 
 import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
-import cn.encmys.ykdz.forest.dailyshop.api.database.Database;
+import cn.encmys.ykdz.forest.dailyshop.api.database.factory.DatabaseFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.factory.ProfileFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.rarity.factory.RarityFactory;
@@ -18,7 +18,7 @@ public abstract class DailyShop extends JavaPlugin {
     public static ProductFactory PRODUCT_FACTORY;
     public static ShopFactory SHOP_FACTORY;
     public static Scheduler SCHEDULER;
-    public static Database DATABASE;
+    public static DatabaseFactory DATABASE_FACTORY;
     public static Economy ECONOMY;
     public static AdventureManager ADVENTURE_MANAGER;
     public static Metrics METRICS;

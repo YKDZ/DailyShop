@@ -5,7 +5,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.*;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.command.CommandHandler;
-import cn.encmys.ykdz.forest.dailyshop.database.SQLiteDatabase;
+import cn.encmys.ykdz.forest.dailyshop.database.factory.DatabaseFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
@@ -45,6 +45,7 @@ public final class DailyShopImpl extends DailyShop {
 
         saveDefaultConfig();
 
+        DailyShop.DATABASE_FACTORY = new DatabaseFactoryImpl();
         DailyShop.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShop.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShop.PRODUCT_FACTORY = new ProductFactoryImpl();
@@ -93,8 +94,7 @@ public final class DailyShopImpl extends DailyShop {
         StackPickerGUIConfig.load();
         OrderHistoryGUIConfig.load();
 
-        DATABASE = new SQLiteDatabase();
-
+        DailyShop.DATABASE_FACTORY = new DatabaseFactoryImpl();
         DailyShopImpl.PROFILE_FACTORY = new ProfileFactoryImpl();
         DailyShopImpl.RARITY_FACTORY = new RarityFactoryImpl();
         DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();

@@ -81,7 +81,7 @@ cart:
         - " "
       features:
         open-shop: LEFT
-        shop-shop-target: blocks
+        open-shop-target: blocks
     "2":
       base: ENDER_EYE
       name: "<gray>Black Market"
@@ -91,7 +91,7 @@ cart:
         - " "
       features:
         open-shop: LEFT
-        shop-shop-target: black_market
+        open-shop-target: black_market
     "h":
       base: BOOK
       name: "<gray>Order History"

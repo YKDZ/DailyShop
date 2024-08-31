@@ -1,7 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.gui;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
@@ -25,7 +24,6 @@ import xyz.xenondevs.invui.window.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
 public class OrderHistoryGUI extends PlayerRelatedGUI {
@@ -131,6 +129,9 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
     @Override
     @SuppressWarnings("unchecked")
     public void loadContent(@Nullable Player player) {
+        if (player == null) {
+            return;
+        }
         DailyShop.INSTANCE.getServer().getScheduler().runTaskAsynchronously(
                 DailyShop.INSTANCE,
                 () -> {
@@ -145,13 +146,9 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
 //                        return;
 //                    }
                     List<Item> contents = new ArrayList<>();
-                    IntStream.range(0, currentPage++).forEach(page -> {
+                    IntStream.range(0, ++currentPage).forEach(page -> {
                         List<SettlementLog> logs;
-                        try {
-                            logs = new ArrayList<>(DailyShop.DATABASE.queryLogs(null, this.player.getUniqueId(), null, Config.logQueryLimit_timeRange / 20 / 60 / 60 / 24, page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM).get());
-                        } catch (InterruptedException | ExecutionException e) {
-                            throw new RuntimeException(e);
-                        }
+                        logs = DailyShop.DATABASE_FACTORY.getSettlementLogDao().queryLogs(player.getUniqueId(), page, pageSize, OrderType.SELL_TO, OrderType.BUY_FROM, OrderType.BUY_ALL_FROM);
                         for (SettlementLog log : logs) {
                             contents.add(
                                     OrderHistoryIconBuilder.build(log, this.player)

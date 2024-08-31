@@ -31,6 +31,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.11.0")
 
+    implementation("com.zaxxer:HikariCP:5.1.0")
+
     implementation(project(":api"))
 }
 

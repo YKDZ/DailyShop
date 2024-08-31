@@ -299,10 +299,12 @@ public class ShopCashierImpl implements ShopCashier {
             default -> log = SettlementLogImpl.buyFromLog(customerUUID);
         }
 
-        DailyShop.DATABASE.insertSettlementLog(shop.getId(), log
+        DailyShop.DATABASE_FACTORY.getSettlementLogDao().insertLog(log
                 .setTotalPrice(order.getTotalPrice())
                 .setType(order.getOrderType())
-                .setOrderedProducts(order.getOrderedProducts()));
+                .setOrderedProducts(order.getOrderedProducts())
+                .setSettledShop(shop.getId())
+        );
     }
 
     @Override
@@ -361,5 +363,10 @@ public class ShopCashierImpl implements ShopCashier {
         if (isMerchant() && !inherit) {
             balance = initBalance;
         }
+    }
+
+    @Override
+    public Shop getShop() {
+        return shop;
     }
 }

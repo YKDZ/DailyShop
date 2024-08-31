@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.pricer;
 
 import cn.encmys.ykdz.forest.dailyshop.api.price.PricePair;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -18,4 +19,6 @@ public interface ShopPricer {
     void setCachedPrices(@NotNull Map<String, PricePair> cachedPrices);
 
     Map<String, PricePair> getCachedPrices();
+
+    Shop getShop();
 }

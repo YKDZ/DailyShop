@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.cashier;
 
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
 import org.jetbrains.annotations.NotNull;
@@ -54,4 +55,6 @@ public interface ShopCashier {
     boolean isMerchant();
 
     void restockMerchant();
+
+    Shop getShop();
 }

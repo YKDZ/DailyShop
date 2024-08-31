@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop.stocker;
 
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface ShopStocker {
     void addListedProducts(List<String> listedProducts);
 
     int getSize();
+
+    Shop getShop();
 }

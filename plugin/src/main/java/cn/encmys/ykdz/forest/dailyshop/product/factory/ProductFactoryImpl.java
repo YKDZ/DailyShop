@@ -3,7 +3,8 @@ package cn.encmys.ykdz.forest.dailyshop.product.factory;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ProductConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.RarityConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductData;
+import cn.encmys.ykdz.forest.dailyshop.api.database.dao.ProductStockDao;
+import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductStockSchema;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class ProductFactoryImpl implements ProductFactory {
     private static final HashMap<String, Product> allProducts = new HashMap<>();
@@ -39,6 +39,11 @@ public class ProductFactoryImpl implements ProductFactory {
     public void load() {
         for (String configId : ProductConfig.getAllPacksId()) {
             YamlConfiguration config = ProductConfig.getConfig(configId);
+
+            if (config == null) {
+                continue;
+            }
+
             ConfigurationSection products = config.getConfigurationSection("products");
             ConfigurationSection defaultSettings = config.getConfigurationSection("default-settings");
 
@@ -168,31 +173,27 @@ public class ProductFactoryImpl implements ProductFactory {
         // 库存（可指定默认值）
         ProductStock stock;
 
-        try {
-            ProductData data = DailyShop.DATABASE.queryProductData(id).get();
+        ProductStockSchema stockSchema = DailyShop.DATABASE_FACTORY.getProductStockDao().querySchema(id);
 
-            ConfigurationSection stockSection = productSection.getConfigurationSection("stock");
-            ConfigurationSection defaultStockSection = defaultSettings.getConfigurationSection("stock");
+        ConfigurationSection stockSection = productSection.getConfigurationSection("stock");
+        ConfigurationSection defaultStockSection = defaultSettings.getConfigurationSection("stock");
 
-            stock = new ProductStockImpl(
-                    id,
-                    ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
-                    ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.replenish", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.replenish", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.inherit", false),
-                    ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.inherit", false)
-            );
+        stock = new ProductStockImpl(
+                id,
+                ConfigUtils.getInt(stockSection, defaultStockSection, "global.size", -1),
+                ConfigUtils.getInt(stockSection, defaultStockSection, "player.size", -1),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.replenish", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.replenish", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.overflow", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.overflow", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "global.inherit", false),
+                ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.inherit", false)
+        );
 
-            // 仅持久化 currentAmount 数据（尊重最新的溢出、补充、尺寸等配置）
-            if (data != null) {
-                stock.setCurrentGlobalAmount(data.stock().getCurrentGlobalAmount());
-                stock.setCurrentPlayerAmount(data.stock().getCurrentPlayerAmount());
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        // 仅持久化 currentAmount 数据（尊重最新的溢出、补充、尺寸等配置）
+        if (stockSchema != null) {
+            stock.setCurrentGlobalAmount(stockSchema.currentGlobalAmount());
+            stock.setCurrentPlayerAmount(stockSchema.currentPlayerAmount());
         }
 
         // IconDecorator
@@ -279,9 +280,9 @@ public class ProductFactoryImpl implements ProductFactory {
         for (Product product : getProducts().values()) {
             // 仅需要储存有库存设置的商品
             if (product.getProductStock().isGlobalStock() || product.getProductStock().isPlayerStock()) {
-                data.add(product);
+                ProductStockDao dao = DailyShop.DATABASE_FACTORY.getProductStockDao();
+                dao.insertSchema(ProductStockSchema.of(product.getProductStock()));
             }
         }
-        DailyShop.DATABASE.saveProductData(data);
     }
 }

@@ -1,10 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.profile;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.CartGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.OrderHistoryGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.StackPickerGUIConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProfileData;
 import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.cart.Cart;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class ProfileImpl implements Profile {
     private final Player owner;
@@ -36,16 +33,6 @@ public class ProfileImpl implements Profile {
         this.cartGUI = new CartGUI(owner, CartGUIConfig.getGUIRecord());
         this.orderHistoryGUI = new OrderHistoryGUI(owner, OrderHistoryGUIConfig.getGUIRecord());
         this.cart = new CartImpl(owner.getUniqueId());
-        try {
-            ProfileData data = DailyShop.DATABASE.queryProfileData(owner.getUniqueId()).get();
-            if (data != null) {
-                cart.setMode(data.cartMode());
-                cart.setOrders(data.cartOrders());
-                shoppingModes.putAll(data.shoppingModes());
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

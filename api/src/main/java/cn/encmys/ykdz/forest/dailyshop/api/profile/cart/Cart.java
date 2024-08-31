@@ -13,8 +13,6 @@ public interface Cart {
 
     @NotNull Map<String, ShopOrder> getOrders();
 
-    void setOrders(Map<String, ShopOrder> cartOrders);
-
     ShopOrder getOrder(@NotNull String shopId);
 
     UUID getOwnerUUID();

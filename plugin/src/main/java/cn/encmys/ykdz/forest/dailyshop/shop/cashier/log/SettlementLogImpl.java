@@ -28,28 +28,28 @@ public class SettlementLogImpl extends SettlementLog {
 
     public static SettlementLog buyFromLog(UUID customer) {
         return new SettlementLogImpl()
-                .setCustomer(customer)
+                .setCustomerUUID(customer)
                 .setType(OrderType.BUY_FROM)
                 .setTransitionTime(new Date());
     }
 
     public static SettlementLog buyAllFromLog(UUID customer) {
         return new SettlementLogImpl()
-                .setCustomer(customer)
+                .setCustomerUUID(customer)
                 .setType(OrderType.BUY_ALL_FROM)
                 .setTransitionTime(new Date());
     }
 
     public static SettlementLog sellToLog(UUID customer) {
         return new SettlementLogImpl()
-                .setCustomer(customer)
+                .setCustomerUUID(customer)
                 .setType(OrderType.SELL_TO)
                 .setTransitionTime(new Date());
     }
 
     @Override
-    public SettlementLog setCustomer(UUID customer) {
-        this.customer = customer;
+    public SettlementLog setCustomerUUID(UUID customerUUID) {
+        this.customer = customerUUID;
         return this;
     }
 
@@ -80,6 +80,17 @@ public class SettlementLogImpl extends SettlementLog {
     @Override
     public SettlementLog setOrderedProducts(Map<String, Integer> orderedProducts) {
         this.orderedProducts = orderedProducts;
+        return this;
+    }
+
+    @Override
+    public String getSettledShop() {
+        return settledShop;
+    }
+
+    @Override
+    public SettlementLog setSettledShop(String settledShop) {
+        this.settledShop = settledShop;
         return this;
     }
 

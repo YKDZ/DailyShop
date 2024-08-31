@@ -24,9 +24,16 @@ log-usage-limit:
 # When query logs in order history gui
 log-query-limit:
   time-range: 31d
+database:
+  # Using data/database.db
+  sqlite:
+    enabled: true
+  mysql:
+    enabled: false
+    url: "jdbc:mysql://localhost:3306/your_database_name?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=UTC"
 # A product may have its buy-price < sell-price (When using random price etc.).
 # The plugin will avoid this situation by automatically disabling
 # one of the sell (true) or buy (false) action.
 price-correct-by-disable-sell-or-buy: true
 # Do not change this
-version: 2
+version: 3
