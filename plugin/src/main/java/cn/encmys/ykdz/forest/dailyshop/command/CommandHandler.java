@@ -41,10 +41,4 @@ public class CommandHandler {
                     DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_save_success);
                 });
     }
-
-    private static CommandAPICommand getTestCommand() {
-        return new CommandAPICommand("test")
-                .executes((sender, args) -> {
-                });
-    }
 }

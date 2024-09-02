@@ -45,9 +45,29 @@ public class OrderHistoryCommand {
                 .withPermission("dailyshop.command.history.clean")
                 .withOptionalArguments(
                         new PlayerArgument("player"),
-                        new IntegerArgument("day")
+                        new IntegerArgument("day-late-than")
                 )
                 .executes((sender, args) -> {
+                    Player player = (Player) args.get("player");
+                    if (player == null) {
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_history_clean_failure_invalidPlayer, null, new HashMap<>()));
+                        return;
+                    }
+                    Object dayLateThanData = args.get("day-late-than");
+                    int dayLateThan = 31;
+                    if (dayLateThanData instanceof Integer) {
+                        dayLateThan = (Integer) dayLateThanData;
+                    } else {
+                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_history_clean_failure_invalidDayLateThan, null, new HashMap<>() {{
+                            put("day-late-than", (String) args.get("day-late-than"));
+                        }}));
+                    }
+                    DailyShop.DATABASE_FACTORY.getSettlementLogDao().deleteLog(player.getUniqueId(), dayLateThan);
+                    int finalDayLateThan = dayLateThan;
+                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_history_clean_success, null, new HashMap<>() {{
+                        put("player-name", player.getName());
+                        put("day-late-than", String.valueOf(finalDayLateThan));
+                    }}));
                 });
     }
 }

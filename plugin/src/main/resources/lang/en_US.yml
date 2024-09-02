@@ -64,6 +64,11 @@ messages:
         success: "" # <gray>Successfully opened order history for player <reset>{player-name}<gray>!
         failure:
           invalid-player: "<red>Player invalid!"
+      clean:
+        success: "<gray>Successfully clean <reset>{player-name}'s <gray>order history before <white>{day-late-than} <reset>days ago."
+        failure:
+          invalid-player: "<red>Player invalid!"
+          invalid-day-late-than: "<red>Day amount <white>{day-late-than} <reset>invalid! It must be an integer."
     switch-shopping-mode:
       success: "<gray>Successfully switched shopping mode of player <white>{player} <gray>in shop <white>{shop-name} <gray>to <white>{mode}<gray>."
       failure:
@@ -151,4 +156,4 @@ messages:
         success: "<gray>Successfully cleared the cart."
 
 # Do not change this
-version: 3
+version: 4

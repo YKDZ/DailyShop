@@ -41,6 +41,9 @@ public class MessageConfig {
     public static String messages_command_cart_open_failure_invalidPlayer;
     public static String messages_command_history_open_success;
     public static String messages_command_history_open_failure_invalidPlayer;
+    public static String messages_command_history_clean_success;
+    public static String messages_command_history_clean_failure_invalidPlayer;
+    public static String messages_command_history_clean_failure_invalidDayLateThan;
     public static String messages_command_shop_misc_switchShoppingMode_success;
     public static String messages_command_shop_misc_switchShoppingMode_failure_invalidPlayer;
     public static String messages_command_shop_misc_switchShoppingMode_failure_invalidShop;
@@ -84,6 +87,9 @@ public class MessageConfig {
         messages_command_shop_open_failure_invalidPlayer = getMessage("messages.command.shop.open.failure.invalid-player");
         messages_command_history_open_success = getMessage("messages.command.history.open.success");
         messages_command_history_open_failure_invalidPlayer = getMessage("messages.command.history.open.failure.invalid-player");
+        messages_command_history_clean_success = getMessage("messages.command.history.clean.success");
+        messages_command_history_clean_failure_invalidPlayer = getMessage("messages.command.history.clean.failure.invalid-player");
+        messages_command_history_clean_failure_invalidDayLateThan = getMessage("messages.command.history.clean.failure.invalid-day-late-than");
         messages_command_cart_open_success = getMessage("messages.command.cart.open.success");
         messages_command_cart_open_failure_invalidPlayer = getMessage("messages.command.cart.open.failure.invalid-player");
         messages_command_shop_restock_success = getMessage("messages.command.shop.restock.success");
@@ -95,7 +101,7 @@ public class MessageConfig {
         messages_command_shop_misc_switchShoppingMode_success = getMessage("messages.command.shop.misc.switch-shopping-mode.success");
         messages_command_shop_misc_switchShoppingMode_failure_invalidPlayer = getMessage("messages.command.shop.misc.switch-shopping-mode.failure.invalid-player");
         messages_command_shop_misc_switchShoppingMode_failure_invalidShop = getMessage("messages.command.shop.misc.switch-shopping-mode.failure.invalid-shop");
-
+        //
         messages_action_cart_openCart_success = getMessage("messages.action.cart.open-cart.success");
         messages_action_cart_switchCartMode_success = getMessage("messages.action.cart.switch-cart-mode.success");
         messages_action_cart_cleanCart_success = getMessage("messages.action.cart.clean-cart.success");

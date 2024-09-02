@@ -64,6 +64,11 @@ messages:
         success: "" # <gray>成功打开玩家 <reset>{player-name} <gray>的购物历史!
         failure:
           invalid-player: "<red>指定的玩家不存在!"
+      clean:
+        success: "<gray>成功清理了玩家 <reset>{player-name} <gray>在 <white>{day-late-than} <reset>天以下的所有交易历史."
+        failure:
+          invalid-player: "<red>指定的玩家不存在!"
+          invalid-day-late-than: "<red>指定的天数 <white>{day-late-than} <reset>格式有误! 它必须是一个整数."
     switch-shopping-mode:
       success: "<gray>成功将玩家 <white>{player} <gray>在商店 <reset>{shop-name} <gray>的购物模式切换为 <white>{mode}<gray>."
       failure:
@@ -151,4 +156,4 @@ messages:
         success: "<gray>成功清空了购物车."
 
 # 不要更改此处
-version: 3
+version: 4
