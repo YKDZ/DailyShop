@@ -414,7 +414,8 @@ public class SQLiteSettlementLogDao implements SettlementLogDao {
             return log
                     .setOrderedProducts(gson.fromJson(rs.getString("ordered_products"), new TypeToken<Map<String, Integer>>() {}.getType()))
                     .setTotalPrice(rs.getDouble("price"))
-                    .setTransitionTime(rs.getTimestamp("transition_time"));
+                    .setTransitionTime(rs.getTimestamp("transition_time"))
+                    .setSettledShop(rs.getString("settled_shop"));
         } catch (SQLException e) {
             e.printStackTrace();
         }

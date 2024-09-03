@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.OrderHistoryGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.OrderHistoryGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.Material;
@@ -35,6 +36,10 @@ public class OrderHistoryIconBuilder {
                         put("price", MessageConfig.format_decimal.format(log.getTotalPrice()));
                         put("type", MessageConfig.getTerm(log.getType()));
                         put("total-price", MessageConfig.format_decimal.format(log.getTotalPrice()));
+                        Shop shop = DailyShop.SHOP_FACTORY.getShop(log.getSettledShop());
+                        if (shop != null) {
+                            put("shop-name", shop.getName());
+                        }
                     }};
                     // 构造内部列表变量
                     Map<String, List<String>> listVars = new HashMap<>() {{

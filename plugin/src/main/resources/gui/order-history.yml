@@ -59,6 +59,8 @@ order-history:
       name: "<white>{date}"
       lore:
         - ""
+        - "<gray>Shop: {shop-name}"
+        - ""
         - "<gray>Products:"
         - "{order-contents}"
         - ""
@@ -81,6 +83,8 @@ order-history:
           - ""
           - "<dark_gray>This icon can only be paper"
           - "<dark_gray>:)"
+          - ""
+          - "<gray>Shop: {shop-name}"
           - ""
           - "<gray>Products:"
           - "{order-contents}"
