@@ -6,7 +6,10 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -38,11 +41,13 @@ public class MinecraftLangConfig {
         }
     }
 
-    public static Map<String, String> getConfig() {
+    @Contract(pure = true)
+    public static @NotNull @UnmodifiableView Map<String, String> getConfig() {
         return Collections.unmodifiableMap(config);
     }
 
-    private static File loadLangFile(String fileDestination) throws IOException {
+    @NotNull
+    private static File loadLangFile(String fileDestination) {
         File locateFile = new File(fileDestination);
         if (!locateFile.exists()) {
             locateFile.getParentFile().mkdirs();
@@ -57,7 +62,8 @@ public class MinecraftLangConfig {
         return locateFile;
     }
 
-    private static File useFallbackLang() {
+    @Contract(" -> new")
+    private static @NotNull File useFallbackLang() {
         DailyShop.INSTANCE.saveResource("lang/minecraft/en_us.json", true);
         return new File(DailyShop.INSTANCE.getDataFolder() + "/lang/minecraft/en_us.json");
     }
@@ -99,7 +105,7 @@ public class MinecraftLangConfig {
             String hash = targetAsset.get("hash").getAsString();
             downloadFile(new URL("https://resources.download.minecraft.net/" + hash.substring(0, 2) + "/" + hash), fileDestination);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -132,7 +138,8 @@ public class MinecraftLangConfig {
         return metaURLString;
     }
 
-    private static JsonObject getTargetAsset(JsonObject assets, String target) {
+    @Nullable
+    private static JsonObject getTargetAsset(@NotNull JsonObject assets, String target) {
         JsonObject objects = assets.getAsJsonObject("objects");
         if (objects == null || !objects.has(target)) return null;
         return objects.getAsJsonObject(target);
@@ -151,7 +158,7 @@ public class MinecraftLangConfig {
         }
     }
 
-    private static JsonObject fetchJson(URL url) throws IOException {
+    private static JsonObject fetchJson(@NotNull URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Accept", "application/json");
@@ -173,11 +180,11 @@ public class MinecraftLangConfig {
         }
     }
 
-    private static void downloadFile(URL url, String fileDestination) throws IOException {
+    private static void downloadFile(@NotNull URL url, String fileDestination) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(5000); // 5 秒超时
-        connection.setReadTimeout(5000); // 5 秒超时
+        connection.setConnectTimeout(10 * 1000); // 10 秒超时
+        connection.setReadTimeout(10 * 1000); // 10 秒超时
 
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
