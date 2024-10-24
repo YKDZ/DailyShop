@@ -30,10 +30,10 @@ public class DatabaseFactoryImpl implements DatabaseFactory {
     }
 
     public void load() {
-        if (Config.databaseSQLiteEnabled) {
+        if (Config.database_sqlite_enabled) {
             dbType = DBType.SQLITE;
             loadSQLite();
-        } else if (Config.databaseMySQLEnabled) {
+        } else if (Config.database_mysql_enabled) {
             dbType = DBType.MYSQL;
             // TODO MySQL 实现
         }

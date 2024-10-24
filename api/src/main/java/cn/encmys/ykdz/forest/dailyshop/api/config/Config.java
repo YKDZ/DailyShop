@@ -19,9 +19,9 @@ public class Config {
     public static int logUsageLimit_entryAmount;
     public static long logUsageLimit_timeRange;
     public static long logQueryLimit_timeRange;
-    public static boolean databaseSQLiteEnabled;
-    public static boolean databaseMySQLEnabled;
-    public static boolean databaseMySQLURL;
+    public static boolean database_sqlite_enabled;
+    public static boolean database_mysql_enabled;
+    public static boolean database_mysql_url;
     public static boolean priceCorrectByDisableSellOrBuy;
     public static long period_saveData;
     public static long period_checkRestocking;
@@ -51,10 +51,11 @@ public class Config {
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
             LogUtils.error(error.getMessage());
-    }        }
+        }
+    }
 
 
-private static void setUp() {
+    private static void setUp() {
         language_message = config.getString("language.message", "en_US");
         language_minecraftLang = config.getString("language.minecraft-lang", "en_us").toLowerCase();
         period_saveData = TextUtils.parseTimeToTicks(config.getString("period.save-data", "5m"));
@@ -62,9 +63,9 @@ private static void setUp() {
         priceCorrectByDisableSellOrBuy = config.getBoolean("price-correct-by-disable-sell-or-buy", true);
         logUsageLimit_entryAmount = config.getInt("log-usage-limit.entry-amount", 500);
         logUsageLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-usage-limit.time-range", "7d"));
-        databaseSQLiteEnabled = config.getBoolean("database.sqlite.enabled", true);
-        databaseMySQLEnabled = config.getBoolean("database.mysql.enabled", true);
-        databaseMySQLURL = config.getBoolean("database.mysql.url", true);
+        database_sqlite_enabled = config.getBoolean("database.sqlite.enabled", true);
+        database_mysql_enabled = config.getBoolean("database.mysql.enabled", true);
+        database_mysql_url = config.getBoolean("database.mysql.url", true);
         logQueryLimit_timeRange = TextUtils.parseTimeToTicks(config.getString("log-query-limit.time-range", "31d"));
         version = config.getInt("version");
     }

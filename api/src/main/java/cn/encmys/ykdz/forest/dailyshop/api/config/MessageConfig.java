@@ -16,8 +16,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class MessageConfig {
-    private static final String resourcePath = "lang/" + Config.language_message + ".yml";
-    private static final String path = DailyShop.INSTANCE.getDataFolder() + "/" + resourcePath;
     public static DecimalFormat format_decimal;
     public static String format_timer;
     public static SimpleDateFormat format_date;
@@ -56,6 +54,9 @@ public class MessageConfig {
     private static YamlConfiguration config = new YamlConfiguration();
 
     public static void load() {
+        String resourcePath = "lang/" + Config.language_message + ".yml";
+        String path = DailyShop.INSTANCE.getDataFolder() + "/" + resourcePath;
+
         File file = new File(path);
 
         if (!file.exists()) {
