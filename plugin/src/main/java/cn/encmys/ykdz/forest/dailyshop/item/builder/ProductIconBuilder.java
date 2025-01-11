@@ -58,11 +58,12 @@ public class ProductIconBuilder {
                             if (content == null) {
                                 continue;
                             }
-                            bundleContentsLore.add(TextUtils.decorateTextKeepMiniMessage(record.formatBundleContentsLine(), null, new HashMap<>() {{
+                            bundleContentsLore.add(TextUtils.decorateText(record.formatBundleContentsLine(), null, new HashMap<>() {{
                                 put("name", content.getIconDecorator().getName());
                                 put("amount", String.valueOf(content.getItemDecorator() != null ? content.getItemDecorator().getAmount() : content.getIconDecorator().getAmount()));
                                 put("stack", String.valueOf(stack));
-                                put("total-amount", String.valueOf(stack * (content.getItemDecorator() != null ? content.getItemDecorator().getAmount() : content.getIconDecorator().getAmount())));
+                                // TODO 错误的数量使用
+                                put("total-amount", String.valueOf(stack * (content.getItemDecorator() != null ? shop.getShopCounter().getAmount(product.getId()) : 1)));
                             }}));
                         }
                     }
@@ -91,11 +92,12 @@ public class ProductIconBuilder {
                         new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(null))
                                 .setCustomModelData(decorator.getCustomModelData())
                                 .setItemFlags(decorator.getItemFlags())
-                                .setLore(TextUtils.decorateText(record.formatLore(), null, vars, listVars))
-                                .setDisplayName(TextUtils.decorateText(record.formatName(), null, vars))
-                                .setBannerPatterns(decorator.getPatternsData())
-                                .setFireworkEffects(decorator.getFireworkEffectData())
-                                .build(decorator.getAmount()));
+                                .setLore(TextUtils.decorateTextToComponent(record.formatLore(), null, vars, listVars))
+                                .setDisplayName(TextUtils.decorateTextToComponent(record.formatName(), null, vars))
+                                .setBannerPatterns(decorator.getBannerPatterns())
+                                .setFireworkEffects(decorator.getFireworkEffects())
+                                .setEnchantments(decorator.getEnchantments())
+                                .build(shop.getShopCounter().getAmount(product.getId())));
             }
 
             @Override
@@ -204,7 +206,7 @@ public class ProductIconBuilder {
         ShopOrder newOrder = new ShopOrderImpl(player)
                 .setOrderType(cartOrder.getOrderType())
                 .setStack(product, 1);
-        // 一个订单在被判断是否能成功前必须被计算订单价值
+        // 一个订单在能被判断成功前必须被计算订单价值
         shop.getShopCashier().billOrder(newOrder);
         // 在一个限制或情况“无法被玩家解决”的情况下
         // 阻止玩家将商品加入购物车

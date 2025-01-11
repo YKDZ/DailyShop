@@ -88,7 +88,7 @@ public class ProductFactoryImpl implements ProductFactory {
         );
 
         // Rarity (可以指定默认值)
-        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString("rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().get(0))));
+        Rarity rarity = DailyShop.RARITY_FACTORY.getRarity(productSection.getString("rarity", defaultSettings.getString("rarity", RarityConfig.getAllId().getFirst())));
 
         // Cacheable (可以指定默认值)
         boolean isCacheable = productSection.getBoolean("cacheable", defaultSettings.getBoolean("cacheable", true));
@@ -108,11 +108,12 @@ public class ProductFactoryImpl implements ProductFactory {
             itemDecorator = new BaseItemDecoratorImpl(item, false)
                     .setName(itemSection.getString("name"))
                     .setLore(itemSection.getStringList("lore"))
-                    .setAmount(itemSection.getInt("amount", defaultSettings.getInt("item.amount", 1)))
+                    .setAmount(itemSection.getString("amount", defaultSettings.getString("item.amount", "1")))
                     .setItemFlags(itemSection.getStringList("item-flags"))
                     .setCustomModelData((Integer) itemSection.get("custom-model-data"))
                     .setBannerPatterns(itemSection.getStringList("banner-patterns"))
-                    .setFireworkEffectData(itemSection.getStringList("firework-effects"));
+                    .setFireworkEffects(itemSection.getStringList("firework-effects"))
+                    .setEnchantments(itemSection.getStringList("enchantments"));
         }
 
         // Icon (若不指定则与 Item 相同)
@@ -127,7 +128,6 @@ public class ProductFactoryImpl implements ProductFactory {
 
         // Icon 继承 Item
         if (itemSection != null) {
-            // base
             if (!iconSection.contains("base")) {
                 if (itemSection.isString("base")) {
                     iconSection.set("base", itemSection.getString("base"));
@@ -136,13 +136,11 @@ public class ProductFactoryImpl implements ProductFactory {
                     return;
                 }
             }
-            // name
             if (!iconSection.contains("name")) {
                 if (itemSection.isString("name")) {
                     iconSection.set("name", itemSection.getString("name"));
                 }
             }
-            // amount
             if (!iconSection.contains("amount")) {
                 if (itemSection.isInt("amount")) {
                     iconSection.set("amount", itemSection.getInt("amount"));
@@ -150,22 +148,29 @@ public class ProductFactoryImpl implements ProductFactory {
                     iconSection.set("amount", defaultSettings.getInt("item.amount"));
                 }
             }
-            // custom-model-data
             if (!iconSection.contains("custom-model-data")) {
                 if (itemSection.isInt("custom-model-data")) {
                     iconSection.set("custom-model-data", itemSection.getInt("custom-model-data"));
                 }
             }
-            // banner-patterns
             if (!iconSection.contains("banner-patterns")) {
                 if (itemSection.isList("banner-patterns")) {
                     iconSection.set("banner-patterns", itemSection.getStringList("banner-patterns"));
                 }
             }
-            // banner-patterns
             if (!iconSection.contains("firework-effects")) {
                 if (itemSection.isList("firework-effects")) {
                     iconSection.set("firework-effects", itemSection.getStringList("firework-effects"));
+                }
+            }
+            if (!iconSection.contains("enchantments")) {
+                if (itemSection.isList("enchantments")) {
+                    iconSection.set("enchantments", itemSection.getStringList("enchantments"));
+                }
+            }
+            if (!iconSection.contains("item-flags")) {
+                if (itemSection.isList("item-flags")) {
+                    iconSection.set("item-flags", itemSection.getStringList("item-flags"));
                 }
             }
         }
@@ -190,7 +195,7 @@ public class ProductFactoryImpl implements ProductFactory {
                 ConfigUtils.getBoolean(stockSection, defaultStockSection, "player.inherit", false)
         );
 
-        // 仅持久化 currentAmount 数据（尊重最新的溢出、补充、尺寸等配置）
+        // 仅持久化 currentAmount 数据（尊重最新的 overflow, supply, size 等配置）
         if (stockSchema != null) {
             stock.setCurrentGlobalAmount(stockSchema.currentGlobalAmount());
             stock.setCurrentPlayerAmount(stockSchema.currentPlayerAmount());
@@ -211,13 +216,14 @@ public class ProductFactoryImpl implements ProductFactory {
         }
 
         BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(icon, true)
-                .setAmount(iconSection.getInt("amount", 1))
+                .setAmount(iconSection.getString("amount", "1"))
                 .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
                 .setName(iconSection.getString("name"))
                 .setItemFlags(iconSection.getStringList("item-flags"))
-                .setCustomModelData((Integer) iconSection.get("custom-model-data"))
+                .setCustomModelData(iconSection.getInt("custom-model-data"))
                 .setBannerPatterns(iconSection.getStringList("banner-patterns"))
-                .setFireworkEffectData(iconSection.getStringList("firework-effects"));
+                .setFireworkEffects(iconSection.getStringList("firework-effects"))
+                .setEnchantments(iconSection.getStringList("enchantments"));
 
         // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {

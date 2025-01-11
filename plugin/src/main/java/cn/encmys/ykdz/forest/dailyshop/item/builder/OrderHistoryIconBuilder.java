@@ -9,6 +9,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.log.SettlementLog;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,12 +51,12 @@ public class OrderHistoryIconBuilder {
                             int stack = entry.getValue();
                             Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
                             if (product == null) {
-                                orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(record.historyIconRecord().formatInvalidOrderContentLine(), player, new HashMap<>() {{
+                                orderContentsLines.add(TextUtils.decorateText(record.historyIconRecord().formatInvalidOrderContentLine(), player, new HashMap<>() {{
                                     put("id", productId);
                                     put("stack", Integer.toString(stack));
                                 }}));
                             } else {
-                                orderContentsLines.add(TextUtils.decorateTextKeepMiniMessage(record.historyIconRecord().formatOrderContentLine(), player, new HashMap<>() {{
+                                orderContentsLines.add(TextUtils.decorateText(record.historyIconRecord().formatOrderContentLine(), player, new HashMap<>() {{
                                     put("name", product.getIconDecorator().getName());
                                     put("stack", Integer.toString(stack));
                                 }}));
@@ -86,8 +87,8 @@ public class OrderHistoryIconBuilder {
                         }
                     }
 
-                    List<String> lore = TextUtils.decorateText(record.historyIconRecord().formatLore(), player, vars, listVars);
-                    String name = TextUtils.decorateText(record.historyIconRecord().formatName(), player, vars);
+                    List<Component> lore = TextUtils.decorateTextToComponent(record.historyIconRecord().formatLore(), player, vars, listVars);
+                    Component name = TextUtils.decorateTextToComponent(record.historyIconRecord().formatName(), player, vars);
 
                     return new ItemBuilder(new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(displayItem)
                             .setDisplayName(name)

@@ -1,7 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.api.item.decorator;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,11 +19,12 @@ public abstract class BaseItemDecorator {
     protected String name;
     protected long period;
     protected List<String> lore;
-    protected int amount;
-    protected List<String> itemFlags;
+    protected String amount;
     protected Integer customModelData;
-    protected List<String> patternsData = new ArrayList<>();
-    protected List<String> fireworkEffectData = new ArrayList<>();
+    protected Map<ItemFlag, Boolean> itemFlags = new HashMap<>();
+    protected Map<PatternType, DyeColor> bannerPatterns = new HashMap<>();
+    protected List<FireworkEffect> fireworkEffects = new ArrayList<>();
+    protected Map<Enchantment, Integer> enchantments = new HashMap<>();
     // 普通图标属性
     protected Map<ClickType, List<String>> commands = new HashMap<>();
     protected ClickType featuresScroll;
@@ -47,15 +53,11 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setLore(List<String> lore);
 
-    public abstract int getAmount();
+    public abstract String getAmount();
 
     public abstract String getName();
 
-    public abstract List<String> getItemFlags();
-
-    public abstract BaseItemDecorator setItemFlags(List<String> itemFlags);
-
-    public abstract BaseItemDecorator setAmount(int amount);
+    public abstract BaseItemDecorator setAmount(String amount);
 
     public abstract List<String> getLore();
 
@@ -63,13 +65,25 @@ public abstract class BaseItemDecorator {
 
     public abstract BaseItemDecorator setCustomModelData(Integer customModelData);
 
-    public abstract List<String> getPatternsData();
+    public abstract Map<ItemFlag, Boolean> getItemFlags();
 
-    public abstract BaseItemDecorator setBannerPatterns(List<String> patternsData);
+    public abstract BaseItemDecorator setItemFlags(List<String> itemFlagsData);
 
-    public abstract Map<ClickType, List<String>> getCommands();
+    public abstract List<FireworkEffect> getFireworkEffects();
 
-    public abstract BaseItemDecorator setCommands(Map<ClickType, List<String>> commands);
+    public abstract BaseItemDecorator setFireworkEffects(List<String> fireworkEffectsData);
+
+    public abstract Map<PatternType, DyeColor> getBannerPatterns();
+
+    public abstract BaseItemDecorator setBannerPatterns(List<String> bannerPatternsData);
+
+    public abstract Map<Enchantment, Integer> getEnchantments();
+
+    public abstract BaseItemDecorator setEnchantments(List<String> enchantmentsData);
+
+    public abstract Map<ClickType, List<String>> getCommandsData();
+
+    public abstract BaseItemDecorator setCommandsData(Map<ClickType, List<String>> commandsData);
 
     public abstract ClickType getFeaturesScroll();
 
@@ -78,10 +92,6 @@ public abstract class BaseItemDecorator {
     public abstract long getUpdatePeriod();
 
     public abstract BaseItemDecorator setUpdatePeriod(long period);
-
-    public abstract List<String> getFireworkEffectData();
-
-    public abstract BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData);
 
     public abstract ClickType getFeaturesBackToShop();
 

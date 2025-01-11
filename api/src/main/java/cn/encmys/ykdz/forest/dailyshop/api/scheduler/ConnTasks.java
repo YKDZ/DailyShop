@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.api.scheduler;
 
-public interface Scheduler {
+public interface ConnTasks {
     void runRestockTimer();
+
     void runDataSaver();
 }

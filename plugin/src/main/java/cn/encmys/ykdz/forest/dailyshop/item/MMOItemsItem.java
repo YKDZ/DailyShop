@@ -1,8 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -35,7 +35,7 @@ public class MMOItemsItem implements BaseItem {
 
         for (ItemStat stat : mmoItem.getStats()) {
             if (stat.getId().equals("NAME")) {
-                return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(((NameData) mmoItem.getData(stat)).getMainName());
+                return HyphaAdventureUtils.legacyToMiniMessage(((NameData) mmoItem.getData(stat)).getMainName());
             }
         }
 

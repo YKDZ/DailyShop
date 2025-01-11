@@ -1,16 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.adventure.AdventureManager;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.EvaluatorException;
-import org.mozilla.javascript.Scriptable;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,36 +16,23 @@ public class TextUtils {
     private static final String optionalMarker = "?";
     private static final String singleMarker = "~";
 
+    @NotNull
+    public static List<Component> decorateTextToComponent(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+        return HyphaAdventureUtils.getComponentFromMiniMessage(decorateText(text, player, normalVars, listVars));
+    }
+
+    @Nullable
+    public static Component decorateTextToComponent(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
+        if (text == null) return null;
+
+        return HyphaAdventureUtils.getComponentFromMiniMessage(decorateText(text, player, normalVars));
+    }
+
     public static List<String> decorateText(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
-        AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
-        return adventureManager.componentToLegacy(
-                adventureManager.getComponentFromMiniMessage(
-                        decorateTextKeepMiniMessage(text, player, normalVars, listVars)
-                )
-        );
-    }
-
-    public static String decorateText(@Nullable String text, Player player, @Nullable Map<String, String> normalVars) {
-        if (text == null) {
-            return null;
-        }
-        String internalResult = parseInternalVar(text, normalVars);
-        if (internalResult == null) {
-            return null;
-        }
-        AdventureManager adventureManager = DailyShop.ADVENTURE_MANAGER;
-        return adventureManager.componentToLegacy(
-                adventureManager.getComponentFromMiniMessage(
-                        decorateTextKeepMiniMessage(text, player, normalVars)
-                )
-        );
-    }
-
-    public static List<String> decorateTextKeepMiniMessage(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
         return parsePlaceholder(parseInternalVar(parseInternalListVar(text, listVars), normalVars), player);
     }
 
-    public static String decorateTextKeepMiniMessage(@Nullable String text, Player player, @Nullable Map<String, String> normalVars) {
+    public static String decorateText(@Nullable String text, @Nullable Player player, @Nullable Map<String, String> normalVars) {
         if (text == null) {
             return null;
         }
@@ -103,19 +86,18 @@ public class TextUtils {
             return line;
         }
         // 正则表达式匹配所有 {} 包裹的变量
-        Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+        Pattern pattern = Pattern.compile("\\{(.*?)}");
         Matcher matcher = pattern.matcher(line);
-        // StringBuilder 用于高效地构建最终字符串
         StringBuilder result = new StringBuilder();
         int lastMatchEnd = 0;
-        boolean hasInvalidValue = false;
-        // 遍历所有匹配的变量
+        boolean hasNullValue = false;
         while (matcher.find()) {
             String key = matcher.group(1);
             String value = vars.get(key);
-            // 检查变量的值是否为 "-1"、null 或空字符串
+            // 变量的值是否为 "-1"、null 或空字符串
+            // 如果是，则可能触发 optionalMarker 机制
             if (value == null || value.equals("-1") || value.isBlank()) {
-                hasInvalidValue = true;
+                hasNullValue = true;
             }
             // 将前面的内容添加到 result
             result.append(line, lastMatchEnd, matcher.start());
@@ -127,7 +109,7 @@ public class TextUtils {
         // 将最后一部分内容添加到 result
         result.append(line.substring(lastMatchEnd));
         // 如果发现有无效值且行以 optionalMarker 开头，则返回 null
-        if (hasInvalidValue && line.startsWith(optionalMarker)) {
+        if (hasNullValue && line.startsWith(optionalMarker)) {
             return null;
         }
         // 如果行以 optionalMarker 开头，则去除它
@@ -181,76 +163,6 @@ public class TextUtils {
             }
         }
         return result;
-    }
-
-    public static double evaluateNumberFormula(String formula, Map<String, String> vars, @Nullable Player player) {
-        formula = parseInternalVar(optionalMarker + formula, vars);
-        if (formula == null || formula.isEmpty()) {
-            return -1d;
-        }
-        formula = parsePlaceholder(formula, player);
-
-        try (Context ctx = Context.enter()) {
-            ctx.setOptimizationLevel(-1);
-            ctx.setLanguageVersion(Context.VERSION_ES6);
-            ctx.setInstructionObserverThreshold(1000);
-            Scriptable scope = ctx.initStandardObjects();
-            try {
-                Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
-                if (result instanceof Number) {
-                    BigDecimal bigDecimalResult = new BigDecimal(result.toString());
-                    if (Objects.equals(bigDecimalResult, BigDecimal.ZERO)) {
-                        return -1d;
-                    }
-                    return bigDecimalResult.doubleValue();
-                } else {
-                    LogUtils.warn("Result of formula " + formula + " is not a number");
-                }
-            } catch (EvaluatorException e) {
-                LogUtils.warn("Evaluation error for formula: " + formula + ". " + e.getMessage());
-            } catch (Exception e) {
-                LogUtils.warn("Unexpected error for formula: " + formula + ". " + e.getMessage());
-            }
-        }
-        return -1d;
-    }
-
-    public static boolean evaluateBooleanFormula(String formula, Map<String, String> vars, @Nullable Player player) {
-        formula = parseInternalVar(optionalMarker + formula, vars);
-        if (formula == null || formula.isEmpty()) {
-            return false;
-        }
-        formula = parsePlaceholder(formula, player);
-
-        try (Context ctx = Context.enter()) {
-            ctx.setOptimizationLevel(-1);
-            ctx.setLanguageVersion(Context.VERSION_ES6);
-            ctx.setInstructionObserverThreshold(1000);
-            Scriptable scope = ctx.initStandardObjects();
-            try {
-                Object result = ctx.evaluateString(scope, formula, "formula", 1, null);
-                if (result instanceof Boolean) {
-                    return (Boolean) result;
-                } else {
-                    LogUtils.warn("Result of formula " + formula + " is not a boolean");
-                }
-            } catch (EvaluatorException e) {
-                LogUtils.warn("Evaluation error for formula: " + formula + ". " + e.getMessage());
-            } catch (Exception e) {
-                LogUtils.warn("Unexpected error for formula: " + formula + ". " + e.getMessage());
-            }
-        }
-        return false;
-    }
-
-    public List<String> legacyToMiniMessage(@NotNull List<String> text) {
-        return text.stream()
-                .map(this::legacyToMiniMessage)
-                .toList();
-    }
-
-    public String legacyToMiniMessage(@NotNull String text) {
-        return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(text);
     }
 
     public static long parseTimeToTicks(@Nullable String time) {

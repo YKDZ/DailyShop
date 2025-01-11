@@ -1,8 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.item;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.enums.BaseItemType;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class ItemsAdderItem implements BaseItem {
     @Override
     public String getDisplayName() {
         if (isExist()) {
-            return DailyShop.ADVENTURE_MANAGER.legacyToMiniMessage(CustomStack.getInstance(namespacedId).getDisplayName());
+            return HyphaAdventureUtils.legacyToMiniMessage(CustomStack.getInstance(namespacedId).getDisplayName());
         } else {
             return null;
         }

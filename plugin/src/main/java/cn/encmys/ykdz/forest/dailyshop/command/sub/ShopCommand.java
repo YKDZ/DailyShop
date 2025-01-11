@@ -8,6 +8,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.PlayerArgument;
@@ -42,17 +43,17 @@ public class ShopCommand {
                     Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                     Player player = (Player) args.get("player");
                     if (player == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_open_failure_invalidPlayer, null, new HashMap<>() {{
+                        HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_shop_open_failure_invalidPlayer, null, new HashMap<>() {{
                             put("shop-id", shopId);
                         }}));
                         return;
                     }
                     if (!sender.hasPermission("dailyshop.shop.open." + shopId)) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_noPermission);
+                        HyphaAdventureUtils.sendMessage(sender, MessageConfig.messages_prefix + MessageConfig.messages_noPermission);
                         return;
                     }
                     if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_open_failure_invalidShop, player, new HashMap<>() {{
+                        HyphaAdventureUtils.sendMessage(sender, MessageConfig.messages_prefix + TextUtils.decorateText(MessageConfig.messages_command_shop_open_failure_invalidShop, player, new HashMap<>() {{
                             put("shop-id", (String) args.get("shop"));
                         }}));
                         return;
@@ -77,13 +78,13 @@ public class ShopCommand {
                     Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                     Player player = (Player) sender;
                     if (shop == null) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_restock_failure_invalidShop, player, new HashMap<>() {{
+                        HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_shop_restock_failure_invalidShop, player, new HashMap<>() {{
                             put("shop-id", shopId);
                         }}));
                         return;
                     }
                     shop.getShopStocker().stock();
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_restock_success, player, new HashMap<>() {{
+                    HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_shop_restock_success, player, new HashMap<>() {{
                         put("shop-name", shop.getName());
                         put("shop-id", shop.getId());
                     }}));
@@ -104,13 +105,13 @@ public class ShopCommand {
                                     Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
                                     Player player = (Player) sender;
                                     if (shop == null) {
-                                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_cache_clear_failure_invalidShop, player, new HashMap<>() {{
+                                        HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_shop_cache_clear_failure_invalidShop, player, new HashMap<>() {{
                                             put("shop-id", shopId);
                                         }}));
                                         return;
                                     }
                                     shop.getCachedProductItems().clear();
-                                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_cache_clear_success, player, new HashMap<>() {{
+                                    HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_shop_cache_clear_success, player, new HashMap<>() {{
                                         put("shop-id", shopId);
                                         put("shop-name", shop.getName());
                                     }}));
@@ -134,19 +135,19 @@ public class ShopCommand {
                                     Player player = (Player) args.get("player");
                                     Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
                                     if (player == null) {
-                                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_misc_switchShoppingMode_failure_invalidPlayer, null, new HashMap<>() {{
+                                        HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_command_shop_misc_switchShoppingMode_failure_invalidPlayer, null, new HashMap<>() {{
                                             put("shop-id", shopId);
                                         }}));
                                         return;
                                     }
                                     if (shop == null) {
-                                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_misc_switchShoppingMode_failure_invalidShop, player, new HashMap<>() {{
+                                        HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_command_shop_misc_switchShoppingMode_failure_invalidShop, player, new HashMap<>() {{
                                             put("shop-id", (String) args.get("shop"));
                                         }}));
                                         return;
                                     }
                                     profile.setShoppingMode(shopId, profile.getShoppingMode(shopId) == ShoppingMode.DIRECT ? ShoppingMode.CART : ShoppingMode.DIRECT);
-                                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_shop_misc_switchShoppingMode_success, null, new HashMap<>() {{
+                                    HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_command_shop_misc_switchShoppingMode_success, null, new HashMap<>() {{
                                         put("shop-id", shopId);
                                         put("shop-name", shop.getName());
                                         put("player-name", player.getDisplayName());

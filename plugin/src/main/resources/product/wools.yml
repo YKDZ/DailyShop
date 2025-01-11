@@ -22,7 +22,7 @@ default-settings:
 products:
   WARM_COLOR_WOOL_BUNDLE:
     icon:
-      base: BARREL
+      base: barrel
       amount: 1
       name: "<white>Warm Color Wool Bundle"
       lore:
@@ -42,7 +42,7 @@ products:
 
   COLD_COLOR_WOOL_BUNDLE:
     icon:
-      base: BARREL
+      base: barrel
       amount: 1
       name: "<white>Cold Color Wool Bundle"
       lore:
@@ -61,14 +61,14 @@ products:
 
   WHITE_WOOL:
     item:
-      base: WHITE_WOOL
+      base: white_wool
 
   MAGIC_ORANGE_WOOL:
     icon:
       lore:
         - "<gray>This is a wool with magic."
     item:
-      base: ORANGE_WOOL
+      base: orange_wool
       name: "<green>Magic Orange Wool"
       lore:
         - "<gray>Unlike other wools, this wool"
@@ -80,7 +80,7 @@ products:
 
   MAGENTA_WOOL:
     item:
-      base: MAGENTA_WOOL
+      base: magenta_wool
     icon:
       lore:
         - "<gray>Unlike the orange wool,"
@@ -91,52 +91,52 @@ products:
 
   LIGHT_BLUE_WOOL:
     item:
-      base: LIGHT_BLUE_WOOL
+      base: light_blue_wool
 
   YELLOW_WOOL:
     item:
-      base: YELLOW_WOOL
+      base: yellow_wool
 
   LIME_WOOL:
     item:
-      base: LIME_WOOL
+      base: lime_wool
 
   PINK_WOOL:
     item:
-      base: PINK_WOOL
+      base: pink_wool
 
   GRAY_WOOL:
     item:
-      base: GRAY_WOOL
+      base: gray_wool
 
   LIGHT_GRAY_WOOL:
     item:
-      base: LIGHT_GRAY_WOOL
+      base: light_gray_wool
 
   CYAN_WOOL:
     item:
-      base: CYAN_WOOL
+      base: cyan_wool
 
   PURPLE_WOOL:
     item:
-      base: PURPLE_WOOL
+      base: purple_wool
 
   BLUE_WOOL:
     item:
-      base: BLUE_WOOL
+      base: blue_wool
 
   BROWN_WOOL:
     item:
-      base: BROWN_WOOL
+      base: brown_wool
 
   GREEN_WOOL:
     item:
-      base: GREEN_WOOL
+      base: green_wool
 
   RED_WOOL:
     item:
-      base: RED_WOOL
+      base: red_wool
 
   BLACK_WOOL:
     item:
-      base: BLACK_WOOL
+      base: black_wool

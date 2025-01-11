@@ -14,6 +14,8 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,9 +73,9 @@ public class MinecraftLangConfig {
     private static boolean downloadLangFileFromMcAssets(String fileDestination) {
         LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json through mcasset.cloud.");
         try {
-            downloadFile(new URL("https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/" + serverVersion + "/assets/minecraft/lang/" + Config.language_minecraftLang + ".json"), fileDestination);
+            downloadFile(new URI("https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/" + serverVersion + "/assets/minecraft/lang/" + Config.language_minecraftLang + ".json").toURL(), fileDestination);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             return false;
         }
     }
@@ -81,20 +83,20 @@ public class MinecraftLangConfig {
     private static boolean downloadLangFileFromOfficial(String fileDestination) {
         LogUtils.info("Try to download lang file " + Config.language_minecraftLang + ".json through official api.");
         try {
-            JsonObject versions = fetchJson(new URL("https://launchermeta.mojang.com/mc/game/version_manifest.json"));
+            JsonObject versions = fetchJson(new URI("https://launchermeta.mojang.com/mc/game/version_manifest.json").toURL());
             if (versions == null) return false;
 
             String latestVersion = getLatestVersion(versions);
             if (latestVersion == null) return false;
 
             String metaURLString = getMetaURLString(versions, latestVersion);
-            JsonObject meta = fetchJson(new URL(metaURLString));
+            JsonObject meta = fetchJson(new URI(metaURLString).toURL());
             if (meta == null) return false;
 
             JsonObject assetIndex = meta.getAsJsonObject("assetIndex");
             if (assetIndex == null || !assetIndex.has("url")) return false;
 
-            JsonObject assets = fetchJson(new URL(assetIndex.get("url").getAsString()));
+            JsonObject assets = fetchJson(new URI(assetIndex.get("url").getAsString()).toURL());
             if (assets == null) return false;
 
             String target = "minecraft/lang/" + Config.language_minecraftLang + ".json";
@@ -103,7 +105,7 @@ public class MinecraftLangConfig {
             if (targetAsset == null) return false;
 
             String hash = targetAsset.get("hash").getAsString();
-            downloadFile(new URL("https://resources.download.minecraft.net/" + hash.substring(0, 2) + "/" + hash), fileDestination);
+            downloadFile(new URI("https://resources.download.minecraft.net/" + hash.substring(0, 2) + "/" + hash).toURL(), fileDestination);
             return true;
         } catch (Exception e) {
             return false;

@@ -1,7 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
+import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -41,6 +42,6 @@ public class PlayerUtils {
     }
 
     public static void sendMessage(String message, Player player, Map<String, String> vars) {
-        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextKeepMiniMessage(message, player, vars));
+        HyphaAdventureUtils.sendMessage(player, MessageConfig.messages_prefix + TextUtils.decorateText(message, player, vars));
     }
 }

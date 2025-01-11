@@ -1,23 +1,34 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
+import cn.encmys.ykdz.forest.hyphautils.HyphaConfigUtils;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import net.kyori.adventure.key.InvalidKeyException;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Registry;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.structure.Marker;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ConfigUtils {
+    private static final List<String> nonInheritableKeys = new ArrayList<>() {{
+        add("icons");
+    }};
+
     public static ConfigurationSection inheritPriceSection(@Nullable ConfigurationSection section, @Nullable ConfigurationSection defaultSection) {
         if (section == null) {
             return defaultSection;
@@ -114,10 +125,6 @@ public class ConfigUtils {
         return icons;
     }
 
-    private static final List<String> nonInheritableKeys = new ArrayList<>() {{
-        add("icons");
-    }};
-
     @Nullable
     public static IconRecord getIconRecord(char iconKey, @Nullable ConfigurationSection iconSection) {
         if (iconSection == null) {
@@ -128,7 +135,7 @@ public class ConfigUtils {
                 iconSection.getString("base", "DIRT"),
                 iconSection.getString("name", null),
                 iconSection.getStringList("lore"),
-                iconSection.getInt("amount", 1),
+                iconSection.getString("amount", "1"),
                 TextUtils.parseTimeToTicks(iconSection.getString("update-period", "0s")),
                 iconSection.getInt("custom-model-data"),
                 iconSection.getConfigurationSection("commands"),
@@ -136,6 +143,7 @@ public class ConfigUtils {
                 iconSection.getStringList("banner-patterns"),
                 iconSection.getStringList("firework-effects"),
                 iconSection.getStringList("potion-effects"),
+                iconSection.getStringList("enchantments"),
                 iconSection.getConfigurationSection("features"),
                 getConditionIconRecords(iconKey, iconSection.getMapList("icons"), iconSection)
         );
@@ -146,7 +154,7 @@ public class ConfigUtils {
         Map<String, IconRecord> conditionIcons = new HashMap<>();
         for (Map<?, ?> map : conditionIconsList) {
             YamlConfiguration conditionIconSection = new YamlConfiguration();
-            loadMapIntoConfiguration(conditionIconSection, map, "");
+            HyphaConfigUtils.loadMapIntoConfiguration(conditionIconSection, map, "");
             if (conditionIconSection.getBoolean("inherit", true)) {
                 inheritIconSection(conditionIconSection.getConfigurationSection("icon"), parentIconSection);
             }
@@ -155,8 +163,8 @@ public class ConfigUtils {
                     // base 必须被继承以保证图标可用性
                     conditionIconSection.getString("icon.base", parentIconSection.getString("base", "DIRT")),
                     conditionIconSection.getString("icon.name", null),
-                    conditionIconSection.getStringList("icon.lore"),
-                    conditionIconSection.getInt("icon.amount", 1),
+                    conditionIconSection.getStringList("lore"),
+                    conditionIconSection.getString("icon.amount", "1"),
                     // update-period 必须被继承以保证更新不是单向的
                     TextUtils.parseTimeToTicks(conditionIconSection.getString("icon.update-period", parentIconSection.getString("update-period", "0s"))),
                     conditionIconSection.getInt("icon.custom-model-data"),
@@ -165,6 +173,7 @@ public class ConfigUtils {
                     conditionIconSection.getStringList("icon.banner-patterns"),
                     conditionIconSection.getStringList("icon.firework-effects"),
                     conditionIconSection.getStringList("icon.potion-effects"),
+                    conditionIconSection.getStringList("icon.enchantments"),
                     conditionIconSection.getConfigurationSection("icon.features"),
                     new HashMap<>()
             ));
@@ -186,19 +195,6 @@ public class ConfigUtils {
                     // 直接设置值
                     iconSection.set(key, value);
                 }
-            }
-        }
-    }
-
-    private static void loadMapIntoConfiguration(ConfigurationSection section, Map<?, ?> map, String path) {
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            String key = (String) entry.getKey();
-            Object value = entry.getValue();
-            String fullPath = path.isEmpty() ? key : path + "." + key;
-            if (value instanceof Map<?, ?>) {
-                loadMapIntoConfiguration(section.createSection(key), (Map<?, ?>) value, fullPath);
-            } else {
-                section.set(key, value);
             }
         }
     }
@@ -243,7 +239,7 @@ public class ConfigUtils {
                     .orElse(0);
         } else {
             // 获取行数和列数（假设所有行长度相等）
-            int columnCount = layout.isEmpty() ? 0 : layout.get(0).length();
+            int columnCount = layout.isEmpty() ? 0 : layout.getFirst().length();
             // 遍历列
             return IntStream.range(0, columnCount)
                     .mapToObj(col -> {
@@ -261,45 +257,112 @@ public class ConfigUtils {
         }
     }
 
-    public static Locale getLocale(String locale) {
-        String[] parts = locale.split("_", -1);
-        return switch (parts.length) {
-            case 1 -> new Locale(parts[0]);  // 仅语言代码
-            case 2 -> new Locale(parts[0], parts[1]);  // 语言代码 + 国家代码
-            case 3 -> new Locale(parts[0], parts[1], parts[2]);  // 语言代码 + 国家代码 + 变体
-            default -> throw new IllegalArgumentException("Invalid locale format: " + locale);
-        };
-    }
+    /**
+     * @param data Enchantment data format like "sharpness:5" or "knockback"
+     * @return Enchantment and Level
+     */
+    public static Map.Entry<Enchantment, Integer> parseEnchantmentData(@NotNull String data) {
+        String[] parsed = data.split(":");
 
-    public static YamlConfiguration loadYamlFromResource(String path) {
-        InputStream inputStream = DailyShop.INSTANCE.getResource(path);
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Resource not found: " + path);
-        }
-        YamlConfiguration config = new YamlConfiguration();
+        if (parsed.length == 0) throw new IllegalArgumentException("Invalid enchantment data: " + data);
+
+        Enchantment enchantment;
+
         try {
-            config.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        } catch (IOException | InvalidConfigurationException e) {
-            LogUtils.error(e.getMessage());
+            Registry<Enchantment> enchantmentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
+            enchantment = enchantmentRegistry.getOrThrow(Key.key(parsed[0]));
+        } catch (NoSuchElementException | InvalidKeyException e) {
+            throw new IllegalArgumentException("Invalid enchantment data: " + data);
         }
-        return config;
+
+        int level = 1;
+        if (parsed.length == 2) {
+            level = Integer.parseInt(parsed[1]);
+        }
+
+        return Map.entry(enchantment, level);
     }
 
-    public static YamlConfiguration merge(YamlConfiguration config, String resourcePath, String path) throws IOException {
-        YamlConfiguration newConfig = ConfigUtils.loadYamlFromResource(resourcePath);
-        if (newConfig.getInt("version") != config.getInt("version")) {
-            for (String key : config.getKeys(true)) {
-                if (key.equals("version")) {
-                    continue;
-                }
-                if (newConfig.contains(key) && !(newConfig.get(key) instanceof ConfigurationSection)) {
-                    newConfig.set(key, config.get(key));
-                }
-            }
-            newConfig.save(path);
-            LogUtils.info("Successfully merged " + resourcePath + " from version " + config.getInt("version") + " to version " + newConfig.getInt("version") + ".");
-            return newConfig;
+    /**
+     * @param data Banner pattern data format like "YELLOW:bricks"
+     * @return Pattern type and its color
+     */
+    public static Map.Entry<PatternType, DyeColor> parseBannerPatternData(@NotNull String data) {
+        String[] parsed = data.split(":");
+
+        if (parsed.length == 0) throw new IllegalArgumentException("Invalid banner pattern data: " + data);
+
+        DyeColor color = DyeColor.valueOf(parsed[0]);
+        PatternType type;
+
+        try {
+            Registry<PatternType> bannerPatternRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BANNER_PATTERN);
+            type = bannerPatternRegistry.getOrThrow(Key.key(parsed[1]));
+        } catch (NoSuchElementException | InvalidKeyException e) {
+            throw new IllegalArgumentException("Invalid banner pattern data: " + data);
         }
-        return config;
+
+        return Map.entry(type, color);
+    }
+
+    /**
+     * @param data Item flag data format like "HIDE_POTION_EFFECTS" or "-HIDE_ATTRIBUTES"
+     * @return ItemFlag: isAdd
+     */
+    public static Map.Entry<ItemFlag, Boolean> parseItemFlagData(@NotNull String data) {
+        ItemFlag flag;
+
+        try {
+            flag = ItemFlag.valueOf(data.replaceAll("-", ""));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid item flag data: " + data);
+        }
+
+        boolean isAdd = !data.startsWith("-");
+
+        return Map.entry(flag, !isAdd);
+    }
+
+    /**
+     * @param data Firework effect data format like "-t:BALL -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:true -flicker:true"
+     * @return Firework effect
+     */
+    public static FireworkEffect parseFireworkEffectData(@NotNull String data) {
+        Map<String, String> params = new HashMap<>();
+        Map<String, List<String>> listParams = new HashMap<>();
+
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile("-(\\w+):(\\[.*?]|\\w+)");
+        Matcher m = p.matcher(data);
+
+        while (m.find()) {
+            String key = m.group(1);
+            String value = m.group(2);
+
+            if (value.startsWith("[")) {
+                String[] listValues = value.substring(1, value.length() - 1).split(",\\s*");
+                listParams.put(key, Arrays.asList(listValues));
+            } else {
+                params.put(key, value);
+            }
+        }
+
+        List<Color> colors = new ArrayList<>();
+        List<Color> fadeColors = new ArrayList<>();
+
+        for (String hex : listParams.get("c")) {
+            colors.add(ColorUtils.getFromHex(hex));
+        }
+
+        for (String hex : listParams.get("fc")) {
+            fadeColors.add(ColorUtils.getFromHex(hex));
+        }
+
+        return FireworkEffect.builder()
+                .with(FireworkEffect.Type.valueOf(params.getOrDefault("t", "BALL")))
+                .withColor(colors)
+                .withFade(fadeColors)
+                .flicker(Boolean.parseBoolean(params.getOrDefault("flicker", "false")))
+                .trail(Boolean.parseBoolean(params.getOrDefault("trail", "false")))
+                .build();
     }
 }

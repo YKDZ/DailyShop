@@ -11,23 +11,23 @@ sounds:
   sell-to:
     # Value format:
     # sound:volume:pitch
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   buy-from:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   buy-all-from:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   add-1-to-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   remove-1-from-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   remove-all-from-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
 
 shop-gui:
   title: "Welcome %player_name%"
@@ -42,17 +42,17 @@ shop-gui:
     - "p # # # c # # # n"
   icons:
     "#":
-      base: BROWN_STAINED_GLASS_PANE
+      base: brown_stained_glass_pane
       name: " "
       lore:
         - "<dark_gray>Wall of Block Shop"
         - " "
     "@":
-      base: CLOCK
+      base: clock
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-period: "1s"
     "p":
-      base: RED_STAINED_GLASS_PANE
+      base: red_stained_glass_pane
       name: "<gray>Previous Line" # : {current-line}/{total-line}
       features:
         scroll: LEFT
@@ -65,9 +65,9 @@ shop-gui:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "n":
-      base: GREEN_STAINED_GLASS_PANE
+      base: green_stained_glass_pane
       name: "<gray>Next Line" # : {current-line}/{total-line}
       features:
         scroll: LEFT
@@ -80,9 +80,9 @@ shop-gui:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "c":
-      base: MINECART
+      base: minecart
       name: " "
       lore:
         - "<dark_gray>✖ <white>Left Click"
@@ -95,7 +95,7 @@ shop-gui:
         open-cart: LEFT
         switch-shopping-mode: RIGHT
     "d":
-      base: PAPER
+      base: paper
       name: " "
       lore:
         - "<dark_gray>✖ <white>Left Click"
@@ -115,7 +115,7 @@ shop-gui:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BOOK
+            base: book
             lore:
               - "<dark_gray>✖ <white>Left Click"
               - "   <gray>Add 1 stack of product"

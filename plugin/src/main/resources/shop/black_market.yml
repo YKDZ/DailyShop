@@ -21,23 +21,23 @@ messages:
 
 sounds:
   sell-to:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   buy-from:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   buy-all-from:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   add-1-to-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   remove-1-from-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
   remove-all-from-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
 
 shop-gui:
   title: "Welcome %player_name%"
@@ -52,17 +52,17 @@ shop-gui:
     - "# # # # c # # # #"
   icons:
     "#":
-      base: BROWN_STAINED_GLASS_PANE
+      base: brown_stained_glass_pane
       name: " "
       lore:
         - "<dark_gray>Wall of Block Shop"
         - " "
     "@":
-      base: CLOCK
+      base: clock
       name: "<gray>Restock Timer: <white>%dailyshop_restock_timer_blocks%"
       update-period: "1s"
     "c":
-      base: MINECART
+      base: minecart
       name: " "
       lore:
         - "<dark_gray>✖ <white>Left Click"
@@ -123,5 +123,6 @@ products:
   - TROPICAL_FISH_BUCKET
   - AXOLOTL_BUCKET
   - CUSTOM_FIREWORK
+  - CUSTOM_WEAPON
   # You can also use PACK:misc
   # to cover all the products above.

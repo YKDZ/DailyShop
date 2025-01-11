@@ -10,7 +10,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.enums.ProductType;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +18,7 @@ import java.util.*;
 
 public class ShopStockerImpl implements ShopStocker {
     private static final Random random = new Random();
+
     private final Shop shop;
     private final int size;
     private final List<String> allProductsId;
@@ -78,11 +78,12 @@ public class ShopStockerImpl implements ShopStocker {
                         List<String> listConditions = product.getListConditions();
                         boolean conditionFlag = true;
                         if (!listConditions.isEmpty()) {
+                            Map<String, String> vars = new HashMap<>() {{
+                                put("product-id", productId);
+                                put("shop-id", shop.getId());
+                            }};
                             for (String condition : listConditions) {
-                                if (!TextUtils.evaluateBooleanFormula(condition, new HashMap<>() {{
-                                    put("product-id", productId);
-                                    put("shop-id", shop.getId());
-                                }}, null)) {
+                                if (!JSUtils.evaluateBooleanFormula(condition, vars, null)) {
                                     conditionFlag = false;
                                     break;
                                 }
@@ -133,17 +134,19 @@ public class ShopStockerImpl implements ShopStocker {
 
         String productId = product.getId();
 
+        shop.getShopCounter().cacheAmount(productId);
         shop.getShopPricer().cachePrice(productId);
         if (product.isProductItemCacheable() && !shop.isProductItemCached(productId)) {
             shop.cacheProductItem(product);
         }
 
-        // 确保每个捆绑包内容都有价格缓存
+        // 确保每个捆绑包内容都有价格和数量缓存
         // 同时尝试缓存商品物品
         if (product.getType() == ProductType.BUNDLE) {
             for (String contentId : ((BundleProduct) product).getBundleContents().keySet()) {
                 Product content = DailyShop.PRODUCT_FACTORY.getProduct(contentId);
                 if (content != null) {
+                    shop.getShopCounter().cacheAmount(contentId);
                     shop.getShopPricer().cachePrice(contentId);
                     if (product.isProductItemCacheable()) {
                         shop.cacheProductItem(content);

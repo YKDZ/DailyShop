@@ -60,7 +60,7 @@ public class ItemProduct extends Product {
         if (decorator == null) {
             return;
         }
-        int needed = decorator.getAmount() * stack;
+        int needed = shop.getShopCounter().getAmount(getId()) * stack;
         if (has(shop, inv, player, 1) < stack) {
             return;
         }
@@ -91,7 +91,7 @@ public class ItemProduct extends Product {
             return 0;
         }
         int total = 0;
-        int stackedAmount = decorator.getAmount() * stack;
+        int stackedAmount = shop.getShopCounter().getAmount(getId()) * stack;
         for (ItemStack check : inv) {
             if (check != null && isMatch(shop.getId(), check, player)) {
                 total += check.getAmount();

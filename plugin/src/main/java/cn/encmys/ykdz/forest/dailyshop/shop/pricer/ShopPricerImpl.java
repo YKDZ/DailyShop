@@ -10,7 +10,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.SettlementLogUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.price.PricePairImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
@@ -51,7 +50,7 @@ public class ShopPricerImpl implements ShopPricer {
     public void cachePrice(@NotNull String productId) {
         Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
         if (product == null) {
-            LogUtils.warn("Try to cache product " + productId + " which does not exist.");
+            LogUtils.warn("Try to cache price for product " + productId + " which does not exist.");
             return;
         }
         Price buyPrice = product.getBuyPrice();
@@ -60,7 +59,8 @@ public class ShopPricerImpl implements ShopPricer {
         double sell = 0d;
 
         Map<String, String> additionalVars = new HashMap<>() {{
-            put("amount", String.valueOf(product.getItemDecorator() != null ? product.getItemDecorator().getAmount() : product.getIconDecorator().getAmount()));
+            put("item-amount", String.valueOf(shop.getShopCounter().getAmount(productId)));
+            put("product-id", productId);
         }};
 
         switch (buyPrice.getPriceMode()) {
@@ -71,7 +71,7 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
                 vars.putAll(additionalVars);
-                double price = TextUtils.evaluateNumberFormula(buyPrice.getFormula(), vars, null);
+                double price = JSUtils.evaluateNumberFormula(buyPrice.getFormula(), vars, null);
                 buy = buyPrice.isRound() ? Math.round(price) : price;
             }
             case BUNDLE_AUTO_NEW -> {
@@ -103,7 +103,7 @@ public class ShopPricerImpl implements ShopPricer {
                 vars.put("history-buy", Integer.toString(historyBuy));
                 vars.put("history-sell", Integer.toString(historySell));
                 vars.putAll(additionalVars);
-                double price = TextUtils.evaluateNumberFormula(sellPrice.getFormula(), vars, null);
+                double price = JSUtils.evaluateNumberFormula(sellPrice.getFormula(), vars, null);
                 sell = sellPrice.isRound() ? Math.round(price) : price;
             }
             case BUNDLE_AUTO_NEW -> {

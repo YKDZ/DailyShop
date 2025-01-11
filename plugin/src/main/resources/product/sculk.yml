@@ -38,13 +38,13 @@ default-settings:
 products:
   SCULK_SENSOR:
     item:
-      base: SCULK_SENSOR
+      base: sculk_sensor
   SCULK:
     item:
-      base: SCULK
+      base: sculk
   SCULK_CATALYST:
     item:
-      base: SCULK_CATALYST
+      base: sculk_catalyst
   SCULK_SHRIEKER:
     item:
-      base: SCULK_SHRIEKER
+      base: sculk_shrieker

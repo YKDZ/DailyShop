@@ -1,21 +1,18 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-
-import java.util.logging.Logger;
+import cn.encmys.ykdz.forest.hyphautils.HyphaLogUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class LogUtils {
-    private final static Logger logger = Logger.getLogger(DailyShop.class.getName());
-
-    public static void info(String log) {
-        DailyShop.ADVENTURE_MANAGER.sendConsoleMessage("[DailyShop] " + log);
+    public static void info(@NotNull String log) {
+        HyphaLogUtils.info("[DailyShop]", log);
     }
 
-    public static void warn(String log) {
-        DailyShop.ADVENTURE_MANAGER.sendConsoleMessage("[DailyShop] <yellow>" + log);
+    public static void warn(@NotNull String log) {
+        HyphaLogUtils.warn("[DailyShop]", log);
     }
 
-    public static void error(String log) {
-        DailyShop.ADVENTURE_MANAGER.sendConsoleMessage("[DailyShop] <red>" + log);
+    public static void error(@NotNull String log) {
+        HyphaLogUtils.error("[DailyShop]", log);
     }
 }

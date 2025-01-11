@@ -4,13 +4,17 @@
 # similar products very easy.
 default-settings:
   item:
-    amount: 16
+    amount: 8-16
   buy-price:
     # Use Rhino JavaScript engine
+    # with language version ES6
     # https://rhino.github.io/
-    formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * (1 + ({history-buy} - {history-sell}) / ({history-sell} + {history-buy} + 1)) ^ 2))"
+    formula: |
+      Math.max(vars.base / 3, Math.min(3 * vars.base, vars.base * (1 + (vars.history_buy - vars.history_sell) / (vars.history_sell + vars.history_buy + 1)) ^ 2)) * vars.item_amount;
   sell-price:
-    formula: "Math.max({base} / 3, Math.min(3 * {base}, {base} * (1 + ({history-sell} - {history-buy}) / ({history-sell} + {history-buy} + 1)) ^ 2))"
+    # Multi line formula
+    formula: |
+      Math.max(vars.base / 3, Math.min(3 * vars.base, vars.base * (1 + (vars.history_buy - vars.history_sell) / (vars.history_sell + vars.history_buy + 1)) ^ 2)) * vars.item_amount;
   stock:
     # It means that the following stock settings
     # will be shared by all players, in other words, each player shares the same size etc.
@@ -38,7 +42,7 @@ default-settings:
 products:
   COAL_ORE:
     item:
-      base: COAL_ORE
+      base: coal_ore
     buy-price:
       vars:
         - "base:30"
@@ -48,7 +52,7 @@ products:
 
   COPPER_ORE:
     item:
-      base: COPPER_ORE
+      base: copper_ore
     buy-price:
       vars:
         - "base:60"
@@ -58,7 +62,7 @@ products:
 
   IRON_ORE:
     item:
-      base: IRON_ORE
+      base: iron_ore
     buy-price:
       vars:
         - "base:90"
@@ -68,7 +72,7 @@ products:
 
   LAPIS_ORE:
     item:
-      base: LAPIS_ORE
+      base: lapis_ore
     buy-price:
       vars:
         - "base:120"
@@ -78,7 +82,7 @@ products:
 
   REDSTONE_ORE:
     item:
-      base: REDSTONE_ORE
+      base: redstone_ore
     buy-price:
       vars:
         - "base:150"
@@ -88,7 +92,7 @@ products:
 
   EMERALD_ORE:
     item:
-      base: EMERALD_ORE
+      base: emerald_ore
     buy-price:
       vars:
         - "base:180"
@@ -98,7 +102,7 @@ products:
 
   GOLD_ORE:
     item:
-      base: GOLD_ORE
+      base: gold_ore
     buy-price:
       vars:
         - "base:210"
@@ -108,7 +112,7 @@ products:
 
   DIAMOND_ORE:
     item:
-      base: DIAMOND_ORE
+      base: diamond_ore
     buy-price:
       vars:
         - "base:240"
@@ -118,7 +122,7 @@ products:
 
   DEEPSLATE_COAL_ORE:
     item:
-      base: DEEPSLATE_COAL_ORE
+      base: deepslate_coal_ore
     buy-price:
       vars:
         - "base:30"
@@ -128,7 +132,7 @@ products:
 
   DEEPSLATE_COPPER_ORE:
     item:
-      base: DEEPSLATE_COPPER_ORE
+      base: deepslate_copper_ore
     buy-price:
       vars:
         - "base:60"
@@ -138,7 +142,7 @@ products:
 
   DEEPSLATE_IRON_ORE:
     item:
-      base: DEEPSLATE_IRON_ORE
+      base: deepslate_iron_ore
     buy-price:
       vars:
         - "base:90"
@@ -148,7 +152,7 @@ products:
 
   DEEPSLATE_LAPIS_ORE:
     item:
-      base: DEEPSLATE_LAPIS_ORE
+      base: deepslate_lapis_ore
     buy-price:
       vars:
         - "base:120"
@@ -158,7 +162,7 @@ products:
 
   DEEPSLATE_REDSTONE_ORE:
     item:
-      base: DEEPSLATE_REDSTONE_ORE
+      base: deepslate_redstone_ore
     buy-price:
       vars:
         - "base:150"
@@ -168,7 +172,7 @@ products:
 
   DEEPSLATE_EMERALD_ORE:
     item:
-      base: DEEPSLATE_EMERALD_ORE
+      base: deepslate_emerald_ore
     buy-price:
       vars:
         - "base:180"
@@ -178,7 +182,7 @@ products:
 
   DEEPSLATE_GOLD_ORE:
     item:
-      base: DEEPSLATE_GOLD_ORE
+      base: deepslate_gold_ore
     buy-price:
       vars:
         - "base:210"
@@ -188,7 +192,7 @@ products:
 
   DEEPSLATE_DIAMOND_ORE:
     item:
-      base: DEEPSLATE_DIAMOND_ORE
+      base: deepslate_diamond_ore
     buy-price:
       vars:
         - "base:240"

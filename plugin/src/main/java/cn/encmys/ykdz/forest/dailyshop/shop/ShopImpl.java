@@ -5,11 +5,13 @@ import cn.encmys.ykdz.forest.dailyshop.api.config.record.shop.ShopSettingsRecord
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
+import cn.encmys.ykdz.forest.dailyshop.api.shop.counter.ShopCounter;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.pricer.ShopPricer;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.stocker.ShopStocker;
 import cn.encmys.ykdz.forest.dailyshop.gui.ShopGUI;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductItemBuilder;
 import cn.encmys.ykdz.forest.dailyshop.shop.cashier.ShopCashierImpl;
+import cn.encmys.ykdz.forest.dailyshop.shop.counter.ShopCounterImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.pricer.ShopPricerImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.stocker.ShopStockerImpl;
 import org.bukkit.entity.Player;
@@ -29,6 +31,7 @@ public class ShopImpl implements Shop {
     private final ShopPricer shopPricer;
     private final ShopCashier shopCashier;
     private final ShopStocker shopStocker;
+    private final ShopCounter shopCounter;
     private final Map<String, ItemStack> cachedProduct = new HashMap<>();
 
     public ShopImpl(String id, ShopSettingsRecord settings, List<String> allProductsId) {
@@ -38,6 +41,7 @@ public class ShopImpl implements Shop {
         shopPricer = new ShopPricerImpl(this);
         shopCashier = new ShopCashierImpl(this, settings.merchant());
         shopStocker = new ShopStockerImpl(this, settings.size(), settings.autoRestockEnabled(), settings.autoRestockPeriod(), allProductsId);
+        shopCounter = new ShopCounterImpl(this);
     }
 
     @Override
@@ -66,7 +70,7 @@ public class ShopImpl implements Shop {
             throw new RuntimeException("Check Product#isCacheable before Shop#cacheProductItem");
         }
         if (product.isProductItemCacheable()) {
-            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getItemDecorator(), this, null));
+            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getId(), product.getItemDecorator(), this, null));
         }
     }
 
@@ -87,7 +91,7 @@ public class ShopImpl implements Shop {
             throw new RuntimeException("Check Product#isCacheable before Shop#getCachedProductItemOrCreateOne");
         }
         return Optional.ofNullable(getCachedProductItem(product))
-                .orElse(ProductItemBuilder.build(product.getItemDecorator(), this, player));
+                .orElse(ProductItemBuilder.build(product.getId(), product.getItemDecorator(), this, player));
     }
 
     @Override
@@ -108,5 +112,10 @@ public class ShopImpl implements Shop {
     @Override
     public Map<String, ItemStack> getCachedProductItems() {
         return cachedProduct;
+    }
+
+    @Override
+    public ShopCounter getShopCounter() {
+        return shopCounter;
     }
 }

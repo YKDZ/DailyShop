@@ -57,8 +57,8 @@ public class OrderHistoryGUI extends PlayerRelatedGUI {
                 .setGui(build(player))
                 .setViewer(player)
                 .setTitle(TextUtils.decorateText(guiRecord.title(), player, new HashMap<>() {{
-                    put("player-name", player.getName());
-                    put("player-uuid", player.getUniqueId().toString());
+                    put("player_name", player.getName());
+                    put("player_uuid", player.getUniqueId().toString());
                 }}))
                 .setCloseHandlers(new ArrayList<>() {{
                     add(() -> getWindows().remove(player.getUniqueId()));

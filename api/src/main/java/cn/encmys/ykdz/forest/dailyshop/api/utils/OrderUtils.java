@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.Profile;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -52,8 +53,8 @@ public class OrderUtils {
                     put("price", cartOrder.getOrderType() == OrderType.SELL_TO ? MessageConfig.format_decimal.format(cartOrder.getBilledPrice(product)) : MessageConfig.placeholderAPI_cartTotalPrice_notSellToMode);
                 }};
 
-                String name = TextUtils.decorateText(iconRecord.formatName(), null, vars);
-                List<String> lore = TextUtils.decorateText(iconRecord.formatLore(), null, vars, null);
+                Component name = TextUtils.decorateTextToComponent(iconRecord.formatName(), null, vars);
+                List<Component> lore = TextUtils.decorateTextToComponent(iconRecord.formatLore(), null, vars, null);
 
                 return new xyz.xenondevs.invui.item.builder.ItemBuilder(
                         new ItemBuilder(product.getIconDecorator().getBaseItem().build(null))

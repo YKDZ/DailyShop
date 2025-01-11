@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 public interface BaseItem {
     BaseItemType getItemType();
     String getDisplayName();
-
     ItemStack build(Player player);
     boolean isSimilar(ItemStack item);
     boolean isExist();

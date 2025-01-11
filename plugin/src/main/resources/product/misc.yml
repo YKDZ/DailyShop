@@ -15,12 +15,12 @@ products:
   A_JOKE:
     # Icon will display in gui
     icon:
-      base: DIAMOND
+      base: diamond
       name: "<white>Cheap Diamond"
       amount: 1
     # Item is what buyer really get
     item:
-      base: DIRT
+      base: dirt
       name: "<white>Just Dirt :)"
       amount: 1
     buy-price:
@@ -30,7 +30,7 @@ products:
 
   WARM_WELCOME:
     icon:
-      base: SUNFLOWER
+      base: sunflower
       amount: 1
       name: "<white>Warm Welcome from server"
     buy-commands:
@@ -61,7 +61,7 @@ products:
   # like sell a permission.
   FLY_PERMISSION:
     icon:
-      base: FEATHER
+      base: feather
       amount: 1
       name: "<white>Fly for 30 minutes"
     buy-commands:
@@ -114,14 +114,14 @@ products:
 
   CUSTOM_BANNER:
     item:
-      base: RED_BANNER
+      base: red_banner
       banner-patterns:
-        - "YELLOW:BRICKS"
-        - "RED:STRIPE_SMALL"
-        - "RED:BORDER"
-        - "RED:DIAGONAL_LEFT_MIRROR"
-        - "RED:HALF_VERTICAL_MIRROR"
-        - "RED:RHOMBUS_MIDDLE"
+        - "YELLOW:bricks"
+        - "RED:small_stripes"
+        - "RED:border"
+        - "RED:diagonal_up_right"
+        - "RED:half_vertical"
+        - "RED:rhombus"
       name: "<red>The Flag of China"
       amount: 1
     icon:
@@ -146,7 +146,7 @@ products:
   SPLASH_POTION_OF_LEAPING:
     item:
       # Base potion data
-      base: POTION:SPLASH:JUMP:false:true
+      base: POTION:SPLASH:jump
       amount: 1
     icon:
       # Due to certain reasons, it is not possible to
@@ -179,6 +179,7 @@ products:
 
   CUSTOM_FIREWORK:
     item:
+      # Firework with power 3
       base: FIREWORK:3
       amount: 1
       firework-effects:
@@ -189,3 +190,15 @@ products:
       lore:
         - "<gray>This is a Tropical Fish Bucket."
         - "<gray>These lore will not be applied to the product base."
+
+  CUSTOM_WEAPON:
+    item:
+      base: iron_sword
+      amount: 1
+      name: "<white>Super Sword"
+      enchantments:
+        - "sharpness:5"
+        - "knockback"
+    icon:
+      lore:
+        - "<gray>A sword with custom enchantments"

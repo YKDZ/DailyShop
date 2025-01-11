@@ -4,14 +4,15 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
+import cn.encmys.ykdz.forest.hyphautils.HyphaConfigUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -65,7 +66,12 @@ public class MessageConfig {
 
         try {
             config.load(file);
-            config = ConfigUtils.merge(config, resourcePath, path);
+            InputStream newConfigStream = DailyShop.INSTANCE.getResource(resourcePath);
+            if (newConfigStream == null) {
+                LogUtils.error("Resource " + resourcePath + " not found");
+                return;
+            }
+            config = cn.encmys.ykdz.forest.hyphautils.HyphaConfigUtils.merge(config, HyphaConfigUtils.loadYamlFromResource(newConfigStream), path);
             setUp();
         } catch (IOException | InvalidConfigurationException error) {
             LogUtils.error(error.getMessage());
@@ -75,7 +81,7 @@ public class MessageConfig {
     private static void setUp() {
         format_decimal = new DecimalFormat(config.getString("format.decimal", "###,###.##"));
         format_timer = config.getString("format.timer", "%02dh:%02dm:%02ds");
-        format_date = new SimpleDateFormat(config.getString("format.date.pattern", "MMMM dd, yyyy HH:mm:ss"), ConfigUtils.getLocale(config.getString("format.date.locale", "en_US")));
+        format_date = new SimpleDateFormat(config.getString("format.date.pattern", "MMMM dd, yyyy HH:mm:ss"), HyphaConfigUtils.getLocale(config.getString("format.date.locale", "en_US")));
 
         placeholderAPI_cartTotalPrice_notSellToMode = config.getString("placeholder-api.cart-total-price.not-sell-to-mode", "Not sell-to mode");
 

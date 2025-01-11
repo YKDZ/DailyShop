@@ -1,7 +1,7 @@
 sounds:
   settle-cart:
-    success: ENTITY_VILLAGER_YES
-    failure: ENTITY_VILLAGER_NO:0.5:1
+    success: entity.villager.yes
+    failure: entity.villager.no:0.5:1
 
 cart:
   title: "Cart for player {player-name}"
@@ -16,13 +16,13 @@ cart:
     - "# # # @ # h # # n"
   icons:
     "#":
-      base: BROWN_STAINED_GLASS_PANE
+      base: brown_stained_glass_pane
       name: " "
       lore:
         - "<dark_gray>Wall of Cart"
         - " "
     "u":
-      base: GREEN_STAINED_GLASS_PANE
+      base: green_stained_glass_pane
       name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
@@ -35,9 +35,9 @@ cart:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "n":
-      base: RED_STAINED_GLASS_PANE
+      base: red_stained_glass_pane
       name: "<gray>Next Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
@@ -50,9 +50,9 @@ cart:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "@":
-      base: PAPER
+      base: paper
       name: "<gray>Total Price: <white>{cart-total-price}"
       lore:
         - " "
@@ -73,7 +73,7 @@ cart:
         switch-cart-mode: SHIFT_RIGHT
         clear-cart: DROP
     "1":
-      base: OAK_WOOD
+      base: oak_wood
       name: "<#A0522D>Blocks Shop"
       lore:
         - " "
@@ -83,7 +83,7 @@ cart:
         open-shop: LEFT
         open-shop-target: blocks
     "2":
-      base: ENDER_EYE
+      base: ender_eye
       name: "<gray>Black Market"
       lore:
         - " "
@@ -93,7 +93,7 @@ cart:
         open-shop: LEFT
         open-shop-target: black_market
     "h":
-      base: BOOK
+      base: book
       name: "<gray>Order History"
       lore:
         - " "

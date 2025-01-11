@@ -1,12 +1,12 @@
 package cn.encmys.ykdz.forest.dailyshop.command.sub;
 
-import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ColorUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.Indyuce.mmoitems.MMOItems;
@@ -17,7 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
-import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class ProductCommand {
                         vars.put("keys", "base, amount, banner-patterns");
                         BannerMeta meta = (BannerMeta) item.getItemMeta();
                         if (meta == null) {
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            HyphaAdventureUtils.sendMessage(player, MessageConfig.messages_prefix + MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
                         List<Pattern> patterns = meta.getPatterns();
@@ -68,19 +68,18 @@ public class ProductCommand {
                         }
                         PotionMeta meta = (PotionMeta) item.getItemMeta();
                         if (meta == null) {
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            HyphaAdventureUtils.sendMessage(player, MessageConfig.messages_prefix + MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
-                        PotionData data = meta.getBasePotionData();
-                        String finalType = type;
-                        keyValue.add("<#C28456>base: <#346659>POTION:" + finalType + ":" + data.getType() + ":" + data.isUpgraded() + ":" + data.isExtended());
+                        PotionType potionType = meta.getBasePotionType();
+                        keyValue.add("<#C28456>base: <#346659>POTION:" + type + ":" + potionType.name());
                     }
                     // Firework
                     else if (item.getType() == Material.FIREWORK_ROCKET) {
                         vars.put("keys", "base, amount, firework-effects");
                         FireworkMeta meta = (FireworkMeta) item.getItemMeta();
                         if (meta == null) {
-                            DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                            HyphaAdventureUtils.sendMessage(player, MessageConfig.messages_prefix + MessageConfig.messages_command_product_check_failure_nullMeta);
                             return;
                         }
                         keyValue.add("<#C28456>base: <#346659>FIREWORK:" + meta.getPower());
@@ -167,13 +166,13 @@ public class ProductCommand {
                         keyValue.add("<#C28456>amount: " + item.getAmount());
                     }
                     for (String out : keyValue) {
-                        DailyShop.ADVENTURE_MANAGER.sendConsoleMessage(out);
+                        HyphaAdventureUtils.sendConsoleMessage(out);
                     }
                     if (!keyValue.isEmpty()) {
-                        DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.messages_command_product_check_success, player, vars));
+                        HyphaAdventureUtils.sendMessage(player, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_product_check_success, player, vars));
                         return;
                     }
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(player, MessageConfig.messages_command_product_check_failure_nullMeta);
+                    HyphaAdventureUtils.sendMessage(player, MessageConfig.messages_prefix + MessageConfig.messages_command_product_check_failure_nullMeta);
                 });
     }
 }

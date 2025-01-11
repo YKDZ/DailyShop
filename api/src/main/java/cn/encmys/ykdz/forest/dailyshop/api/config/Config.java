@@ -1,14 +1,15 @@
 package cn.encmys.ykdz.forest.dailyshop.api.config;
 
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.hyphautils.HyphaConfigUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Config {
     private static final String resourcePath = "config.yml";
@@ -47,15 +48,19 @@ public class Config {
 
         try {
             config.load(file);
-            config = ConfigUtils.merge(config, resourcePath, path);
-            setUp();
+            InputStream newConfigStream = DailyShop.INSTANCE.getResource(resourcePath);
+            if (newConfigStream == null) {
+                LogUtils.error("Resource " + resourcePath + " not found");
+                return;
+            }
+            config = HyphaConfigUtils.merge(config, HyphaConfigUtils.loadYamlFromResource(newConfigStream), path);
+            setup();
         } catch (IOException | InvalidConfigurationException error) {
             LogUtils.error(error.getMessage());
         }
     }
 
-
-    private static void setUp() {
+    private static void setup() {
         language_message = config.getString("language.message", "en_US");
         language_minecraftLang = config.getString("language.minecraft-lang", "en_us").toLowerCase();
         period_saveData = TextUtils.parseTimeToTicks(config.getString("period.save-data", "5m"));

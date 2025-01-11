@@ -3,15 +3,22 @@ package cn.encmys.ykdz.forest.dailyshop.item.decorator;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.EnumUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.BaseItemBuilder;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.block.banner.PatternType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BaseItemDecoratorImpl extends BaseItemDecorator {
     public BaseItemDecoratorImpl(@NotNull BaseItem baseItem, boolean setDefaultName) {
@@ -32,12 +39,13 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
                 .setLore(record.lore())
                 .setAmount(record.amount())
                 .setUpdatePeriod(record.updatePeriod())
-                .setItemFlags(record.itemFlags())
+                .setItemFlags(record.itemFlagsData())
                 .setCustomModelData(record.customModalData())
-                .setBannerPatterns(record.bannerPatterns());
+                .setBannerPatterns(record.bannerPatternsData())
+                .setEnchantments(record.enchantmentsData());
 
         if (record.commands() != null) {
-            decorator.setCommands(new HashMap<>() {{
+            decorator.setCommandsData(new HashMap<>() {{
                 put(ClickType.LEFT, record.commands().getStringList("left"));
                 put(ClickType.RIGHT, record.commands().getStringList("right"));
                 put(ClickType.SHIFT_LEFT, record.commands().getStringList("shift-left"));
@@ -88,13 +96,13 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public BaseItemDecorator setLore(@NotNull List<String> lore) {
+    public BaseItemDecorator setLore(List<String> lore) {
         this.lore = lore;
         return this;
     }
 
     @Override
-    public int getAmount() {
+    public String getAmount() {
         return amount;
     }
 
@@ -104,18 +112,7 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public List<String> getItemFlags() {
-        return itemFlags;
-    }
-
-    @Override
-    public BaseItemDecorator setItemFlags(List<String> itemFlags) {
-        this.itemFlags = itemFlags;
-        return this;
-    }
-
-    @Override
-    public BaseItemDecorator setAmount(int amount) {
+    public BaseItemDecorator setAmount(String amount) {
         this.amount = amount;
         return this;
     }
@@ -137,24 +134,65 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     }
 
     @Override
-    public List<String> getPatternsData() {
-        return patternsData;
+    public Map<ItemFlag, Boolean> getItemFlags() {
+        return itemFlags;
     }
 
     @Override
-    public BaseItemDecorator setBannerPatterns(List<String> patternsData) {
-        this.patternsData = patternsData;
+    public BaseItemDecorator setItemFlags(List<String> itemFlagsData) {
+        this.itemFlags = itemFlagsData.stream()
+                .map(ConfigUtils::parseItemFlagData)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return this;
     }
 
     @Override
-    public Map<ClickType, List<String>> getCommands() {
+    public Map<PatternType, DyeColor> getBannerPatterns() {
+        return bannerPatterns;
+    }
+
+    @Override
+    public BaseItemDecorator setBannerPatterns(List<String> bannerPatternsData) {
+        this.bannerPatterns = bannerPatternsData.stream()
+                .map(ConfigUtils::parseBannerPatternData)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return this;
+    }
+
+    @Override
+    public Map<Enchantment, Integer> getEnchantments() {
+        return enchantments;
+    }
+
+    @Override
+    public BaseItemDecorator setEnchantments(List<String> enchantmentsData) {
+        this.enchantments = enchantmentsData.stream()
+                .map(ConfigUtils::parseEnchantmentData)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return this;
+    }
+
+    @Override
+    public List<FireworkEffect> getFireworkEffects() {
+        return fireworkEffects;
+    }
+
+    @Override
+    public BaseItemDecorator setFireworkEffects(List<String> fireworkEffectsData) {
+        this.fireworkEffects = fireworkEffectsData.stream()
+                .map(ConfigUtils::parseFireworkEffectData)
+                .toList();
+        return this;
+    }
+
+    @Override
+    public Map<ClickType, List<String>> getCommandsData() {
         return commands;
     }
 
     @Override
-    public BaseItemDecorator setCommands(Map<ClickType, List<String>> commands) {
-        this.commands = commands;
+    public BaseItemDecorator setCommandsData(Map<ClickType, List<String>> commandsData) {
+        this.commands = commandsData;
         return this;
     }
 
@@ -166,17 +204,6 @@ public class BaseItemDecoratorImpl extends BaseItemDecorator {
     @Override
     public BaseItemDecorator setUpdatePeriod(long period) {
         this.period = period;
-        return this;
-    }
-
-    @Override
-    public List<String> getFireworkEffectData() {
-        return fireworkEffectData;
-    }
-
-    @Override
-    public BaseItemDecorator setFireworkEffectData(List<String> fireworkEffectData) {
-        this.fireworkEffectData = fireworkEffectData;
         return this;
     }
 

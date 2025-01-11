@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ProductItemBuilder {
     @NotNull
-    public static ItemStack build(@NotNull BaseItemDecorator decorator, @NotNull Shop shop, Player player) {
+    public static ItemStack build(@NotNull String productId, @NotNull BaseItemDecorator decorator, @NotNull Shop shop, Player player) {
         Map<String, String> vars = new HashMap<>() {{
             if (player != null) {
                 put("player-name", player.getName());
@@ -21,13 +21,15 @@ public class ProductItemBuilder {
             put("shop-name", shop.getName());
             put("shop-id", shop.getId());
         }};
+
         return new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(player))
-                .setDisplayName(TextUtils.decorateText(decorator.getName(), player, vars))
-                .setLore(TextUtils.decorateText(decorator.getLore(), player, vars, null))
+                .setDisplayName(TextUtils.decorateTextToComponent(decorator.getName(), player, vars))
+                .setLore(TextUtils.decorateTextToComponent(decorator.getLore(), player, vars, null))
                 .setItemFlags(decorator.getItemFlags())
                 .setCustomModelData(decorator.getCustomModelData())
-                .setBannerPatterns(decorator.getPatternsData())
-                .setFireworkEffects(decorator.getFireworkEffectData())
-                .build(decorator.getAmount());
+                .setBannerPatterns(decorator.getBannerPatterns())
+                .setFireworkEffects(decorator.getFireworkEffects())
+                .setEnchantments(decorator.getEnchantments())
+                .build(shop.getShopCounter().getAmount(productId));
     }
 }

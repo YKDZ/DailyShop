@@ -3,6 +3,7 @@ version: '${version}'
 main: cn.encmys.ykdz.forest.dailyshop.DailyShopImpl
 api-version: '1.18'
 depend:
+  - HyphaRepo
   - Vault
 softdepend:
   - PlaceholderAPI

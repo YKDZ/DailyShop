@@ -13,13 +13,13 @@ order-history:
     - "p p p p @ n n n n"
   icons:
     "#":
-      base: BROWN_STAINED_GLASS_PANE
+      base: brown_stained_glass_pane
       name: " "
       lore:
         - "<dark_gray>Wall of History"
         - " "
     "p":
-      base: RED_STAINED_GLASS_PANE
+      base: red_stained_glass_pane
       name: "<gray>Previous Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
@@ -32,9 +32,9 @@ order-history:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "n":
-      base: GREEN_STAINED_GLASS_PANE
+      base: green_stained_glass_pane
       name: "<gray>Next Page: {current-page}/{total-page}"
       features:
         page-change: LEFT
@@ -48,9 +48,9 @@ order-history:
           # base and update-period will be inherited anyway
           inherit: true
           icon:
-            base: BLACK_STAINED_GLASS_PANE
+            base: black_stained_glass_pane
     "@":
-      base: MINECART
+      base: minecart
       name: "<white>Shopping Cart"
       features:
         open-cart: LEFT
@@ -77,7 +77,7 @@ order-history:
     # can not be build to history icon.
     misc:
       placeholder-icon:
-        base: PAPER
+        base: paper
         name: "<white>{date}"
         lore:
           - ""

@@ -3,32 +3,31 @@ package cn.encmys.ykdz.forest.dailyshop.scheduler;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.Config;
 import cn.encmys.ykdz.forest.dailyshop.api.config.MessageConfig;
-import cn.encmys.ykdz.forest.dailyshop.api.scheduler.Scheduler;
+import cn.encmys.ykdz.forest.dailyshop.api.scheduler.ConnTasks;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.HashMap;
 
-public class SchedulerImpl implements Scheduler {
-    public SchedulerImpl() {
+public class ConnTasksImpl implements ConnTasks {
+    public ConnTasksImpl() {
         runRestockTimer();
         runDataSaver();
     }
 
     @Override
     public void runRestockTimer() {
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.runTaskTimer(DailyShop.INSTANCE, task -> {
+        Scheduler.runTaskAtFixedRate(task -> {
             long now = System.currentTimeMillis();
             for (Shop shop : DailyShop.SHOP_FACTORY.getShops().values()) {
                 if (shop.getShopStocker().needAutoRestock() && shop.getShopStocker().getLastRestocking() + shop.getShopStocker().getAutoRestockPeriod() * 50 <= now) {
                     shop.getShopStocker().stock();
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        DailyShop.ADVENTURE_MANAGER.sendPlayerMessage(player, TextUtils.decorateTextKeepMiniMessage(MessageConfig.getShopOverrideableString(shop.getId(), "messages.notification.restock"), player, new HashMap<>() {{
+                        HyphaAdventureUtils.sendPlayerMessage(player, TextUtils.decorateText(MessageConfig.getShopOverrideableString(shop.getId(), "messages.notification.restock"), player, new HashMap<>() {{
                             put("shop", shop.getName());
                         }}));
                     }
@@ -40,8 +39,7 @@ public class SchedulerImpl implements Scheduler {
 
     @Override
     public void runDataSaver() {
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.runTaskTimerAsynchronously(DailyShop.INSTANCE, task -> {
+        Scheduler.runAsyncTaskAtFixedRate(task -> {
             DailyShop.PROFILE_FACTORY.save();
             DailyShop.PRODUCT_FACTORY.save();
             DailyShop.SHOP_FACTORY.save();

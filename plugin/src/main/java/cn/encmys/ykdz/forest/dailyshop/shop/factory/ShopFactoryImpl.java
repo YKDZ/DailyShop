@@ -11,7 +11,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.shop.factory.ShopFactory;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.shop.ShopImpl;
 
-import javax.management.openmbean.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,7 @@ public class ShopFactoryImpl implements ShopFactory {
     @Override
     public Shop buildShop(String id) {
         if (shops.containsKey(id)) {
-            throw new InvalidKeyException("Shop ID is duplicated: " + id);
+            throw new IllegalArgumentException("Shop ID is duplicated: " + id);
         }
 
         List<String> products = new ArrayList<>();

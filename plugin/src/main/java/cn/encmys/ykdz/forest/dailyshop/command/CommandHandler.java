@@ -6,6 +6,7 @@ import cn.encmys.ykdz.forest.dailyshop.command.sub.CartCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.OrderHistoryCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.ProductCommand;
 import cn.encmys.ykdz.forest.dailyshop.command.sub.ShopCommand;
+import cn.encmys.ykdz.forest.hyphautils.HyphaAdventureUtils;
 import dev.jorel.commandapi.CommandAPICommand;
 
 public class CommandHandler {
@@ -27,7 +28,7 @@ public class CommandHandler {
                 .withPermission("dailyshop.command.reload")
                 .executes((sender, args) -> {
                     DailyShop.INSTANCE.reload();
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_reload_success);
+                    HyphaAdventureUtils.sendMessage(sender, MessageConfig.messages_prefix + MessageConfig.messages_command_reload_success);
                 });
     }
 
@@ -38,7 +39,7 @@ public class CommandHandler {
                     DailyShop.PROFILE_FACTORY.save();
                     DailyShop.PRODUCT_FACTORY.save();
                     DailyShop.SHOP_FACTORY.save();
-                    DailyShop.ADVENTURE_MANAGER.sendMessageWithPrefix(sender, MessageConfig.messages_command_save_success);
+                    HyphaAdventureUtils.sendMessage(sender, MessageConfig.messages_prefix + MessageConfig.messages_command_save_success);
                 });
     }
 }

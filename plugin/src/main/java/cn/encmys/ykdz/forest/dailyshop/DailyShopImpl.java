@@ -1,6 +1,5 @@
 package cn.encmys.ykdz.forest.dailyshop;
 
-import cn.encmys.ykdz.forest.dailyshop.adventure.AdventureManagerImpl;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.*;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
@@ -15,8 +14,9 @@ import cn.encmys.ykdz.forest.dailyshop.listener.PlayerListener;
 import cn.encmys.ykdz.forest.dailyshop.product.factory.ProductFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.profile.factory.ProfileFactoryImpl;
 import cn.encmys.ykdz.forest.dailyshop.rarity.factory.RarityFactoryImpl;
-import cn.encmys.ykdz.forest.dailyshop.scheduler.SchedulerImpl;
+import cn.encmys.ykdz.forest.dailyshop.scheduler.ConnTasksImpl;
 import cn.encmys.ykdz.forest.dailyshop.shop.factory.ShopFactoryImpl;
+import cn.encmys.ykdz.forest.hyphautils.HyphaPluginUtils;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import net.milkbowl.vault.economy.Economy;
@@ -71,8 +71,6 @@ public final class DailyShopImpl extends DailyShop {
     public void init() {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), INSTANCE);
 
-        ADVENTURE_MANAGER = new AdventureManagerImpl(INSTANCE);
-
         if (!setupEconomy()) {
             LogUtils.error("Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
@@ -100,7 +98,7 @@ public final class DailyShopImpl extends DailyShop {
         DailyShopImpl.PRODUCT_FACTORY = new ProductFactoryImpl();
         DailyShopImpl.SHOP_FACTORY = new ShopFactoryImpl();
 
-        DailyShopImpl.SCHEDULER = new SchedulerImpl();
+        DailyShopImpl.CONN_TASKS = new ConnTasksImpl();
 
         CommandAPI.onEnable();
         CommandHandler.load();
@@ -119,7 +117,7 @@ public final class DailyShopImpl extends DailyShop {
 
     @Override
     public boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+        if (!HyphaPluginUtils.isExist("Vault")) {
             return false;
         }
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);

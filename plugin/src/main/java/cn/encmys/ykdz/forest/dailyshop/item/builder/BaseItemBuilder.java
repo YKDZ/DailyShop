@@ -1,26 +1,38 @@
 package cn.encmys.ykdz.forest.dailyshop.item.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.hook.ItemsAdderHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MMOItemsHook;
 import cn.encmys.ykdz.forest.dailyshop.hook.MythicMobsHook;
 import cn.encmys.ykdz.forest.dailyshop.item.*;
+import net.kyori.adventure.key.InvalidKeyException;
+import net.kyori.adventure.key.Key;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.TropicalFish;
 
+import java.util.NoSuchElementException;
+
 public class BaseItemBuilder {
     public static BaseItem get(String base) {
-        if (base.startsWith(MMOItemsHook.getIdentifier()) && MMOItemsHook.isHooked()) {
+        if (base.startsWith(MMOItemsHook.getIdentifier())) {
+            if (!MMOItemsHook.isHooked()) return null;
+
             String[] typeId = base.substring(MMOItemsHook.getIdentifier().length()).split(":");
             String type = typeId[0];
             String id = typeId[1];
             return mmoitems(type, id);
-        } else if (base.startsWith(ItemsAdderHook.getIdentifier()) && ItemsAdderHook.isHooked()) {
+        } else if (base.startsWith(ItemsAdderHook.getIdentifier())) {
+            if (!ItemsAdderHook.isHooked()) return null;
+
             String namespacedId = base.substring(ItemsAdderHook.getIdentifier().length());
             return itemsadder(namespacedId);
-        } else if (base.startsWith(MythicMobsHook.getIdentifier()) && MythicMobsHook.isHooked()) {
+        } else if (base.startsWith(MythicMobsHook.getIdentifier())) {
+            if (!MythicMobsHook.isHooked()) return null;
+
             String id = base.substring(MythicMobsHook.getIdentifier().length());
             return mythicmobs(id);
         } else if (base.startsWith("SKULL:")) {
@@ -38,11 +50,9 @@ public class BaseItemBuilder {
                 potionType = Material.SPLASH_POTION;
             }
             if (data[1].equals("NONE")) {
-                return potion(potionType, data[1], false, false);
+                return potion(potionType, data[1]);
             }
-            boolean upgradeable = Boolean.parseBoolean(data[2]);
-            boolean extendable = Boolean.parseBoolean(data[3]);
-            return potion(potionType, data[1], upgradeable, extendable);
+            return potion(potionType, data[1]);
         } else if (base.startsWith("TROPICAL_FISH_BUCKET:")) {
             String[] data = base.substring(21).split(":");
 
@@ -58,8 +68,12 @@ public class BaseItemBuilder {
 
             return axolotlBucket(variant);
         } else {
-            Material material = Material.matchMaterial(base.toUpperCase());
-            if (material == null) {
+            Registry<Material> materialRegistry = Registry.MATERIAL;
+            Material material;
+            try {
+                material = materialRegistry.getOrThrow(Key.key(base));
+            } catch (NoSuchElementException | InvalidKeyException e) {
+                LogUtils.warn("Material: " + base + " is invalid. Please check your item config.");
                 return null;
             }
             return vanilla(material);
@@ -114,8 +128,8 @@ public class BaseItemBuilder {
         return item;
     }
 
-    public static BaseItem potion(Material potionType, String effectType, boolean upgradeable, boolean extendable) {
-        BaseItem item = new PotionItem(potionType, effectType, upgradeable, extendable);
+    public static BaseItem potion(Material potionType, String effectType) {
+        BaseItem item = new PotionItem(potionType, effectType);
         if (!item.isExist()) {
             return null;
         }

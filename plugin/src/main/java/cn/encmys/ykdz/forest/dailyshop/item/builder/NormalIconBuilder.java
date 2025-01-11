@@ -15,10 +15,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.OrderType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.enums.SettlementResult;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.CommandUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.PlayerUtils;
-import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
+import cn.encmys.ykdz.forest.dailyshop.api.utils.*;
 import cn.encmys.ykdz.forest.dailyshop.gui.StackPickerGUI;
 import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import org.bukkit.entity.Player;
@@ -56,7 +53,7 @@ public class NormalIconBuilder {
         // 否则使用默认图标
         IconRecord targetIconRecord = iconRecord;
         for (Map.Entry<String, IconRecord> entry : iconRecord.conditionIcons().entrySet()) {
-            if (TextUtils.evaluateBooleanFormula(entry.getKey(), vars, player)) {
+            if (JSUtils.evaluateBooleanFormula(entry.getKey(), vars, player)) {
                 targetIconRecord = entry.getValue();
                 break;
             }
@@ -106,7 +103,7 @@ public class NormalIconBuilder {
                     }
                 }};
                 BaseItemDecorator decorator = decoratorFromIconRecord(iconRecord, shop, player, vars);
-                dispatchCommand(clickType, player, decorator.getCommands(), vars);
+                dispatchCommand(clickType, player, decorator.getCommandsData(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 notifyWindows();
             }
@@ -156,7 +153,7 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                dispatchCommand(clickType, player, decorator.getCommands(), vars);
+                dispatchCommand(clickType, player, decorator.getCommandsData(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
@@ -208,7 +205,7 @@ public class NormalIconBuilder {
                         putAll(additionalVars);
                     }
                 }};
-                dispatchCommand(clickType, player, decorator.getCommands(), vars);
+                dispatchCommand(clickType, player, decorator.getCommandsData(), vars);
                 handleNormalFeatures(clickType, decorator, player, shop);
                 handleControlFeatures(clickType, decorator, player, shop, getGui());
             }
@@ -319,11 +316,12 @@ public class NormalIconBuilder {
                 new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(player))
                         .setCustomModelData(decorator.getCustomModelData())
                         .setItemFlags(decorator.getItemFlags())
-                        .setLore(TextUtils.decorateText(decorator.getLore(), player, vars, additionalListVars))
-                        .setDisplayName(TextUtils.decorateText(decorator.getName(), player, vars))
-                        .setBannerPatterns(decorator.getPatternsData())
-                        .setFireworkEffects(decorator.getFireworkEffectData())
-                        .build(decorator.getAmount()));
+                        .setLore(TextUtils.decorateTextToComponent(decorator.getLore(), player, vars, additionalListVars))
+                        .setDisplayName(TextUtils.decorateTextToComponent(decorator.getName(), player, vars))
+                        .setBannerPatterns(decorator.getBannerPatterns())
+                        .setFireworkEffects(decorator.getFireworkEffects())
+                        .setEnchantments(decorator.getEnchantments())
+                        .build(ConfigUtils.amountFromConfig(decorator.getAmount())));
     }
 
     private static void settleCart(Player player) {

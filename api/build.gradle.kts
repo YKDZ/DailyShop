@@ -1,9 +1,10 @@
-dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
-    compileOnly("net.kyori:adventure-api:4.17.0")
-    compileOnly("net.kyori:adventure-platform-bukkit:4.3.3")
-    compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
 
@@ -11,28 +12,27 @@ dependencies {
 
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
 
-    compileOnly("xyz.xenondevs.invui:invui:1.37")
+    compileOnly("xyz.xenondevs.invui:invui:1.43")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     compileOnly("org.jetbrains:annotations:24.1.0")
     annotationProcessor("org.jetbrains:annotations:24.1.0")
 
-    implementation("org.mozilla:rhino:1.7.15")
-
     compileOnly("com.google.code.gson:gson:2.11.0")
+
+    compileOnly("cn.encmys:HyphaRepo:0.1.0-Beta")
 }
 
 tasks {
     shadowJar {
-        relocate("dev.jorel.commandapi", "cn.encmys.ykdz.forest.dailyshop.libraries.commandapi")
-        relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
-        relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.intellij")
-        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
-        relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
-        relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
-        relocate("org.mozilla", "cn.encmys.ykdz.forest.dailyshop.libraries.mozilla")
+        relocate("dev.jorel.commandapi", "${project.group}.dailyshop.libraries.commandapi")
+        relocate("org.bstats", "${project.group}.dailyshop.libraries.bstats")
+        relocate("xyz.xenondevs", "${project.group}.dailyshop.libraries")
+        relocate("org.intellij.lang.annotations", "${project.group}.dailyshop.libraries.annotations.intellij")
+        relocate("org.jetbrains.annotations", "${project.group}.dailyshop.libraries.annotations.jetbrains")
+        relocate("javax.annotation", "${project.group}.dailyshop.libraries.annotations.javax")
+        relocate("com.google", "${project.group}.dailyshop.libraries.google")
+        relocate("com.zaxxer.hikari", "${project.group}.dailyshop.libraries.hikari")
     }
 }

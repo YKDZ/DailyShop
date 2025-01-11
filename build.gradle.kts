@@ -1,18 +1,22 @@
 plugins {
+    `java-library`
     id("java")
     id("maven-publish")
     id("io.github.goooler.shadow") version "8.1.8"
 }
 
 allprojects {
-
     project.group = "cn.encmys.ykdz.forest"
-    project.version = "0.3.2-Beta"
+    project.version = "0.4.0-Beta"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
     apply(plugin = "io.github.goooler.shadow")
     apply(plugin = "org.gradle.maven-publish")
+
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    }
 
     repositories {
         mavenLocal()
@@ -56,15 +60,15 @@ subprojects {
         }
     }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release.set(17)
-    }
-
     tasks.shadowJar {
         destinationDirectory.set(file("${rootDir}/target"))
         archiveClassifier.set("")
         archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+    }
+
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.release.set(21)
     }
 
     if ("api" == project.name) {

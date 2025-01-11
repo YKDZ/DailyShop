@@ -1,6 +1,8 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.SoundRecord;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 
 public class RecordUtils {
@@ -9,11 +11,12 @@ public class RecordUtils {
             return null;
         }
         String[] data = soundData.split(":");
+        Registry<Sound> soundRegistry = Registry.SOUNDS;
         Sound sound = Sound.ENTITY_VILLAGER_YES;
         float volume = 1;
         float pitch = 1;
         if (data.length >= 1) {
-            sound = EnumUtils.getEnumFromName(Sound.class, data[0]);
+            sound = soundRegistry.get(Key.key(data[0]));
             if (sound == null) {
                 return null;
             }

@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("net.Indyuce:MMOItems-API:6.9.5-SNAPSHOT")
@@ -11,15 +11,11 @@ dependencies {
 
     compileOnly("io.lumine:Mythic-Dist:5.6.1")
 
-    compileOnly("dev.jorel:commandapi-annotations:9.5.3")
-    implementation("dev.jorel:commandapi-bukkit-shade:9.5.3")
-    annotationProcessor("dev.jorel:commandapi-annotations:9.5.3")
+    compileOnly("dev.jorel:commandapi-annotations:9.7.0")
+    implementation("dev.jorel:commandapi-bukkit-shade:9.7.0")
+    annotationProcessor("dev.jorel:commandapi-annotations:9.7.0")
 
-    implementation("xyz.xenondevs.invui:invui:1.37")
-
-    implementation("net.kyori:adventure-api:4.17.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+    implementation("xyz.xenondevs.invui:invui:1.43")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
@@ -33,19 +29,21 @@ dependencies {
 
     implementation("com.zaxxer:HikariCP:5.1.0")
 
+    implementation("cn.encmys:HyphaUtils:0.1.0-Beta")
+
     implementation(project(":api"))
 }
 
 tasks {
     shadowJar {
         archiveFileName.set("DailyShop-" + project.version + ".jar")
-        relocate("dev.jorel.commandapi", "cn.encmys.ykdz.forest.dailyshop.libraries.commandapi")
-        relocate("org.bstats", "cn.encmys.ykdz.forest.dailyshop.libraries.bstats")
-        relocate("net.kyori", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("xyz.xenondevs", "cn.encmys.ykdz.forest.dailyshop.libraries")
-        relocate("org.intellij.lang.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.intellij")
-        relocate("org.jetbrains.annotations", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.jetbrains")
-        relocate("javax.annotation", "cn.encmys.ykdz.forest.dailyshop.libraries.annotations.javax")
-        relocate("com.google", "cn.encmys.ykdz.forest.dailyshop.libraries.google")
+        relocate("dev.jorel.commandapi", "${project.group}.dailyshop.libraries.commandapi")
+        relocate("org.bstats", "${project.group}.dailyshop.libraries.bstats")
+        relocate("xyz.xenondevs", "${project.group}.dailyshop.libraries")
+        relocate("org.intellij.lang.annotations", "${project.group}.dailyshop.libraries.annotations.intellij")
+        relocate("org.jetbrains.annotations", "${project.group}.dailyshop.libraries.annotations.jetbrains")
+        relocate("javax.annotation", "${project.group}.dailyshop.libraries.annotations.javax")
+        relocate("com.google", "${project.group}.dailyshop.libraries.google")
+        relocate("com.zaxxer.hikari", "${project.group}.dailyshop.libraries.hikari")
     }
 }

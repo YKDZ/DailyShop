@@ -9,10 +9,11 @@ import java.util.Map;
 
 public record IconRecord(char key, @NotNull String base,
                          @Nullable String name, @Nullable List<String> lore,
-                         int amount, long updatePeriod,
+                         String amount, long updatePeriod,
                          int customModalData, @Nullable ConfigurationSection commands,
-                         @Nullable List<String> itemFlags, @Nullable List<String> bannerPatterns,
-                         @Nullable List<String> fireworkEffects, @Nullable List<String> potionEffects,
+                         @Nullable List<String> itemFlagsData, @Nullable List<String> bannerPatternsData,
+                         @Nullable List<String> fireworkEffectsData, @Nullable List<String> potionEffectsData,
+                         @Nullable List<String> enchantmentsData,
                          @Nullable ConfigurationSection features,
                          // Inspired from TrMenu
                          @NotNull Map<String, IconRecord> conditionIcons) {

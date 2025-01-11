@@ -1,19 +1,25 @@
 package cn.encmys.ykdz.forest.dailyshop.api.utils;
 
-import org.bukkit.Color;
+import net.kyori.adventure.text.Component;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ItemBuilder {
     private final ItemStack raw;
@@ -31,17 +37,17 @@ public class ItemBuilder {
                 .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
     }
 
-    public ItemBuilder setDisplayName(String displayName) {
+    public ItemBuilder setDisplayName(@Nullable Component displayName) {
         if (displayName != null) {
-            meta.setDisplayName(displayName);
+            meta.displayName(displayName);
         }
         return this;
     }
 
-    public ItemBuilder setLore(List<String> lore) {
-        if (lore != null && !lore.isEmpty()) {
+    public ItemBuilder setLore(@NotNull List<Component> lore) {
+        if (!lore.isEmpty()) {
             lore.removeAll(Collections.singleton(null));
-            meta.setLore(lore);
+            meta.lore(lore);
         }
         return this;
     }
@@ -53,80 +59,50 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setItemFlags(List<String> itemFlags) {
-        for (String itemFlag : itemFlags) {
-            ItemFlag flag = ItemFlag.valueOf(itemFlag);
-            if (itemFlag.startsWith("-")) {
-                meta.removeItemFlags(flag);
+    public ItemBuilder setItemFlags(Map<ItemFlag, Boolean> itemFlags) {
+        for (Map.Entry<ItemFlag, Boolean> data : itemFlags.entrySet()) {
+            if (!data.getValue()) {
+                meta.removeItemFlags(data.getKey());
             } else {
-                meta.addItemFlags(flag);
+                meta.addItemFlags(data.getKey());
             }
         }
         return this;
     }
 
-    // YELLOW:BRICKS
-    public ItemBuilder setBannerPatterns(List<String> patternsData) {
+    public ItemBuilder setBannerPatterns(Map<PatternType, DyeColor> bannerPatterns) {
         if (!(meta instanceof BannerMeta)) {
             return this;
         }
 
-        for (String data : patternsData) {
-            String[] parsed = data.split(":");
-            DyeColor color = DyeColor.valueOf(parsed[0]);
-            PatternType type = PatternType.valueOf(parsed[1]);
-            ((BannerMeta) meta).addPattern(new Pattern(color, type));
+        for (Map.Entry<PatternType, DyeColor> data : bannerPatterns.entrySet()) {
+            ((BannerMeta) meta).addPattern(new Pattern(data.getValue(), data.getKey()));
         }
+
         return this;
     }
 
     // -t:BALL -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:true -flicker:true
-    public ItemBuilder setFireworkEffects(List<String> fireworkEffects) {
+    public ItemBuilder setFireworkEffects(List<FireworkEffect> fireworkEffects) {
         if (!(meta instanceof FireworkMeta)) {
             return this;
         }
 
-        List<FireworkEffect> effects = new ArrayList<>();
-        for (String data : fireworkEffects) {
-            Map<String, String> params = new HashMap<>();
-            Map<String, List<String>> listParams = new HashMap<>();
+        ((FireworkMeta) meta).addEffects(fireworkEffects);
 
-            java.util.regex.Pattern p = java.util.regex.Pattern.compile("-(\\w+):(\\[.*?]|\\w+)");
-            Matcher m = p.matcher(data);
+        return this;
+    }
 
-            while (m.find()) {
-                String key = m.group(1);
-                String value = m.group(2);
-
-                if (value.startsWith("[")) {
-                    String[] listValues = value.substring(1, value.length() - 1).split(",\\s*");
-                    listParams.put(key, Arrays.asList(listValues));
-                } else {
-                    params.put(key, value);
-                }
+    public ItemBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
+        if (meta instanceof EnchantmentStorageMeta) {
+            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                ((EnchantmentStorageMeta) meta).addStoredEnchant(entry.getKey(), entry.getValue(), true);
             }
-
-            List<Color> colors = new ArrayList<>();
-            List<Color> fadeColors = new ArrayList<>();
-
-            for (String hex : listParams.get("c")) {
-                colors.add(ColorUtils.getFromHex(hex));
+        } else {
+            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                meta.addEnchant(entry.getKey(), entry.getValue(), true);
             }
-
-            for (String hex : listParams.get("fc")) {
-                fadeColors.add(ColorUtils.getFromHex(hex));
-            }
-
-            effects.add(FireworkEffect.builder()
-                            .with(FireworkEffect.Type.valueOf(params.getOrDefault("t", "BALL")))
-                            .withColor(colors)
-                            .withFade(fadeColors)
-                            .flicker(Boolean.parseBoolean(params.getOrDefault("flicker", "false")))
-                            .trail(Boolean.parseBoolean(params.getOrDefault("trail", "false")))
-                            .build());
         }
-
-        ((FireworkMeta) meta).addEffects(effects);
 
         return this;
     }
