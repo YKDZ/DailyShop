@@ -40,8 +40,8 @@ public class OrderUtils {
 
                 Map<String, String> vars = new HashMap<>() {{
                     put("name", product.getIconDecorator().getName());
-                    if (product.getItemDecorator() != null) {
-                        put("amount", String.valueOf(product.getItemDecorator().getAmount()));
+                    if (product.getProductItemDecorator() != null) {
+                        put("amount", String.valueOf(product.getProductItemDecorator().getAmount()));
                     } else {
                         put("amount", String.valueOf(product.getIconDecorator().getAmount()));
                     }

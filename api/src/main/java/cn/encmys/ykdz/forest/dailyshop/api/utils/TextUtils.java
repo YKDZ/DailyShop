@@ -17,7 +17,7 @@ public class TextUtils {
     private static final String singleMarker = "~";
 
     @NotNull
-    public static List<Component> decorateTextToComponent(@NotNull List<String> text, Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
+    public static List<Component> decorateTextToComponent(@NotNull List<String> text, @Nullable Player player, @Nullable Map<String, String> normalVars, @Nullable Map<String, List<String>> listVars) {
         return HyphaAdventureUtils.getComponentFromMiniMessage(decorateText(text, player, normalVars, listVars));
     }
 

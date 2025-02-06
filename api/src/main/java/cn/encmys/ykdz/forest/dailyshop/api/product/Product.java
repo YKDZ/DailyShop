@@ -71,7 +71,7 @@ public abstract class Product {
     }
 
     @Nullable
-    public BaseItemDecorator getItemDecorator() {
+    public BaseItemDecorator getProductItemDecorator() {
         return itemDecorator;
     }
 

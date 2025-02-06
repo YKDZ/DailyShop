@@ -17,11 +17,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.xenondevs.invui.gui.structure.Marker;
 
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ConfigUtils {
@@ -227,34 +225,6 @@ public class ConfigUtils {
                 .filter(colIndex -> layout.stream()
                         .anyMatch(str -> str.length() > colIndex && str.charAt(colIndex) == markerIdentifier))
                 .count();
-    }
-
-    public static int getLastLineMarkerAmount(List<String> layout, char markerIdentifier, Marker marker) {
-        if (marker.isHorizontal()) {
-            Optional<String> lastMatchingLine = layout.stream()
-                    .filter(line -> line.indexOf(markerIdentifier) != -1) // 过滤包含符号的行
-                    .reduce((first, second) -> second);         // 获取最后一个匹配的行
-            return lastMatchingLine
-                    .map(line -> (int) line.chars().filter(ch -> ch == markerIdentifier).count())
-                    .orElse(0);
-        } else {
-            // 获取行数和列数（假设所有行长度相等）
-            int columnCount = layout.isEmpty() ? 0 : layout.getFirst().length();
-            // 遍历列
-            return IntStream.range(0, columnCount)
-                    .mapToObj(col -> {
-                        // 构建列数据，将每行中对应的字符拼接成一个字符串
-                        // 过滤掉列数不足的行
-                        return layout.stream()
-                                .filter(line -> line.length() > col) // 过滤掉列数不足的行
-                                .map(line -> String.valueOf(line.charAt(col)))
-                                .collect(Collectors.joining());
-                    })
-                    .filter(colData -> colData.indexOf(markerIdentifier) != -1) // 过滤包含符号的列
-                    .reduce((first, second) -> second) // 获取最后一个匹配的列
-                    .map(colData -> (int) colData.chars().filter(ch -> ch == markerIdentifier).count()) // 统计符号个数
-                    .orElse(0); // 如果没有匹配的列，返回 0
-        }
     }
 
     /**

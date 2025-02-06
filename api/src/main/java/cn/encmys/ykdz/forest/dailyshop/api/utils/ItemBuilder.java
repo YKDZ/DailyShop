@@ -22,29 +22,33 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ItemBuilder {
+    @NotNull
     private final ItemStack raw;
+    @NotNull
     private final ItemMeta meta;
 
-    public ItemBuilder(ItemStack raw) {
+    public ItemBuilder(@NotNull ItemStack raw) {
         this.raw = raw;
         this.meta = Optional.ofNullable(raw.getItemMeta())
                 .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
     }
 
-    public ItemBuilder(Material material) {
+    public ItemBuilder(@NotNull Material material) {
         this.raw = new ItemStack(material);
         this.meta = Optional.ofNullable(raw.getItemMeta())
                 .orElse(new ItemStack(Material.BEDROCK).getItemMeta());
     }
 
-    public ItemBuilder setDisplayName(@Nullable Component displayName) {
+    public @NotNull ItemBuilder setDisplayName(@Nullable Component displayName) {
         if (displayName != null) {
             meta.displayName(displayName);
         }
         return this;
     }
 
-    public ItemBuilder setLore(@NotNull List<Component> lore) {
+    public @NotNull ItemBuilder setLore(@Nullable List<Component> lore) {
+        if (lore == null) return this;
+
         if (!lore.isEmpty()) {
             lore.removeAll(Collections.singleton(null));
             meta.lore(lore);
@@ -52,14 +56,16 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setCustomModelData(Integer data) {
+    public @NotNull ItemBuilder setCustomModelData(@Nullable Integer data) {
         if (data != null) {
             meta.setCustomModelData(data);
         }
         return this;
     }
 
-    public ItemBuilder setItemFlags(Map<ItemFlag, Boolean> itemFlags) {
+    public @NotNull ItemBuilder setItemFlags(@Nullable Map<ItemFlag, Boolean> itemFlags) {
+        if (itemFlags == null) return this;
+
         for (Map.Entry<ItemFlag, Boolean> data : itemFlags.entrySet()) {
             if (!data.getValue()) {
                 meta.removeItemFlags(data.getKey());
@@ -70,7 +76,9 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setBannerPatterns(Map<PatternType, DyeColor> bannerPatterns) {
+    public @NotNull ItemBuilder setBannerPatterns(@Nullable Map<PatternType, DyeColor> bannerPatterns) {
+        if (bannerPatterns == null) return this;
+
         if (!(meta instanceof BannerMeta)) {
             return this;
         }
@@ -83,7 +91,9 @@ public class ItemBuilder {
     }
 
     // -t:BALL -c:[#FFFFFF, #123456] -fc:[#FFFFFF, #123456] -trail:true -flicker:true
-    public ItemBuilder setFireworkEffects(List<FireworkEffect> fireworkEffects) {
+    public @NotNull ItemBuilder setFireworkEffects(@Nullable List<FireworkEffect> fireworkEffects) {
+        if (fireworkEffects == null) return this;
+
         if (!(meta instanceof FireworkMeta)) {
             return this;
         }
@@ -93,7 +103,9 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
+    public @NotNull ItemBuilder setEnchantments(@Nullable Map<Enchantment, Integer> enchantments) {
+        if (enchantments == null) return this;
+
         if (meta instanceof EnchantmentStorageMeta) {
             for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
                 ((EnchantmentStorageMeta) meta).addStoredEnchant(entry.getKey(), entry.getValue(), true);
@@ -107,7 +119,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemStack build(int amount) {
+    public @NotNull ItemStack build(int amount) {
         raw.setItemMeta(meta);
         raw.setAmount(amount);
         return raw;

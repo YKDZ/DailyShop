@@ -15,7 +15,7 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade:9.7.0")
     annotationProcessor("dev.jorel:commandapi-annotations:9.7.0")
 
-    implementation("xyz.xenondevs.invui:invui:1.43")
+    implementation("xyz.xenondevs.invui:invui:2.0.0-alpha.7")
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 

@@ -1,6 +1,7 @@
 package cn.encmys.ykdz.forest.dailyshop.item.builder;
 
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.enums.PropertyType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import org.bukkit.entity.Player;
@@ -23,13 +24,13 @@ public class ProductItemBuilder {
         }};
 
         return new cn.encmys.ykdz.forest.dailyshop.api.utils.ItemBuilder(decorator.getBaseItem().build(player))
-                .setDisplayName(TextUtils.decorateTextToComponent(decorator.getName(), player, vars))
-                .setLore(TextUtils.decorateTextToComponent(decorator.getLore(), player, vars, null))
-                .setItemFlags(decorator.getItemFlags())
-                .setCustomModelData(decorator.getCustomModelData())
-                .setBannerPatterns(decorator.getBannerPatterns())
-                .setFireworkEffects(decorator.getFireworkEffects())
-                .setEnchantments(decorator.getEnchantments())
+                .setDisplayName(TextUtils.decorateTextToComponent(decorator.getProperty(PropertyType.NAME), player, vars))
+                .setLore(TextUtils.decorateTextToComponent(decorator.getProperty(PropertyType.LORE), player, vars, null))
+                .setItemFlags(decorator.getProperty(PropertyType.ITEM_FLAGS))
+                .setCustomModelData(decorator.getProperty(PropertyType.CUSTOM_MODEL_DATA))
+                .setBannerPatterns(decorator.getProperty(PropertyType.BANNER_PATTERNS))
+                .setFireworkEffects(decorator.getProperty(PropertyType.FIREWORK_EFFECTS))
+                .setEnchantments(decorator.getProperty(PropertyType.ENCHANTMENTS))
                 .build(shop.getShopCounter().getAmount(productId));
     }
 }

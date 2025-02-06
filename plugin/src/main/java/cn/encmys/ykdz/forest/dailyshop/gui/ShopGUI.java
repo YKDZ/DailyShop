@@ -3,127 +3,105 @@ package cn.encmys.ykdz.forest.dailyshop.gui;
 import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.ShopConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.ShopGUIRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.enums.GUIContentType;
-import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
-import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.TextUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
+import xyz.xenondevs.invui.gui.IngredientPreset;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.ScrollGui;
-import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-public class ShopGUI extends ShopRelatedGUI {
+public class ShopGUI extends GUI {
+    @NotNull
+    private final Shop shop;
+    @NotNull
     private final ShopGUIRecord guiRecord;
+    @NotNull
+    private final IngredientPreset iconPreset = buildIconPreset();
+    @NotNull
+    private final List<Item> contents = buildContents();
 
-    public ShopGUI(Shop shop, ShopGUIRecord guiRecord) {
-        super(shop);
+    public ShopGUI(@NotNull Shop shop, @NotNull ShopGUIRecord guiRecord) {
+        this.shop = shop;
         this.guiRecord = guiRecord;
-        this.guiContentType = guiRecord.scrollMode() != null ? GUIContentType.SCROLL : GUIContentType.PAGED;
     }
 
-    @Override
-    protected Gui buildScrollGUI(Player player) {
-        if (guiRecord.scrollMode() == null) {
-            throw new IllegalStateException();
-        }
+    protected IngredientPreset buildIconPreset() {
+        IngredientPreset.Builder builder = IngredientPreset.builder();
+        Stream.ofNullable(guiRecord.icons())
+                .flatMap(Collection::stream)
+                .forEach(iconRecord ->
+                        builder.addIngredient(
+                                iconRecord.key(),
+                                NormalIconBuilder.build(iconRecord, shop, null, null)
+                        )
+                );
+        return builder.build();
+    }
+
+    protected List<Item> buildContents() {
+        return shop.getShopStocker().getListedProducts().stream()
+                .map(productId -> DailyShop.PRODUCT_FACTORY.getProduct(productId))
+                .filter(Objects::nonNull)
+                .map(product -> ProductIconBuilder.build(product.getIconDecorator(), shop.getId(), product))
+                .toList();
+    }
+
+    protected Gui build() {
+        if (guiRecord.pageMode() != null) return buildPagedGUI();
+        else return buildScrollGUI();
+    }
+
+    protected Gui buildScrollGUI() {
+        if (guiRecord.scrollMode() == null) throw new IllegalStateException("Try to build ScrollGui with a null scrollMode");
 
         ScrollGui.Builder<Item> guiBuilder = ScrollGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
+        guiBuilder.addIngredient(markerIdentifier, guiRecord.scrollMode());
 
-        if (guiRecord.scrollMode().isHorizontal()) {
-            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
-        } else {
-            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
-        }
-
-        // 普通图标
-        if (guiRecord.icons() != null) {
-            for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player, null, null));
-            }
-        }
-
-        // 商品图标
-        for (String productId : shop.getShopStocker().getListedProducts()) {
-            Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
-            if (product == null) {
-                continue;
-            }
-            guiBuilder.addContent(ProductIconBuilder.build(product.getIconDecorator(), player, shop.getId(), product));
-        }
+        guiBuilder.applyPreset(iconPreset);
+        contents.forEach(guiBuilder::addContent);
 
         return guiBuilder.build();
     }
 
-    @Override
-    protected Gui buildPagedGUI(Player player) {
-        if (guiRecord.pageMode() == null) {
-            throw new IllegalStateException();
-        }
+    protected Gui buildPagedGUI() {
+        if (guiRecord.pageMode() == null) throw new IllegalStateException("Try to build PagedGUI with a null pageMode");
 
         PagedGui.Builder<Item> guiBuilder = PagedGui.items()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
+        guiBuilder.addIngredient(markerIdentifier, guiRecord.pageMode());
+        guiBuilder.applyPreset(buildIconPreset());
 
-        if (guiRecord.pageMode().isHorizontal()) {
-            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_HORIZONTAL);
-        } else {
-            guiBuilder.addIngredient(markerIdentifier, Markers.CONTENT_LIST_SLOT_VERTICAL);
-        }
-
-        // 普通图标
-        if (guiRecord.icons() != null) {
-            for (IconRecord iconRecord : guiRecord.icons()) {
-                guiBuilder.addIngredient(iconRecord.key(), NormalIconBuilder.build(iconRecord, shop, this, player, null, null));
-            }
-        }
-
-        // 商品图标
-        for (String productId : shop.getShopStocker().getListedProducts()) {
-            Product product = DailyShop.PRODUCT_FACTORY.getProduct(productId);
-            if (product == null) {
-                continue;
-            }
-            guiBuilder.addContent(ProductIconBuilder.build(product.getIconDecorator(), player, shop.getId(), product));
-        }
+        guiBuilder.applyPreset(iconPreset);
+        contents.forEach(guiBuilder::addContent);
 
         return guiBuilder.build();
     }
 
-    @Override
-    public void loadContent(@Nullable Player player) {
-    }
-
-    @Override
-    public void open(Player player) {
+    public void open(@NotNull Player player) {
         ShopGUIRecord record = ShopConfig.getShopGUIRecord(shop.getId());
         Window window = Window.single()
-                .setGui(build(player))
-                .setTitle(TextUtils.decorateText(record.title(), player, new HashMap<>() {{
+                .setGui(build())
+                .setTitle(TextUtils.decorateTextToComponent(record.title(), player, new HashMap<>() {{
                     put("shop-name", shop.getName());
                     put("shop-id", shop.getId());
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
-                .setCloseHandlers(new ArrayList<>() {{
-                    add(() -> getWindows().remove(player.getUniqueId()));
-                }})
                 .build(player);
-
-        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.SHOP);
-
-        getWindows().put(player.getUniqueId(), window);
         window.open();
     }
 }

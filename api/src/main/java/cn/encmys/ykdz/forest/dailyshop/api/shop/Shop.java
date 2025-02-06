@@ -1,6 +1,5 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop;
 
-import cn.encmys.ykdz.forest.dailyshop.api.gui.ShopRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.counter.ShopCounter;

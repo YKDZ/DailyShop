@@ -26,12 +26,12 @@ public class ShopCounterImpl implements ShopCounter {
             LogUtils.warn("Try to cache amount for product " + productId + " which does not exist.");
             return;
         }
-        if (product.getItemDecorator() == null) {
+        if (product.getProductItemDecorator() == null) {
             LogUtils.warn("Try to cache amount for product " + productId + " which is not an item product (have not amount).");
             return;
         }
 
-        String amountConfig = product.getItemDecorator().getAmount();
+        String amountConfig = product.getProductItemDecorator().getAmount();
         int amount;
 
         try {

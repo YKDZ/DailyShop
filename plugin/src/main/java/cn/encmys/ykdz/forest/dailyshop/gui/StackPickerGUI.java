@@ -4,7 +4,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.StackPickerGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.StackPickerGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
-import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
@@ -32,7 +31,7 @@ public class StackPickerGUI extends PlayerRelatedGUI {
 
     @Override
     public Gui build(Player player) {
-        Gui.Builder.Normal guiBuilder = Gui.normal()
+        Gui.Builder guiBuilder = Gui.normal()
                 .setStructure(guiRecord.layout().toArray(new String[0]));
 
         if (guiRecord.icons() == null) {

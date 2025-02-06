@@ -4,12 +4,12 @@ import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface ProductFactory {
     void buildProduct(String id, ConfigurationSection productSection, ConfigurationSection defaultSettings);
 
-    HashMap<String, Product> getProducts();
+    Map<String, Product> getProducts();
 
     @Nullable
     Product getProduct(String id);

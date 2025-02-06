@@ -56,7 +56,7 @@ public class ItemProduct extends Product {
 
     @Override
     public void take(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
-        BaseItemDecorator decorator = getItemDecorator();
+        BaseItemDecorator decorator = getProductItemDecorator();
         if (decorator == null) {
             return;
         }
@@ -86,7 +86,7 @@ public class ItemProduct extends Product {
 
     @Override
     public int has(@NotNull Shop shop, @NotNull Iterable<ItemStack> inv, Player player, int stack) {
-        BaseItemDecorator decorator = getItemDecorator();
+        BaseItemDecorator decorator = getProductItemDecorator();
         if (decorator == null) {
             return 0;
         }
@@ -117,7 +117,7 @@ public class ItemProduct extends Product {
 
     @Override
     public boolean isMatch(@NotNull String shopId, ItemStack item, Player player) {
-        BaseItemDecorator decorator = getItemDecorator();
+        BaseItemDecorator decorator = getProductItemDecorator();
         Shop shop = DailyShop.SHOP_FACTORY.getShop(shopId);
         if (decorator == null || shop == null) {
             return false;

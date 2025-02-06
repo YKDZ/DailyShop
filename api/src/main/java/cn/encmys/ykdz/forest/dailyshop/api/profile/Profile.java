@@ -1,8 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.profile;
 
-import cn.encmys.ykdz.forest.dailyshop.api.gui.PlayerRelatedGUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.cart.Cart;
-import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
 import org.bukkit.entity.Player;
@@ -29,8 +27,4 @@ public interface Profile {
     PlayerRelatedGUI getCurrentStackPickerGUI();
 
     PlayerRelatedGUI getOrderHistoryGUI();
-
-    GUIType getViewingGuiType();
-
-    void setViewingGuiType(GUIType viewingGuiType);
 }

@@ -66,11 +66,11 @@ public class ShopImpl implements Shop {
 
     @Override
     public void cacheProductItem(@NotNull Product product) {
-        if (product.getItemDecorator() == null) {
+        if (product.getProductItemDecorator() == null) {
             throw new RuntimeException("Check Product#isCacheable before Shop#cacheProductItem");
         }
         if (product.isProductItemCacheable()) {
-            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getId(), product.getItemDecorator(), this, null));
+            getCachedProductItems().put(product.getId(), ProductItemBuilder.build(product.getId(), product.getProductItemDecorator(), this, null));
         }
     }
 
@@ -87,11 +87,11 @@ public class ShopImpl implements Shop {
     @Override
     @NotNull
     public ItemStack getCachedProductItemOrBuildOne(@NotNull Product product, Player player) {
-        if (product.getItemDecorator() == null) {
+        if (product.getProductItemDecorator() == null) {
             throw new RuntimeException("Check Product#isCacheable before Shop#getCachedProductItemOrCreateOne");
         }
         return Optional.ofNullable(getCachedProductItem(product))
-                .orElse(ProductItemBuilder.build(product.getId(), product.getItemDecorator(), this, player));
+                .orElse(ProductItemBuilder.build(product.getId(), product.getProductItemDecorator(), this, player));
     }
 
     @Override

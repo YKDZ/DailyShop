@@ -7,6 +7,7 @@ import cn.encmys.ykdz.forest.dailyshop.api.database.dao.ProductStockDao;
 import cn.encmys.ykdz.forest.dailyshop.api.database.schema.ProductStockSchema;
 import cn.encmys.ykdz.forest.dailyshop.api.item.BaseItem;
 import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.BaseItemDecorator;
+import cn.encmys.ykdz.forest.dailyshop.api.item.decorator.enums.PropertyType;
 import cn.encmys.ykdz.forest.dailyshop.api.price.Price;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.product.factory.ProductFactory;
@@ -15,7 +16,6 @@ import cn.encmys.ykdz.forest.dailyshop.api.rarity.Rarity;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.ConfigUtils;
 import cn.encmys.ykdz.forest.dailyshop.api.utils.LogUtils;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.BaseItemBuilder;
-import cn.encmys.ykdz.forest.dailyshop.item.decorator.BaseItemDecoratorImpl;
 import cn.encmys.ykdz.forest.dailyshop.price.PriceImpl;
 import cn.encmys.ykdz.forest.dailyshop.product.BundleProduct;
 import cn.encmys.ykdz.forest.dailyshop.product.CommandProduct;
@@ -24,13 +24,10 @@ import cn.encmys.ykdz.forest.dailyshop.product.stock.ProductStockImpl;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProductFactoryImpl implements ProductFactory {
-    private static final HashMap<String, Product> allProducts = new HashMap<>();
+    private static final Map<String, Product> products = new HashMap<>();
 
     public ProductFactoryImpl() {
         load();
@@ -105,15 +102,15 @@ public class ProductFactoryImpl implements ProductFactory {
 
             // 首先尊重 baseItem 可能自带的名称（一般特指原版物品的自动本地化物品名机制）
             // 其次再应用插件内指定的名称
-            itemDecorator = new BaseItemDecoratorImpl(item, false)
-                    .setName(itemSection.getString("name"))
-                    .setLore(itemSection.getStringList("lore"))
-                    .setAmount(itemSection.getString("amount", defaultSettings.getString("item.amount", "1")))
-                    .setItemFlags(itemSection.getStringList("item-flags"))
-                    .setCustomModelData((Integer) itemSection.get("custom-model-data"))
-                    .setBannerPatterns(itemSection.getStringList("banner-patterns"))
-                    .setFireworkEffects(itemSection.getStringList("firework-effects"))
-                    .setEnchantments(itemSection.getStringList("enchantments"));
+            itemDecorator = new BaseItemDecorator(item)
+                    .setProperty(PropertyType.NAME, itemSection.getString("name"))
+                    .setProperty(PropertyType.LORE, itemSection.getStringList("lore"))
+                    .setProperty(PropertyType.AMOUNT, itemSection.getString("amount", defaultSettings.getString("item.amount", "1")))
+                    .setProperty(PropertyType.ITEM_FLAGS, itemSection.getStringList("item-flags"))
+                    .setProperty(PropertyType.CUSTOM_MODEL_DATA, itemSection.get("custom-model-data"))
+                    .setProperty(PropertyType.BANNER_PATTERNS, itemSection.getStringList("banner-patterns"))
+                    .setProperty(PropertyType.FIREWORK_EFFECTS, itemSection.getStringList("firework-effects"))
+                    .setProperty(PropertyType.ENCHANTMENTS, itemSection.getStringList("enchantments"));
         }
 
         // Icon (若不指定则与 Item 相同)
@@ -215,19 +212,19 @@ public class ProductFactoryImpl implements ProductFactory {
             listConditions = defaultSettings.getStringList("list-conditions");
         }
 
-        BaseItemDecorator iconDecorator = new BaseItemDecoratorImpl(icon, true)
-                .setAmount(iconSection.getString("amount", "1"))
-                .setLore(iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
-                .setName(iconSection.getString("name"))
-                .setItemFlags(iconSection.getStringList("item-flags"))
-                .setCustomModelData(iconSection.getInt("custom-model-data"))
-                .setBannerPatterns(iconSection.getStringList("banner-patterns"))
-                .setFireworkEffects(iconSection.getStringList("firework-effects"))
-                .setEnchantments(iconSection.getStringList("enchantments"));
+        BaseItemDecorator iconDecorator = new BaseItemDecorator(icon)
+                .setProperty(PropertyType.AMOUNT, iconSection.getString("amount", "1"))
+                .setProperty(PropertyType.LORE, iconSection.getStringList("lore").isEmpty() ? null : iconSection.getStringList("lore"))
+                .setProperty(PropertyType.NAME, iconSection.getString("name"))
+                .setProperty(PropertyType.ITEM_FLAGS, iconSection.getStringList("item-flags"))
+                .setProperty(PropertyType.CUSTOM_MODEL_DATA, iconSection.getInt("custom-model-data"))
+                .setProperty(PropertyType.BANNER_PATTERNS, iconSection.getStringList("banner-patterns"))
+                .setProperty(PropertyType.FIREWORK_EFFECTS, iconSection.getStringList("firework-effects"))
+                .setProperty(PropertyType.ENCHANTMENTS, iconSection.getStringList("enchantments"));
 
         // 构建商品 & 储存
         if (productSection.contains("buy-commands") || productSection.contains("sell-commands")) {
-            allProducts.put(id,
+            products.put(id,
                     new CommandProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, listConditions,
                             productSection.getStringList("buy-commands"),
                             productSection.getStringList("sell-commands")));
@@ -245,44 +242,43 @@ public class ProductFactoryImpl implements ProductFactory {
                 }
                 // 检查捆绑包内容商品是否存在
                 // 需确保捆绑包商品在所有商品之后加载
-                Product content = allProducts.get(parsedContentData[0]);
+                Product content = products.get(parsedContentData[0]);
                 if (content == null) {
                     LogUtils.warn("Bundle product " + id + " has invalid content " + contentData + ". Please check and fix it in your product config.");
                     bundleContents.remove(parsedContentData[0]);
                 }
             }
-            allProducts.put(id,
+            products.put(id,
                     new BundleProduct(id, buyPrice, sellPrice, rarity, iconDecorator, stock, listConditions, bundleContents));
         } else {
-            allProducts.put(id,
+            products.put(id,
                     new ItemProduct(id, buyPrice, sellPrice, rarity, iconDecorator, itemDecorator, stock, listConditions, isCacheable));
         }
     }
 
     @Override
-    public HashMap<String, Product> getProducts() {
-        return allProducts;
+    public Map<String, Product> getProducts() {
+        return Collections.unmodifiableMap(products);
     }
 
     @Override
     public Product getProduct(String id) {
-        return allProducts.get(id);
+        return products.get(id);
     }
 
     @Override
     public boolean containsProduct(String id) {
-        return allProducts.containsKey(id);
+        return products.containsKey(id);
     }
 
     @Override
     public void unload() {
         save();
-        allProducts.clear();
+        products.clear();
     }
 
     @Override
     public void save() {
-        List<Product> data = new ArrayList<>();
         for (Product product : getProducts().values()) {
             // 仅需要储存有库存设置的商品
             if (product.getProductStock().isGlobalStock() || product.getProductStock().isPlayerStock()) {
