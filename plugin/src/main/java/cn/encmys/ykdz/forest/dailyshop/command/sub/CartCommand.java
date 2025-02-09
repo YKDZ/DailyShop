@@ -34,7 +34,7 @@ public class CartCommand {
                         return;
                     }
                     Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-                    profile.getCartGUI().open();
+                    profile.getCartGUI().open(player);
                     HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_cart_open_success, null, new HashMap<>() {{
                         put("player-name", player.getName());
                     }}));

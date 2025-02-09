@@ -34,7 +34,7 @@ public class OrderHistoryCommand {
                         HyphaAdventureUtils.sendMessage(sender, TextUtils.decorateText(MessageConfig.messages_prefix + MessageConfig.messages_command_history_open_failure_invalidPlayer, null, new HashMap<>()));
                         return;
                     }
-                    DailyShop.PROFILE_FACTORY.getProfile(player).getOrderHistoryGUI().open();
+                    DailyShop.PROFILE_FACTORY.getProfile(player).getOrderHistoryGUI().open(player);
                     HyphaAdventureUtils.sendMessage(sender, MessageConfig.messages_prefix + TextUtils.decorateText(MessageConfig.messages_command_history_open_success, player, new HashMap<>() {{
                         put("player-name", player.getName());
                     }}));

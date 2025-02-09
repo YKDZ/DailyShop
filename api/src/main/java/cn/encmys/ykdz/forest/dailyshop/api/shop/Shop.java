@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.shop;
 
+import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.product.Product;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.cashier.ShopCashier;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.counter.ShopCounter;
@@ -17,7 +18,7 @@ public interface Shop {
 
     String getId();
 
-    ShopRelatedGUI getShopGUI();
+    GUI getShopGUI();
 
     Map<String, ItemStack> getCachedProductItems();
 

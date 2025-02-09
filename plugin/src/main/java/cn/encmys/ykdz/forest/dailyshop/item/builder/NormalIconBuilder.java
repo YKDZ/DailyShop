@@ -120,7 +120,6 @@ public class NormalIconBuilder {
                     }
                 })
                 .updatePeriodically((Long) Optional.ofNullable(staticDecorator.getProperty(PropertyType.UPDATE_PERIOD)).orElse(-1L))
-                .
                 .build();
     }
 
@@ -374,14 +373,12 @@ public class NormalIconBuilder {
         else {
             PlayerUtils.playSound(CartGUIConfig.getSoundRecord("settle-cart.failure"), player);
         }
-        profile.getCartGUI().loadContent(player);
+//        profile.getCartGUI().loadContent(player);
     }
 
     private static void loadMoreLog(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        if (profile.getViewingGuiType() == GUIType.ORDER_HISTORY) {
-            profile.getOrderHistoryGUI().loadContent(player);
-        }
+//        profile.getOrderHistoryGUI().loadContent(player);
     }
 
     private static void featuresScroll(int featuresScrollAmount, @NotNull ScrollGui<?> gui) {
@@ -407,11 +404,11 @@ public class NormalIconBuilder {
         }});
     }
 
-    private static void openCart(Player player) {
+    private static void openCart(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        profile.getCartGUI().open();
+        profile.getCartGUI().open(player);
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_openCart_success, player, new HashMap<>() {{
-            put("player-name", player.getDisplayName());
+            put("player-name", PlainTextComponentSerializer.plainText().serialize(player.displayName()));
         }});
         PlayerUtils.playSound(CartGUIConfig.getSoundRecord("open-cart.success"), player);
     }
@@ -426,7 +423,7 @@ public class NormalIconBuilder {
                 }
         );
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_switchCartMode_success, player, new HashMap<>() {{
-            put("player-name", player.getDisplayName());
+            put("player-name", PlainTextComponentSerializer.plainText().serialize(player.displayName()));
             put("mode", MessageConfig.getTerm(profile.getCart().getMode()));
         }});
         PlayerUtils.playSound(CartGUIConfig.getSoundRecord("switch-cart-mode.success"), player);
@@ -435,9 +432,9 @@ public class NormalIconBuilder {
     private static void cleanCart(Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         profile.getCart().clean();
-        profile.getCartGUI().loadContent(player);
+//        profile.getCartGUI().loadContent(player);
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_cleanCart_success, player, new HashMap<>() {{
-            put("player-name", player.getDisplayName());
+            put("player-name", PlainTextComponentSerializer.plainText().serialize(player.displayName()));
         }});
         PlayerUtils.playSound(CartGUIConfig.getSoundRecord("clean-cart.success"), player);
     }
@@ -445,9 +442,9 @@ public class NormalIconBuilder {
     private static void clearCart(Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
         profile.getCart().clear();
-        profile.getCartGUI().loadContent(player);
+//        profile.getCartGUI().loadContent(player);
         PlayerUtils.sendMessage(MessageConfig.messages_action_cart_clearCart_success, player, new HashMap<>() {{
-            put("player-name", player.getDisplayName());
+            put("player-name", PlainTextComponentSerializer.plainText().serialize(player.displayName()));
         }});
         PlayerUtils.playSound(CartGUIConfig.getSoundRecord("clear-cart.success"), player);
     }
@@ -456,8 +453,8 @@ public class NormalIconBuilder {
         shop.getShopGUI().open(player);
     }
 
-    private static void openOrderHistory(Player player) {
+    private static void openOrderHistory(@NotNull Player player) {
         Profile profile = DailyShop.PROFILE_FACTORY.getProfile(player);
-        profile.getOrderHistoryGUI().open();
+        profile.getOrderHistoryGUI().open(player);
     }
 }

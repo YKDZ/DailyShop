@@ -1,5 +1,6 @@
 package cn.encmys.ykdz.forest.dailyshop.api.profile;
 
+import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.cart.Cart;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.ShoppingMode;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.Shop;
@@ -20,11 +21,11 @@ public interface Profile {
     @NotNull
     Cart getCart();
 
-    PlayerRelatedGUI getCartGUI();
+    GUI getCartGUI();
 
     void pickProductStack(Shop shop, String productId);
 
-    PlayerRelatedGUI getCurrentStackPickerGUI();
+    GUI getCurrentStackPickerGUI();
 
-    PlayerRelatedGUI getOrderHistoryGUI();
+    GUI getOrderHistoryGUI();
 }

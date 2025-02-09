@@ -4,63 +4,62 @@ import cn.encmys.ykdz.forest.dailyshop.api.DailyShop;
 import cn.encmys.ykdz.forest.dailyshop.api.config.StackPickerGUIConfig;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.gui.StackPickerGUIRecord;
 import cn.encmys.ykdz.forest.dailyshop.api.config.record.misc.IconRecord;
+import cn.encmys.ykdz.forest.dailyshop.api.gui.GUI;
 import cn.encmys.ykdz.forest.dailyshop.api.profile.enums.GUIType;
 import cn.encmys.ykdz.forest.dailyshop.api.shop.order.ShopOrder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
+import xyz.xenondevs.invui.gui.IngredientPreset;
 import xyz.xenondevs.invui.window.AnvilWindow;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Stream;
 
-public class StackPickerGUI extends PlayerRelatedGUI {
+public class StackPickerGUI extends GUI {
+    @NotNull
     private final StackPickerGUIRecord guiRecord;
+    @NotNull
     private final ShopOrder order;
+    @NotNull
     private final String targetProductId;
     private int stack;
+    @NotNull
+    private final IngredientPreset iconPreset = buildIconPreset();
 
-    public StackPickerGUI(Player player, ShopOrder order, String targetProductId, StackPickerGUIRecord guiRecord) {
-        super(player);
+    public StackPickerGUI(@NotNull ShopOrder order, @NotNull String targetProductId, @NotNull StackPickerGUIRecord guiRecord) {
         this.guiRecord = guiRecord;
         this.order = order;
         this.targetProductId = targetProductId;
         this.stack = order.getOrderedProducts().get(targetProductId);
     }
 
-    @Override
+    protected @NotNull IngredientPreset buildIconPreset() {
+        IngredientPreset.Builder builder = IngredientPreset.builder();
+        Stream.ofNullable(guiRecord.icons())
+                .flatMap(Collection::stream)
+                .forEach(iconRecord ->
+                        builder.addIngredient(
+                                iconRecord.key(),
+                                NormalIconBuilder.build(iconRecord, null, null, null)
+                        )
+                );
+        return builder.build();
+    }
+
     public Gui build(Player player) {
-        Gui.Builder guiBuilder = Gui.normal()
-                .setStructure(guiRecord.layout().toArray(new String[0]));
-
-        if (guiRecord.icons() == null) {
-            return guiBuilder.build();
-        }
-
-        for (IconRecord icon : guiRecord.icons()) {
-            guiBuilder.addIngredient(icon.key(), NormalIconBuilder.build(icon, null, this, player, null, null));
-        }
-
-        return guiBuilder.build();
+        return Gui.normal()
+                .setStructure(guiRecord.layout().toArray(new String[0]))
+                .applyPreset(iconPreset)
+                .build();
     }
 
     @Override
-    protected Gui buildScrollGUI(Player player) {
-        return null;
-    }
-
-    @Override
-    protected Gui buildPagedGUI(Player player) {
-        return null;
-    }
-
-    @Override
-    public void loadContent(@Nullable Player player) {
-    }
-
-    @Override
-    public void open() {
+    public void open(@NotNull Player player) {
         StackPickerGUIRecord guiRecord = StackPickerGUIConfig.getGUIRecord();
         Window window = AnvilWindow.single()
                 .setGui(build(player))
@@ -81,31 +80,22 @@ public class StackPickerGUI extends PlayerRelatedGUI {
                             return;
                         }
                         order.setStack(targetProductId, stack);
-                        close();
                     });
                 }})
                 .build(player);
 
-        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.STACK_PICKER);
+//        DailyShop.PROFILE_FACTORY.getProfile(player).setViewingGuiType(GUIType.STACK_PICKER);
 
-        getWindows().put(player.getUniqueId(), window);
+        windows.put(player.getUniqueId(), window);
         window.open();
     }
 
-    @Override
-    public void close() {
-        windows.remove(player.getUniqueId());
-        // https://github.com/NichtStudioCode/InvUI/discussions/85
-        DailyShop.INSTANCE.getServer().getScheduler().runTaskLater(DailyShop.INSTANCE, () -> DailyShop.PROFILE_FACTORY.getProfile(player).getCartGUI().open(), 1);
-    }
-
-    public ShopOrder getOrder() {
-        return order;
-    }
-
-    public String getTargetProductId() {
-        return targetProductId;
-    }
+//    @Override
+//    public void close() {
+//        windows.remove(player.getUniqueId());
+//        // https://github.com/NichtStudioCode/InvUI/discussions/85
+//        DailyShop.INSTANCE.getServer().getScheduler().runTaskLater(DailyShop.INSTANCE, () -> DailyShop.PROFILE_FACTORY.getProfile(player).getCartGUI().open(), 1);
+//    }
 
     public int getStack() {
         return stack;

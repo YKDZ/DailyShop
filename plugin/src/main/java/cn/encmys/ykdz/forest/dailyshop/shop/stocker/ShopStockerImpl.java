@@ -112,8 +112,6 @@ public class ShopStockerImpl implements ShopStocker {
         // 逐个上架
         productsPreparedToBeListed.forEach(this::listProduct);
 
-        getShop().getShopGUI().closeAll();
-
         lastRestocking = System.currentTimeMillis();
 
         // Event

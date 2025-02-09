@@ -10,7 +10,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
-import xyz.xenondevs.invui.gui.structure.Markers;
+import xyz.xenondevs.invui.gui.Markers;
 
 import java.io.File;
 import java.io.IOException;

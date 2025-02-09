@@ -10,6 +10,7 @@ import cn.encmys.ykdz.forest.dailyshop.item.builder.NormalIconBuilder;
 import cn.encmys.ykdz.forest.dailyshop.item.builder.ProductIconBuilder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.IngredientPreset;
 import xyz.xenondevs.invui.gui.PagedGui;
@@ -17,10 +18,7 @@ import xyz.xenondevs.invui.gui.ScrollGui;
 import xyz.xenondevs.invui.item.Item;
 import xyz.xenondevs.invui.window.Window;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ShopGUI extends GUI {
@@ -31,7 +29,7 @@ public class ShopGUI extends GUI {
     @NotNull
     private final IngredientPreset iconPreset = buildIconPreset();
     @NotNull
-    private final List<Item> contents = buildContents();
+    private final List<Item> contents = new ArrayList<>();
 
     public ShopGUI(@NotNull Shop shop, @NotNull ShopGUIRecord guiRecord) {
         this.shop = shop;
@@ -51,12 +49,14 @@ public class ShopGUI extends GUI {
         return builder.build();
     }
 
-    protected List<Item> buildContents() {
-        return shop.getShopStocker().getListedProducts().stream()
+    @Override
+    public void loadContent(@Nullable Player player) {
+        contents.clear();
+        contents.addAll(shop.getShopStocker().getListedProducts().stream()
                 .map(productId -> DailyShop.PRODUCT_FACTORY.getProduct(productId))
                 .filter(Objects::nonNull)
                 .map(product -> ProductIconBuilder.build(product.getIconDecorator(), shop.getId(), product))
-                .toList();
+                .toList());
     }
 
     protected Gui build() {
@@ -101,7 +101,9 @@ public class ShopGUI extends GUI {
                     put("player-name", player.getName());
                     put("player-uuid", player.getUniqueId().toString());
                 }}))
+                .addCloseHandler(() -> windows.remove(player.getUniqueId()))
                 .build(player);
+        windows.put(player.getUniqueId(), window);
         window.open();
     }
 }
