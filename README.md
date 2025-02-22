@@ -1,4 +1,4 @@
-# DailyShop
+# HyphaShop
 
 English | [简体中文](README_ZH_CN.md)
 
@@ -47,7 +47,7 @@ You can find the document [here](https://docs.encmys.cn/s/ykdz-plugin-docs).
 <dependencies>
     <dependency>
         <groupId>cn.encmys</groupId>
-        <artifactId>DailyShop</artifactId>
+        <artifactId>HyphaShop</artifactId>
         <version>{VERSION}</version>
         <scope>provided</scope>
     </dependency>
@@ -64,7 +64,7 @@ repositories {
 
 ```
 dependencies {
-    compileOnly("cn.encmys:DailyShop:{VERSION}")
+    compileOnly("cn.encmys:HyphaShop:{VERSION}")
 }
 ```
 

@@ -35,5 +35,7 @@ database:
 # The plugin will avoid this situation by automatically disabling
 # one of the sell (true) or buy (false) action.
 price-correct-by-disable-sell-or-buy: true
+# Whether printing debug log in console
+debug: false
 # Do not change this
 version: 3

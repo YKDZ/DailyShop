@@ -63,7 +63,7 @@ subprojects {
     tasks.shadowJar {
         destinationDirectory.set(file("${rootDir}/target"))
         archiveClassifier.set("")
-        archiveFileName.set("DailyShop-" + project.name + "-" + project.version + ".jar")
+        archiveFileName.set(rootProject.name + "-" + project.name + "-" + project.version + ".jar")
     }
 
     tasks.withType<JavaCompile> {
@@ -76,7 +76,7 @@ subprojects {
             publications {
                 create<MavenPublication>("mavenJava") {
                     groupId = "cn.encmys"
-                    artifactId = "DailyShop"
+                    artifactId = rootProject.name
                     version = rootProject.version.toString()
                     artifact(tasks.shadowJar)
                 }

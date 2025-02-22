@@ -1,4 +1,4 @@
-# DailyShop
+# HyphaShop
 
 [English](README.md) | 简体中文
 
@@ -47,7 +47,7 @@
 <dependencies>
     <dependency>
         <groupId>cn.encmys</groupId>
-        <artifactId>DailyShop</artifactId>
+        <artifactId>HyphaShop</artifactId>
         <version>{VERSION}</version>
         <scope>provided</scope>
     </dependency>
@@ -64,7 +64,7 @@ repositories {
 
 ```
 dependencies {
-    compileOnly("cn.encmys:DailyShop:{VERSION}")
+    compileOnly("cn.encmys:HyphaShop:{VERSION}")
 }
 ```
 

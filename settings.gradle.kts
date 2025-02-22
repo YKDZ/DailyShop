@@ -1,3 +1,3 @@
-rootProject.name = "DailyShop"
+rootProject.name = "HyphaShop"
 include(":plugin")
 include(":api")

@@ -23,16 +23,3 @@ dependencies {
 
     compileOnly("cn.encmys:HyphaRepo:0.1.0-Beta")
 }
-
-tasks {
-    shadowJar {
-        relocate("dev.jorel.commandapi", "${project.group}.dailyshop.libraries.commandapi")
-        relocate("org.bstats", "${project.group}.dailyshop.libraries.bstats")
-        relocate("xyz.xenondevs", "${project.group}.dailyshop.libraries")
-        relocate("org.intellij.lang.annotations", "${project.group}.dailyshop.libraries.annotations.intellij")
-        relocate("org.jetbrains.annotations", "${project.group}.dailyshop.libraries.annotations.jetbrains")
-        relocate("javax.annotation", "${project.group}.dailyshop.libraries.annotations.javax")
-        relocate("com.google", "${project.group}.dailyshop.libraries.google")
-        relocate("com.zaxxer.hikari", "${project.group}.dailyshop.libraries.hikari")
-    }
-}
